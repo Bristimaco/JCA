@@ -86,8 +86,13 @@ class Member extends Model
         return $this->belongsTo(WeightCategory::class);
     }
 
-    public function ageCategory(string $countryCode = 'BE'): ?AgeCategory
+    public function ageCategory(): BelongsTo
     {
-        return AgeCategory::forBirthDate($this->date_of_birth, $countryCode);
+        return $this->belongsTo(AgeCategory::class);
+    }
+
+    public function calculateAgeCategory(string $countryCode = 'BE', ?Carbon $referenceDate = null): ?AgeCategory
+    {
+        return AgeCategory::forBirthDate($this->date_of_birth, $countryCode, $referenceDate);
     }
 }

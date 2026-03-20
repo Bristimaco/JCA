@@ -5,6 +5,7 @@ export default function AgeCategoriesSection({ ageCategories }) {
     const { flash } = usePage().props;
     const [selectedCountry, setSelectedCountry] = useState('BE');
     const [showAddForm, setShowAddForm] = useState(false);
+    const recalcForm = useForm({ country_code: 'BE' });
 
     const countries = [...new Set(ageCategories.map((c) => c.country_code))];
     if (!countries.includes(selectedCountry)) {
@@ -60,6 +61,16 @@ export default function AgeCategoriesSection({ ageCategories }) {
                         className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700"
                     >
                         {showAddForm ? 'Annuleren' : 'Toevoegen'}
+                    </button>
+                    <button
+                        onClick={() => {
+                            recalcForm.setData('country_code', selectedCountry);
+                            recalcForm.post('/admin/age-categories/recalculate', { preserveScroll: true });
+                        }}
+                        disabled={recalcForm.processing}
+                        className="rounded-md bg-green-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-50"
+                    >
+                        {recalcForm.processing ? 'Bezig...' : 'Herbereken'}
                     </button>
                 </div>
             </div>

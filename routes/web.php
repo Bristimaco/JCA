@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AgeCategoryController;
 use App\Http\Controllers\Admin\ApproveUserController;
 use App\Http\Controllers\Admin\MemberController;
 use App\Http\Controllers\Admin\MemberIndexController;
+use App\Http\Controllers\Admin\RecalculateAgeCategoriesController;
 use App\Http\Controllers\Admin\ToggleUserActiveController;
 use App\Http\Controllers\Admin\UpdateUserController;
 use App\Http\Controllers\Admin\UserMembersController;
@@ -66,6 +67,7 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::post('/age-categories', [AgeCategoryController::class, 'store'])->name('admin.age-categories.store');
         Route::patch('/age-categories/{ageCategory}', [AgeCategoryController::class, 'update'])->name('admin.age-categories.update');
         Route::delete('/age-categories/{ageCategory}', [AgeCategoryController::class, 'destroy'])->name('admin.age-categories.destroy');
+        Route::post('/age-categories/recalculate', RecalculateAgeCategoriesController::class)->name('admin.age-categories.recalculate');
 
         // Weight categories
         Route::post('/weight-categories', [WeightCategoryController::class, 'store'])->name('admin.weight-categories.store');
