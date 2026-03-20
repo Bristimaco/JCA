@@ -2,7 +2,7 @@ import { Head, Link } from '@inertiajs/react';
 import AppLayout from '../../Layouts/AppLayout';
 import MembersSection from '../Dashboard/MembersSection';
 
-export default function Members({ members, ageCategories, weightCategories, beltRanks }) {
+export default function Members({ members, ageCategories, weightCategories, beltRanks, users }) {
     return (
         <AppLayout>
             <Head title="Leden" />
@@ -14,7 +14,7 @@ export default function Members({ members, ageCategories, weightCategories, belt
                 <h1 className="text-2xl font-bold text-gray-900">Ledenlijst</h1>
             </div>
 
-            <MembersSection members={members} ageCategories={ageCategories} weightCategories={weightCategories} beltRanks={beltRanks} />
+            <MembersSection members={members} ageCategories={ageCategories} weightCategories={weightCategories} beltRanks={beltRanks} users={users} />
         </AppLayout>
     );
 }

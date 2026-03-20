@@ -26,6 +26,8 @@ class DashboardController extends Controller
             $props['memberStats'] = $this->memberStats();
         }
 
+        $props['myMemberCount'] = $request->user()->members()->count();
+
         return Inertia::render('Dashboard', $props);
     }
 

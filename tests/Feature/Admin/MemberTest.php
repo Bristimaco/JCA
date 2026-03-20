@@ -226,7 +226,7 @@ class MemberTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertInertia(
-            fn($page) => $page
+            fn ($page) => $page
                 ->component('Admin/Members')
                 ->has('members', 3)
                 ->has('ageCategories')

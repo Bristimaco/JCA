@@ -2,7 +2,7 @@ import { useForm, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import MemberCard from './MemberCard';
 
-export default function MembersSection({ members, ageCategories, weightCategories, beltRanks }) {
+export default function MembersSection({ members, ageCategories, weightCategories, beltRanks, users }) {
     const { flash } = usePage().props;
     const [showAddForm, setShowAddForm] = useState(false);
     const [search, setSearch] = useState('');
@@ -94,6 +94,7 @@ export default function MembersSection({ members, ageCategories, weightCategorie
                     ageCategories={ageCategories}
                     weightCategories={weightCategories}
                     beltRanks={beltRanks}
+                    users={users}
                 />
             )}
 
@@ -105,6 +106,7 @@ export default function MembersSection({ members, ageCategories, weightCategorie
                     ageCategories={ageCategories}
                     weightCategories={weightCategories}
                     beltRanks={beltRanks}
+                    users={users}
                 />
             )}
 
@@ -188,7 +190,7 @@ function MemberRow({ member, ageCategoryName, weightCategoryName, onView, onEdit
     );
 }
 
-function MemberForm({ member, onSuccess, onCancel, ageCategories, weightCategories, beltRanks }) {
+function MemberForm({ member, onSuccess, onCancel, ageCategories, weightCategories, beltRanks, users }) {
     const isEditing = !!member;
     const form = useForm({
         first_name: member?.first_name || '',
@@ -203,6 +205,7 @@ function MemberForm({ member, onSuccess, onCancel, ageCategories, weightCategori
         license_number: member?.license_number || '',
         weight_category_id: member?.weight_category_id || '',
         belt_rank: member?.current_belt || '',
+        user_id: member?.user_id || '',
         membership_status: member?.membership_status || 'active',
         is_competition: member?.is_competition || false,
         photo: null,
@@ -234,6 +237,7 @@ function MemberForm({ member, onSuccess, onCancel, ageCategories, weightCategori
         });
         if (formData.weight_category_id === '') formData.weight_category_id = null;
         if (formData.belt_rank === '') formData.belt_rank = null;
+        if (formData.user_id === '') formData.user_id = null;
 
         if (isEditing) {
             // Use POST with _method for file uploads
@@ -326,6 +330,19 @@ function MemberForm({ member, onSuccess, onCancel, ageCategories, weightCategori
                     </select>
                     {form.errors.belt_rank && <p className="text-xs text-red-600 mt-1">{form.errors.belt_rank}</p>}
                 </div>
+                {users && (
+                    <div>
+                        <label className="block text-xs font-medium text-gray-500 mb-1">Gekoppelde gebruiker</label>
+                        <select value={form.data.user_id} onChange={(e) => form.setData('user_id', e.target.value)}
+                            className="w-full rounded-md border border-gray-300 text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">Geen</option>
+                            {users.map((u) => (
+                                <option key={u.id} value={u.id}>{u.name} ({u.email})</option>
+                            ))}
+                        </select>
+                        {form.errors.user_id && <p className="text-xs text-red-600 mt-1">{form.errors.user_id}</p>}
+                    </div>
+                )}
                 <div>
                     <label className="block text-xs font-medium text-gray-500 mb-1">Straat + nr</label>
                     <input type="text" value={form.data.address_street} onChange={(e) => form.setData('address_street', e.target.value)}

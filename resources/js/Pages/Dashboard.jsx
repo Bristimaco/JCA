@@ -2,11 +2,12 @@ import { Head, Link, usePage } from '@inertiajs/react';
 import AppLayout from '../Layouts/AppLayout';
 
 const modules = [
+    { name: 'Mijn Leden', href: '/mijn-leden', roles: ['parent', 'member', 'admin', 'coach'] },
     { name: 'Leden', href: '/admin/members', roles: ['admin'] },
     { name: 'Admin', href: '/admin', roles: ['admin'] },
 ];
 
-export default function Dashboard({ pendingCount, memberStats }) {
+export default function Dashboard({ pendingCount, memberStats, myMemberCount }) {
     const { auth } = usePage().props;
     const role = auth.user.role;
 
@@ -41,6 +42,11 @@ export default function Dashboard({ pendingCount, memberStats }) {
                                 {m.name === 'Leden' && memberStats && (
                                     <span className="ml-2 inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-700">
                                         {memberStats.total}
+                                    </span>
+                                )}
+                                {m.name === 'Mijn Leden' && myMemberCount > 0 && (
+                                    <span className="ml-2 inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-700">
+                                        {myMemberCount}
                                     </span>
                                 )}
                             </div>

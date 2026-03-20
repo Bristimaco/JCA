@@ -12,6 +12,7 @@ use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MyMembersController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -47,6 +48,10 @@ Route::middleware('auth')->group(function () {
 // Protected routes (authenticated + verified + approved)
 Route::middleware(['auth', 'verified', 'approved'])->group(function () {
     Route::get('/', DashboardController::class)->name('dashboard');
+
+    // My members (for ouder/lid roles)
+    Route::get('/mijn-leden', [MyMembersController::class, 'index'])->name('my-members.index');
+    Route::patch('/mijn-leden/{member}', [MyMembersController::class, 'update'])->name('my-members.update');
 
     // Admin routes
     Route::middleware('admin')->prefix('admin')->group(function () {

@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -35,9 +34,9 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
-    public function member(): HasOne
+    public function members(): HasMany
     {
-        return $this->hasOne(Member::class);
+        return $this->hasMany(Member::class);
     }
 
     public function guardedMembers(): HasMany
