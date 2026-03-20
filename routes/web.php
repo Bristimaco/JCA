@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\ApproveUserController;
+use App\Http\Controllers\Admin\ToggleUserActiveController;
+use App\Http\Controllers\Admin\UpdateUserController;
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -46,5 +48,7 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
     Route::middleware('admin')->prefix('admin')->group(function () {
         Route::get('/', AdminDashboardController::class)->name('admin.dashboard');
         Route::patch('/users/{user}/approve', ApproveUserController::class)->name('admin.users.approve');
+        Route::patch('/users/{user}/toggle-active', ToggleUserActiveController::class)->name('admin.users.toggle-active');
+        Route::patch('/users/{user}', UpdateUserController::class)->name('admin.users.update');
     });
 });

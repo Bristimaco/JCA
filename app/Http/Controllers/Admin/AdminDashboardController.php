@@ -18,6 +18,10 @@ class AdminDashboardController extends Controller
             ->orderBy('created_at')
             ->get(['id', 'name', 'email', 'created_at']);
 
+        $users = User::whereNotNull('role')
+            ->orderBy('name')
+            ->get(['id', 'name', 'email', 'role', 'is_active']);
+
         $roles = collect(UserRole::cases())->map(fn (UserRole $role) => [
             'value' => $role->value,
             'label' => $role->label(),
@@ -25,6 +29,7 @@ class AdminDashboardController extends Controller
 
         return Inertia::render('Admin/Dashboard', [
             'pendingUsers' => $pendingUsers,
+            'users' => $users,
             'roles' => $roles,
         ]);
     }
