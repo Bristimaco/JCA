@@ -29,7 +29,7 @@ class DashboardTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertInertia(
-            fn ($page) => $page
+            fn($page) => $page
                 ->component('Dashboard')
                 ->where('pendingCount', 1)
         );
@@ -50,7 +50,7 @@ class DashboardTest extends TestCase
         $response = $this->actingAs($admin)->get('/');
 
         $response->assertInertia(
-            fn ($page) => $page
+            fn($page) => $page
                 ->component('Dashboard')
                 ->where('pendingCount', 0)
         );
@@ -67,7 +67,7 @@ class DashboardTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertInertia(
-            fn ($page) => $page
+            fn($page) => $page
                 ->component('Dashboard')
                 ->missing('pendingCount')
         );
@@ -89,7 +89,7 @@ class DashboardTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertInertia(
-            fn ($page) => $page
+            fn($page) => $page
                 ->component('Admin/Dashboard')
                 ->has('pendingUsers', 1)
                 ->has('users')

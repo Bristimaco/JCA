@@ -19,7 +19,7 @@ class ToggleUserActiveController extends Controller
             return back()->with('status', 'Een beheerder kan niet gedeactiveerd worden. Wijzig eerst de rol.');
         }
 
-        $user->update(['is_active' => ! $user->is_active]);
+        $user->update(['is_active' => !$user->is_active]);
 
         $action = $user->is_active ? 'geactiveerd' : 'gedeactiveerd';
 
