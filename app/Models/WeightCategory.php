@@ -14,7 +14,6 @@ class WeightCategory extends Model
     {
         return [
             'gender' => Gender::class,
-            'min_weight_kg' => 'decimal:1',
             'max_weight_kg' => 'decimal:1',
             'display_order' => 'integer',
             'is_active' => 'boolean',

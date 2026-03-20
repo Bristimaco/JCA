@@ -15,8 +15,7 @@ class WeightCategoryController extends Controller
             'age_category_id' => ['required', 'exists:age_categories,id'],
             'name' => ['required', 'string', 'max:255'],
             'gender' => ['required', 'string', 'in:male,female'],
-            'min_weight_kg' => ['required', 'numeric', 'min:0', 'max:999.9'],
-            'max_weight_kg' => ['required', 'numeric', 'min:0', 'max:999.9', 'gte:min_weight_kg'],
+            'max_weight_kg' => ['required', 'numeric', 'min:0', 'max:999.9'],
             'display_order' => ['required', 'integer', 'min:0'],
         ]);
 
@@ -30,8 +29,7 @@ class WeightCategoryController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'gender' => ['required', 'string', 'in:male,female'],
-            'min_weight_kg' => ['required', 'numeric', 'min:0', 'max:999.9'],
-            'max_weight_kg' => ['required', 'numeric', 'min:0', 'max:999.9', 'gte:min_weight_kg'],
+            'max_weight_kg' => ['required', 'numeric', 'min:0', 'max:999.9'],
             'display_order' => ['required', 'integer', 'min:0'],
         ]);
 

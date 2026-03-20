@@ -40,7 +40,6 @@ class WeightCategoryTest extends TestCase
             'age_category_id' => $ageCat->id,
             'name' => '-60',
             'gender' => 'male',
-            'min_weight_kg' => 0,
             'max_weight_kg' => 60.0,
             'display_order' => 1,
         ]);
@@ -60,28 +59,11 @@ class WeightCategoryTest extends TestCase
             'age_category_id' => 999,
             'name' => '',
             'gender' => 'invalid',
-            'min_weight_kg' => -1,
             'max_weight_kg' => 'abc',
             'display_order' => -1,
         ]);
 
-        $response->assertSessionHasErrors(['age_category_id', 'name', 'gender', 'min_weight_kg', 'max_weight_kg', 'display_order']);
-    }
-
-    public function test_max_weight_must_be_gte_min_weight(): void
-    {
-        $ageCat = $this->ageCategory();
-
-        $response = $this->actingAs($this->admin())->post('/admin/weight-categories', [
-            'age_category_id' => $ageCat->id,
-            'name' => '-60',
-            'gender' => 'male',
-            'min_weight_kg' => 60,
-            'max_weight_kg' => 50,
-            'display_order' => 1,
-        ]);
-
-        $response->assertSessionHasErrors(['max_weight_kg']);
+        $response->assertSessionHasErrors(['age_category_id', 'name', 'gender', 'max_weight_kg', 'display_order']);
     }
 
     public function test_admin_can_update_weight_category(): void
@@ -91,7 +73,6 @@ class WeightCategoryTest extends TestCase
             'age_category_id' => $ageCat->id,
             'name' => '-60',
             'gender' => 'male',
-            'min_weight_kg' => 0,
             'max_weight_kg' => 60.0,
             'display_order' => 1,
         ]);
@@ -99,7 +80,6 @@ class WeightCategoryTest extends TestCase
         $response = $this->actingAs($this->admin())->patch("/admin/weight-categories/{$weight->id}", [
             'name' => '-66',
             'gender' => 'male',
-            'min_weight_kg' => 60.1,
             'max_weight_kg' => 66.0,
             'display_order' => 2,
         ]);
@@ -119,7 +99,6 @@ class WeightCategoryTest extends TestCase
             'age_category_id' => $ageCat->id,
             'name' => '-60',
             'gender' => 'male',
-            'min_weight_kg' => 0,
             'max_weight_kg' => 60.0,
             'display_order' => 1,
         ]);
@@ -142,7 +121,6 @@ class WeightCategoryTest extends TestCase
             'age_category_id' => $ageCat->id,
             'name' => '-60',
             'gender' => 'male',
-            'min_weight_kg' => 0,
             'max_weight_kg' => 60.0,
             'display_order' => 1,
         ]);
@@ -157,7 +135,6 @@ class WeightCategoryTest extends TestCase
             'age_category_id' => $ageCat->id,
             'name' => '-60',
             'gender' => 'male',
-            'min_weight_kg' => 0,
             'max_weight_kg' => 60.0,
             'display_order' => 1,
         ]);
@@ -174,7 +151,6 @@ class WeightCategoryTest extends TestCase
             'age_category_id' => $ageCat->id,
             'name' => '-60',
             'gender' => 'male',
-            'min_weight_kg' => 0,
             'max_weight_kg' => 60.0,
             'display_order' => 1,
         ]);

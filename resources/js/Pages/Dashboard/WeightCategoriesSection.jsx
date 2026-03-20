@@ -161,7 +161,6 @@ function AddWeightCategoryForm({ ageCategoryId, onSuccess }) {
         age_category_id: ageCategoryId,
         name: '',
         gender: 'male',
-        min_weight_kg: '',
         max_weight_kg: '',
         display_order: '0',
     });
@@ -204,18 +203,6 @@ function AddWeightCategoryForm({ ageCategoryId, onSuccess }) {
                     {form.errors.gender && <p className="text-xs text-red-600 mt-1">{form.errors.gender}</p>}
                 </div>
                 <div>
-                    <label className="block text-xs font-medium text-gray-500 mb-1">Min (kg)</label>
-                    <input
-                        type="number"
-                        step="0.1"
-                        value={form.data.min_weight_kg}
-                        onChange={(e) => form.setData('min_weight_kg', e.target.value)}
-                        min="0" max="999.9"
-                        className="w-full rounded-md border border-gray-300 text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    />
-                    {form.errors.min_weight_kg && <p className="text-xs text-red-600 mt-1">{form.errors.min_weight_kg}</p>}
-                </div>
-                <div>
                     <label className="block text-xs font-medium text-gray-500 mb-1">Max (kg)</label>
                     <input
                         type="number"
@@ -255,7 +242,6 @@ function WeightCategoryRow({ weight }) {
     const form = useForm({
         name: weight.name,
         gender: weight.gender,
-        min_weight_kg: weight.min_weight_kg,
         max_weight_kg: weight.max_weight_kg,
         display_order: weight.display_order,
     });
@@ -299,18 +285,6 @@ function WeightCategoryRow({ weight }) {
                             <option value="female">Vrouw</option>
                         </select>
                         {form.errors.gender && <p className="text-xs text-red-600 mt-1">{form.errors.gender}</p>}
-                    </div>
-                    <div>
-                        <label className="block text-xs font-medium text-gray-500 mb-1">Min (kg)</label>
-                        <input
-                            type="number"
-                            step="0.1"
-                            value={form.data.min_weight_kg}
-                            onChange={(e) => form.setData('min_weight_kg', e.target.value)}
-                            min="0" max="999.9"
-                            className="w-full rounded-md border border-gray-300 text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        />
-                        {form.errors.min_weight_kg && <p className="text-xs text-red-600 mt-1">{form.errors.min_weight_kg}</p>}
                     </div>
                     <div>
                         <label className="block text-xs font-medium text-gray-500 mb-1">Max (kg)</label>
@@ -361,7 +335,7 @@ function WeightCategoryRow({ weight }) {
             <div>
                 <span className="font-medium text-gray-900 text-sm">{weight.name}</span>
                 <span className="ml-2 text-xs text-gray-400">
-                    {weight.min_weight_kg}–{weight.max_weight_kg} kg
+                    max {weight.max_weight_kg} kg
                 </span>
                 <span className="ml-2 text-xs text-gray-300">#{weight.display_order}</span>
             </div>
