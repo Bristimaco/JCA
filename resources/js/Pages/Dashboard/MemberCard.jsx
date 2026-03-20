@@ -1,4 +1,4 @@
-export default function MemberCard({ member, ageCategories, weightCategories }) {
+export default function MemberCard({ member, ageCategories }) {
     const genderLabel = member.gender === 'male' ? 'Man' : 'Vrouw';
     const statusLabels = { active: 'Actief', inactive: 'Inactief', suspended: 'Geschorst', pending: 'In afwachting' };
     const statusColors = { active: 'bg-green-500', inactive: 'bg-gray-400', suspended: 'bg-red-500', pending: 'bg-yellow-500' };
@@ -8,13 +8,6 @@ export default function MemberCard({ member, ageCategories, weightCategories }) 
 
     const ageCat = age !== null
         ? ageCategories.find((c) => c.country_code === 'BE' && age >= c.min_age && age <= c.max_age)
-        : null;
-
-    const weightCat = ageCat && member.current_weight_kg
-        ? weightCategories
-            .filter((w) => w.age_category_id === ageCat.id && w.gender === member.gender)
-            .sort((a, b) => a.display_order - b.display_order)
-            .find((w) => parseFloat(w.max_weight_kg) >= parseFloat(member.current_weight_kg))
         : null;
 
     return (
@@ -73,10 +66,7 @@ export default function MemberCard({ member, ageCategories, weightCategories }) 
                                 </p>
                                 <p>
                                     <span className="text-gray-400 w-20 inline-block">Gewicht:</span>
-                                    {weightCat ? weightCat.name : '-'}
-                                    {member.current_weight_kg && (
-                                        <span className="text-gray-400 ml-1">({member.current_weight_kg} kg)</span>
-                                    )}
+                                    {member.weight_category_name || '-'}
                                 </p>
                             </div>
                         </div>

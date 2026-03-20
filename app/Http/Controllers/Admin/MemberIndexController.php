@@ -14,10 +14,11 @@ class MemberIndexController extends Controller
 {
     public function __invoke(Request $request): Response
     {
-        $members = Member::orderBy('last_name')->orderBy('first_name')->get()
+        $members = Member::with('weightCategory')->orderBy('last_name')->orderBy('first_name')->get()
             ->map(fn (Member $m) => [
                 ...$m->toArray(),
                 'photo_url' => $m->photo_path ? asset('storage/'.$m->photo_path) : null,
+                'weight_category_name' => $m->weightCategory?->name,
             ]);
 
         $ageCategories = AgeCategory::ordered()->get();

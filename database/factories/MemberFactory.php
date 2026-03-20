@@ -26,6 +26,7 @@ class MemberFactory extends Factory
             'address_country' => 'BE',
             'membership_status' => MembershipStatus::Active,
             'membership_start_date' => fake()->dateTimeBetween('-5 years', '-1 year'),
+            'weight_category_id' => null,
             'is_competition' => fake()->boolean(30),
         ];
     }

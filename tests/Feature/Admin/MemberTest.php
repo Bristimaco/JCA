@@ -3,8 +3,10 @@
 namespace Tests\Feature\Admin;
 
 use App\Enums\UserRole;
+use App\Models\AgeCategory;
 use App\Models\Member;
 use App\Models\User;
+use App\Models\WeightCategory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -81,16 +83,25 @@ class MemberTest extends TestCase
 
     public function test_admin_can_create_competition_member(): void
     {
+        $ageCat = AgeCategory::create([
+            'name' => 'U15', 'country_code' => 'BE',
+            'min_age' => 13, 'max_age' => 14, 'display_order' => 1,
+        ]);
+        $wc = WeightCategory::create([
+            'age_category_id' => $ageCat->id, 'name' => '-46',
+            'max_weight_kg' => 46, 'gender' => 'male', 'display_order' => 1, 'is_active' => true,
+        ]);
+
         $response = $this->actingAs($this->admin())->post('/admin/members', $this->validData([
             'is_competition' => true,
-            'current_weight_kg' => 45.5,
+            'weight_category_id' => $wc->id,
         ]));
 
         $response->assertRedirect();
         $this->assertDatabaseHas('members', [
             'first_name' => 'Jan',
             'is_competition' => true,
-            'current_weight_kg' => 45.5,
+            'weight_category_id' => $wc->id,
         ]);
     }
 

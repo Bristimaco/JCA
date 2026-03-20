@@ -26,7 +26,6 @@ class Member extends Model
             'membership_status' => MembershipStatus::class,
             'membership_start_date' => 'date',
             'membership_end_date' => 'date',
-            'current_weight_kg' => 'decimal:1',
             'photo_consent' => 'boolean',
             'is_competition' => 'boolean',
         ];
@@ -81,24 +80,13 @@ class Member extends Model
         return $this->membership_status === MembershipStatus::Active;
     }
 
+    public function weightCategory(): BelongsTo
+    {
+        return $this->belongsTo(WeightCategory::class);
+    }
+
     public function ageCategory(string $countryCode = 'BE'): ?AgeCategory
     {
         return AgeCategory::forBirthDate($this->date_of_birth, $countryCode);
-    }
-
-    public function weightCategory(string $countryCode = 'BE'): ?WeightCategory
-    {
-        $ageCat = $this->ageCategory($countryCode);
-
-        if (! $ageCat || ! $this->gender) {
-            return null;
-        }
-
-        return WeightCategory::active()
-            ->where('age_category_id', $ageCat->id)
-            ->forGender($this->gender)
-            ->where('max_weight_kg', '>=', $this->current_weight_kg ?? 0)
-            ->ordered()
-            ->first();
     }
 }

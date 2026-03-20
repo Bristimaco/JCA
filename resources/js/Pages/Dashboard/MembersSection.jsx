@@ -30,19 +30,7 @@ export default function MembersSection({ members, ageCategories, weightCategorie
     };
 
     const getWeightCategoryName = (member) => {
-        if (!member.current_weight_kg || !member.gender) return '-';
-        const ageCat = ageCategories.find((c) => {
-            if (c.country_code !== 'BE') return false;
-            const birthDate = new Date(member.date_of_birth);
-            const age = new Date().getFullYear() - birthDate.getFullYear();
-            return age >= c.min_age && age <= c.max_age;
-        });
-        if (!ageCat) return '-';
-        const wc = weightCategories
-            .filter((w) => w.age_category_id === ageCat.id && w.gender === member.gender)
-            .sort((a, b) => a.display_order - b.display_order)
-            .find((w) => parseFloat(w.max_weight_kg) >= parseFloat(member.current_weight_kg));
-        return wc ? wc.name : '-';
+        return member.weight_category_name || '-';
     };
 
     if (viewingMember) {
@@ -61,7 +49,6 @@ export default function MembersSection({ members, ageCategories, weightCategorie
                     <MemberCard
                         member={viewingMember}
                         ageCategories={ageCategories}
-                        weightCategories={weightCategories}
                     />
                 </div>
             </div>
@@ -104,6 +91,8 @@ export default function MembersSection({ members, ageCategories, weightCategorie
                 <MemberForm
                     onSuccess={() => setShowAddForm(false)}
                     onCancel={() => setShowAddForm(false)}
+                    ageCategories={ageCategories}
+                    weightCategories={weightCategories}
                 />
             )}
 
@@ -112,6 +101,8 @@ export default function MembersSection({ members, ageCategories, weightCategorie
                     member={editingMember}
                     onSuccess={() => setEditingMember(null)}
                     onCancel={() => setEditingMember(null)}
+                    ageCategories={ageCategories}
+                    weightCategories={weightCategories}
                 />
             )}
 
@@ -195,7 +186,7 @@ function MemberRow({ member, ageCategoryName, weightCategoryName, onView, onEdit
     );
 }
 
-function MemberForm({ member, onSuccess, onCancel }) {
+function MemberForm({ member, onSuccess, onCancel, ageCategories, weightCategories }) {
     const isEditing = !!member;
     const form = useForm({
         first_name: member?.first_name || '',
@@ -208,20 +199,37 @@ function MemberForm({ member, onSuccess, onCancel }) {
         address_city: member?.address_city || '',
         address_postal_code: member?.address_postal_code || '',
         license_number: member?.license_number || '',
-        current_weight_kg: member?.current_weight_kg || '',
+        weight_category_id: member?.weight_category_id || '',
         membership_status: member?.membership_status || 'active',
         is_competition: member?.is_competition || false,
         photo: null,
     });
+
+    // Compute available weight categories based on date_of_birth + gender
+    const getAvailableWeightCategories = () => {
+        if (!form.data.date_of_birth || !form.data.gender) return [];
+        const birthDate = new Date(form.data.date_of_birth);
+        const age = new Date().getFullYear() - birthDate.getFullYear();
+        const ageCat = ageCategories.find(
+            (c) => c.country_code === 'BE' && age >= c.min_age && age <= c.max_age
+        );
+        if (!ageCat) return [];
+        return weightCategories
+            .filter((w) => w.age_category_id === ageCat.id && w.gender === form.data.gender)
+            .sort((a, b) => a.display_order - b.display_order);
+    };
+
+    const availableWeightCategories = getAvailableWeightCategories();
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
         const formData = { ...form.data };
         // Clean empty strings to null
-        ['email', 'phone', 'address_street', 'address_city', 'address_postal_code', 'license_number', 'current_weight_kg'].forEach((f) => {
+        ['email', 'phone', 'address_street', 'address_city', 'address_postal_code', 'license_number'].forEach((f) => {
             if (formData[f] === '') formData[f] = null;
         });
+        if (formData.weight_category_id === '') formData.weight_category_id = null;
 
         if (isEditing) {
             // Use POST with _method for file uploads
@@ -290,11 +298,18 @@ function MemberForm({ member, onSuccess, onCancel }) {
                     {form.errors.license_number && <p className="text-xs text-red-600 mt-1">{form.errors.license_number}</p>}
                 </div>
                 <div>
-                    <label className="block text-xs font-medium text-gray-500 mb-1">Gewicht (kg)</label>
-                    <input type="number" step="0.1" value={form.data.current_weight_kg} onChange={(e) => form.setData('current_weight_kg', e.target.value)}
-                        min="0" max="999.9"
-                        className="w-full rounded-md border border-gray-300 text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
-                    {form.errors.current_weight_kg && <p className="text-xs text-red-600 mt-1">{form.errors.current_weight_kg}</p>}
+                    <label className="block text-xs font-medium text-gray-500 mb-1">Gewichtsklasse</label>
+                    <select value={form.data.weight_category_id} onChange={(e) => form.setData('weight_category_id', e.target.value)}
+                        className="w-full rounded-md border border-gray-300 text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">Geen</option>
+                        {availableWeightCategories.map((wc) => (
+                            <option key={wc.id} value={wc.id}>{wc.name}</option>
+                        ))}
+                    </select>
+                    {availableWeightCategories.length === 0 && form.data.date_of_birth && (
+                        <p className="text-xs text-gray-400 mt-1">Geen klasses voor deze leeftijd/geslacht</p>
+                    )}
+                    {form.errors.weight_category_id && <p className="text-xs text-red-600 mt-1">{form.errors.weight_category_id}</p>}
                 </div>
                 <div>
                     <label className="block text-xs font-medium text-gray-500 mb-1">Straat + nr</label>
