@@ -22,10 +22,10 @@ class MyMembersTest extends TestCase
         ]);
     }
 
-    private function memberUser(): User
+    private function admin(): User
     {
         return User::factory()->create([
-            'role' => UserRole::Member,
+            'role' => UserRole::Admin,
             'email_verified_at' => now(),
         ]);
     }
@@ -33,9 +33,10 @@ class MyMembersTest extends TestCase
     public function test_user_can_view_my_members_page(): void
     {
         $user = $this->parentUser();
-        Member::factory()->create(['user_id' => $user->id]);
-        Member::factory()->create(['user_id' => $user->id]);
+        $m1 = Member::factory()->create();
+        $m2 = Member::factory()->create();
         Member::factory()->create(); // unlinked
+        $user->members()->attach([$m1->id, $m2->id]);
 
         $response = $this->actingAs($user)->get('/mijn-leden');
 
@@ -52,7 +53,8 @@ class MyMembersTest extends TestCase
     public function test_user_can_update_own_linked_member_contact_info(): void
     {
         $user = $this->parentUser();
-        $member = Member::factory()->create(['user_id' => $user->id]);
+        $member = Member::factory()->create();
+        $user->members()->attach($member);
 
         $response = $this->actingAs($user)->patch("/mijn-leden/{$member->id}", [
             'email' => 'new@example.com',
@@ -77,11 +79,11 @@ class MyMembersTest extends TestCase
     {
         $user = $this->parentUser();
         $member = Member::factory()->create([
-            'user_id' => $user->id,
             'first_name' => 'Jan',
             'license_number' => 'JCA-111111',
             'membership_status' => 'active',
         ]);
+        $user->members()->attach($member);
 
         $this->actingAs($user)->patch("/mijn-leden/{$member->id}", [
             'first_name' => 'Changed',
@@ -101,7 +103,7 @@ class MyMembersTest extends TestCase
     public function test_user_cannot_update_unlinked_member(): void
     {
         $user = $this->parentUser();
-        $otherMember = Member::factory()->create(); // not linked to user
+        $otherMember = Member::factory()->create();
 
         $response = $this->actingAs($user)->patch("/mijn-leden/{$otherMember->id}", [
             'email' => 'hack@example.com',
@@ -114,7 +116,8 @@ class MyMembersTest extends TestCase
     {
         $user = $this->parentUser();
         $otherUser = $this->parentUser();
-        $member = Member::factory()->create(['user_id' => $otherUser->id]);
+        $member = Member::factory()->create();
+        $otherUser->members()->attach($member);
 
         $response = $this->actingAs($user)->patch("/mijn-leden/{$member->id}", [
             'email' => 'hack@example.com',
@@ -123,12 +126,32 @@ class MyMembersTest extends TestCase
         $response->assertStatus(403);
     }
 
+    public function test_multiple_users_can_manage_same_member(): void
+    {
+        $parent1 = $this->parentUser();
+        $parent2 = $this->parentUser();
+        $member = Member::factory()->create();
+        $parent1->members()->attach($member);
+        $parent2->members()->attach($member);
+
+        $this->actingAs($parent1)->patch("/mijn-leden/{$member->id}", [
+            'email' => 'parent1@example.com',
+        ])->assertRedirect();
+
+        $this->actingAs($parent2)->patch("/mijn-leden/{$member->id}", [
+            'email' => 'parent2@example.com',
+        ])->assertRedirect();
+
+        $this->assertEquals('parent2@example.com', $member->fresh()->email);
+    }
+
     public function test_user_can_upload_photo_for_linked_member(): void
     {
         Storage::fake('public');
 
         $user = $this->parentUser();
-        $member = Member::factory()->create(['user_id' => $user->id]);
+        $member = Member::factory()->create();
+        $user->members()->attach($member);
 
         $response = $this->actingAs($user)->patch("/mijn-leden/{$member->id}", [
             'photo' => UploadedFile::fake()->image('photo.jpg', 200, 200),
@@ -149,7 +172,8 @@ class MyMembersTest extends TestCase
     public function test_dashboard_shows_my_member_count(): void
     {
         $user = $this->parentUser();
-        Member::factory()->count(2)->create(['user_id' => $user->id]);
+        $members = Member::factory()->count(2)->create();
+        $user->members()->attach($members->pluck('id'));
 
         $response = $this->actingAs($user)->get('/');
 
@@ -161,28 +185,45 @@ class MyMembersTest extends TestCase
         );
     }
 
-    public function test_admin_can_link_member_to_user(): void
+    public function test_admin_can_link_members_to_user(): void
     {
-        $admin = User::factory()->create([
-            'role' => UserRole::Admin,
-            'email_verified_at' => now(),
-        ]);
+        $admin = $this->admin();
         $parentUser = $this->parentUser();
+        $m1 = Member::factory()->create();
+        $m2 = Member::factory()->create();
 
-        $response = $this->actingAs($admin)->post('/admin/members', [
-            'first_name' => 'Jan',
-            'last_name' => 'Peeters',
-            'date_of_birth' => '2010-05-15',
-            'gender' => 'male',
-            'membership_status' => 'active',
-            'is_competition' => false,
-            'user_id' => $parentUser->id,
+        $response = $this->actingAs($admin)->put("/admin/users/{$parentUser->id}/members", [
+            'member_ids' => [$m1->id, $m2->id],
         ]);
 
         $response->assertRedirect();
-        $this->assertDatabaseHas('members', [
-            'first_name' => 'Jan',
-            'user_id' => $parentUser->id,
+        $this->assertCount(2, $parentUser->fresh()->members);
+    }
+
+    public function test_admin_can_unlink_members_from_user(): void
+    {
+        $admin = $this->admin();
+        $parentUser = $this->parentUser();
+        $m1 = Member::factory()->create();
+        $parentUser->members()->attach($m1);
+
+        $response = $this->actingAs($admin)->put("/admin/users/{$parentUser->id}/members", [
+            'member_ids' => [],
         ]);
+
+        $response->assertRedirect();
+        $this->assertCount(0, $parentUser->fresh()->members);
+    }
+
+    public function test_non_admin_cannot_link_members_to_user(): void
+    {
+        $parentUser = $this->parentUser();
+        $member = Member::factory()->create();
+
+        $response = $this->actingAs($parentUser)->put("/admin/users/{$parentUser->id}/members", [
+            'member_ids' => [$member->id],
+        ]);
+
+        $response->assertStatus(403);
     }
 }

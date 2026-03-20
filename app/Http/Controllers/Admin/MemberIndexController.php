@@ -6,7 +6,6 @@ use App\Enums\BeltRank;
 use App\Http\Controllers\Controller;
 use App\Models\AgeCategory;
 use App\Models\Member;
-use App\Models\User;
 use App\Models\WeightCategory;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -33,17 +32,11 @@ class MemberIndexController extends Controller
             'label' => $b->label(),
         ])->values()->all();
 
-        $users = User::whereNotNull('role')
-            ->where('is_active', true)
-            ->orderBy('name')
-            ->get(['id', 'name', 'email', 'role']);
-
         return Inertia::render('Admin/Members', [
             'members' => $members,
             'ageCategories' => $ageCategories,
             'weightCategories' => $weightCategories,
             'beltRanks' => $beltRanks,
-            'users' => $users,
         ]);
     }
 }

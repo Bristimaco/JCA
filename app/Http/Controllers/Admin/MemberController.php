@@ -30,7 +30,6 @@ class MemberController extends Controller
             'is_competition' => ['boolean'],
             'photo' => ['nullable', 'image', 'max:2048'],
             'belt_rank' => ['nullable', 'string', Rule::in(array_column(BeltRank::cases(), 'value'))],
-            'user_id' => ['nullable', 'integer', 'exists:users,id'],
         ]);
 
         if ($request->hasFile('photo')) {
@@ -70,7 +69,6 @@ class MemberController extends Controller
             'is_competition' => ['boolean'],
             'photo' => ['nullable', 'image', 'max:2048'],
             'belt_rank' => ['nullable', 'string', Rule::in(array_column(BeltRank::cases(), 'value'))],
-            'user_id' => ['nullable', 'integer', 'exists:users,id'],
         ]);
 
         if ($request->hasFile('photo')) {

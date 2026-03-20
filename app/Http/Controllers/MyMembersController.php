@@ -36,7 +36,7 @@ class MyMembersController extends Controller
 
     public function update(Request $request, Member $member): RedirectResponse
     {
-        if ($member->user_id !== $request->user()->id) {
+        if (! $member->users()->where('users.id', $request->user()->id)->exists()) {
             abort(403);
         }
 

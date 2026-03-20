@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\MemberController;
 use App\Http\Controllers\Admin\MemberIndexController;
 use App\Http\Controllers\Admin\ToggleUserActiveController;
 use App\Http\Controllers\Admin\UpdateUserController;
+use App\Http\Controllers\Admin\UserMembersController;
 use App\Http\Controllers\Admin\WeightCategoryController;
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\LoginController;
@@ -59,6 +60,7 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::patch('/users/{user}/approve', ApproveUserController::class)->name('admin.users.approve');
         Route::patch('/users/{user}/toggle-active', ToggleUserActiveController::class)->name('admin.users.toggle-active');
         Route::patch('/users/{user}', UpdateUserController::class)->name('admin.users.update');
+        Route::put('/users/{user}/members', [UserMembersController::class, 'update'])->name('admin.users.members');
 
         // Age categories
         Route::post('/age-categories', [AgeCategoryController::class, 'store'])->name('admin.age-categories.store');

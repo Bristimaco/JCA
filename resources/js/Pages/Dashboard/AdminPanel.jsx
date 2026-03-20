@@ -3,7 +3,7 @@ import { useState } from 'react';
 import AgeCategoriesSection from './AgeCategoriesSection';
 import WeightCategoriesSection from './WeightCategoriesSection';
 
-export default function AdminPanel({ pendingUsers, users, roles, ageCategories, weightCategories }) {
+export default function AdminPanel({ pendingUsers, users, roles, ageCategories, weightCategories, allMembers }) {
     return (
         <div>
             <h1 className="text-2xl font-bold text-gray-900 mb-6">Beheerder Dashboard</h1>
@@ -11,7 +11,7 @@ export default function AdminPanel({ pendingUsers, users, roles, ageCategories, 
             <PendingUsersSection pendingUsers={pendingUsers} roles={roles} />
 
             <div className="mt-8">
-                <UsersSection users={users} roles={roles} />
+                <UsersSection users={users} roles={roles} allMembers={allMembers} />
             </div>
 
             <div className="mt-8">
@@ -106,7 +106,7 @@ function PendingUserRow({ user, roles }) {
     );
 }
 
-function UsersSection({ users, roles }) {
+function UsersSection({ users, roles, allMembers }) {
     const { flash } = usePage().props;
 
     return (
@@ -127,7 +127,7 @@ function UsersSection({ users, roles }) {
             ) : (
                 <div className="divide-y divide-gray-200">
                     {users.map((user) => (
-                        <UserRow key={user.id} user={user} roles={roles} />
+                        <UserRow key={user.id} user={user} roles={roles} allMembers={allMembers} />
                     ))}
                 </div>
             )}
@@ -135,14 +135,18 @@ function UsersSection({ users, roles }) {
     );
 }
 
-function UserRow({ user, roles }) {
+function UserRow({ user, roles, allMembers }) {
     const [editing, setEditing] = useState(false);
+    const [managingMembers, setManagingMembers] = useState(false);
     const form = useForm({
         name: user.name,
         email: user.email,
         role: user.role,
     });
     const toggleForm = useForm({});
+    const membersForm = useForm({
+        member_ids: user.member_ids || [],
+    });
 
     const handleSave = (e) => {
         e.preventDefault();
@@ -216,6 +220,7 @@ function UserRow({ user, roles }) {
     }
 
     return (
+        <>
         <div className={`px-6 py-4 flex items-center justify-between gap-4 ${!user.is_active ? 'opacity-50' : ''}`}>
             <div className="min-w-0 flex-1">
                 <p className="font-medium text-gray-900 truncate">
@@ -227,13 +232,24 @@ function UserRow({ user, roles }) {
                     )}
                 </p>
                 <p className="text-sm text-gray-500">{user.email}</p>
+                {(user.member_ids || []).length > 0 && (
+                    <p className="text-xs text-gray-400 mt-0.5">
+                        {(user.member_ids || []).length} lid(leden) gekoppeld
+                    </p>
+                )}
             </div>
             <div className="flex items-center gap-3">
                 <span className="text-sm text-gray-500">
                     {roles.find((r) => r.value === user.role)?.label}
                 </span>
                 <button
-                    onClick={() => setEditing(true)}
+                    onClick={() => { setManagingMembers(!managingMembers); setEditing(false); }}
+                    className="text-sm text-green-600 hover:text-green-800"
+                >
+                    Leden
+                </button>
+                <button
+                    onClick={() => { setEditing(true); setManagingMembers(false); }}
                     className="text-sm text-blue-600 hover:text-blue-800"
                 >
                     Bewerken
@@ -247,5 +263,59 @@ function UserRow({ user, roles }) {
                 </button>
             </div>
         </div>
+
+        {managingMembers && (
+            <div className="px-6 py-3 bg-gray-50 border-t border-gray-100">
+                <p className="text-xs font-medium text-gray-500 mb-2">Gekoppelde leden</p>
+                <div className="flex flex-wrap gap-2 mb-2">
+                    {membersForm.data.member_ids.map((mid) => {
+                        const m = allMembers.find((am) => am.id === mid);
+                        return m ? (
+                            <span key={mid} className="inline-flex items-center gap-1 rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
+                                {m.name}
+                                <button type="button" onClick={() => membersForm.setData('member_ids', membersForm.data.member_ids.filter((id) => id !== mid))}
+                                    className="text-blue-600 hover:text-blue-900 ml-0.5">&times;</button>
+                            </span>
+                        ) : null;
+                    })}
+                    {membersForm.data.member_ids.length === 0 && (
+                        <span className="text-xs text-gray-400">Geen leden gekoppeld</span>
+                    )}
+                </div>
+                <div className="flex items-center gap-2">
+                    <select
+                        onChange={(e) => {
+                            const val = parseInt(e.target.value);
+                            if (val && !membersForm.data.member_ids.includes(val)) {
+                                membersForm.setData('member_ids', [...membersForm.data.member_ids, val]);
+                            }
+                            e.target.value = '';
+                        }}
+                        className="rounded-md border border-gray-300 text-sm py-1 px-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    >
+                        <option value="">Lid toevoegen...</option>
+                        {allMembers.filter((am) => !membersForm.data.member_ids.includes(am.id)).map((am) => (
+                            <option key={am.id} value={am.id}>{am.name}</option>
+                        ))}
+                    </select>
+                    <button
+                        type="button"
+                        disabled={membersForm.processing}
+                        onClick={() => membersForm.put(`/admin/users/${user.id}/members`, { onSuccess: () => setManagingMembers(false) })}
+                        className="rounded-md bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+                    >
+                        Opslaan
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => { membersForm.setData('member_ids', user.member_ids || []); setManagingMembers(false); }}
+                        className="rounded-md bg-white border border-gray-300 px-3 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50"
+                    >
+                        Annuleren
+                    </button>
+                </div>
+            </div>
+        )}
+        </>
     );
 }
