@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
+use App\Models\AgeCategory;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -22,15 +23,18 @@ class AdminDashboardController extends Controller
             ->orderBy('name')
             ->get(['id', 'name', 'email', 'role', 'is_active']);
 
-        $roles = collect(UserRole::cases())->map(fn(UserRole $role) => [
+        $roles = collect(UserRole::cases())->map(fn (UserRole $role) => [
             'value' => $role->value,
             'label' => $role->label(),
         ])->values()->all();
+
+        $ageCategories = AgeCategory::ordered()->get();
 
         return Inertia::render('Admin/Dashboard', [
             'pendingUsers' => $pendingUsers,
             'users' => $users,
             'roles' => $roles,
+            'ageCategories' => $ageCategories,
         ]);
     }
 }

@@ -1,7 +1,8 @@
 import { useForm, usePage } from '@inertiajs/react';
 import { useState } from 'react';
+import AgeCategoriesSection from './AgeCategoriesSection';
 
-export default function AdminPanel({ pendingUsers, users, roles }) {
+export default function AdminPanel({ pendingUsers, users, roles, ageCategories }) {
     return (
         <div>
             <h1 className="text-2xl font-bold text-gray-900 mb-6">Beheerder Dashboard</h1>
@@ -10,6 +11,10 @@ export default function AdminPanel({ pendingUsers, users, roles }) {
 
             <div className="mt-8">
                 <UsersSection users={users} roles={roles} />
+            </div>
+
+            <div className="mt-8">
+                <AgeCategoriesSection ageCategories={ageCategories} />
             </div>
         </div>
     );
