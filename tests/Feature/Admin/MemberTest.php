@@ -200,16 +200,18 @@ class MemberTest extends TestCase
         $response->assertStatus(403);
     }
 
-    public function test_admin_dashboard_includes_members(): void
+    public function test_admin_can_view_members_page(): void
     {
         Member::factory()->count(3)->create();
 
-        $response = $this->actingAs($this->admin())->get('/admin');
+        $response = $this->actingAs($this->admin())->get('/admin/members');
 
         $response->assertStatus(200);
         $response->assertInertia(fn ($page) => $page
-            ->component('Admin/Dashboard')
+            ->component('Admin/Members')
             ->has('members', 3)
+            ->has('ageCategories')
+            ->has('weightCategories')
         );
     }
 }

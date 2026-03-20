@@ -3,6 +3,7 @@ import AppLayout from '../Layouts/AppLayout';
 
 const modules = [
     { name: 'Admin', href: '/admin', roles: ['admin'] },
+    { name: 'Leden', href: '/admin/members', roles: ['admin'] },
 ];
 
 export default function Dashboard({ pendingCount }) {
