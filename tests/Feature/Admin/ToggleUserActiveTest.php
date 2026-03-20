@@ -63,6 +63,25 @@ class ToggleUserActiveTest extends TestCase
         $this->assertTrue($admin->fresh()->is_active);
     }
 
+    public function test_cannot_deactivate_another_admin(): void
+    {
+        $admin = User::factory()->create([
+            'role' => UserRole::Admin,
+            'email_verified_at' => now(),
+        ]);
+
+        $otherAdmin = User::factory()->create([
+            'role' => UserRole::Admin,
+            'email_verified_at' => now(),
+            'is_active' => true,
+        ]);
+
+        $response = $this->actingAs($admin)->patch("/admin/users/{$otherAdmin->id}/toggle-active");
+
+        $response->assertRedirect();
+        $this->assertTrue($otherAdmin->fresh()->is_active);
+    }
+
     public function test_deactivated_user_cannot_access_app(): void
     {
         $user = User::factory()->create([
