@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\BeltRank;
 use App\Http\Controllers\Controller;
 use App\Models\Member;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class MemberController extends Controller
 {
@@ -27,15 +29,24 @@ class MemberController extends Controller
             'membership_status' => ['required', 'string', 'in:active,inactive,suspended,pending'],
             'is_competition' => ['boolean'],
             'photo' => ['nullable', 'image', 'max:2048'],
+            'belt_rank' => ['nullable', 'string', Rule::in(array_column(BeltRank::cases(), 'value'))],
         ]);
 
         if ($request->hasFile('photo')) {
             $validated['photo_path'] = $request->file('photo')->store('member-photos', 'public');
         }
 
-        unset($validated['photo']);
+        $beltRank = $validated['belt_rank'] ?? null;
+        unset($validated['photo'], $validated['belt_rank']);
 
-        Member::create($validated);
+        $member = Member::create($validated);
+
+        if ($beltRank) {
+            $member->beltHistories()->create([
+                'belt_rank' => $beltRank,
+                'achieved_date' => now()->toDateString(),
+            ]);
+        }
 
         return back()->with('status', "Lid {$validated['first_name']} {$validated['last_name']} is aangemaakt.");
     }
@@ -57,6 +68,7 @@ class MemberController extends Controller
             'membership_status' => ['required', 'string', 'in:active,inactive,suspended,pending'],
             'is_competition' => ['boolean'],
             'photo' => ['nullable', 'image', 'max:2048'],
+            'belt_rank' => ['nullable', 'string', Rule::in(array_column(BeltRank::cases(), 'value'))],
         ]);
 
         if ($request->hasFile('photo')) {
@@ -66,9 +78,17 @@ class MemberController extends Controller
             $validated['photo_path'] = $request->file('photo')->store('member-photos', 'public');
         }
 
-        unset($validated['photo']);
+        $beltRank = $validated['belt_rank'] ?? null;
+        unset($validated['photo'], $validated['belt_rank']);
 
         $member->update($validated);
+
+        if ($beltRank && $beltRank !== $member->currentBelt()?->value) {
+            $member->beltHistories()->create([
+                'belt_rank' => $beltRank,
+                'achieved_date' => now()->toDateString(),
+            ]);
+        }
 
         return back()->with('status', "{$member->fullName()} is bijgewerkt.");
     }

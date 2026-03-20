@@ -26,19 +26,6 @@ export default function MemberCard({ member, ageCategories }) {
                 {/* Body */}
                 <div className="p-6">
                     <div className="flex gap-5">
-                        {/* Photo */}
-                        <div className="flex-shrink-0">
-                            {member.photo_url ? (
-                                <img src={member.photo_url} alt="" className="w-24 h-28 rounded-lg object-cover border border-gray-200" />
-                            ) : (
-                                <div className="w-24 h-28 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center">
-                                    <span className="text-2xl font-bold text-gray-400">
-                                        {member.first_name[0]}{member.last_name[0]}
-                                    </span>
-                                </div>
-                            )}
-                        </div>
-
                         {/* Info */}
                         <div className="flex-1 min-w-0">
                             <h3 className="text-xl font-bold text-gray-900 truncate">
@@ -65,10 +52,27 @@ export default function MemberCard({ member, ageCategories }) {
                                     {ageCat ? ageCat.name : '-'}
                                 </p>
                                 <p>
+                                    <span className="text-gray-400 w-20 inline-block">Gordel:</span>
+                                    {member.current_belt_label || '-'}
+                                </p>
+                                <p>
                                     <span className="text-gray-400 w-20 inline-block">Gewicht:</span>
                                     {member.weight_category_name || '-'}
                                 </p>
                             </div>
+                        </div>
+
+                        {/* Photo */}
+                        <div className="flex-shrink-0">
+                            {member.photo_url ? (
+                                <img src={member.photo_url} alt="" className="w-24 h-28 rounded-lg object-cover border border-gray-200" />
+                            ) : (
+                                <div className="w-24 h-28 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center">
+                                    <span className="text-2xl font-bold text-gray-400">
+                                        {member.first_name[0]}{member.last_name[0]}
+                                    </span>
+                                </div>
+                            )}
                         </div>
                     </div>
 

@@ -2,7 +2,7 @@ import { useForm, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import MemberCard from './MemberCard';
 
-export default function MembersSection({ members, ageCategories, weightCategories }) {
+export default function MembersSection({ members, ageCategories, weightCategories, beltRanks }) {
     const { flash } = usePage().props;
     const [showAddForm, setShowAddForm] = useState(false);
     const [search, setSearch] = useState('');
@@ -93,6 +93,7 @@ export default function MembersSection({ members, ageCategories, weightCategorie
                     onCancel={() => setShowAddForm(false)}
                     ageCategories={ageCategories}
                     weightCategories={weightCategories}
+                    beltRanks={beltRanks}
                 />
             )}
 
@@ -103,6 +104,7 @@ export default function MembersSection({ members, ageCategories, weightCategorie
                     onCancel={() => setEditingMember(null)}
                     ageCategories={ageCategories}
                     weightCategories={weightCategories}
+                    beltRanks={beltRanks}
                 />
             )}
 
@@ -157,7 +159,7 @@ function MemberRow({ member, ageCategoryName, weightCategoryName, onView, onEdit
                         )}
                     </p>
                     <p className="text-xs text-gray-500">
-                        {ageCategoryName} · {weightCategoryName} · {member.gender === 'male' ? 'M' : 'V'}
+                        {ageCategoryName} · {weightCategoryName} · {member.current_belt_label || '-'} · {member.gender === 'male' ? 'M' : 'V'}
                         {member.is_competition && (
                             <span className="ml-1 text-blue-600">· Competitie</span>
                         )}
@@ -186,7 +188,7 @@ function MemberRow({ member, ageCategoryName, weightCategoryName, onView, onEdit
     );
 }
 
-function MemberForm({ member, onSuccess, onCancel, ageCategories, weightCategories }) {
+function MemberForm({ member, onSuccess, onCancel, ageCategories, weightCategories, beltRanks }) {
     const isEditing = !!member;
     const form = useForm({
         first_name: member?.first_name || '',
@@ -200,6 +202,7 @@ function MemberForm({ member, onSuccess, onCancel, ageCategories, weightCategori
         address_postal_code: member?.address_postal_code || '',
         license_number: member?.license_number || '',
         weight_category_id: member?.weight_category_id || '',
+        belt_rank: member?.current_belt || '',
         membership_status: member?.membership_status || 'active',
         is_competition: member?.is_competition || false,
         photo: null,
@@ -230,6 +233,7 @@ function MemberForm({ member, onSuccess, onCancel, ageCategories, weightCategori
             if (formData[f] === '') formData[f] = null;
         });
         if (formData.weight_category_id === '') formData.weight_category_id = null;
+        if (formData.belt_rank === '') formData.belt_rank = null;
 
         if (isEditing) {
             // Use POST with _method for file uploads
@@ -310,6 +314,17 @@ function MemberForm({ member, onSuccess, onCancel, ageCategories, weightCategori
                         <p className="text-xs text-gray-400 mt-1">Geen klasses voor deze leeftijd/geslacht</p>
                     )}
                     {form.errors.weight_category_id && <p className="text-xs text-red-600 mt-1">{form.errors.weight_category_id}</p>}
+                </div>
+                <div>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">Gordel</label>
+                    <select value={form.data.belt_rank} onChange={(e) => form.setData('belt_rank', e.target.value)}
+                        className="w-full rounded-md border border-gray-300 text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">Geen</option>
+                        {(beltRanks || []).map((br) => (
+                            <option key={br.value} value={br.value}>{br.label}</option>
+                        ))}
+                    </select>
+                    {form.errors.belt_rank && <p className="text-xs text-red-600 mt-1">{form.errors.belt_rank}</p>}
                 </div>
                 <div>
                     <label className="block text-xs font-medium text-gray-500 mb-1">Straat + nr</label>
