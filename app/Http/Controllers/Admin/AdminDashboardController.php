@@ -24,7 +24,7 @@ class AdminDashboardController extends Controller
             ->orderBy('name')
             ->get(['id', 'name', 'email', 'role', 'is_active']);
 
-        $roles = collect(UserRole::cases())->map(fn (UserRole $role) => [
+        $roles = collect(UserRole::cases())->map(fn(UserRole $role) => [
             'value' => $role->value,
             'label' => $role->label(),
         ])->values()->all();
