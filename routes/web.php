@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\Admin\ApproveUserController;
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -37,7 +39,10 @@ Route::middleware('auth')->group(function () {
 
 // Protected routes (authenticated + verified + approved)
 Route::middleware(['auth', 'verified', 'approved'])->group(function () {
-    Route::get('/', function () {
-        return Inertia::render('Home');
-    })->name('home');
+    Route::get('/', DashboardController::class)->name('dashboard');
+
+    // Admin routes
+    Route::middleware('admin')->prefix('admin')->group(function () {
+        Route::patch('/users/{user}/approve', ApproveUserController::class)->name('admin.users.approve');
+    });
 });
