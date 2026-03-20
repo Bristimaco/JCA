@@ -20,6 +20,13 @@ class UpdateUserController extends Controller
             'role' => ['required', new Enum(UserRole::class)],
         ]);
 
+        if ($user->isAdmin() && $validated['role'] !== UserRole::Admin->value) {
+            $adminCount = User::where('role', UserRole::Admin)->where('is_active', true)->count();
+            if ($adminCount <= 1) {
+                return back()->with('status', 'Er moet minstens één beheerder actief zijn. Rol kan niet gewijzigd worden.');
+            }
+        }
+
         $user->update($validated);
 
         return back()->with('status', "{$user->name} is bijgewerkt.");

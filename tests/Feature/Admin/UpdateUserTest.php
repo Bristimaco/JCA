@@ -128,4 +128,43 @@ class UpdateUserTest extends TestCase
 
         $response->assertStatus(403);
     }
+
+    public function test_cannot_change_role_of_last_admin(): void
+    {
+        $admin = User::factory()->create([
+            'role' => UserRole::Admin,
+            'email_verified_at' => now(),
+        ]);
+
+        $response = $this->actingAs($admin)->patch("/admin/users/{$admin->id}", [
+            'name' => $admin->name,
+            'email' => $admin->email,
+            'role' => 'member',
+        ]);
+
+        $response->assertRedirect();
+        $this->assertEquals(UserRole::Admin, $admin->fresh()->role);
+    }
+
+    public function test_can_change_role_of_admin_when_another_exists(): void
+    {
+        $admin1 = User::factory()->create([
+            'role' => UserRole::Admin,
+            'email_verified_at' => now(),
+        ]);
+
+        $admin2 = User::factory()->create([
+            'role' => UserRole::Admin,
+            'email_verified_at' => now(),
+        ]);
+
+        $response = $this->actingAs($admin1)->patch("/admin/users/{$admin2->id}", [
+            'name' => $admin2->name,
+            'email' => $admin2->email,
+            'role' => 'member',
+        ]);
+
+        $response->assertRedirect();
+        $this->assertEquals(UserRole::Member, $admin2->fresh()->role);
+    }
 }
