@@ -84,12 +84,19 @@ class MemberTest extends TestCase
     public function test_admin_can_create_competition_member(): void
     {
         $ageCat = AgeCategory::create([
-            'name' => 'U15', 'country_code' => 'BE',
-            'min_age' => 13, 'max_age' => 14, 'display_order' => 1,
+            'name' => 'U15',
+            'country_code' => 'BE',
+            'min_age' => 13,
+            'max_age' => 14,
+            'display_order' => 1,
         ]);
         $wc = WeightCategory::create([
-            'age_category_id' => $ageCat->id, 'name' => '-46',
-            'max_weight_kg' => 46, 'gender' => 'male', 'display_order' => 1, 'is_active' => true,
+            'age_category_id' => $ageCat->id,
+            'name' => '-46',
+            'max_weight_kg' => 46,
+            'gender' => 'male',
+            'display_order' => 1,
+            'is_active' => true,
         ]);
 
         $response = $this->actingAs($this->admin())->post('/admin/members', $this->validData([
@@ -218,11 +225,12 @@ class MemberTest extends TestCase
         $response = $this->actingAs($this->admin())->get('/admin/members');
 
         $response->assertStatus(200);
-        $response->assertInertia(fn ($page) => $page
-            ->component('Admin/Members')
-            ->has('members', 3)
-            ->has('ageCategories')
-            ->has('weightCategories')
+        $response->assertInertia(
+            fn($page) => $page
+                ->component('Admin/Members')
+                ->has('members', 3)
+                ->has('ageCategories')
+                ->has('weightCategories')
         );
     }
 }

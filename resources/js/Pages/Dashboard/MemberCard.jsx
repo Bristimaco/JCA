@@ -96,9 +96,8 @@ export default function MemberCard({ member, ageCategories }) {
 
                     {/* Footer badges */}
                     <div className="mt-4 pt-3 border-t border-gray-100 flex items-center gap-2">
-                        <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                            member.membership_status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
-                        }`}>
+                        <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${member.membership_status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
+                            }`}>
                             {statusLabels[member.membership_status]}
                         </span>
                         {member.is_competition && (
