@@ -10,13 +10,11 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('weight_categories', function (Blueprint $table) {
+        Schema::create('age_categories', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->decimal('min_weight_kg', 5, 1);
-            $table->decimal('max_weight_kg', 5, 1);
-            $table->string('gender');
-            $table->string('age_group')->nullable();
+            $table->unsignedTinyInteger('min_age');
+            $table->unsignedTinyInteger('max_age');
             $table->unsignedSmallInteger('display_order')->default(0);
             $table->boolean('is_active')->default(true);
             $table->timestamps();
@@ -28,6 +26,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('weight_categories');
+        Schema::dropIfExists('age_categories');
     }
 };
