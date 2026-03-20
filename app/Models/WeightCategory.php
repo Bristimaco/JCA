@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\Gender;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class WeightCategory extends Model
 {
@@ -15,8 +16,14 @@ class WeightCategory extends Model
             'gender' => Gender::class,
             'min_weight_kg' => 'decimal:1',
             'max_weight_kg' => 'decimal:1',
+            'display_order' => 'integer',
             'is_active' => 'boolean',
         ];
+    }
+
+    public function ageCategory(): BelongsTo
+    {
+        return $this->belongsTo(AgeCategory::class);
     }
 
     public function scopeActive($query)

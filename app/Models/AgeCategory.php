@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class AgeCategory extends Model
 {
@@ -37,6 +38,11 @@ class AgeCategory extends Model
     public function scopeForAge($query, int $age)
     {
         return $query->where('min_age', '<=', $age)->where('max_age', '>=', $age);
+    }
+
+    public function weightCategories(): HasMany
+    {
+        return $this->hasMany(WeightCategory::class);
     }
 
     /**
@@ -77,6 +83,6 @@ class AgeCategory extends Model
             $age = (int) $birthDate->diffInYears($cutoff);
         }
 
-        return $categories->first(fn(self $cat) => $age >= $cat->min_age && $age <= $cat->max_age);
+        return $categories->first(fn (self $cat) => $age >= $cat->min_age && $age <= $cat->max_age);
     }
 }

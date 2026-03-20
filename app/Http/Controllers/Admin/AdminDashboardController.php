@@ -6,6 +6,7 @@ use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Models\AgeCategory;
 use App\Models\User;
+use App\Models\WeightCategory;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -23,18 +24,21 @@ class AdminDashboardController extends Controller
             ->orderBy('name')
             ->get(['id', 'name', 'email', 'role', 'is_active']);
 
-        $roles = collect(UserRole::cases())->map(fn(UserRole $role) => [
+        $roles = collect(UserRole::cases())->map(fn (UserRole $role) => [
             'value' => $role->value,
             'label' => $role->label(),
         ])->values()->all();
 
         $ageCategories = AgeCategory::ordered()->get();
 
+        $weightCategories = WeightCategory::ordered()->get();
+
         return Inertia::render('Admin/Dashboard', [
             'pendingUsers' => $pendingUsers,
             'users' => $users,
             'roles' => $roles,
             'ageCategories' => $ageCategories,
+            'weightCategories' => $weightCategories,
         ]);
     }
 }
