@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\UserRole;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -15,15 +14,9 @@ class DashboardController extends Controller
         $props = [];
 
         if ($request->user()->isAdmin()) {
-            $props['pendingUsers'] = User::whereNull('role')
+            $props['pendingCount'] = User::whereNull('role')
                 ->whereNotNull('email_verified_at')
-                ->orderBy('created_at')
-                ->get(['id', 'name', 'email', 'created_at']);
-
-            $props['roles'] = collect(UserRole::cases())->map(fn (UserRole $role) => [
-                'value' => $role->value,
-                'label' => $role->label(),
-            ])->values()->all();
+                ->count();
         }
 
         return Inertia::render('Dashboard', $props);

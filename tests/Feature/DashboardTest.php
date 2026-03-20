@@ -11,7 +11,7 @@ class DashboardTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_admin_sees_dashboard_with_pending_users(): void
+    public function test_admin_sees_dashboard_with_pending_count(): void
     {
         $admin = User::factory()->create([
             'role' => UserRole::Admin,
@@ -30,19 +30,18 @@ class DashboardTest extends TestCase
         $response->assertStatus(200);
         $response->assertInertia(fn ($page) => $page
             ->component('Dashboard')
-            ->has('pendingUsers', 1)
-            ->has('roles')
+            ->where('pendingCount', 1)
         );
     }
 
-    public function test_admin_does_not_see_unverified_users_as_pending(): void
+    public function test_admin_pending_count_excludes_unverified(): void
     {
         $admin = User::factory()->create([
             'role' => UserRole::Admin,
             'email_verified_at' => now(),
         ]);
 
-        // Unverified user (should not appear in pending list)
+        // Unverified user (should not count)
         User::factory()->unverified()->create([
             'role' => null,
         ]);
@@ -51,11 +50,11 @@ class DashboardTest extends TestCase
 
         $response->assertInertia(fn ($page) => $page
             ->component('Dashboard')
-            ->has('pendingUsers', 0)
+            ->where('pendingCount', 0)
         );
     }
 
-    public function test_non_admin_sees_dashboard_without_pending_users(): void
+    public function test_non_admin_sees_dashboard_without_pending_count(): void
     {
         $member = User::factory()->create([
             'role' => UserRole::Member,
@@ -67,8 +66,41 @@ class DashboardTest extends TestCase
         $response->assertStatus(200);
         $response->assertInertia(fn ($page) => $page
             ->component('Dashboard')
-            ->missing('pendingUsers')
-            ->missing('roles')
+            ->missing('pendingCount')
         );
+    }
+
+    public function test_admin_can_access_admin_module(): void
+    {
+        $admin = User::factory()->create([
+            'role' => UserRole::Admin,
+            'email_verified_at' => now(),
+        ]);
+
+        User::factory()->create([
+            'role' => null,
+            'email_verified_at' => now(),
+        ]);
+
+        $response = $this->actingAs($admin)->get('/admin');
+
+        $response->assertStatus(200);
+        $response->assertInertia(fn ($page) => $page
+            ->component('Admin/Dashboard')
+            ->has('pendingUsers', 1)
+            ->has('roles')
+        );
+    }
+
+    public function test_non_admin_cannot_access_admin_module(): void
+    {
+        $member = User::factory()->create([
+            'role' => UserRole::Member,
+            'email_verified_at' => now(),
+        ]);
+
+        $response = $this->actingAs($member)->get('/admin');
+
+        $response->assertStatus(403);
     }
 }

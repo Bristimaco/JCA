@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\ApproveUserController;
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\LoginController;
@@ -43,6 +44,7 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
 
     // Admin routes
     Route::middleware('admin')->prefix('admin')->group(function () {
+        Route::get('/', AdminDashboardController::class)->name('admin.dashboard');
         Route::patch('/users/{user}/approve', ApproveUserController::class)->name('admin.users.approve');
     });
 });
