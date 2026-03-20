@@ -159,7 +159,7 @@ class WeightCategoryTest extends TestCase
 
         $response->assertOk();
         $response->assertInertia(
-            fn($page) => $page
+            fn ($page) => $page
                 ->has('weightCategories', 1)
                 ->where('weightCategories.0.name', '-60')
         );

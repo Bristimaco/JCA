@@ -83,6 +83,6 @@ class AgeCategory extends Model
             $age = (int) $birthDate->diffInYears($cutoff);
         }
 
-        return $categories->first(fn(self $cat) => $age >= $cat->min_age && $age <= $cat->max_age);
+        return $categories->first(fn (self $cat) => $age >= $cat->min_age && $age <= $cat->max_age);
     }
 }
