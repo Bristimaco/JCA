@@ -12,7 +12,7 @@ class WeightCategoriesImport implements ToModel, WithHeadingRow, WithValidation
     public function model(array $row)
     {
         $category = isset($row['id']) ? WeightCategory::find($row['id']) : null;
-        if (!$category) {
+        if (! $category) {
             $category = new WeightCategory;
         }
         $category->fill([

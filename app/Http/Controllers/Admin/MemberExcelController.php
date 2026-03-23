@@ -22,6 +22,7 @@ class MemberExcelController extends Controller
             'file' => 'required|file|mimes:xlsx',
         ]);
         Excel::import(new MembersImport, $request->file('file'));
+
         return Redirect::back()->with('status', 'Leden geïmporteerd.');
     }
 }

@@ -9,6 +9,8 @@ use App\Http\Controllers\Admin\MemberExcelController;
 use App\Http\Controllers\Admin\MemberIndexController;
 use App\Http\Controllers\Admin\RecalculateAgeCategoriesController;
 use App\Http\Controllers\Admin\ToggleUserActiveController;
+use App\Http\Controllers\Admin\TournamentController;
+use App\Http\Controllers\Admin\TournamentIndexController;
 use App\Http\Controllers\Admin\UpdateUserController;
 use App\Http\Controllers\Admin\UserMembersController;
 use App\Http\Controllers\Admin\WeightCategoryController;
@@ -91,5 +93,11 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::post('/age-categories/import', [CategoryExcelController::class, 'importAgeCategories'])->name('admin.age-categories.import');
         Route::get('/weight-categories/export', [CategoryExcelController::class, 'exportWeightCategories'])->name('admin.weight-categories.export');
         Route::post('/weight-categories/import', [CategoryExcelController::class, 'importWeightCategories'])->name('admin.weight-categories.import');
+
+        // Tournaments
+        Route::get('/tournaments', TournamentIndexController::class)->name('admin.tournaments.index');
+        Route::post('/tournaments', [TournamentController::class, 'store'])->name('admin.tournaments.store');
+        Route::post('/tournaments/{tournament}', [TournamentController::class, 'update'])->name('admin.tournaments.update');
+        Route::delete('/tournaments/{tournament}', [TournamentController::class, 'destroy'])->name('admin.tournaments.destroy');
     });
 });

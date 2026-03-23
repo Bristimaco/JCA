@@ -3,7 +3,6 @@
 namespace App\Imports;
 
 use App\Models\Member;
-use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
@@ -14,8 +13,8 @@ class MembersImport implements ToModel, WithHeadingRow, WithValidation
     {
         // Update if id exists, else create
         $member = isset($row['id']) ? Member::find($row['id']) : null;
-        if (!$member) {
-            $member = new Member();
+        if (! $member) {
+            $member = new Member;
         }
         $member->fill([
             'first_name' => $row['first_name'] ?? null,
@@ -40,6 +39,7 @@ class MembersImport implements ToModel, WithHeadingRow, WithValidation
             'notes' => $row['notes'] ?? null,
         ]);
         $member->save();
+
         return $member;
     }
 

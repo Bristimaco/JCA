@@ -4,6 +4,7 @@ import AppLayout from '../Layouts/AppLayout';
 const modules = [
     { name: 'Mijn Leden', href: '/mijn-leden', roles: ['parent', 'member', 'admin', 'coach'] },
     { name: 'Leden', href: '/admin/members', roles: ['admin'] },
+    { name: 'Toernooien', href: '/admin/tournaments', roles: ['admin'] },
     { name: 'Admin', href: '/admin', roles: ['admin'] },
 ];
 
