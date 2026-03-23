@@ -36,7 +36,7 @@ class Tournament extends Model
     public function members(): BelongsToMany
     {
         return $this->belongsToMany(Member::class)
-            ->withPivot(['id', 'invitation_status', 'invited_at', 'responded_at', 'invitation_token'])
+            ->withPivot(['id', 'invitation_status', 'registration_status', 'invited_at', 'responded_at', 'invitation_token'])
             ->withTimestamps();
     }
 }

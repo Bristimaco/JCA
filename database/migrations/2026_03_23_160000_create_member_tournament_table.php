@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         Schema::create('member_tournament', function (Blueprint $table) {
@@ -12,6 +13,7 @@ return new class extends Migration {
             $table->foreignId('tournament_id')->constrained()->cascadeOnDelete();
             $table->foreignId('member_id')->constrained()->cascadeOnDelete();
             $table->string('invitation_status')->default('pending');
+            $table->string('registration_status')->nullable();
             $table->timestamp('invited_at')->nullable();
             $table->timestamp('responded_at')->nullable();
             $table->string('invitation_token', 64)->nullable()->unique();

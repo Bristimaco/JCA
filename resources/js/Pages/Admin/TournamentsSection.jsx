@@ -190,6 +190,8 @@ function TournamentMembersPanel({ tournament, members, competitionMembers }) {
     const inviteAllForm = useForm({});
     const closeForm = useForm({});
     const revertForm = useForm({});
+    const openRegForm = useForm({});
+    const closeRegForm = useForm({});
     const addMemberForm = useForm({ member_id: '' });
     const [processing, setProcessing] = useState({});
 
@@ -225,6 +227,42 @@ function TournamentMembersPanel({ tournament, members, competitionMembers }) {
         if (confirm('Status terugzetten naar de vorige stap?')) {
             revertForm.post(`/admin/tournaments/${tournament.id}/revert-status`);
         }
+    };
+
+    const handleOpenRegistrations = () => {
+        if (confirm('Inschrijvingen starten?')) {
+            openRegForm.post(`/admin/tournaments/${tournament.id}/open-registrations`);
+        }
+    };
+
+    const handleRegister = (memberId) => {
+        setProcessing(prev => ({ ...prev, [memberId]: true }));
+        router.post(`/admin/tournaments/${tournament.id}/register/${memberId}`, {}, {
+            onFinish: () => setProcessing(prev => ({ ...prev, [memberId]: false })),
+        });
+    };
+
+    const handleUnregister = (memberId, memberName) => {
+        if (confirm(`${memberName} uitschrijven?`)) {
+            setProcessing(prev => ({ ...prev, [memberId]: true }));
+            router.post(`/admin/tournaments/${tournament.id}/unregister/${memberId}`, {}, {
+                onFinish: () => setProcessing(prev => ({ ...prev, [memberId]: false })),
+            });
+        }
+    };
+
+    const handleCloseRegistrations = (confirmed = false) => {
+        const accepted = members.filter(m => m.invitation_status === 'accepted');
+        const allRegistered = accepted.every(m => m.registration_status === 'registered');
+
+        if (!allRegistered && !confirmed) {
+            if (confirm('Niet alle deelnemers zijn ingeschreven. Toch inschrijvingen afsluiten?')) {
+                handleCloseRegistrations(true);
+            }
+            return;
+        }
+
+        router.post(`/admin/tournaments/${tournament.id}/close-registrations`, { confirmed: confirmed ? '1' : '0' });
     };
 
     const handleAddMember = (e) => {
@@ -279,6 +317,24 @@ function TournamentMembersPanel({ tournament, members, competitionMembers }) {
                         Uitnodigingen afsluiten
                     </button>
                 )}
+                {tournament.status === 'invitations_sent' && (
+                    <button
+                        onClick={handleOpenRegistrations}
+                        disabled={openRegForm.processing}
+                        className="rounded-md bg-yellow-500 px-2.5 py-1 text-xs font-medium text-white hover:bg-yellow-600 disabled:opacity-50"
+                    >
+                        Inschrijvingen starten
+                    </button>
+                )}
+                {tournament.status === 'registrations_open' && (
+                    <button
+                        onClick={() => handleCloseRegistrations()}
+                        disabled={closeRegForm.processing}
+                        className="rounded-md bg-orange-500 px-2.5 py-1 text-xs font-medium text-white hover:bg-orange-600 disabled:opacity-50"
+                    >
+                        Inschrijvingen afsluiten
+                    </button>
+                )}
                 {tournament.status !== 'preparation' && (
                     <button
                         onClick={handleRevertStatus}
@@ -319,26 +375,75 @@ function TournamentMembersPanel({ tournament, members, competitionMembers }) {
                 </div>
             ) : (() => {
                 const showSplit = tournament.status !== 'preparation';
-                const participating = showSplit ? members.filter(m => m.invitation_status === 'accepted') : members;
-                const notParticipating = showSplit ? members.filter(m => m.invitation_status !== 'accepted') : [];
+                const isRegClosed = ['registrations_closed', 'started', 'finished'].includes(tournament.status);
+
+                let participating, notParticipating;
+                if (isRegClosed) {
+                    participating = members.filter(m => m.invitation_status === 'accepted' && m.registration_status !== 'unregistered');
+                    notParticipating = members.filter(m => m.invitation_status !== 'accepted' || m.registration_status === 'unregistered');
+                } else if (showSplit) {
+                    participating = members.filter(m => m.invitation_status === 'accepted');
+                    notParticipating = members.filter(m => m.invitation_status !== 'accepted');
+                } else {
+                    participating = members;
+                    notParticipating = [];
+                }
 
                 const renderMember = (member) => (
                     <div key={member.id} className="px-4 py-2 flex items-center justify-between gap-3">
-                        <div className="min-w-0 flex-1">
+                        <div className="min-w-0 flex-1 flex items-center gap-3">
                             <span className="text-sm text-gray-900">{member.name}</span>
-                            <span className="ml-2 text-xs text-gray-400">{member.date_of_birth}</span>
+                            <span className="text-xs text-gray-400">{member.date_of_birth}</span>
+                            {member.age_category && (
+                                <span className="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700">
+                                    {member.age_category}
+                                </span>
+                            )}
+                            {member.weight_category && (
+                                <span className="inline-flex items-center rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700">
+                                    {member.weight_category}
+                                </span>
+                            )}
                         </div>
                         <div className="flex items-center gap-2">
                             <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${invitationStatusColors[member.invitation_status] || ''}`}>
                                 {member.invitation_status_label}
                             </span>
-                            {member.invitation_status === 'pending' && (
+                            {member.registration_status === 'registered' && (
+                                <span className="inline-flex items-center rounded-full bg-emerald-100 text-emerald-700 px-2 py-0.5 text-xs font-medium">
+                                    Ingeschreven
+                                </span>
+                            )}
+                            {member.registration_status === 'unregistered' && (
+                                <span className="inline-flex items-center rounded-full bg-red-100 text-red-700 px-2 py-0.5 text-xs font-medium">
+                                    Uitgeschreven
+                                </span>
+                            )}
+                            {member.invitation_status === 'pending' && tournament.status === 'preparation' && (
                                 <button
                                     onClick={() => handleInvite(member.id)}
                                     disabled={processing[member.id]}
                                     className="text-xs text-green-600 hover:text-green-800 disabled:opacity-50"
                                 >
                                     Uitnodigen
+                                </button>
+                            )}
+                            {tournament.status === 'registrations_open' && member.invitation_status === 'accepted' && member.registration_status !== 'registered' && (
+                                <button
+                                    onClick={() => handleRegister(member.id)}
+                                    disabled={processing[member.id]}
+                                    className="text-xs text-emerald-600 hover:text-emerald-800 disabled:opacity-50"
+                                >
+                                    Inschrijven
+                                </button>
+                            )}
+                            {tournament.status === 'registrations_open' && member.registration_status === 'registered' && (
+                                <button
+                                    onClick={() => handleUnregister(member.id, member.name)}
+                                    disabled={processing[member.id]}
+                                    className="text-xs text-red-500 hover:text-red-700 disabled:opacity-50"
+                                >
+                                    Uitschrijven
                                 </button>
                             )}
                             {tournament.status === 'preparation' && (
