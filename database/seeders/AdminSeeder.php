@@ -10,14 +10,19 @@ class AdminSeeder extends Seeder
 {
     public function run(): void
     {
-        User::updateOrCreate(
+        $user = User::updateOrCreate(
             ['email' => 'admin@jca.be'],
             [
                 'name' => 'Admin',
-                'password' => bcrypt('Admin2026!'),
+                'password' => 'Admin2026!',
                 'email_verified_at' => now(),
                 'role' => UserRole::Admin,
+                'is_active' => true,
             ]
         );
+
+        // Force password update in case it was already hashed differently
+        $user->password = 'Admin2026!';
+        $user->save();
     }
 }
