@@ -1,4 +1,5 @@
 import { Head, Link, usePage } from '@inertiajs/react';
+import { useState } from 'react';
 import AppLayout from '../Layouts/AppLayout';
 
 const modules = [
@@ -8,7 +9,7 @@ const modules = [
     { name: 'Admin', href: '/admin', roles: ['admin'] },
 ];
 
-export default function Dashboard({ pendingCount, memberStats, myMemberCount }) {
+export default function Dashboard({ pendingCount, memberStats, myMemberCount, myTournaments }) {
     const { auth } = usePage().props;
     const role = auth.user.role;
 
@@ -84,6 +85,97 @@ export default function Dashboard({ pendingCount, memberStats, myMemberCount }) 
                     ))}
                 </div>
             )}
+
+            {myTournaments && myTournaments.length > 0 && (
+                <MyTournaments tournaments={myTournaments} />
+            )}
         </AppLayout>
+    );
+}
+
+const statusGroups = [
+    { key: 'accepted', label: 'Geaccepteerd', color: 'bg-green-100 text-green-700' },
+    { key: 'invited', label: 'Uitgenodigd', color: 'bg-blue-100 text-blue-700' },
+    { key: 'declined', label: 'Afgeslagen', color: 'bg-red-100 text-red-700' },
+    { key: 'pending', label: 'In afwachting', color: 'bg-gray-100 text-gray-600' },
+];
+
+function MyTournaments({ tournaments }) {
+    const [expandedId, setExpandedId] = useState(null);
+
+    const formatDate = (dateStr) => {
+        if (!dateStr) return '-';
+        return new Date(dateStr).toLocaleDateString('nl-BE');
+    };
+
+    return (
+        <div className="mt-8">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Mijn Toernooien</h2>
+            {statusGroups.map(group => {
+                const items = tournaments.filter(t => t.invitation_status === group.key);
+                if (items.length === 0) return null;
+                return (
+                    <div key={group.key} className="mb-6">
+                        <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-2">
+                            {group.label}
+                            <span className={`ml-2 inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${group.color}`}>
+                                {items.length}
+                            </span>
+                        </h3>
+                        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                            {items.map(t => (
+                                <div key={t.id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                                    {t.latitude && t.longitude && (
+                                        <iframe
+                                            title={`Locatie ${t.name}`}
+                                            width="100%"
+                                            height="140"
+                                            className="border-b border-gray-200"
+                                            src={`https://www.openstreetmap.org/export/embed.html?bbox=${t.longitude - 0.01},${t.latitude - 0.01},${parseFloat(t.longitude) + 0.01},${parseFloat(t.latitude) + 0.01}&layer=mapnik&marker=${t.latitude},${t.longitude}`}
+                                        />
+                                    )}
+                                    <div className="p-4">
+                                        <p className="font-medium text-gray-900">{t.name}</p>
+                                        <p className="text-sm text-gray-500 mt-1">{formatDate(t.tournament_date)}</p>
+                                        <p className="text-xs text-gray-400 mt-1">
+                                            {[t.address_street, t.address_postal_code, t.address_city].filter(Boolean).join(', ') || 'Geen adres'}
+                                        </p>
+                                        {t.attachments && t.attachments.length > 0 && (
+                                            <div className="flex flex-wrap gap-2 mt-2">
+                                                {t.attachments.map(att => (
+                                                    <a key={att.id} href={att.url} target="_blank" rel="noopener noreferrer"
+                                                        className="text-xs text-blue-600 hover:underline">
+                                                        {att.original_name}
+                                                    </a>
+                                                ))}
+                                            </div>
+                                        )}
+                                        <button
+                                            onClick={() => setExpandedId(expandedId === t.id ? null : t.id)}
+                                            className="mt-2 text-xs text-blue-600 hover:text-blue-800"
+                                        >
+                                            Deelnemers ({t.participants.length}) {expandedId === t.id ? '▲' : '▼'}
+                                        </button>
+                                        {expandedId === t.id && (
+                                            <div className="mt-2 pt-2 border-t border-gray-100">
+                                                {t.participants.length === 0 ? (
+                                                    <p className="text-xs text-gray-400">Nog geen bevestigde deelnemers.</p>
+                                                ) : (
+                                                    <ul className="space-y-1">
+                                                        {t.participants.map(p => (
+                                                            <li key={p.id} className="text-xs text-gray-700">{p.name}</li>
+                                                        ))}
+                                                    </ul>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                );
+            })}
+        </div>
     );
 }
