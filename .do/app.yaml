@@ -9,6 +9,8 @@ services:
     build_command: |
       composer install --no-dev --optimize-autoloader
       npm ci && npm run build
+      php artisan config:clear
+      php artisan route:clear
       php artisan view:cache
     run_command: |
       php artisan migrate --force && php artisan config:cache && php artisan route:cache && heroku-php-apache2 public/
