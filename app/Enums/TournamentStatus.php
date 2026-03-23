@@ -22,4 +22,12 @@ enum TournamentStatus: string
             self::Finished => 'Afgelopen',
         };
     }
+
+    public function previous(): ?self
+    {
+        $cases = self::cases();
+        $index = array_search($this, $cases, true);
+
+        return $index > 0 ? $cases[$index - 1] : null;
+    }
 }

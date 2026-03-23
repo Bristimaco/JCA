@@ -32,4 +32,11 @@ class Tournament extends Model
     {
         return $this->hasMany(TournamentAttachment::class);
     }
+
+    public function members(): BelongsToMany
+    {
+        return $this->belongsToMany(Member::class)
+            ->withPivot(['id', 'invitation_status', 'invited_at', 'responded_at', 'invitation_token'])
+            ->withTimestamps();
+    }
 }

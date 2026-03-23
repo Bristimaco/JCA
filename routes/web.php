@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\RecalculateAgeCategoriesController;
 use App\Http\Controllers\Admin\ToggleUserActiveController;
 use App\Http\Controllers\Admin\TournamentController;
 use App\Http\Controllers\Admin\TournamentIndexController;
+use App\Http\Controllers\Admin\TournamentMembersController;
 use App\Http\Controllers\Admin\UpdateUserController;
 use App\Http\Controllers\Admin\UserMembersController;
 use App\Http\Controllers\Admin\WeightCategoryController;
@@ -19,8 +20,12 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MyMembersController;
+use App\Http\Controllers\TournamentRsvpController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+
+// Public RSVP route (no auth required)
+Route::get('/tournaments/rsvp/{token}/{response}', TournamentRsvpController::class)->name('tournament.rsvp');
 
 // Guest routes (unauthenticated only)
 Route::middleware('guest')->group(function () {
@@ -99,5 +104,14 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::post('/tournaments', [TournamentController::class, 'store'])->name('admin.tournaments.store');
         Route::post('/tournaments/{tournament}', [TournamentController::class, 'update'])->name('admin.tournaments.update');
         Route::delete('/tournaments/{tournament}', [TournamentController::class, 'destroy'])->name('admin.tournaments.destroy');
+
+        // Tournament members & invitations
+        Route::post('/tournaments/{tournament}/populate', [TournamentMembersController::class, 'populate'])->name('admin.tournaments.populate');
+        Route::post('/tournaments/{tournament}/members', [TournamentMembersController::class, 'addMember'])->name('admin.tournaments.add-member');
+        Route::delete('/tournaments/{tournament}/members/{member}', [TournamentMembersController::class, 'removeMember'])->name('admin.tournaments.remove-member');
+        Route::post('/tournaments/{tournament}/invite-all', [TournamentMembersController::class, 'inviteAll'])->name('admin.tournaments.invite-all');
+        Route::post('/tournaments/{tournament}/invite/{member}', [TournamentMembersController::class, 'invite'])->name('admin.tournaments.invite');
+        Route::post('/tournaments/{tournament}/close-invitations', [TournamentMembersController::class, 'closeInvitations'])->name('admin.tournaments.close-invitations');
+        Route::post('/tournaments/{tournament}/revert-status', [TournamentMembersController::class, 'revertStatus'])->name('admin.tournaments.revert-status');
     });
 });
