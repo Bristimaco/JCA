@@ -242,10 +242,28 @@ class TournamentMembersController extends Controller
     }
 
     /**
+     * Start the tournament → status to Started.
+     */
+    public function startTournament(Tournament $tournament): RedirectResponse
+    {
+        if ($tournament->status !== TournamentStatus::RegistrationsClosed) {
+            return back()->with('status', 'Het toernooi kan alleen worden gestart vanuit de status "Inschrijvingen voltooid".');
+        }
+
+        $tournament->update(['status' => TournamentStatus::Started]);
+
+        return back()->with('status', 'Toernooi gestart!');
+    }
+
+    /**
      * Revert tournament to the previous status.
      */
     public function revertStatus(Tournament $tournament): RedirectResponse
     {
+        if (in_array($tournament->status, [TournamentStatus::Started, TournamentStatus::Finished], true)) {
+            return back()->with('status', 'Een gestart of afgelopen toernooi kan niet worden teruggezet.');
+        }
+
         $previous = $tournament->status->previous();
 
         if (!$previous) {

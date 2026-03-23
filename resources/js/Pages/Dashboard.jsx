@@ -9,7 +9,7 @@ const modules = [
     { name: 'Admin', href: '/admin', roles: ['admin'] },
 ];
 
-export default function Dashboard({ pendingCount, memberStats, myMemberCount, myTournaments }) {
+export default function Dashboard({ pendingCount, memberStats, myMemberCount, myTournaments, activeTournaments }) {
     const { auth } = usePage().props;
     const role = auth.user.role;
 
@@ -86,10 +86,52 @@ export default function Dashboard({ pendingCount, memberStats, myMemberCount, my
                 </div>
             )}
 
+            {activeTournaments && activeTournaments.length > 0 && (
+                <ActiveTournaments tournaments={activeTournaments} />
+            )}
+
             {myTournaments && myTournaments.length > 0 && (
                 <MyTournaments tournaments={myTournaments} />
             )}
         </AppLayout>
+    );
+}
+
+function ActiveTournaments({ tournaments }) {
+    const formatDate = (dateStr) => {
+        if (!dateStr) return '-';
+        return new Date(dateStr).toLocaleDateString('nl-BE');
+    };
+
+    return (
+        <div className="mt-8">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Lopende Toernooien</h2>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {tournaments.map(t => (
+                    <div key={t.id} className="bg-white rounded-lg shadow-sm border-2 border-red-300 overflow-hidden">
+                        {t.latitude && t.longitude && (
+                            <iframe
+                                title={`Locatie ${t.name}`}
+                                width="100%"
+                                height="140"
+                                className="border-b border-gray-200"
+                                src={`https://www.openstreetmap.org/export/embed.html?bbox=${t.longitude - 0.01},${t.latitude - 0.01},${parseFloat(t.longitude) + 0.01},${parseFloat(t.latitude) + 0.01}&layer=mapnik&marker=${t.latitude},${t.longitude}`}
+                            />
+                        )}
+                        <div className="p-4">
+                            <div className="flex items-center gap-2">
+                                <span className="inline-flex items-center rounded-full bg-red-100 text-red-700 px-2 py-0.5 text-xs font-medium">Live</span>
+                                <p className="font-medium text-gray-900">{t.name}</p>
+                            </div>
+                            <p className="text-sm text-gray-500 mt-1">{formatDate(t.tournament_date)}</p>
+                            <p className="text-xs text-gray-400 mt-1">
+                                {[t.address_street, t.address_postal_code, t.address_city].filter(Boolean).join(', ') || 'Geen adres'}
+                            </p>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
     );
 }
 

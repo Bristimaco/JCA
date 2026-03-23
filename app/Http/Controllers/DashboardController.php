@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\BeltRank;
 use App\Enums\Gender;
 use App\Enums\InvitationStatus;
+use App\Enums\TournamentStatus;
 use App\Models\BeltHistory;
 use App\Models\Member;
 use App\Models\Tournament;
@@ -29,6 +30,21 @@ class DashboardController extends Controller
         }
 
         $props['myMemberCount'] = $request->user()->members()->count();
+
+        // Active (started) tournaments for all users
+        $props['activeTournaments'] = Tournament::where('status', TournamentStatus::Started)
+            ->orderByDesc('tournament_date')
+            ->get()
+            ->map(fn(Tournament $t) => [
+                'id' => $t->id,
+                'name' => $t->name,
+                'tournament_date' => $t->tournament_date->toDateString(),
+                'address_street' => $t->address_street,
+                'address_postal_code' => $t->address_postal_code,
+                'address_city' => $t->address_city,
+                'latitude' => $t->latitude,
+                'longitude' => $t->longitude,
+            ]);
 
         // Load tournaments for the user's linked members
         $memberIds = $request->user()->members()->pluck('members.id');

@@ -9,7 +9,7 @@ class TournamentRsvpController extends Controller
 {
     public function __invoke(string $token, string $response)
     {
-        if (!in_array($response, ['accept', 'decline'])) {
+        if (! in_array($response, ['accept', 'decline'])) {
             abort(404);
         }
 
@@ -17,7 +17,7 @@ class TournamentRsvpController extends Controller
             ->where('invitation_token', $token)
             ->first();
 
-        if (!$pivot) {
+        if (! $pivot) {
             abort(404);
         }
 
@@ -38,7 +38,7 @@ class TournamentRsvpController extends Controller
         return view('rsvp-confirmation', [
             'status' => $status,
             'tournamentName' => $tournament->name ?? 'Toernooi',
-            'memberName' => ($member->first_name ?? '') . ' ' . ($member->last_name ?? ''),
+            'memberName' => ($member->first_name ?? '').' '.($member->last_name ?? ''),
         ]);
     }
 }

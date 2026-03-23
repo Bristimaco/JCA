@@ -18,13 +18,12 @@ class TournamentInvitation extends Mailable
         public Tournament $tournament,
         public Member $member,
         public string $token,
-    ) {
-    }
+    ) {}
 
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Uitnodiging: ' . $this->tournament->name,
+            subject: 'Uitnodiging: '.$this->tournament->name,
         );
     }
 

@@ -192,6 +192,7 @@ function TournamentMembersPanel({ tournament, members, competitionMembers }) {
     const revertForm = useForm({});
     const openRegForm = useForm({});
     const closeRegForm = useForm({});
+    const startForm = useForm({});
     const addMemberForm = useForm({ member_id: '' });
     const [processing, setProcessing] = useState({});
 
@@ -265,6 +266,12 @@ function TournamentMembersPanel({ tournament, members, competitionMembers }) {
         router.post(`/admin/tournaments/${tournament.id}/close-registrations`, { confirmed: confirmed ? '1' : '0' });
     };
 
+    const handleStartTournament = () => {
+        if (confirm('Toernooi starten? Er kunnen hierna geen wijzigingen meer worden gemaakt.')) {
+            startForm.post(`/admin/tournaments/${tournament.id}/start`);
+        }
+    };
+
     const handleAddMember = (e) => {
         e.preventDefault();
         if (!addMemberForm.data.member_id) return;
@@ -335,7 +342,16 @@ function TournamentMembersPanel({ tournament, members, competitionMembers }) {
                         Inschrijvingen afsluiten
                     </button>
                 )}
-                {tournament.status !== 'preparation' && (
+                {tournament.status === 'registrations_closed' && (
+                    <button
+                        onClick={handleStartTournament}
+                        disabled={startForm.processing}
+                        className="rounded-md bg-red-600 px-2.5 py-1 text-xs font-medium text-white hover:bg-red-700 disabled:opacity-50"
+                    >
+                        Toernooi starten
+                    </button>
+                )}
+                {!['preparation', 'started', 'finished'].includes(tournament.status) && (
                     <button
                         onClick={handleRevertStatus}
                         disabled={revertForm.processing}
