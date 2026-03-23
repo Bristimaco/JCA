@@ -35,7 +35,8 @@
                                 </p>
                             @else
                                 <p style="font-size:15px;color:#374151;margin:0 0 24px;">
-                                    Je inschrijving voor het toernooi <strong>{{ $tournament->name }}</strong> is geannuleerd.
+                                    Je inschrijving voor het toernooi <strong>{{ $tournament->name }}</strong> is
+                                    geannuleerd.
                                 </p>
                             @endif
 
@@ -47,7 +48,8 @@
                                         <table cellpadding="0" cellspacing="0" style="font-size:14px;color:#374151;">
                                             <tr>
                                                 <td style="padding:4px 16px 4px 0;font-weight:bold;">Datum:</td>
-                                                <td style="padding:4px 0;">{{ $tournament->tournament_date->format('d/m/Y') }}</td>
+                                                <td style="padding:4px 0;">
+                                                    {{ $tournament->tournament_date->format('d/m/Y') }}</td>
                                             </tr>
                                             @if($tournament->address_street || $tournament->address_city)
                                                 <tr>
@@ -59,13 +61,15 @@
                                             @endif
                                             @if($registered && $ageCategory)
                                                 <tr>
-                                                    <td style="padding:4px 16px 4px 0;font-weight:bold;">Leeftijdscategorie:</td>
+                                                    <td style="padding:4px 16px 4px 0;font-weight:bold;">Leeftijdscategorie:
+                                                    </td>
                                                     <td style="padding:4px 0;">{{ $ageCategory }}</td>
                                                 </tr>
                                             @endif
                                             @if($registered && $weightCategory)
                                                 <tr>
-                                                    <td style="padding:4px 16px 4px 0;font-weight:bold;">Gewichtsklasse:</td>
+                                                    <td style="padding:4px 16px 4px 0;font-weight:bold;">Gewichtsklasse:
+                                                    </td>
                                                     <td style="padding:4px 0;">{{ $weightCategory }}</td>
                                                 </tr>
                                             @endif

@@ -18,14 +18,15 @@ class TournamentRegistrationNotification extends Mailable
         public Tournament $tournament,
         public Member $member,
         public bool $registered,
-    ) {}
+    ) {
+    }
 
     public function envelope(): Envelope
     {
         $action = $this->registered ? 'Ingeschreven' : 'Uitgeschreven';
 
         return new Envelope(
-            subject: $action.': '.$this->tournament->name,
+            subject: $action . ': ' . $this->tournament->name,
         );
     }
 
@@ -39,7 +40,7 @@ class TournamentRegistrationNotification extends Mailable
         $this->member->load('weightCategory.ageCategory');
         $wc = $this->member->weightCategory;
         $weightCategory = $wc
-            ? ($wc->ageCategory?->name ? $wc->ageCategory->name.' — '.$wc->max_weight_kg.'kg' : $wc->max_weight_kg.'kg')
+            ? ($wc->ageCategory?->name ? $wc->ageCategory->name . ' — ' . $wc->max_weight_kg . 'kg' : $wc->max_weight_kg . 'kg')
             : null;
 
         return new Content(
