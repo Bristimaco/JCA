@@ -12,7 +12,7 @@ class AgeCategoriesImport implements ToModel, WithHeadingRow, WithValidation
     public function model(array $row)
     {
         $category = isset($row['id']) ? AgeCategory::find($row['id']) : null;
-        if (! $category) {
+        if (!$category) {
             $category = new AgeCategory;
         }
         $category->fill([
