@@ -1,17 +1,32 @@
-import { useForm, usePage } from '@inertiajs/react';
-import { useState } from 'react';
+import { useForm, usePage, router } from '@inertiajs/react';
+import { useState, useRef } from 'react';
 
 export default function AgeCategoriesSection({ ageCategories }) {
     const { flash } = usePage().props;
     const [selectedCountry, setSelectedCountry] = useState('BE');
     const [showAddForm, setShowAddForm] = useState(false);
     const recalcForm = useForm({ country_code: 'BE' });
+    const importFileRef = useRef(null);
+    const [importing, setImporting] = useState(false);
 
     const countries = [...new Set(ageCategories.map((c) => c.country_code))];
     if (!countries.includes(selectedCountry)) {
         countries.push(selectedCountry);
     }
     countries.sort();
+
+    const handleImportFile = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        setImporting(true);
+        router.post('/admin/age-categories/import', { file }, {
+            forceFormData: true,
+            onFinish: () => {
+                setImporting(false);
+                if (importFileRef.current) importFileRef.current.value = '';
+            },
+        });
+    };
 
     const filtered = ageCategories.filter((c) => c.country_code === selectedCountry);
 
@@ -61,6 +76,26 @@ export default function AgeCategoriesSection({ ageCategories }) {
                         className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700"
                     >
                         {showAddForm ? 'Annuleren' : 'Toevoegen'}
+                    </button>
+                    <a
+                        href="/admin/age-categories/export"
+                        className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                    >
+                        Export
+                    </a>
+                    <input
+                        type="file"
+                        ref={importFileRef}
+                        accept=".xlsx,.xls,.csv"
+                        onChange={handleImportFile}
+                        className="hidden"
+                    />
+                    <button
+                        onClick={() => importFileRef.current?.click()}
+                        disabled={importing}
+                        className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                    >
+                        {importing ? 'Importeren...' : 'Import'}
                     </button>
                     <button
                         onClick={() => {

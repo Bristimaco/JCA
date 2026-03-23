@@ -221,126 +221,126 @@ function UserRow({ user, roles, allMembers }) {
 
     return (
         <>
-        <div className={`px-6 py-4 flex items-center justify-between gap-4 ${!user.is_active ? 'opacity-50' : ''}`}>
-            <div className="min-w-0 flex-1">
-                <p className="font-medium text-gray-900 truncate">
-                    {user.name}
-                    {!user.is_active && (
-                        <span className="ml-2 inline-flex items-center rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">
-                            Inactief
-                        </span>
-                    )}
-                </p>
-                <p className="text-sm text-gray-500">{user.email}</p>
-                {(user.member_ids || []).length > 0 && (
-                    <p className="text-xs text-gray-400 mt-0.5">
-                        {(user.member_ids || []).length} lid(leden) gekoppeld
-                    </p>
-                )}
-            </div>
-            <div className="flex items-center gap-3">
-                <span className="text-sm text-gray-500">
-                    {roles.find((r) => r.value === user.role)?.label}
-                </span>
-                <button
-                    onClick={() => { setManagingMembers(!managingMembers); setEditing(false); }}
-                    className="text-sm text-green-600 hover:text-green-800"
-                >
-                    Leden
-                </button>
-                <button
-                    onClick={() => { setEditing(true); setManagingMembers(false); }}
-                    className="text-sm text-blue-600 hover:text-blue-800"
-                >
-                    Bewerken
-                </button>
-                <button
-                    onClick={handleToggleActive}
-                    disabled={toggleForm.processing}
-                    className={`text-sm ${user.is_active ? 'text-red-600 hover:text-red-800' : 'text-green-600 hover:text-green-800'}`}
-                >
-                    {user.is_active ? 'Deactiveren' : 'Activeren'}
-                </button>
-            </div>
-        </div>
-
-        {managingMembers && (
-            <div className="px-6 py-3 bg-gray-50 border-t border-gray-100">
-                <p className="text-xs font-medium text-gray-500 mb-2">Gekoppelde leden</p>
-                <div className="flex flex-wrap gap-2 mb-2">
-                    {membersForm.data.member_ids.map((mid) => {
-                        const m = allMembers.find((am) => am.id === mid);
-                        return m ? (
-                            <span key={mid} className="inline-flex items-center gap-1 rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
-                                {m.name}
-                                <button type="button" onClick={() => membersForm.setData('member_ids', membersForm.data.member_ids.filter((id) => id !== mid))}
-                                    className="text-blue-600 hover:text-blue-900 ml-0.5">&times;</button>
+            <div className={`px-6 py-4 flex items-center justify-between gap-4 ${!user.is_active ? 'opacity-50' : ''}`}>
+                <div className="min-w-0 flex-1">
+                    <p className="font-medium text-gray-900 truncate">
+                        {user.name}
+                        {!user.is_active && (
+                            <span className="ml-2 inline-flex items-center rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">
+                                Inactief
                             </span>
-                        ) : null;
-                    })}
-                    {membersForm.data.member_ids.length === 0 && (
-                        <span className="text-xs text-gray-400">Geen leden gekoppeld</span>
+                        )}
+                    </p>
+                    <p className="text-sm text-gray-500">{user.email}</p>
+                    {(user.member_ids || []).length > 0 && (
+                        <p className="text-xs text-gray-400 mt-0.5">
+                            {(user.member_ids || []).length} lid(leden) gekoppeld
+                        </p>
                     )}
                 </div>
-                <div className="flex items-center gap-2">
-                    <select
-                        onChange={(e) => {
-                            const val = parseInt(e.target.value);
-                            if (val && !membersForm.data.member_ids.includes(val)) {
-                                membersForm.setData('member_ids', [...membersForm.data.member_ids, val]);
-                            }
-                            e.target.value = '';
-                        }}
-                        className="rounded-md border border-gray-300 text-sm py-1 px-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    >
-                        <option value="">Lid toevoegen...</option>
-                        {allMembers.filter((am) => !membersForm.data.member_ids.includes(am.id)).map((am) => (
-                            <option key={am.id} value={am.id}>{am.name}</option>
-                        ))}
-                    </select>
+                <div className="flex items-center gap-3">
+                    <span className="text-sm text-gray-500">
+                        {roles.find((r) => r.value === user.role)?.label}
+                    </span>
                     <button
-                        type="button"
-                        disabled={membersForm.processing}
-                        onClick={() => membersForm.put(`/admin/users/${user.id}/members`, { onSuccess: () => setManagingMembers(false) })}
-                        className="rounded-md bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+                        onClick={() => { setManagingMembers(!managingMembers); setEditing(false); }}
+                        className="text-sm text-green-600 hover:text-green-800"
                     >
-                        Opslaan
+                        Leden
                     </button>
                     <button
-                        type="button"
-                        onClick={() => { membersForm.setData('member_ids', user.member_ids || []); setManagingMembers(false); }}
-                        className="rounded-md bg-white border border-gray-300 px-3 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50"
+                        onClick={() => { setEditing(true); setManagingMembers(false); }}
+                        className="text-sm text-blue-600 hover:text-blue-800"
                     >
-                        Annuleren
+                        Bewerken
+                    </button>
+                    <button
+                        onClick={handleToggleActive}
+                        disabled={toggleForm.processing}
+                        className={`text-sm ${user.is_active ? 'text-red-600 hover:text-red-800' : 'text-green-600 hover:text-green-800'}`}
+                    >
+                        {user.is_active ? 'Deactiveren' : 'Activeren'}
                     </button>
                 </div>
             </div>
-        )}
+
+            {managingMembers && (
+                <div className="px-6 py-3 bg-gray-50 border-t border-gray-100">
+                    <p className="text-xs font-medium text-gray-500 mb-2">Gekoppelde leden</p>
+                    <div className="flex flex-wrap gap-2 mb-2">
+                        {membersForm.data.member_ids.map((mid) => {
+                            const m = allMembers.find((am) => am.id === mid);
+                            return m ? (
+                                <span key={mid} className="inline-flex items-center gap-1 rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
+                                    {m.name}
+                                    <button type="button" onClick={() => membersForm.setData('member_ids', membersForm.data.member_ids.filter((id) => id !== mid))}
+                                        className="text-blue-600 hover:text-blue-900 ml-0.5">&times;</button>
+                                </span>
+                            ) : null;
+                        })}
+                        {membersForm.data.member_ids.length === 0 && (
+                            <span className="text-xs text-gray-400">Geen leden gekoppeld</span>
+                        )}
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <select
+                            onChange={(e) => {
+                                const val = parseInt(e.target.value);
+                                if (val && !membersForm.data.member_ids.includes(val)) {
+                                    membersForm.setData('member_ids', [...membersForm.data.member_ids, val]);
+                                }
+                                e.target.value = '';
+                            }}
+                            className="rounded-md border border-gray-300 text-sm py-1 px-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        >
+                            <option value="">Lid toevoegen...</option>
+                            {allMembers.filter((am) => !membersForm.data.member_ids.includes(am.id)).map((am) => (
+                                <option key={am.id} value={am.id}>{am.name}</option>
+                            ))}
+                        </select>
+                        <button
+                            type="button"
+                            disabled={membersForm.processing}
+                            onClick={() => membersForm.put(`/admin/users/${user.id}/members`, { onSuccess: () => setManagingMembers(false) })}
+                            className="rounded-md bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+                        >
+                            Opslaan
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => { membersForm.setData('member_ids', user.member_ids || []); setManagingMembers(false); }}
+                            className="rounded-md bg-white border border-gray-300 px-3 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50"
+                        >
+                            Annuleren
+                        </button>
+                    </div>
+                </div>
+            )}
         </>
     );
 }
 
 <div className="flex gap-3 mb-4">
-                <form
-                    method="POST"
-                    encType="multipart/form-data"
-                    onSubmit={e => {
-                        e.preventDefault();
-                        if (e.target.file.files.length) {
-                            const form = new FormData();
-                            form.append('file', e.target.file.files[0]);
-                            window.axios.post('/admin/members/import', form, { headers: { 'Content-Type': 'multipart/form-data' } })
-                                .then(() => window.location.reload());
-                        }
-                    }}
-                >
-                    <input type="file" name="file" accept=".xlsx" className="inline-block mr-2" required />
-                    <button type="submit" className="rounded-md bg-green-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-green-700">Importeren</button>
-                </form>
-                <a
-                    href="/admin/members/export"
-                    className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700"
-                >
-                    Exporteren
-                </a>
-            </div>
+    <form
+        method="POST"
+        encType="multipart/form-data"
+        onSubmit={e => {
+            e.preventDefault();
+            if (e.target.file.files.length) {
+                const form = new FormData();
+                form.append('file', e.target.file.files[0]);
+                window.axios.post('/admin/members/import', form, { headers: { 'Content-Type': 'multipart/form-data' } })
+                    .then(() => window.location.reload());
+            }
+        }}
+    >
+        <input type="file" name="file" accept=".xlsx" className="inline-block mr-2" required />
+        <button type="submit" className="rounded-md bg-green-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-green-700">Importeren</button>
+    </form>
+    <a
+        href="/admin/members/export"
+        className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700"
+    >
+        Exporteren
+    </a>
+</div>

@@ -3,7 +3,9 @@
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AgeCategoryController;
 use App\Http\Controllers\Admin\ApproveUserController;
+use App\Http\Controllers\Admin\CategoryExcelController;
 use App\Http\Controllers\Admin\MemberController;
+use App\Http\Controllers\Admin\MemberExcelController;
 use App\Http\Controllers\Admin\MemberIndexController;
 use App\Http\Controllers\Admin\RecalculateAgeCategoriesController;
 use App\Http\Controllers\Admin\ToggleUserActiveController;
@@ -81,7 +83,13 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::delete('/members/{member}', [MemberController::class, 'destroy'])->name('admin.members.destroy');
 
         // Excel import/export leden
-        Route::get('/members/export', [\App\Http\Controllers\Admin\MemberExcelController::class, 'export'])->name('admin.members.export');
-        Route::post('/members/import', [\App\Http\Controllers\Admin\MemberExcelController::class, 'import'])->name('admin.members.import');
+        Route::get('/members/export', [MemberExcelController::class, 'export'])->name('admin.members.export');
+        Route::post('/members/import', [MemberExcelController::class, 'import'])->name('admin.members.import');
+
+        // Excel import/export categorieën
+        Route::get('/age-categories/export', [CategoryExcelController::class, 'exportAgeCategories'])->name('admin.age-categories.export');
+        Route::post('/age-categories/import', [CategoryExcelController::class, 'importAgeCategories'])->name('admin.age-categories.import');
+        Route::get('/weight-categories/export', [CategoryExcelController::class, 'exportWeightCategories'])->name('admin.weight-categories.export');
+        Route::post('/weight-categories/import', [CategoryExcelController::class, 'importWeightCategories'])->name('admin.weight-categories.import');
     });
 });
