@@ -50,7 +50,7 @@ class TournamentMembersController extends Controller
             return back()->with('status', 'Geen nieuwe leden gevonden die aan de criteria voldoen.');
         }
 
-        $rows = $toAttach->mapWithKeys(fn (Member $m) => [
+        $rows = $toAttach->mapWithKeys(fn(Member $m) => [
             $m->id => [
                 'invitation_status' => InvitationStatus::Pending->value,
                 'invitation_token' => Str::random(64),
@@ -59,7 +59,7 @@ class TournamentMembersController extends Controller
 
         $tournament->members()->attach($rows);
 
-        return back()->with('status', $toAttach->count().' leden toegevoegd aan het toernooi.');
+        return back()->with('status', $toAttach->count() . ' leden toegevoegd aan het toernooi.');
     }
 
     /**
@@ -81,7 +81,7 @@ class TournamentMembersController extends Controller
 
         $member = Member::findOrFail($validated['member_id']);
 
-        if (! $member->is_competition) {
+        if (!$member->is_competition) {
             return back()->with('status', 'Dit lid is geen competitielid.');
         }
 
@@ -90,7 +90,7 @@ class TournamentMembersController extends Controller
             $tournament->tournament_date,
         );
 
-        if (! $category || ! $tournament->ageCategories->contains($category->id)) {
+        if (!$category || !$tournament->ageCategories->contains($category->id)) {
             return back()->with('status', 'Dit lid valt niet in een leeftijdscategorie van dit toernooi.');
         }
 
@@ -99,7 +99,7 @@ class TournamentMembersController extends Controller
             'invitation_token' => Str::random(64),
         ]);
 
-        return back()->with('status', $member->fullName().' is toegevoegd.');
+        return back()->with('status', $member->fullName() . ' is toegevoegd.');
     }
 
     /**
@@ -113,7 +113,7 @@ class TournamentMembersController extends Controller
 
         $tournament->members()->detach($member->id);
 
-        return back()->with('status', $member->fullName().' is verwijderd van het toernooi.');
+        return back()->with('status', $member->fullName() . ' is verwijderd van het toernooi.');
     }
 
     /**
@@ -123,13 +123,13 @@ class TournamentMembersController extends Controller
     {
         $pivot = $tournament->members()->where('members.id', $member->id)->first()?->pivot;
 
-        if (! $pivot) {
+        if (!$pivot) {
             return back()->with('status', 'Dit lid staat niet op de lijst.');
         }
 
         $this->sendInvitation($tournament, $member, $pivot);
 
-        return back()->with('status', 'Uitnodiging verstuurd naar '.$member->fullName().'.');
+        return back()->with('status', 'Uitnodiging verstuurd naar ' . $member->fullName() . '.');
     }
 
     /**
@@ -151,7 +151,7 @@ class TournamentMembersController extends Controller
             $count++;
         }
 
-        return back()->with('status', $count.' uitnodigingen verstuurd.');
+        return back()->with('status', $count . ' uitnodigingen verstuurd.');
     }
 
     /**
@@ -171,20 +171,20 @@ class TournamentMembersController extends Controller
     {
         $previous = $tournament->status->previous();
 
-        if (! $previous) {
+        if (!$previous) {
             return back()->with('status', 'Dit toernooi staat al op de eerste status.');
         }
 
         $tournament->update(['status' => $previous]);
 
-        return back()->with('status', 'Status teruggezet naar: '.$previous->label().'.');
+        return back()->with('status', 'Status teruggezet naar: ' . $previous->label() . '.');
     }
 
     private function sendInvitation(Tournament $tournament, Member $member, $pivot): void
     {
         $email = $this->resolveEmail($member, $tournament);
 
-        if (! $email) {
+        if (!$email) {
             return;
         }
 

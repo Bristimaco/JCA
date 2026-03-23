@@ -1,17 +1,50 @@
 <!DOCTYPE html>
 <html lang="nl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bevestiging</title>
     <style>
-        body { margin:0; padding:0; background-color:#f3f4f6; font-family:Arial,sans-serif; display:flex; justify-content:center; align-items:center; min-height:100vh; }
-        .card { background:#fff; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,.1); padding:48px; max-width:480px; text-align:center; }
-        .icon { font-size:48px; margin-bottom:16px; }
-        h1 { font-size:22px; color:#111827; margin:0 0 12px; }
-        p { font-size:15px; color:#6b7280; margin:0; }
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f3f4f6;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, .1);
+            padding: 48px;
+            max-width: 480px;
+            text-align: center;
+        }
+
+        .icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        h1 {
+            font-size: 22px;
+            color: #111827;
+            margin: 0 0 12px;
+        }
+
+        p {
+            font-size: 15px;
+            color: #6b7280;
+            margin: 0;
+        }
     </style>
 </head>
+
 <body>
     <div class="card">
         @if($status === \App\Enums\InvitationStatus::Accepted)
@@ -25,4 +58,5 @@
         @endif
     </div>
 </body>
+
 </html>
