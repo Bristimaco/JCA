@@ -13,7 +13,7 @@ services:
       php artisan route:clear
       php artisan view:cache
     run_command: |
-      php artisan migrate --force && php artisan db:seed --class=AdminSeeder --force && php artisan config:cache && php artisan route:cache && heroku-php-apache2 public/
+      php artisan migrate --force && php artisan config:cache && php artisan route:cache && heroku-php-apache2 public/
     environment_slug: php
     instance_count: 1
     instance_size_slug: apps-s-1vcpu-0.5gb
