@@ -319,3 +319,28 @@ function UserRow({ user, roles, allMembers }) {
         </>
     );
 }
+
+<div className="flex gap-3 mb-4">
+                <form
+                    method="POST"
+                    encType="multipart/form-data"
+                    onSubmit={e => {
+                        e.preventDefault();
+                        if (e.target.file.files.length) {
+                            const form = new FormData();
+                            form.append('file', e.target.file.files[0]);
+                            window.axios.post('/admin/members/import', form, { headers: { 'Content-Type': 'multipart/form-data' } })
+                                .then(() => window.location.reload());
+                        }
+                    }}
+                >
+                    <input type="file" name="file" accept=".xlsx" className="inline-block mr-2" required />
+                    <button type="submit" className="rounded-md bg-green-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-green-700">Importeren</button>
+                </form>
+                <a
+                    href="/admin/members/export"
+                    className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700"
+                >
+                    Exporteren
+                </a>
+            </div>

@@ -79,5 +79,9 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::post('/members', [MemberController::class, 'store'])->name('admin.members.store');
         Route::patch('/members/{member}', [MemberController::class, 'update'])->name('admin.members.update');
         Route::delete('/members/{member}', [MemberController::class, 'destroy'])->name('admin.members.destroy');
+
+        // Excel import/export leden
+        Route::get('/members/export', [\App\Http\Controllers\Admin\MemberExcelController::class, 'export'])->name('admin.members.export');
+        Route::post('/members/import', [\App\Http\Controllers\Admin\MemberExcelController::class, 'import'])->name('admin.members.import');
     });
 });

@@ -1,5 +1,5 @@
-import { useForm, usePage } from '@inertiajs/react';
-import { useState } from 'react';
+import { useForm, usePage, router } from '@inertiajs/react';
+import { useState, useRef } from 'react';
 import MemberCard from './MemberCard';
 
 export default function MembersSection({ members, ageCategories, weightCategories, beltRanks }) {
@@ -8,6 +8,8 @@ export default function MembersSection({ members, ageCategories, weightCategorie
     const [search, setSearch] = useState('');
     const [viewingMember, setViewingMember] = useState(null);
     const [editingMember, setEditingMember] = useState(null);
+    const importFileRef = useRef(null);
+    const [importing, setImporting] = useState(false);
 
     const filtered = members.filter((m) => {
         const q = search.toLowerCase();
@@ -31,6 +33,19 @@ export default function MembersSection({ members, ageCategories, weightCategorie
 
     const getWeightCategoryName = (member) => {
         return member.weight_category_name || '-';
+    };
+
+    const handleImportFile = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        setImporting(true);
+        router.post('/admin/members/import', { file }, {
+            forceFormData: true,
+            onFinish: () => {
+                setImporting(false);
+                if (importFileRef.current) importFileRef.current.value = '';
+            },
+        });
     };
 
     if (viewingMember) {
@@ -72,6 +87,26 @@ export default function MembersSection({ members, ageCategories, weightCategorie
                         onChange={(e) => setSearch(e.target.value)}
                         className="rounded-md border border-gray-300 text-sm py-1 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
+                    <a
+                        href="/admin/members/export"
+                        className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                    >
+                        Export
+                    </a>
+                    <input
+                        type="file"
+                        ref={importFileRef}
+                        accept=".xlsx,.xls,.csv"
+                        onChange={handleImportFile}
+                        className="hidden"
+                    />
+                    <button
+                        onClick={() => importFileRef.current?.click()}
+                        disabled={importing}
+                        className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                    >
+                        {importing ? 'Importeren...' : 'Import'}
+                    </button>
                     <button
                         onClick={() => { setShowAddForm(!showAddForm); setEditingMember(null); }}
                         className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700"
