@@ -18,12 +18,13 @@ class TournamentReport extends Mailable
     public function __construct(
         public Tournament $tournament,
         public Collection $resultGroups,
-    ) {}
+    ) {
+    }
 
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Toernooiverslag: '.$this->tournament->name,
+            subject: 'Toernooiverslag: ' . $this->tournament->name,
         );
     }
 

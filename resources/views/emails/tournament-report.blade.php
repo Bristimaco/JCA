@@ -16,21 +16,24 @@
                     {{-- Header --}}
                     <tr>
                         <td style="background-color:#7c3aed;padding:24px 32px;">
-                            <table cellpadding="0" cellspacing="0"><tr>
-                                @if($club->logo_data)
-                                    <td style="padding-right:16px;vertical-align:middle;">
-                                        <img src="{{ route('club.logo') }}" alt="" width="40" height="40" style="display:block;border-radius:4px;" />
+                            <table cellpadding="0" cellspacing="0">
+                                <tr>
+                                    @if($club->logo_data)
+                                        <td style="padding-right:16px;vertical-align:middle;">
+                                            <img src="{{ route('club.logo') }}" alt="" width="40" height="40"
+                                                style="display:block;border-radius:4px;" />
+                                        </td>
+                                    @endif
+                                    <td style="vertical-align:middle;">
+                                        <h1 style="color:#ffffff;margin:0;font-size:22px;">
+                                            Toernooiverslag
+                                        </h1>
+                                        <p style="color:#e9d5ff;margin:8px 0 0;font-size:14px;">
+                                            {{ $tournament->name }}
+                                        </p>
                                     </td>
-                                @endif
-                                <td style="vertical-align:middle;">
-                                    <h1 style="color:#ffffff;margin:0;font-size:22px;">
-                                        Toernooiverslag
-                                    </h1>
-                                    <p style="color:#e9d5ff;margin:8px 0 0;font-size:14px;">
-                                        {{ $tournament->name }}
-                                    </p>
-                                </td>
-                            </tr></table>
+                                </tr>
+                            </table>
                         </td>
                     </tr>
 

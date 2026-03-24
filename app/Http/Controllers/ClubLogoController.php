@@ -11,7 +11,7 @@ class ClubLogoController extends Controller
     {
         $settings = ClubSettings::current();
 
-        if (! $settings->hasLogo()) {
+        if (!$settings->hasLogo()) {
             abort(404);
         }
 

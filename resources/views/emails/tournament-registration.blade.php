@@ -16,18 +16,21 @@
                     {{-- Header --}}
                     <tr>
                         <td style="background-color:{{ $registered ? '#16a34a' : '#dc2626' }};padding:24px 32px;">
-                            <table cellpadding="0" cellspacing="0"><tr>
-                                @if($club->logo_data)
-                                    <td style="padding-right:16px;vertical-align:middle;">
-                                        <img src="{{ route('club.logo') }}" alt="" width="40" height="40" style="display:block;border-radius:4px;" />
+                            <table cellpadding="0" cellspacing="0">
+                                <tr>
+                                    @if($club->logo_data)
+                                        <td style="padding-right:16px;vertical-align:middle;">
+                                            <img src="{{ route('club.logo') }}" alt="" width="40" height="40"
+                                                style="display:block;border-radius:4px;" />
+                                        </td>
+                                    @endif
+                                    <td style="vertical-align:middle;">
+                                        <h1 style="color:#ffffff;margin:0;font-size:22px;">
+                                            {{ $registered ? 'Inschrijving bevestigd' : 'Uitschrijving' }}
+                                        </h1>
                                     </td>
-                                @endif
-                                <td style="vertical-align:middle;">
-                                    <h1 style="color:#ffffff;margin:0;font-size:22px;">
-                                        {{ $registered ? 'Inschrijving bevestigd' : 'Uitschrijving' }}
-                                    </h1>
-                                </td>
-                            </tr></table>
+                                </tr>
+                            </table>
                         </td>
                     </tr>
 
@@ -58,7 +61,8 @@
                                             <tr>
                                                 <td style="padding:4px 16px 4px 0;font-weight:bold;">Datum:</td>
                                                 <td style="padding:4px 0;">
-                                                    {{ $tournament->tournament_date->format('d/m/Y') }}</td>
+                                                    {{ $tournament->tournament_date->format('d/m/Y') }}
+                                                </td>
                                             </tr>
                                             @if($tournament->address_street || $tournament->address_city)
                                                 <tr>
