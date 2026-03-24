@@ -142,6 +142,7 @@ function UserRow({ user, roles, allMembers }) {
         name: user.name,
         email: user.email,
         role: user.role,
+        results_interest: user.results_interest || false,
     });
     const toggleForm = useForm({});
     const membersForm = useForm({
@@ -199,6 +200,17 @@ function UserRow({ user, roles, allMembers }) {
                         {form.errors.role && <p className="text-xs text-red-600 mt-1">{form.errors.role}</p>}
                     </div>
                 </div>
+                <div className="flex items-center gap-4 mb-3">
+                    <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                        <input
+                            type="checkbox"
+                            checked={form.data.results_interest}
+                            onChange={(e) => form.setData('results_interest', e.target.checked)}
+                            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        />
+                        Interesse in toernooiresultaten
+                    </label>
+                </div>
                 <div className="flex gap-2">
                     <button
                         type="submit"
@@ -232,11 +244,18 @@ function UserRow({ user, roles, allMembers }) {
                         )}
                     </p>
                     <p className="text-sm text-gray-500">{user.email}</p>
-                    {(user.member_ids || []).length > 0 && (
-                        <p className="text-xs text-gray-400 mt-0.5">
-                            {(user.member_ids || []).length} lid(leden) gekoppeld
-                        </p>
-                    )}
+                    <div className="flex items-center gap-2 mt-0.5">
+                        {(user.member_ids || []).length > 0 && (
+                            <span className="text-xs text-gray-400">
+                                {(user.member_ids || []).length} lid(leden) gekoppeld
+                            </span>
+                        )}
+                        {user.results_interest && (
+                            <span className="inline-flex items-center rounded-full bg-purple-100 px-2 py-0.5 text-xs font-medium text-purple-700">
+                                Resultaten
+                            </span>
+                        )}
+                    </div>
                 </div>
                 <div className="flex items-center gap-3">
                     <span className="text-sm text-gray-500">

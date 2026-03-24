@@ -37,6 +37,7 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
 
     const [results, setResults] = useState(buildInitialResults);
     const form = useForm({ results: [] });
+    const closeForm = useForm({});
 
     const updateResult = (memberId, field, value) => {
         setResults(prev => ({
@@ -74,6 +75,14 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
     };
 
     const filledCount = Object.values(results).filter(r => r.result !== '').length;
+    const allFilled = totalParticipants > 0 && filledCount === totalParticipants;
+    const canClose = t.status === 'started' && allFilled;
+    const isFinished = t.status === 'finished';
+
+    const handleClose = () => {
+        if (!confirm('Weet je zeker dat je dit toernooi wilt afsluiten? Er wordt een verslag verstuurd naar alle geïnteresseerden.')) return;
+        closeForm.post(`/trainer/toernooien/${t.id}/afsluiten`);
+    };
 
     return (
         <AppLayout>
@@ -168,13 +177,33 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                     )}
 
                     {/* Save button */}
-                    <button
-                        onClick={handleSave}
-                        disabled={form.processing}
-                        className="w-full rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50 transition-colors"
-                    >
-                        {form.processing ? 'Opslaan...' : 'Resultaten opslaan'}
-                    </button>
+                    {!isFinished && (
+                        <button
+                            onClick={handleSave}
+                            disabled={form.processing}
+                            className="w-full rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                        >
+                            {form.processing ? 'Opslaan...' : 'Resultaten opslaan'}
+                        </button>
+                    )}
+
+                    {/* Close tournament button */}
+                    {t.status === 'started' && (
+                        <div className="space-y-2">
+                            <button
+                                onClick={handleClose}
+                                disabled={!canClose || closeForm.processing}
+                                className="w-full rounded-lg bg-purple-600 px-4 py-3 text-sm font-semibold text-white hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            >
+                                {closeForm.processing ? 'Afsluiten...' : 'Toernooi afsluiten'}
+                            </button>
+                            {!allFilled && (
+                                <p className="text-xs text-amber-600 text-center">
+                                    Alle deelnemers moeten eerst een resultaat hebben voordat het toernooi kan worden afgesloten.
+                                </p>
+                            )}
+                        </div>
+                    )}
                 </div>
 
                 {/* Right column: Participants with result inputs */}
@@ -222,7 +251,8 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                                                                 <select
                                                                     value={results[member.id]?.result || ''}
                                                                     onChange={(e) => updateResult(member.id, 'result', e.target.value)}
-                                                                    className="rounded-md border border-gray-300 text-sm py-1 px-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                                    disabled={isFinished}
+                                                                    className={`rounded-md border border-gray-300 text-sm py-1 px-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${isFinished ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                                                                 >
                                                                     {resultOptions.map(opt => (
                                                                         <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -232,9 +262,10 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                                                                     placeholder="Opmerking..."
                                                                     value={results[member.id]?.notes || ''}
                                                                     onChange={(e) => updateResult(member.id, 'notes', e.target.value)}
+                                                                    disabled={isFinished}
                                                                     rows={1}
                                                                     onInput={(e) => { e.target.style.height = 'auto'; e.target.style.height = e.target.scrollHeight + 'px'; }}
-                                                                    className="min-w-32 flex-1 rounded-md border border-gray-300 text-sm py-1 px-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none overflow-hidden"
+                                                                    className={`min-w-32 flex-1 rounded-md border border-gray-300 text-sm py-1 px-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none overflow-hidden ${isFinished ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                                                                 />
                                                             </div>
                                                         ))}

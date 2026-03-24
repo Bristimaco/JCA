@@ -24,7 +24,7 @@ class AdminDashboardController extends Controller
         $users = User::whereNotNull('role')
             ->with('members:id')
             ->orderBy('name')
-            ->get(['id', 'name', 'email', 'role', 'is_active'])
+            ->get(['id', 'name', 'email', 'role', 'is_active', 'results_interest'])
             ->map(fn (User $u) => [
                 ...$u->toArray(),
                 'member_ids' => $u->members->pluck('id')->values()->all(),

@@ -44,7 +44,7 @@ Route::middleware('auth')->group(function () {
     // Email verification
     Route::get('/email/verify', [EmailVerificationController::class, 'notice'])->name('verification.notice');
     Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
-        ->middleware('signed')->name('verification.verify');
+        ->middleware('signed:relative')->name('verification.verify');
     Route::post('/email/verification-notification', [EmailVerificationController::class, 'resend'])
         ->middleware('throttle:6,1')->name('verification.send');
 
@@ -73,6 +73,7 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
     Route::middleware('coach')->prefix('trainer')->group(function () {
         Route::get('/toernooien/{tournament}', [TrainerTournamentController::class, 'show'])->name('trainer.tournament.show');
         Route::post('/toernooien/{tournament}/resultaten', [TrainerTournamentController::class, 'storeResults'])->name('trainer.tournament.results');
+        Route::post('/toernooien/{tournament}/afsluiten', [TrainerTournamentController::class, 'closeTournament'])->name('trainer.tournament.close');
     });
 
     // Admin routes

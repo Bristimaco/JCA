@@ -5,10 +5,13 @@ namespace App\Http\Controllers\Trainer;
 use App\Enums\InvitationStatus;
 use App\Enums\TournamentStatus;
 use App\Http\Controllers\Controller;
+use App\Mail\TournamentReport;
 use App\Models\Member;
 use App\Models\Tournament;
 use App\Models\TournamentResult;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -45,11 +48,11 @@ class TrainerTournamentController extends Controller
 
             $weightCat = $member->weightCategory;
             $weightName = $weightCat
-                ? $weightCat->max_weight_kg . 'kg'
+                ? $weightCat->max_weight_kg.'kg'
                 : 'Geen gewichtscategorie';
             $weightOrder = $weightCat?->display_order ?? 999;
 
-            if (!isset($grouped[$ageName])) {
+            if (! isset($grouped[$ageName])) {
                 $grouped[$ageName] = [
                     'name' => $ageName,
                     'order' => $ageOrder,
@@ -57,7 +60,7 @@ class TrainerTournamentController extends Controller
                 ];
             }
 
-            if (!isset($grouped[$ageName]['weights'][$weightName])) {
+            if (! isset($grouped[$ageName]['weights'][$weightName])) {
                 $grouped[$ageName]['weights'][$weightName] = [
                     'name' => $weightName,
                     'order' => $weightOrder,
@@ -76,10 +79,10 @@ class TrainerTournamentController extends Controller
         }
 
         // Sort
-        usort($grouped, fn($a, $b) => $a['order'] <=> $b['order']);
+        usort($grouped, fn ($a, $b) => $a['order'] <=> $b['order']);
         foreach ($grouped as &$ageGroup) {
             $weights = array_values($ageGroup['weights']);
-            usort($weights, fn($a, $b) => $a['order'] <=> $b['order']);
+            usort($weights, fn ($a, $b) => $a['order'] <=> $b['order']);
             $ageGroup['weights'] = $weights;
         }
         unset($ageGroup);
@@ -97,12 +100,12 @@ class TrainerTournamentController extends Controller
                 'longitude' => $tournament->longitude,
                 'status' => $tournament->status->value,
                 'status_label' => $tournament->status->label(),
-                'attachments' => $tournament->attachments->map(fn($a) => [
+                'attachments' => $tournament->attachments->map(fn ($a) => [
                     'id' => $a->id,
                     'original_name' => $a->original_name,
-                    'url' => asset('storage/' . $a->file_path),
+                    'url' => asset('storage/'.$a->file_path),
                 ])->values()->all(),
-                'coaches' => $tournament->coaches->map(fn(Member $m) => [
+                'coaches' => $tournament->coaches->map(fn (Member $m) => [
                     'id' => $m->id,
                     'name' => $m->fullName(),
                 ])->values()->all(),
@@ -114,6 +117,10 @@ class TrainerTournamentController extends Controller
 
     public function storeResults(Request $request, Tournament $tournament)
     {
+        if ($tournament->status === TournamentStatus::Finished) {
+            return redirect()->back()->with('status', 'Resultaten kunnen niet meer worden aangepast na afsluiting.');
+        }
+
         $validated = Validator::make($request->all(), [
             'results' => ['required', 'array'],
             'results.*.member_id' => ['required', 'integer', 'exists:members,id'],
@@ -125,7 +132,7 @@ class TrainerTournamentController extends Controller
         $tournamentMemberIds = $tournament->members()->pluck('members.id')->toArray();
 
         foreach ($validated['results'] as $entry) {
-            if (!in_array($entry['member_id'], $tournamentMemberIds)) {
+            if (! in_array($entry['member_id'], $tournamentMemberIds)) {
                 continue;
             }
 
@@ -143,5 +150,77 @@ class TrainerTournamentController extends Controller
         }
 
         return redirect()->back()->with('status', 'Resultaten opgeslagen.');
+    }
+
+    public function closeTournament(Request $request, Tournament $tournament)
+    {
+        if ($tournament->status !== TournamentStatus::Started) {
+            return redirect()->back()->with('status', 'Dit toernooi kan niet worden afgesloten (status is niet "Gestart").');
+        }
+
+        // Get all registered participants
+        $participantIds = $tournament->members()
+            ->wherePivot('invitation_status', InvitationStatus::Accepted->value)
+            ->wherePivot('registration_status', 'registered')
+            ->pluck('members.id');
+
+        // Check all participants have results
+        $resultCount = TournamentResult::where('tournament_id', $tournament->id)
+            ->whereIn('member_id', $participantIds)
+            ->count();
+
+        if ($resultCount < $participantIds->count()) {
+            $missing = $participantIds->count() - $resultCount;
+
+            return redirect()->back()->with('status', "Kan niet afsluiten: {$missing} deelnemer(s) hebben nog geen resultaat.");
+        }
+
+        // Close the tournament
+        $tournament->update(['status' => TournamentStatus::Finished]);
+
+        // Build result groups for the email
+        $results = TournamentResult::where('tournament_id', $tournament->id)
+            ->with(['member.weightCategory.ageCategory', 'member'])
+            ->get();
+
+        $grouped = [];
+        foreach ($results as $result) {
+            $member = $result->member;
+            $ageCategory = $member->calculateAgeCategory($tournament->country_code, $tournament->tournament_date);
+            $ageName = $ageCategory?->name ?? 'Onbekend';
+            $weightCat = $member->weightCategory;
+            $weightName = $weightCat ? $weightCat->max_weight_kg.'kg' : null;
+            $key = $ageName.'_'.($weightName ?? 'geen');
+
+            if (! isset($grouped[$key])) {
+                $grouped[$key] = [
+                    'age_category' => $ageName,
+                    'weight_category' => $weightName,
+                    'results' => [],
+                ];
+            }
+
+            $grouped[$key]['results'][] = [
+                'name' => $member->fullName(),
+                'result' => $result->result,
+                'notes' => $result->notes,
+            ];
+        }
+
+        $resultGroups = collect(array_values($grouped));
+
+        // Send report to all users interested in results
+        $interestedUsers = User::where('results_interest', true)
+            ->where('is_active', true)
+            ->whereNotNull('role')
+            ->get();
+
+        foreach ($interestedUsers as $user) {
+            Mail::to($user->email)->queue(new TournamentReport($tournament, $resultGroups));
+        }
+
+        $mailCount = $interestedUsers->count();
+
+        return redirect()->back()->with('status', "Toernooi afgesloten. Verslag verstuurd naar {$mailCount} geïnteresseerde(n).");
     }
 }

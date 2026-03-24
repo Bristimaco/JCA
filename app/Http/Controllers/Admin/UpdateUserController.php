@@ -18,6 +18,7 @@ class UpdateUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'role' => ['required', new Enum(UserRole::class)],
+            'results_interest' => ['sometimes', 'boolean'],
         ]);
 
         if ($user->isAdmin() && $validated['role'] !== UserRole::Admin->value) {

@@ -16,13 +16,13 @@ class MyMembersController extends Controller
     public function index(Request $request): Response
     {
         $members = $request->user()->members()->with(['weightCategory', 'tournamentResults.tournament'])->orderBy('first_name')->get()
-            ->map(fn(Member $m) => [
+            ->map(fn (Member $m) => [
                 ...$m->toArray(),
-                'photo_url' => $m->photo_path ? asset('storage/' . $m->photo_path) : null,
+                'photo_url' => $m->photo_path ? asset('storage/'.$m->photo_path) : null,
                 'weight_category_name' => $m->weightCategory?->name,
                 'current_belt' => $m->currentBelt()?->value,
                 'current_belt_label' => $m->currentBelt()?->label(),
-                'tournament_results' => $m->is_competition ? $m->tournamentResults->map(fn($r) => [
+                'tournament_results' => $m->is_competition ? $m->tournamentResults->map(fn ($r) => [
                     'id' => $r->id,
                     'tournament_name' => $r->tournament->name,
                     'tournament_date' => $r->tournament->tournament_date->toDateString(),
@@ -43,7 +43,7 @@ class MyMembersController extends Controller
 
     public function update(Request $request, Member $member): RedirectResponse
     {
-        if (!$member->users()->where('users.id', $request->user()->id)->exists()) {
+        if (! $member->users()->where('users.id', $request->user()->id)->exists()) {
             abort(403);
         }
 

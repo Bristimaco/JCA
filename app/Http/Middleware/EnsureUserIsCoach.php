@@ -10,7 +10,7 @@ class EnsureUserIsCoach
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (!$request->user()?->isCoach() && !$request->user()?->isAdmin()) {
+        if (! $request->user()?->isCoach() && ! $request->user()?->isAdmin()) {
             abort(403);
         }
 
