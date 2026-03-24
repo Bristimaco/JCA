@@ -82,7 +82,19 @@
                                     @foreach ($group['results'] as $result)
                                         <tr style="border-top:1px solid #f3f4f6;">
                                             <td style="padding:8px 16px;font-size:14px;color:#374151;width:50%;">
-                                                {{ $result['name'] }}
+                                                <table cellpadding="0" cellspacing="0">
+                                                    <tr>
+                                                        @if (!empty($result['photo_url']))
+                                                            <td style="padding-right:10px;vertical-align:middle;">
+                                                                <img src="{{ $result['photo_url'] }}" alt="" width="32" height="32"
+                                                                    style="display:block;border-radius:50%;object-fit:cover;" />
+                                                            </td>
+                                                        @endif
+                                                        <td style="vertical-align:middle;">
+                                                            {{ $result['name'] }}
+                                                        </td>
+                                                    </tr>
+                                                </table>
                                             </td>
                                             <td
                                                 style="padding:8px 12px;font-size:14px;font-weight:bold;color:#111827;text-align:right;">

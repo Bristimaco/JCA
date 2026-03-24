@@ -41,7 +41,7 @@ class TournamentDetailController extends Controller
 
             $weightCat = $member->weightCategory;
             $weightName = $weightCat
-                ? $weightCat->max_weight_kg . 'kg'
+                ? $weightCat->name
                 : 'Geen gewichtscategorie';
             $weightOrder = $weightCat?->display_order ?? 999;
 

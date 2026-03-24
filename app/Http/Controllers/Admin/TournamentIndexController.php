@@ -18,7 +18,7 @@ class TournamentIndexController extends Controller
     {
         $tournaments = Tournament::with(['ageCategories:id,name', 'attachments', 'members.weightCategory.ageCategory', 'coaches'])
             ->where('status', '!=', TournamentStatus::Archived)
-            ->orderByDesc('tournament_date')
+            ->orderBy('tournament_date')
             ->get()
             ->map(fn (Tournament $t) => [
                 ...$t->toArray(),
