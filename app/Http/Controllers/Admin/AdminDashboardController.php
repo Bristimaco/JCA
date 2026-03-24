@@ -26,19 +26,19 @@ class AdminDashboardController extends Controller
             ->with('members:id')
             ->orderBy('name')
             ->get(['id', 'name', 'email', 'role', 'is_active', 'results_interest'])
-            ->map(fn(User $u) => [
+            ->map(fn (User $u) => [
                 ...$u->toArray(),
                 'member_ids' => $u->members->pluck('id')->values()->all(),
             ]);
 
         $allMembers = Member::orderBy('last_name')->orderBy('first_name')
             ->get(['id', 'first_name', 'last_name'])
-            ->map(fn(Member $m) => [
+            ->map(fn (Member $m) => [
                 'id' => $m->id,
                 'name' => $m->fullName(),
             ]);
 
-        $roles = collect(UserRole::cases())->map(fn(UserRole $role) => [
+        $roles = collect(UserRole::cases())->map(fn (UserRole $role) => [
             'value' => $role->value,
             'label' => $role->label(),
         ])->values()->all();

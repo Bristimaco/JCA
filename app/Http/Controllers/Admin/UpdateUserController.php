@@ -22,8 +22,11 @@ class UpdateUserController extends Controller
         ]);
 
         if ($user->isAdmin() && $validated['role'] !== UserRole::Admin->value) {
-            $adminCount = User::where('role', UserRole::Admin)->where('is_active', true)->count();
-            if ($adminCount <= 1) {
+            $otherAdminCount = User::where('role', UserRole::Admin)
+                ->where('is_active', true)
+                ->where('id', '!=', $user->id)
+                ->count();
+            if ($otherAdminCount === 0) {
                 return back()->with('status', 'Er moet minstens één beheerder actief zijn. Rol kan niet gewijzigd worden.');
             }
         }

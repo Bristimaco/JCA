@@ -52,7 +52,7 @@ class HandleInertiaRequests extends Middleware
             'flash' => [
                 'status' => $request->session()->get('status'),
             ],
-            'club' => fn() => [
+            'club' => fn () => [
                 'name' => ClubSettings::current()->name,
                 'has_logo' => (bool) ClubSettings::current()->logo_data,
             ],

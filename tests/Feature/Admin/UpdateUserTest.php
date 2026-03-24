@@ -131,6 +131,9 @@ class UpdateUserTest extends TestCase
 
     public function test_cannot_change_role_of_last_admin(): void
     {
+        // Remove seeded admin so the factory admin is truly the only one
+        User::where('role', UserRole::Admin)->delete();
+
         $admin = User::factory()->create([
             'role' => UserRole::Admin,
             'email_verified_at' => now(),
