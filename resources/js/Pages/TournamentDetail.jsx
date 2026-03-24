@@ -17,6 +17,7 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
         registrations_closed: 'bg-orange-100 text-orange-700',
         started: 'bg-green-100 text-green-700',
         finished: 'bg-purple-100 text-purple-700',
+        archived: 'bg-purple-100 text-purple-700',
     };
 
     return (
@@ -145,9 +146,9 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                                                                 <span>{member.name}</span>
                                                                 {member.result && (
                                                                     <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${member.result === '1e plaats' ? 'bg-yellow-100 text-yellow-800' :
-                                                                            member.result === '2e plaats' ? 'bg-gray-200 text-gray-800' :
-                                                                                member.result === '3e plaats' ? 'bg-amber-100 text-amber-800' :
-                                                                                    'bg-gray-100 text-gray-600'
+                                                                        member.result === '2e plaats' ? 'bg-gray-200 text-gray-800' :
+                                                                            member.result === '3e plaats' ? 'bg-amber-100 text-amber-800' :
+                                                                                'bg-gray-100 text-gray-600'
                                                                         }`}>
                                                                         {member.result}
                                                                     </span>

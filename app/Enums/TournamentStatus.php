@@ -10,6 +10,7 @@ enum TournamentStatus: string
     case RegistrationsClosed = 'registrations_closed';
     case Started = 'started';
     case Finished = 'finished';
+    case Archived = 'archived';
 
     public function label(): string
     {
@@ -20,6 +21,7 @@ enum TournamentStatus: string
             self::RegistrationsClosed => 'Inschrijvingen voltooid',
             self::Started => 'Gestart',
             self::Finished => 'Afgelopen',
+            self::Archived => 'Gearchiveerd',
         };
     }
 

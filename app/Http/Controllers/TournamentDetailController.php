@@ -17,7 +17,7 @@ class TournamentDetailController extends Controller
         $tournament->load(['ageCategories.weightCategories', 'attachments', 'coaches', 'members.weightCategory.ageCategory']);
 
         // Only show participants who are effectively participating
-        $isLive = in_array($tournament->status, [TournamentStatus::Started, TournamentStatus::Finished], true);
+        $isLive = in_array($tournament->status, [TournamentStatus::Started, TournamentStatus::Finished, TournamentStatus::Archived], true);
 
         $participants = $tournament->members->filter(function (Member $m) use ($isLive) {
             if ($isLive) {

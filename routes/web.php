@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\TournamentMembersController;
 use App\Http\Controllers\Admin\UpdateUserController;
 use App\Http\Controllers\Admin\UserMembersController;
 use App\Http\Controllers\Admin\WeightCategoryController;
+use App\Http\Controllers\ArchivedTournamentsController;
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -68,6 +69,9 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
 
     // Tournament detail (any authenticated user)
     Route::get('/toernooien/{tournament}', TournamentDetailController::class)->name('tournament.detail');
+
+    // Archived tournaments (any authenticated user)
+    Route::get('/archief', ArchivedTournamentsController::class)->name('archived.tournaments');
 
     // Trainer routes
     Route::middleware('coach')->prefix('trainer')->group(function () {
@@ -132,6 +136,7 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::post('/tournaments/{tournament}/unregister/{member}', [TournamentMembersController::class, 'unregister'])->name('admin.tournaments.unregister');
         Route::post('/tournaments/{tournament}/close-registrations', [TournamentMembersController::class, 'closeRegistrations'])->name('admin.tournaments.close-registrations');
         Route::post('/tournaments/{tournament}/start', [TournamentMembersController::class, 'startTournament'])->name('admin.tournaments.start');
+        Route::post('/tournaments/{tournament}/archive', [TournamentController::class, 'archive'])->name('admin.tournaments.archive');
 
         // Tournament coaches (trainers)
         Route::post('/tournaments/{tournament}/coaches', [TournamentMembersController::class, 'addCoach'])->name('admin.tournaments.add-coach');

@@ -23,7 +23,7 @@ class TrainerTournamentController extends Controller
         $tournament->load(['ageCategories.weightCategories', 'attachments', 'coaches', 'members.weightCategory.ageCategory']);
 
         // Only show participants who accepted & registered (for live/finished tournaments)
-        $isLive = in_array($tournament->status, [TournamentStatus::Started, TournamentStatus::Finished], true);
+        $isLive = in_array($tournament->status, [TournamentStatus::Started, TournamentStatus::Finished, TournamentStatus::Archived], true);
 
         $participants = $tournament->members->filter(function (Member $m) use ($isLive) {
             if ($isLive) {
@@ -48,11 +48,11 @@ class TrainerTournamentController extends Controller
 
             $weightCat = $member->weightCategory;
             $weightName = $weightCat
-                ? $weightCat->max_weight_kg.'kg'
+                ? $weightCat->max_weight_kg . 'kg'
                 : 'Geen gewichtscategorie';
             $weightOrder = $weightCat?->display_order ?? 999;
 
-            if (! isset($grouped[$ageName])) {
+            if (!isset($grouped[$ageName])) {
                 $grouped[$ageName] = [
                     'name' => $ageName,
                     'order' => $ageOrder,
@@ -60,7 +60,7 @@ class TrainerTournamentController extends Controller
                 ];
             }
 
-            if (! isset($grouped[$ageName]['weights'][$weightName])) {
+            if (!isset($grouped[$ageName]['weights'][$weightName])) {
                 $grouped[$ageName]['weights'][$weightName] = [
                     'name' => $weightName,
                     'order' => $weightOrder,
@@ -79,10 +79,10 @@ class TrainerTournamentController extends Controller
         }
 
         // Sort
-        usort($grouped, fn ($a, $b) => $a['order'] <=> $b['order']);
+        usort($grouped, fn($a, $b) => $a['order'] <=> $b['order']);
         foreach ($grouped as &$ageGroup) {
             $weights = array_values($ageGroup['weights']);
-            usort($weights, fn ($a, $b) => $a['order'] <=> $b['order']);
+            usort($weights, fn($a, $b) => $a['order'] <=> $b['order']);
             $ageGroup['weights'] = $weights;
         }
         unset($ageGroup);
@@ -100,12 +100,12 @@ class TrainerTournamentController extends Controller
                 'longitude' => $tournament->longitude,
                 'status' => $tournament->status->value,
                 'status_label' => $tournament->status->label(),
-                'attachments' => $tournament->attachments->map(fn ($a) => [
+                'attachments' => $tournament->attachments->map(fn($a) => [
                     'id' => $a->id,
                     'original_name' => $a->original_name,
-                    'url' => asset('storage/'.$a->file_path),
+                    'url' => asset('storage/' . $a->file_path),
                 ])->values()->all(),
-                'coaches' => $tournament->coaches->map(fn (Member $m) => [
+                'coaches' => $tournament->coaches->map(fn(Member $m) => [
                     'id' => $m->id,
                     'name' => $m->fullName(),
                 ])->values()->all(),
@@ -117,7 +117,7 @@ class TrainerTournamentController extends Controller
 
     public function storeResults(Request $request, Tournament $tournament)
     {
-        if ($tournament->status === TournamentStatus::Finished) {
+        if (in_array($tournament->status, [TournamentStatus::Finished, TournamentStatus::Archived], true)) {
             return redirect()->back()->with('status', 'Resultaten kunnen niet meer worden aangepast na afsluiting.');
         }
 
@@ -132,7 +132,7 @@ class TrainerTournamentController extends Controller
         $tournamentMemberIds = $tournament->members()->pluck('members.id')->toArray();
 
         foreach ($validated['results'] as $entry) {
-            if (! in_array($entry['member_id'], $tournamentMemberIds)) {
+            if (!in_array($entry['member_id'], $tournamentMemberIds)) {
                 continue;
             }
 
@@ -189,10 +189,10 @@ class TrainerTournamentController extends Controller
             $ageCategory = $member->calculateAgeCategory($tournament->country_code, $tournament->tournament_date);
             $ageName = $ageCategory?->name ?? 'Onbekend';
             $weightCat = $member->weightCategory;
-            $weightName = $weightCat ? $weightCat->max_weight_kg.'kg' : null;
-            $key = $ageName.'_'.($weightName ?? 'geen');
+            $weightName = $weightCat ? $weightCat->max_weight_kg . 'kg' : null;
+            $key = $ageName . '_' . ($weightName ?? 'geen');
 
-            if (! isset($grouped[$key])) {
+            if (!isset($grouped[$key])) {
                 $grouped[$key] = [
                     'age_category' => $ageName,
                     'weight_category' => $weightName,

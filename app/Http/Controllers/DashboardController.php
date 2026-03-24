@@ -9,6 +9,7 @@ use App\Enums\TournamentStatus;
 use App\Models\BeltHistory;
 use App\Models\Member;
 use App\Models\Tournament;
+use App\Models\TournamentResult;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -89,10 +90,17 @@ class DashboardController extends Controller
                         'invitation_status_label' => InvitationStatus::tryFrom($myMember?->pivot->invitation_status)?->label(),
                         'participants' => $t->members
                             ->filter(fn ($m) => $m->pivot->invitation_status === InvitationStatus::Accepted->value)
-                            ->map(fn ($m) => [
-                                'id' => $m->id,
-                                'name' => $m->fullName(),
-                            ])->values()->all(),
+                            ->map(function ($m) use ($t) {
+                                $result = TournamentResult::where('tournament_id', $t->id)
+                                    ->where('member_id', $m->id)
+                                    ->first();
+
+                                return [
+                                    'id' => $m->id,
+                                    'name' => $m->fullName(),
+                                    'result' => $result?->result,
+                                ];
+                            })->values()->all(),
                         'attachments' => $t->attachments->map(fn ($a) => [
                             'id' => $a->id,
                             'original_name' => $a->original_name,

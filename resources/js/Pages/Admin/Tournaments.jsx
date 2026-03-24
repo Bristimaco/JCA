@@ -12,6 +12,9 @@ export default function Tournaments({ tournaments, ageCategories, competitionMem
                     &larr; Dashboard
                 </Link>
                 <h1 className="text-2xl font-bold text-gray-900">Toernooien</h1>
+                <Link href="/archief" className="text-sm text-purple-600 hover:text-purple-800">
+                    Archief →
+                </Link>
             </div>
 
             <TournamentsSection tournaments={tournaments} ageCategories={ageCategories} competitionMembers={competitionMembers} statuses={statuses} availableCoaches={availableCoaches} />

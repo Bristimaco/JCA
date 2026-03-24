@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\TournamentStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Tournament;
 use Illuminate\Http\RedirectResponse;
@@ -106,5 +107,16 @@ class TournamentController extends Controller
         $tournament->delete();
 
         return back()->with('status', "Toernooi \"{$name}\" is verwijderd.");
+    }
+
+    public function archive(Tournament $tournament): RedirectResponse
+    {
+        if ($tournament->status !== TournamentStatus::Finished) {
+            return back()->with('status', 'Alleen afgelopen toernooien kunnen worden gearchiveerd.');
+        }
+
+        $tournament->update(['status' => TournamentStatus::Archived]);
+
+        return back()->with('status', "Toernooi \"{$tournament->name}\" is gearchiveerd.");
     }
 }

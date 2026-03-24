@@ -14,6 +14,7 @@ export default function TournamentsSection({ tournaments, ageCategories, competi
         registrations_closed: 'bg-orange-100 text-orange-700',
         started: 'bg-green-100 text-green-700',
         finished: 'bg-purple-100 text-purple-700',
+        archived: 'bg-purple-100 text-purple-700',
     };
 
     return (
@@ -195,6 +196,7 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
     const openRegForm = useForm({});
     const closeRegForm = useForm({});
     const startForm = useForm({});
+    const archiveForm = useForm({});
     const addMemberForm = useForm({ member_id: '' });
     const addCoachForm = useForm({ member_id: '' });
     const [processing, setProcessing] = useState({});
@@ -272,6 +274,12 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
     const handleStartTournament = () => {
         if (confirm('Toernooi starten? Er kunnen hierna geen wijzigingen meer worden gemaakt.')) {
             startForm.post(`/admin/tournaments/${tournament.id}/start`);
+        }
+    };
+
+    const handleArchiveTournament = () => {
+        if (confirm('Toernooi archiveren? Het toernooi verdwijnt uit deze lijst en wordt read-only.')) {
+            archiveForm.post(`/admin/tournaments/${tournament.id}/archive`);
         }
     };
 
@@ -370,6 +378,15 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
                         className="rounded-md bg-red-600 px-2.5 py-1 text-xs font-medium text-white hover:bg-red-700 disabled:opacity-50"
                     >
                         Toernooi starten
+                    </button>
+                )}
+                {tournament.status === 'finished' && (
+                    <button
+                        onClick={handleArchiveTournament}
+                        disabled={archiveForm.processing}
+                        className="rounded-md bg-purple-600 px-2.5 py-1 text-xs font-medium text-white hover:bg-purple-700 disabled:opacity-50"
+                    >
+                        Archiveren
                     </button>
                 )}
                 {!['preparation', 'started', 'finished'].includes(tournament.status) && (

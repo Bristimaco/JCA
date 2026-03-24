@@ -6,6 +6,7 @@ const modules = [
     { name: 'Mijn Leden', href: '/mijn-leden', roles: ['parent', 'member', 'admin', 'coach'] },
     { name: 'Leden', href: '/admin/members', roles: ['admin'] },
     { name: 'Toernooien', href: '/admin/tournaments', roles: ['admin'] },
+    { name: 'Archief', href: '/archief', roles: ['parent', 'member', 'admin', 'coach'] },
     { name: 'Admin', href: '/admin', roles: ['admin'] },
 ];
 
@@ -210,7 +211,18 @@ function MyTournaments({ tournaments }) {
                                                 ) : (
                                                     <ul className="space-y-1">
                                                         {t.participants.map(p => (
-                                                            <li key={p.id} className="text-xs text-gray-700">{p.name}</li>
+                                                            <li key={p.id} className="flex items-center justify-between text-xs text-gray-700">
+                                                                <span>{p.name}</span>
+                                                                {p.result && (
+                                                                    <span className={`inline-flex items-center rounded-full px-1.5 py-0.5 text-[10px] font-medium ${p.result === '1e plaats' ? 'bg-yellow-100 text-yellow-800' :
+                                                                        p.result === '2e plaats' ? 'bg-gray-200 text-gray-800' :
+                                                                            p.result === '3e plaats' ? 'bg-amber-100 text-amber-800' :
+                                                                                'bg-gray-100 text-gray-600'
+                                                                        }`}>
+                                                                        {p.result}
+                                                                    </span>
+                                                                )}
+                                                            </li>
                                                         ))}
                                                     </ul>
                                                 )}

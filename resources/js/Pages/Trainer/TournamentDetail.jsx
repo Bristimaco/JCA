@@ -72,12 +72,13 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
         registrations_closed: 'bg-orange-100 text-orange-700',
         started: 'bg-green-100 text-green-700',
         finished: 'bg-purple-100 text-purple-700',
+        archived: 'bg-purple-100 text-purple-700',
     };
 
     const filledCount = Object.values(results).filter(r => r.result !== '').length;
     const allFilled = totalParticipants > 0 && filledCount === totalParticipants;
     const canClose = t.status === 'started' && allFilled;
-    const isFinished = t.status === 'finished';
+    const isFinished = t.status === 'finished' || t.status === 'archived';
 
     const handleClose = () => {
         if (!confirm('Weet je zeker dat je dit toernooi wilt afsluiten? Er wordt een verslag verstuurd naar alle geïnteresseerden.')) return;
