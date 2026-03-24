@@ -7,10 +7,9 @@ const modules = [
     { name: 'Leden', href: '/admin/members', roles: ['admin'] },
     { name: 'Toernooien', href: '/admin/tournaments', roles: ['admin'] },
     { name: 'Archief', href: '/archief', roles: ['parent', 'member', 'admin', 'coach'] },
-    { name: 'Admin', href: '/admin', roles: ['admin'] },
 ];
 
-export default function Dashboard({ pendingCount, memberStats, myMemberCount, myTournaments, activeTournaments, coachTournaments }) {
+export default function Dashboard({ pendingCount, pendingUsers, adminCounters, memberStats, myMemberCount, myTournaments, activeTournaments, coachTournaments }) {
     const { auth } = usePage().props;
     const role = auth.user.role;
 
@@ -27,6 +26,10 @@ export default function Dashboard({ pendingCount, memberStats, myMemberCount, my
                 <p className="text-gray-600">Welkom, {auth.user.name}!</p>
             </div>
 
+            {role === 'admin' && (
+                <AdminTile pendingCount={pendingCount} pendingUsers={pendingUsers} adminCounters={adminCounters} />
+            )}
+
             {visibleModules.length > 0 && (
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                     {visibleModules.map((m) => (
@@ -37,11 +40,6 @@ export default function Dashboard({ pendingCount, memberStats, myMemberCount, my
                         >
                             <div className="text-center">
                                 <span className="text-lg font-semibold text-gray-900">{m.name}</span>
-                                {m.name === 'Admin' && pendingCount > 0 && (
-                                    <span className="ml-2 inline-flex items-center rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-800">
-                                        {pendingCount}
-                                    </span>
-                                )}
                                 {m.name === 'Leden' && memberStats && (
                                     <span className="ml-2 inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-700">
                                         {memberStats.total}
@@ -99,6 +97,68 @@ export default function Dashboard({ pendingCount, memberStats, myMemberCount, my
                 <MyTournaments tournaments={myTournaments} />
             )}
         </AppLayout>
+    );
+}
+
+function AdminTile({ pendingCount, pendingUsers, adminCounters }) {
+    const hasPending = pendingCount > 0;
+
+    const formatDate = (dateStr) => {
+        if (!dateStr) return '-';
+        return new Date(dateStr).toLocaleDateString('nl-BE');
+    };
+
+    const counters = [
+        { label: 'Nieuwe aanvragen', value: pendingCount, bg: 'bg-amber-100', text: 'text-amber-700' },
+        { label: 'Inactieve leden', value: adminCounters?.inactiveMemberCount ?? 0, bg: 'bg-gray-100', text: 'text-gray-700' },
+        { label: 'Komende toernooien', value: adminCounters?.upcomingTournamentCount ?? 0, bg: 'bg-blue-100', text: 'text-blue-700' },
+        { label: 'Actieve toernooien', value: adminCounters?.activeTournamentCount ?? 0, bg: 'bg-green-100', text: 'text-green-700' },
+    ];
+
+    return (
+        <Link
+            href="/admin"
+            className={`block mb-6 rounded-lg shadow-sm border-2 p-6 transition-all hover:shadow-md ${hasPending
+                    ? 'border-amber-400 bg-amber-50 hover:border-amber-500'
+                    : 'border-gray-200 bg-white hover:border-blue-400'
+                }`}
+        >
+            <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-bold text-gray-900">Admin</h2>
+                {hasPending && (
+                    <span className="inline-flex items-center rounded-full bg-amber-500 px-2.5 py-1 text-xs font-bold text-white">
+                        {pendingCount} {pendingCount === 1 ? 'aanvraag' : 'aanvragen'}
+                    </span>
+                )}
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+                {counters.map((c) => (
+                    <div key={c.label} className="rounded-lg bg-white/70 p-3 text-center">
+                        <p className={`text-2xl font-bold ${c.text}`}>{c.value}</p>
+                        <p className="text-xs text-gray-500 mt-0.5">{c.label}</p>
+                    </div>
+                ))}
+            </div>
+
+            {pendingUsers && pendingUsers.length > 0 && (
+                <div className="border-t border-amber-200 pt-3">
+                    <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Recente aanvragen</p>
+                    <ul className="space-y-1.5">
+                        {pendingUsers.map((u, i) => (
+                            <li key={i} className="flex items-center justify-between text-sm">
+                                <div>
+                                    <span className="font-medium text-gray-900">{u.name}</span>
+                                    <span className="ml-2 text-gray-400 text-xs">{u.email}</span>
+                                </div>
+                                <span className="text-xs text-gray-400">{formatDate(u.created_at)}</span>
+                            </li>
+                        ))}
+                    </ul>
+                    <p className="mt-2 text-xs text-amber-600 font-medium">Bekijk alle →</p>
+                </div>
+            )}
+        </Link>
     );
 }
 

@@ -20,27 +20,27 @@ class TournamentIndexController extends Controller
             ->where('status', '!=', TournamentStatus::Archived)
             ->orderByDesc('tournament_date')
             ->get()
-            ->map(fn(Tournament $t) => [
+            ->map(fn (Tournament $t) => [
                 ...$t->toArray(),
                 'status_label' => $t->status->label(),
                 'age_category_ids' => $t->ageCategories->pluck('id')->values()->all(),
-                'attachments' => $t->attachments->map(fn($a) => [
+                'attachments' => $t->attachments->map(fn ($a) => [
                     'id' => $a->id,
                     'original_name' => $a->original_name,
-                    'url' => asset('storage/' . $a->file_path),
+                    'url' => asset('storage/'.$a->file_path),
                 ]),
-                'tournament_coaches' => $t->coaches->map(fn(Member $m) => [
+                'tournament_coaches' => $t->coaches->map(fn (Member $m) => [
                     'id' => $m->id,
                     'name' => $m->fullName(),
                 ]),
-                'tournament_members' => $t->members->map(fn(Member $m) => [
+                'tournament_members' => $t->members->map(fn (Member $m) => [
                     'id' => $m->id,
                     'name' => $m->fullName(),
                     'date_of_birth' => $m->date_of_birth->toDateString(),
                     'age_category' => $m->calculateAgeCategory($t->country_code, $t->tournament_date)?->name,
                     'weight_category' => $m->weightCategory?->ageCategory?->name
-                        ? $m->weightCategory->ageCategory->name . ' — ' . $m->weightCategory->max_weight_kg . 'kg'
-                        : ($m->weightCategory ? $m->weightCategory->max_weight_kg . 'kg' : null),
+                        ? $m->weightCategory->ageCategory->name.' — '.$m->weightCategory->max_weight_kg.'kg'
+                        : ($m->weightCategory ? $m->weightCategory->max_weight_kg.'kg' : null),
                     'invitation_status' => $m->pivot->invitation_status,
                     'invitation_status_label' => InvitationStatus::tryFrom($m->pivot->invitation_status)?->label() ?? $m->pivot->invitation_status,
                     'registration_status' => $m->pivot->registration_status,
@@ -56,22 +56,22 @@ class TournamentIndexController extends Controller
             ->orderBy('last_name')
             ->orderBy('first_name')
             ->get(['id', 'first_name', 'last_name'])
-            ->map(fn(Member $m) => [
+            ->map(fn (Member $m) => [
                 'id' => $m->id,
                 'name' => $m->fullName(),
             ]);
 
-        $statuses = collect(TournamentStatus::cases())->map(fn(TournamentStatus $s) => [
+        $statuses = collect(TournamentStatus::cases())->map(fn (TournamentStatus $s) => [
             'value' => $s->value,
             'label' => $s->label(),
         ])->values()->all();
 
         // Members linked to users with Coach role = trainers
-        $availableCoaches = Member::whereHas('users', fn($q) => $q->where('role', UserRole::Coach->value))
+        $availableCoaches = Member::whereHas('users', fn ($q) => $q->where('role', UserRole::Coach->value))
             ->orderBy('last_name')
             ->orderBy('first_name')
             ->get(['id', 'first_name', 'last_name'])
-            ->map(fn(Member $m) => [
+            ->map(fn (Member $m) => [
                 'id' => $m->id,
                 'name' => $m->fullName(),
             ]);
