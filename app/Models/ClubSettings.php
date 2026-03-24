@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Cache;
 
 class ClubSettings extends Model
 {
@@ -11,14 +10,7 @@ class ClubSettings extends Model
 
     public static function current(): self
     {
-        return Cache::remember('club_settings', 300, function () {
-            return self::first() ?? new self(['name' => 'JCA']);
-        });
-    }
-
-    public static function clearCache(): void
-    {
-        Cache::forget('club_settings');
+        return self::first() ?? new self(['name' => 'JCA']);
     }
 
     public function hasLogo(): bool

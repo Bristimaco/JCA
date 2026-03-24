@@ -39,7 +39,6 @@ class ClubSettingsController extends Controller
         }
 
         $settings->update($data);
-        ClubSettings::clearCache();
 
         return back()->with('status', 'Clubinstellingen bijgewerkt.');
     }
