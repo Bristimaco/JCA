@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="nl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -30,7 +31,11 @@
             --purple-600: #9333ea;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -129,7 +134,9 @@
             border-bottom: 2px solid var(--blue-600);
         }
 
-        h2:first-child { margin-top: 0; }
+        h2:first-child {
+            margin-top: 0;
+        }
 
         h3 {
             font-size: 20px;
@@ -152,7 +159,8 @@
             color: var(--gray-700);
         }
 
-        ul, ol {
+        ul,
+        ol {
             margin-bottom: 12px;
             padding-left: 24px;
         }
@@ -202,7 +210,8 @@
             font-size: 14px;
         }
 
-        th, td {
+        th,
+        td {
             padding: 10px 14px;
             text-align: left;
             border-bottom: 1px solid var(--gray-200);
@@ -234,13 +243,40 @@
             font-weight: 500;
         }
 
-        .badge-blue { background: #dbeafe; color: #1e40af; }
-        .badge-green { background: #dcfce7; color: #166534; }
-        .badge-gray { background: var(--gray-100); color: var(--gray-700); }
-        .badge-orange { background: #ffedd5; color: #9a3412; }
-        .badge-red { background: #fee2e2; color: #991b1b; }
-        .badge-yellow { background: #fef9c3; color: #854d0e; }
-        .badge-purple { background: #f3e8ff; color: #6b21a8; }
+        .badge-blue {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .badge-green {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-gray {
+            background: var(--gray-100);
+            color: var(--gray-700);
+        }
+
+        .badge-orange {
+            background: #ffedd5;
+            color: #9a3412;
+        }
+
+        .badge-red {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge-yellow {
+            background: #fef9c3;
+            color: #854d0e;
+        }
+
+        .badge-purple {
+            background: #f3e8ff;
+            color: #6b21a8;
+        }
 
         /* Status flow */
         .flow {
@@ -295,624 +331,993 @@
         }
 
         /* Belt colors */
-        .belt { display: inline-block; width: 14px; height: 14px; border-radius: 3px; vertical-align: middle; margin-right: 6px; border: 1px solid rgba(0,0,0,0.1); }
-        .belt-white { background: #fff; }
-        .belt-yellow { background: #facc15; }
-        .belt-orange { background: #f97316; }
-        .belt-green { background: #22c55e; }
-        .belt-blue { background: #3b82f6; }
-        .belt-brown { background: #92400e; }
-        .belt-black { background: #1c1917; }
+        .belt {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border-radius: 3px;
+            vertical-align: middle;
+            margin-right: 6px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .belt-white {
+            background: #fff;
+        }
+
+        .belt-yellow {
+            background: #facc15;
+        }
+
+        .belt-orange {
+            background: #f97316;
+        }
+
+        .belt-green {
+            background: #22c55e;
+        }
+
+        .belt-blue {
+            background: #3b82f6;
+        }
+
+        .belt-brown {
+            background: #92400e;
+        }
+
+        .belt-black {
+            background: #1c1917;
+        }
 
         /* Responsive */
         @media (max-width: 900px) {
-            .sidebar { display: none; }
-            .main { margin-left: 0; padding: 24px 20px 60px; }
+            .sidebar {
+                display: none;
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 24px 20px 60px;
+            }
         }
 
         /* Print */
         @media print {
-            .sidebar { display: none; }
-            .main { margin-left: 0; max-width: 100%; }
-            h2 { page-break-before: always; }
-            h2:first-child { page-break-before: auto; }
+            .sidebar {
+                display: none;
+            }
+
+            .main {
+                margin-left: 0;
+                max-width: 100%;
+            }
+
+            h2 {
+                page-break-before: always;
+            }
+
+            h2:first-child {
+                page-break-before: auto;
+            }
         }
     </style>
 </head>
+
 <body>
-<div class="layout">
-
-    <!-- Sidebar -->
-    <aside class="sidebar">
-        <div class="sidebar-header">
-            <h1>JCA Handleiding</h1>
-            <p>Judo Club Applicatie</p>
-        </div>
-        <nav>
-            <div class="section-title">Aan de slag</div>
-            <a href="#overzicht">Overzicht</a>
-            <a href="#rollen">Gebruikersrollen</a>
-            <a href="#registratie">Registratie &amp; Inloggen</a>
-
-            <div class="section-title">Gebruikers</div>
-            <a href="#dashboard">Dashboard</a>
-            <a href="#mijn-leden">Mijn Leden</a>
-            <a href="#toernooi-uitnodigingen">Toernooi-uitnodigingen</a>
-
-            <div class="section-title">Beheer (Admin)</div>
-            <a href="#admin-dashboard">Admin Dashboard</a>
-            <a href="#gebruikersbeheer">Gebruikersbeheer</a>
-            <a href="#ledenbeheer">Ledenbeheer</a>
-            <a href="#categorieen">Categorieën</a>
-            <a class="sub" href="#leeftijdscategorieen">Leeftijdscategorieën</a>
-            <a class="sub" href="#gewichtscategorieen">Gewichtscategorieën</a>
-            <a href="#toernooien">Toernooien</a>
-            <a class="sub" href="#toernooi-aanmaken">Toernooi aanmaken</a>
-            <a class="sub" href="#toernooi-workflow">Toernooi-workflow</a>
-            <a class="sub" href="#toernooi-leden">Leden &amp; Uitnodigingen</a>
-            <a class="sub" href="#toernooi-trainers">Trainers toewijzen</a>
-            <a href="#import-export">Import / Export</a>
-
-            <div class="section-title">Referentie</div>
-            <a href="#statussen">Statussen &amp; Labels</a>
-            <a href="#gordels">Gordelrangen</a>
-        </nav>
-    </aside>
-
-    <!-- Main content -->
-    <main class="main">
-
-        <!-- OVERZICHT -->
-        <h2 id="overzicht">Overzicht</h2>
-        <p>
-            <strong>JCA</strong> (Judo Club Applicatie) is een webapplicatie voor het beheren van een judoclub.
-            De applicatie biedt functionaliteiten voor ledenbeheer, toernooi-organisatie, gewichts- en leeftijdscategorieën,
-            en communicatie met ouders en trainers.
-        </p>
-
-        <h4>Belangrijkste functies</h4>
-        <ul>
-            <li><strong>Ledenbeheer</strong> — Leden toevoegen, bewerken, importeren/exporteren via Excel</li>
-            <li><strong>Toernooien</strong> — Toernooien aanmaken, leden uitnodigen, inschrijvingen beheren, trainers toewijzen</li>
-            <li><strong>Categorieën</strong> — Leeftijds- en gewichtscategorieën per land configureren</li>
-            <li><strong>Gebruikersbeheer</strong> — Rollen toewijzen, accounts goedkeuren, leden koppelen aan gebruikers</li>
-            <li><strong>Communicatie</strong> — Automatische e-mailuitnodigingen voor toernooien met RSVP-links</li>
-        </ul>
-
-        <!-- ROLLEN -->
-        <h2 id="rollen">Gebruikersrollen</h2>
-        <p>Elke gebruiker krijgt een rol toegewezen door een beheerder. De rol bepaalt welke onderdelen zichtbaar en toegankelijk zijn.</p>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Rol</th>
-                    <th>Label</th>
-                    <th>Rechten</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><span class="badge badge-red">admin</span></td>
-                    <td>Beheerder</td>
-                    <td>Volledige toegang: ledenbeheer, toernooien, categorieën, gebruikersbeheer</td>
-                </tr>
-                <tr>
-                    <td><span class="badge badge-blue">coach</span></td>
-                    <td>Trainer</td>
-                    <td>Inzicht in leden, kan als trainer aan toernooien worden gekoppeld</td>
-                </tr>
-                <tr>
-                    <td><span class="badge badge-green">parent</span></td>
-                    <td>Ouder</td>
-                    <td>Beperkte gegevens van eigen kinderen (leden) beheren, toernooi-informatie bekijken</td>
-                </tr>
-                <tr>
-                    <td><span class="badge badge-gray">member</span></td>
-                    <td>Lid</td>
-                    <td>Eigen gegevens bekijken, toernooi-uitnodigingen ontvangen</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <!-- REGISTRATIE & INLOGGEN -->
-        <h2 id="registratie">Registratie &amp; Inloggen</h2>
-
-        <h3>Nieuw account aanmaken</h3>
-        <ol>
-            <li>Ga naar de <strong>registratiepagina</strong> (<kbd>/register</kbd>).</li>
-            <li>Vul je <strong>naam</strong>, <strong>e-mailadres</strong> en <strong>wachtwoord</strong> in.</li>
-            <li>Klik op <strong>Registreren</strong>.</li>
-            <li>Controleer je inbox en klik op de <strong>verificatielink</strong> in de e-mail.</li>
-            <li>Na verificatie verschijnt een wachtpagina. Een beheerder moet je account <strong>goedkeuren</strong> en een rol toewijzen.</li>
-        </ol>
-
-        <div class="box box-info">
-            <div class="box-title">Tip</div>
-            Geen verificatie-e-mail ontvangen? Klik op "Verificatie opnieuw versturen" op de verificatiepagina.
-        </div>
-
-        <h3>Inloggen</h3>
-        <ol>
-            <li>Ga naar de <strong>inlogpagina</strong> (<kbd>/login</kbd>).</li>
-            <li>Vul je <strong>e-mailadres</strong> en <strong>wachtwoord</strong> in.</li>
-            <li>Optioneel: vink <strong>"Onthoud mij"</strong> aan om ingelogd te blijven.</li>
-            <li>Klik op <strong>Inloggen</strong>.</li>
-        </ol>
-
-        <!-- DASHBOARD -->
-        <h2 id="dashboard">Dashboard</h2>
-        <p>Na het inloggen verschijnt het dashboard. Wat je ziet hangt af van je rol:</p>
-
-        <h4>Snelkoppelingen</h4>
-        <table>
-            <thead>
-                <tr>
-                    <th>Knop</th>
-                    <th>Zichtbaar voor</th>
-                    <th>Beschrijving</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Mijn Leden</td>
-                    <td>Iedereen</td>
-                    <td>Ga naar je gekoppelde leden</td>
-                </tr>
-                <tr>
-                    <td>Leden</td>
-                    <td>Beheerder</td>
-                    <td>Ga naar het volledige ledenregister</td>
-                </tr>
-                <tr>
-                    <td>Toernooien</td>
-                    <td>Beheerder</td>
-                    <td>Ga naar toernooibeheer</td>
-                </tr>
-                <tr>
-                    <td>Admin</td>
-                    <td>Beheerder</td>
-                    <td>Ga naar het admin-paneel</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <h4>Actieve toernooien</h4>
-        <p>Toernooien met de status <span class="badge badge-green">Gestart</span> worden prominent op het dashboard getoond, inclusief een kaartweergave.</p>
-
-        <h4>Mijn toernooien</h4>
-        <p>Toernooien waarvoor je gekoppelde leden zijn uitgenodigd. Per toernooi zie je:</p>
-        <ul>
-            <li>Naam, datum en locatie (met kaart)</li>
-            <li>Status van elke deelnemer (geaccepteerd, uitgenodigd, afgeslagen)</li>
-            <li>Bijlagen (downloadbare bestanden)</li>
-        </ul>
-
-        <!-- MIJN LEDEN -->
-        <h2 id="mijn-leden">Mijn Leden</h2>
-        <p>Op de pagina <strong>Mijn Leden</strong> (<kbd>/mijn-leden</kbd>) beheer je de leden die aan jouw account zijn gekoppeld.</p>
-
-        <h4>Wat zie je per lid?</h4>
-        <ul>
-            <li>Foto, naam en gordelrang</li>
-            <li>Gewichtscategorie en leeftijdscategorie</li>
-            <li>Lidkaart met alle gegevens</li>
-        </ul>
-
-        <h4>Wat kun je aanpassen?</h4>
-        <ul>
-            <li><strong>E-mailadres</strong> en <strong>telefoonnummer</strong></li>
-            <li><strong>Adres</strong> (straat, postcode, stad)</li>
-            <li><strong>Gewichtscategorie</strong> (gefilterd op leeftijd en geslacht)</li>
-            <li><strong>Foto</strong> uploaden of wijzigen</li>
-        </ul>
-
-        <div class="box box-warning">
-            <div class="box-title">Let op</div>
-            Bepaalde velden (naam, geboortedatum, geslacht, lidmaatschap) kunnen alleen door een beheerder worden gewijzigd.
-        </div>
-
-        <!-- TOERNOOI-UITNODIGINGEN -->
-        <h2 id="toernooi-uitnodigingen">Toernooi-uitnodigingen</h2>
-        <p>Wanneer een lid wordt uitgenodigd voor een toernooi, ontvangt de verantwoordelijke (ouder of lid zelf) een <strong>e-mail</strong> met:</p>
-        <ul>
-            <li>De naam en datum van het toernooi</li>
-            <li>Het adres en een kaartje van de locatie</li>
-            <li>De deadline om te reageren</li>
-            <li>Eventuele bijlagen (documenten)</li>
-            <li>Twee knoppen: <strong>Accepteren</strong> of <strong>Weigeren</strong></li>
-        </ul>
-        <p>Door op een knop te klikken wordt de uitnodiging direct beantwoord. Er is geen inloggen nodig — de link bevat een unieke token.</p>
-
-        <div class="box box-info">
-            <div class="box-title">Voor minderjarigen</div>
-            De uitnodiging wordt gestuurd naar het e-mailadres van de primaire voogd (ouder). Voor volwassen leden gaat de e-mail naar het lid zelf.
-        </div>
-
-        <!-- ADMIN DASHBOARD -->
-        <h2 id="admin-dashboard">Admin Dashboard</h2>
-        <p>Het admin dashboard (<kbd>/admin</kbd>) is het startpunt voor alle beheertaken. Alleen gebruikers met de rol <span class="badge badge-red">Beheerder</span> hebben toegang.</p>
-
-        <h3 id="gebruikersbeheer">Gebruikersbeheer</h3>
-
-        <h4>Nieuwe gebruikers goedkeuren</h4>
-        <p>Bovenaan het admin dashboard zie je gebruikers die wachten op goedkeuring (e-mail geverifieerd, maar nog geen rol).</p>
-        <ol>
-            <li>Kies een <strong>rol</strong> uit het dropdownmenu (Beheerder, Trainer, Ouder, Lid).</li>
-            <li>Klik op <strong>Goedkeuren</strong>.</li>
-        </ol>
-
-        <h4>Gebruikers beheren</h4>
-        <p>Voor bestaande gebruikers kun je:</p>
-        <ul>
-            <li><strong>Bewerken</strong> — naam, e-mailadres en rol wijzigen</li>
-            <li><strong>Leden koppelen</strong> — klik op <strong>Leden</strong> naast een gebruiker om via checkboxes leden aan het account te koppelen of ontkoppelen</li>
-            <li><strong>Deactiveren / Activeren</strong> — een gedeactiveerde gebruiker kan niet meer inloggen, weergegeven met een <span class="badge badge-gray">Inactief</span> badge</li>
-        </ul>
-
-        <div class="box box-warning">
-            <div class="box-title">Let op</div>
-            Je kunt jezelf niet deactiveren, en je kunt de rol van de laatste beheerder niet wijzigen.
-        </div>
-
-        <!-- LEDENBEHEER -->
-        <h2 id="ledenbeheer">Ledenbeheer</h2>
-        <p>De ledenpagina (<kbd>/admin/members</kbd>) toont alle leden van de club. Alleen beheerders hebben toegang.</p>
-
-        <h3>Leden zoeken</h3>
-        <p>Gebruik het zoekveld om te filteren op voornaam, achternaam, licentienummer of e-mailadres. De lijst wordt real-time gefilterd.</p>
-
-        <h3>Lid toevoegen</h3>
-        <p>Klik op <strong>"Lid toevoegen"</strong> en vul het formulier in:</p>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Veld</th>
-                    <th>Verplicht</th>
-                    <th>Toelichting</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr><td>Voornaam</td><td>Ja</td><td></td></tr>
-                <tr><td>Achternaam</td><td>Ja</td><td></td></tr>
-                <tr><td>Geboortedatum</td><td>Ja</td><td>Bepaalt automatisch de leeftijdscategorie</td></tr>
-                <tr><td>Geslacht</td><td>Ja</td><td>Man of Vrouw</td></tr>
-                <tr><td>E-mail</td><td>Nee</td><td></td></tr>
-                <tr><td>Telefoon</td><td>Nee</td><td></td></tr>
-                <tr><td>Licentienummer</td><td>Nee</td><td>Moet uniek zijn</td></tr>
-                <tr><td>Gewichtscategorie</td><td>Nee</td><td>Gefilterd op leeftijd en geslacht</td></tr>
-                <tr><td>Gordelrang</td><td>Nee</td><td>Wordt opgeslagen in gordelhistoriek</td></tr>
-                <tr><td>Adres</td><td>Nee</td><td>Straat, postcode, stad</td></tr>
-                <tr><td>Lidmaatschapsstatus</td><td>Ja</td><td>Actief, Inactief, Geschorst, In afwachting</td></tr>
-                <tr><td>Competitie</td><td>Nee</td><td>Aanvinken als het lid aan competities deelneemt</td></tr>
-                <tr><td>Foto</td><td>Nee</td><td>Profielfoto uploaden</td></tr>
-            </tbody>
-        </table>
-
-        <h3>Lid bewerken</h3>
-        <p>Klik op <strong>Bewerken</strong> naast een lid om alle velden aan te passen. Wijzigingen worden direct opgeslagen bij klikken op <strong>Opslaan</strong>.</p>
-
-        <h3>Lid verwijderen</h3>
-        <p>Klik op <strong>Verwijderen</strong> en bevestig. Het lid wordt <em>soft-deleted</em> (niet permanent verwijderd uit de database).</p>
-
-        <!-- CATEGORIEËN -->
-        <h2 id="categorieen">Categorieën</h2>
-
-        <h3 id="leeftijdscategorieen">Leeftijdscategorieën</h3>
-        <p>Leeftijdscategorieën worden per <strong>land</strong> geconfigureerd. Elk land kan een ander systeem hanteren:</p>
-        <ul>
-            <li><strong>België (BE)</strong> — Jaargebaseerd: leeftijd op 31 december van het huidige jaar</li>
-            <li><strong>Frankrijk (FR)</strong> — Seisoengebaseerd: leeftijd op een vaste peildatum (cutoff date)</li>
-        </ul>
-
-        <h4>Categorie toevoegen / bewerken</h4>
-        <table>
-            <thead>
-                <tr>
-                    <th>Veld</th>
-                    <th>Voorbeeld</th>
-                    <th>Toelichting</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr><td>Naam</td><td>U15</td><td>Weergavenaam</td></tr>
-                <tr><td>Land</td><td>BE</td><td>Landcode (2 letters)</td></tr>
-                <tr><td>Minimumleeftijd</td><td>12</td><td></td></tr>
-                <tr><td>Maximumleeftijd</td><td>14</td><td>Moet ≥ minimumleeftijd zijn</td></tr>
-                <tr><td>Peildatum</td><td>09-01</td><td>Optioneel, formaat MM-DD (voor seizoenssysteem)</td></tr>
-                <tr><td>Volgorde</td><td>3</td><td>Bepaalt de weergavevolgorde</td></tr>
-            </tbody>
-        </table>
-
-        <h4>Herberekenen</h4>
-        <p>Klik op <strong>"Herberekenen"</strong> om alle leden automatisch opnieuw in te delen in de juiste leeftijdscategorie op basis van hun geboortedatum.</p>
-
-        <h3 id="gewichtscategorieen">Gewichtscategorieën</h3>
-        <p>Gewichtscategorieën zijn gekoppeld aan een leeftijdscategorie en gescheiden per geslacht.</p>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Veld</th>
-                    <th>Voorbeeld</th>
-                    <th>Toelichting</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr><td>Naam</td><td>-60</td><td>Weergavenaam</td></tr>
-                <tr><td>Leeftijdscategorie</td><td>U18</td><td>Koppeling aan leeftijdscategorie</td></tr>
-                <tr><td>Geslacht</td><td>Man / Vrouw</td><td></td></tr>
-                <tr><td>Max gewicht (kg)</td><td>60.0</td><td></td></tr>
-                <tr><td>Volgorde</td><td>2</td><td>Weergavevolgorde</td></tr>
-            </tbody>
-        </table>
-
-        <!-- TOERNOOIEN -->
-        <h2 id="toernooien">Toernooien</h2>
-        <p>Toernooien worden beheerd op de toernooipagina (<kbd>/admin/tournaments</kbd>). Hier doorloop je het volledige proces van aanmaken tot afsluiten.</p>
-
-        <h3 id="toernooi-aanmaken">Toernooi aanmaken</h3>
-        <p>Klik op <strong>"Toernooi toevoegen"</strong> en vul het formulier in:</p>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Veld</th>
-                    <th>Verplicht</th>
-                    <th>Toelichting</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr><td>Naam</td><td>Ja</td><td>Naam van het toernooi</td></tr>
-                <tr><td>Land</td><td>Ja</td><td>Bepaalt welke leeftijdscategorieën beschikbaar zijn</td></tr>
-                <tr><td>Toernooidatum</td><td>Ja</td><td></td></tr>
-                <tr><td>Straat + nr</td><td>Nee</td><td>Adres van de locatie</td></tr>
-                <tr><td>Postcode</td><td>Nee</td><td></td></tr>
-                <tr><td>Stad</td><td>Nee</td><td>Na invoer wordt de locatie automatisch op de kaart getoond</td></tr>
-                <tr><td>Uitnodiging deadline</td><td>Nee</td><td>Wordt vermeld in de uitnodigingsmail</td></tr>
-                <tr><td>Inschrijving deadline</td><td>Nee</td><td></td></tr>
-                <tr><td>Leeftijdscategorieën</td><td>Nee</td><td>Vink aan welke categorieën mogen deelnemen</td></tr>
-                <tr><td>Bijlagen</td><td>Nee</td><td>Bestanden uploaden (max 10 MB per bestand)</td></tr>
-            </tbody>
-        </table>
-
-        <div class="box box-info">
-            <div class="box-title">Automatische locatie</div>
-            Wanneer je het adres invult, zoekt de applicatie automatisch de coördinaten op en toont een kaart in het formulier. Dit wordt ook op het dashboard en in uitnodigingsmails weergegeven.
-        </div>
-
-        <h3 id="toernooi-workflow">Toernooi-workflow</h3>
-        <p>Elk toernooi doorloopt een vaste reeks statussen. De beschikbare acties hangen af van de huidige status.</p>
-
-        <div class="flow">
-            <div class="flow-step"><span class="badge badge-gray">Voorbereiding</span></div>
-            <span class="flow-arrow">→</span>
-            <div class="flow-step"><span class="badge badge-blue">Uitnodigingen verstuurd</span></div>
-            <span class="flow-arrow">→</span>
-            <div class="flow-step"><span class="badge badge-yellow">Inschrijvingen gestart</span></div>
-            <span class="flow-arrow">→</span>
-            <div class="flow-step"><span class="badge badge-orange">Inschrijvingen voltooid</span></div>
-            <span class="flow-arrow">→</span>
-            <div class="flow-step"><span class="badge badge-green">Gestart</span></div>
-            <span class="flow-arrow">→</span>
-            <div class="flow-step"><span class="badge badge-purple">Afgelopen</span></div>
-        </div>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Status</th>
-                    <th>Beschikbare acties</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><span class="badge badge-gray">Voorbereiding</span></td>
-                    <td>
-                        Leden toevoegen (automatisch of individueel), uitnodigen, verwijderen, trainers toewijzen.
-                        Klik op <strong>"Uitnodigingen afsluiten"</strong> om naar de volgende stap te gaan.
-                    </td>
-                </tr>
-                <tr>
-                    <td><span class="badge badge-blue">Uitnodigingen verstuurd</span></td>
-                    <td>
-                        Wachten op reacties van deelnemers. Klik op <strong>"Inschrijvingen starten"</strong> zodra genoeg reacties binnen zijn.
-                    </td>
-                </tr>
-                <tr>
-                    <td><span class="badge badge-yellow">Inschrijvingen gestart</span></td>
-                    <td>
-                        Leden die hebben geaccepteerd <strong>inschrijven</strong> (bevestig op externe wedstrijdsite).
-                        <strong>Uitschrijven</strong> is ook mogelijk. Klik op <strong>"Inschrijvingen afsluiten"</strong> als alle inschrijvingen zijn verwerkt.
-                    </td>
-                </tr>
-                <tr>
-                    <td><span class="badge badge-orange">Inschrijvingen voltooid</span></td>
-                    <td>
-                        Klik op <strong>"Toernooi starten"</strong> om het toernooi te starten.
-                    </td>
-                </tr>
-                <tr>
-                    <td><span class="badge badge-green">Gestart</span></td>
-                    <td>
-                        Toernooi is bezig. Wordt op het dashboard van alle gebruikers getoond.
-                    </td>
-                </tr>
-                <tr>
-                    <td><span class="badge badge-purple">Afgelopen</span></td>
-                    <td>
-                        Toernooi is afgelopen.
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-
-        <div class="box box-info">
-            <div class="box-title">Status terugzetten</div>
-            Met de knop <strong>"← Vorige status"</strong> kun je terugkeren naar de vorige stap. Dit is niet mogelijk voor de statussen <em>Gestart</em> en <em>Afgelopen</em>.
-        </div>
-
-        <h3 id="toernooi-leden">Leden &amp; Uitnodigingen</h3>
-        <p>Klik op <strong>"Leden (X)"</strong> bij een toernooi om het ledenpaneel te openen.</p>
-
-        <h4>Leden toevoegen</h4>
-        <ul>
-            <li><strong>Automatisch:</strong> klik op <strong>"Leden toevoegen"</strong> — alle competitieleden die in een geselecteerde leeftijdscategorie vallen worden automatisch toegevoegd.</li>
-            <li><strong>Individueel:</strong> kies een lid uit het dropdownmenu rechts en klik op <strong>+</strong>.</li>
-        </ul>
-
-        <h4>Uitnodigen</h4>
-        <ul>
-            <li><strong>Allen uitnodigen:</strong> klik op <strong>"Alle uitnodigen (X)"</strong> om alle nog-niet-uitgenodigde leden in één keer een e-mail te sturen.</li>
-            <li><strong>Individueel:</strong> klik op <strong>"Uitnodigen"</strong> naast een specifiek lid.</li>
-        </ul>
-
-        <h4>Uitnodigingsstatussen</h4>
-        <table>
-            <thead>
-                <tr>
-                    <th>Status</th>
-                    <th>Betekenis</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr><td><span class="badge badge-gray">Nog niet uitgenodigd</span></td><td>Lid is toegevoegd maar nog geen e-mail verstuurd</td></tr>
-                <tr><td><span class="badge badge-blue">Uitgenodigd</span></td><td>E-mail is verstuurd, wachtend op reactie</td></tr>
-                <tr><td><span class="badge badge-green">Neemt deel</span></td><td>Lid heeft de uitnodiging geaccepteerd</td></tr>
-                <tr><td><span class="badge badge-red">Neemt niet deel</span></td><td>Lid heeft de uitnodiging afgeslagen</td></tr>
-            </tbody>
-        </table>
-
-        <h4>Inschrijvingen</h4>
-        <p>Tijdens de fase <span class="badge badge-yellow">Inschrijvingen gestart</span> kun je leden die hebben geaccepteerd inschrijven:</p>
-        <ul>
-            <li>Klik op <strong>"Inschrijven"</strong> naast een lid om te bevestigen dat de inschrijving op de externe wedstrijdsite is gedaan.</li>
-            <li>Klik op <strong>"Uitschrijven"</strong> om een inschrijving ongedaan te maken.</li>
-            <li>Het lid ontvangt een e-mail bij zowel inschrijving als uitschrijving.</li>
-        </ul>
-
-        <!-- TOERNOOI-TRAINERS -->
-        <h3 id="toernooi-trainers">Trainers toewijzen</h3>
-        <p>Onder de ledenlijst van elk toernooi staat een sectie <strong>"Trainers"</strong>. Hier wijs je aan welke trainers de begeleiding van de deelnemers op zich nemen.</p>
-
-        <h4>Wie zijn trainers?</h4>
-        <p>Trainers zijn <strong>leden</strong> die gekoppeld zijn aan een gebruikersaccount met de rol <span class="badge badge-blue">Trainer</span>. Een lid verschijnt alleen in de dropdown als aan beide voorwaarden is voldaan:</p>
-        <ol>
-            <li>Er bestaat een <strong>lid</strong> in het ledenregister.</li>
-            <li>Er bestaat een <strong>gebruiker</strong> met de rol <em>Trainer</em>, en dat lid is aan die gebruiker <strong>gekoppeld</strong>.</li>
-        </ol>
-
-        <h4>Trainer toevoegen</h4>
-        <ol>
-            <li>Open het ledenpaneel van een toernooi (klik op <strong>"Leden"</strong>).</li>
-            <li>Scroll naar de sectie <strong>"Trainers"</strong> onderaan.</li>
-            <li>Kies een trainer uit het dropdownmenu <strong>"Trainer toevoegen..."</strong>.</li>
-            <li>Klik op <strong>+</strong> om toe te voegen.</li>
-        </ol>
-
-        <h4>Trainer verwijderen</h4>
-        <p>Klik op het <strong>✕</strong> naast de naam van de trainer en bevestig.</p>
-
-        <div class="box box-info">
-            <div class="box-title">Trainer koppelen aan gebruiker</div>
-            Om een lid als trainer beschikbaar te maken: ga naar <strong>Admin Dashboard → Gebruikers</strong>, klik op <strong>"Leden"</strong> naast de trainer-gebruiker, en koppel het juiste lid via de checkboxes.
-        </div>
-
-        <!-- IMPORT / EXPORT -->
-        <h2 id="import-export">Import / Export</h2>
-        <p>De applicatie ondersteunt het importeren en exporteren van gegevens via Excel-bestanden.</p>
-
-        <h3>Leden importeren / exporteren</h3>
-        <ul>
-            <li><strong>Exporteren:</strong> klik op <strong>"Exporteren"</strong> op de ledenpagina om een Excel-bestand te downloaden met alle leden.</li>
-            <li><strong>Importeren:</strong> klik op <strong>"Importeren"</strong> en upload een <kbd>.xlsx</kbd>, <kbd>.xls</kbd> of <kbd>.csv</kbd> bestand.</li>
-        </ul>
-
-        <h3>Categorieën importeren / exporteren</h3>
-        <ul>
-            <li><strong>Leeftijdscategorieën</strong> en <strong>gewichtscategorieën</strong> kunnen apart worden geïmporteerd en geëxporteerd via het admin dashboard.</li>
-        </ul>
-
-        <div class="box box-warning">
-            <div class="box-title">Let op bij import</div>
-            Zorg dat de kolomnamen in het Excel-bestand overeenkomen met het verwachte formaat. Exporteer eerst een bestand om het juiste sjabloon te zien.
-        </div>
-
-        <!-- STATUSSEN & LABELS -->
-        <h2 id="statussen">Statussen &amp; Labels</h2>
-
-        <h3>Lidmaatschapsstatus</h3>
-        <table>
-            <thead><tr><th>Waarde</th><th>Label</th></tr></thead>
-            <tbody>
-                <tr><td>active</td><td><span class="badge badge-green">Actief</span></td></tr>
-                <tr><td>inactive</td><td><span class="badge badge-gray">Inactief</span></td></tr>
-                <tr><td>suspended</td><td><span class="badge badge-red">Geschorst</span></td></tr>
-                <tr><td>pending</td><td><span class="badge badge-yellow">In afwachting</span></td></tr>
-            </tbody>
-        </table>
-
-        <h3>Toernooi-status</h3>
-        <table>
-            <thead><tr><th>Waarde</th><th>Label</th></tr></thead>
-            <tbody>
-                <tr><td>preparation</td><td><span class="badge badge-gray">Voorbereiding</span></td></tr>
-                <tr><td>invitations_sent</td><td><span class="badge badge-blue">Uitnodigingen verstuurd</span></td></tr>
-                <tr><td>registrations_open</td><td><span class="badge badge-yellow">Inschrijvingen gestart</span></td></tr>
-                <tr><td>registrations_closed</td><td><span class="badge badge-orange">Inschrijvingen voltooid</span></td></tr>
-                <tr><td>started</td><td><span class="badge badge-green">Gestart</span></td></tr>
-                <tr><td>finished</td><td><span class="badge badge-purple">Afgelopen</span></td></tr>
-            </tbody>
-        </table>
-
-        <h3>Geslacht</h3>
-        <table>
-            <thead><tr><th>Waarde</th><th>Label</th></tr></thead>
-            <tbody>
-                <tr><td>male</td><td>Man</td></tr>
-                <tr><td>female</td><td>Vrouw</td></tr>
-            </tbody>
-        </table>
-
-        <h3>Voogdrelatie</h3>
-        <table>
-            <thead><tr><th>Waarde</th><th>Label</th></tr></thead>
-            <tbody>
-                <tr><td>father</td><td>Vader</td></tr>
-                <tr><td>mother</td><td>Moeder</td></tr>
-                <tr><td>guardian</td><td>Voogd</td></tr>
-                <tr><td>other</td><td>Andere</td></tr>
-            </tbody>
-        </table>
-
-        <!-- GORDELS -->
-        <h2 id="gordels">Gordelrangen</h2>
-        <p>De applicatie ondersteunt een volledige gordelhistoriek per lid. Bij het toekennen van een nieuwe gordelrang wordt de datum, locatie en examinator opgeslagen.</p>
-
-        <table>
-            <thead><tr><th>Kleur</th><th>Label</th></tr></thead>
-            <tbody>
-                <tr><td><span class="belt belt-white"></span> Wit</td><td>white</td></tr>
-                <tr><td><span class="belt belt-yellow"></span> Geel</td><td>yellow</td></tr>
-                <tr><td><span class="belt belt-orange"></span> Oranje</td><td>orange</td></tr>
-                <tr><td><span class="belt belt-green"></span> Groen</td><td>green</td></tr>
-                <tr><td><span class="belt belt-blue"></span> Blauw</td><td>blue</td></tr>
-                <tr><td><span class="belt belt-brown"></span> Bruin</td><td>brown</td></tr>
-                <tr><td><span class="belt belt-black"></span> Zwart 1e Dan</td><td>black_1dan</td></tr>
-                <tr><td><span class="belt belt-black"></span> Zwart 2e Dan</td><td>black_2dan</td></tr>
-                <tr><td><span class="belt belt-black"></span> Zwart 3e Dan</td><td>black_3dan</td></tr>
-                <tr><td><span class="belt belt-black"></span> Zwart 4e Dan</td><td>black_4dan</td></tr>
-                <tr><td><span class="belt belt-black"></span> Zwart 5e Dan</td><td>black_5dan</td></tr>
-                <tr><td><span class="belt belt-black"></span> Zwart 6e Dan — 10e Dan</td><td>black_6dan — black_10dan</td></tr>
-            </tbody>
-        </table>
-
-        <p style="margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--gray-200); color: var(--gray-500); font-size: 13px;">
-            JCA Handleiding — Laatste update: maart 2026
-        </p>
-
-    </main>
-</div>
+    <div class="layout">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>JCA Handleiding</h1>
+                <p>Judo Club Applicatie</p>
+            </div>
+            <nav>
+                <div class="section-title">Aan de slag</div>
+                <a href="#overzicht">Overzicht</a>
+                <a href="#rollen">Gebruikersrollen</a>
+                <a href="#registratie">Registratie &amp; Inloggen</a>
+
+                <div class="section-title">Gebruikers</div>
+                <a href="#dashboard">Dashboard</a>
+                <a href="#mijn-leden">Mijn Leden</a>
+                <a href="#toernooi-detail">Toernooikaart</a>
+                <a href="#toernooi-uitnodigingen">Toernooi-uitnodigingen</a>
+
+                <div class="section-title">Beheer (Admin)</div>
+                <a href="#admin-dashboard">Admin Dashboard</a>
+                <a href="#gebruikersbeheer">Gebruikersbeheer</a>
+                <a href="#ledenbeheer">Ledenbeheer</a>
+                <a href="#categorieen">Categorieën</a>
+                <a class="sub" href="#leeftijdscategorieen">Leeftijdscategorieën</a>
+                <a class="sub" href="#gewichtscategorieen">Gewichtscategorieën</a>
+                <a href="#toernooien">Toernooien</a>
+                <a class="sub" href="#toernooi-aanmaken">Toernooi aanmaken</a>
+                <a class="sub" href="#toernooi-workflow">Toernooi-workflow</a>
+                <a class="sub" href="#toernooi-leden">Leden &amp; Uitnodigingen</a>
+                <a class="sub" href="#toernooi-trainers">Trainers toewijzen</a>
+                <a href="#import-export">Import / Export</a>
+
+                <div class="section-title">Referentie</div>
+                <a href="#statussen">Statussen &amp; Labels</a>
+                <a href="#gordels">Gordelrangen</a>
+            </nav>
+        </aside>
+
+        <!-- Main content -->
+        <main class="main">
+
+            <!-- OVERZICHT -->
+            <h2 id="overzicht">Overzicht</h2>
+            <p>
+                <strong>JCA</strong> (Judo Club Applicatie) is een webapplicatie voor het beheren van een judoclub.
+                De applicatie biedt functionaliteiten voor ledenbeheer, toernooi-organisatie, gewichts- en
+                leeftijdscategorieën,
+                en communicatie met ouders en trainers.
+            </p>
+
+            <h4>Belangrijkste functies</h4>
+            <ul>
+                <li><strong>Ledenbeheer</strong> — Leden toevoegen, bewerken, importeren/exporteren via Excel</li>
+                <li><strong>Toernooien</strong> — Toernooien aanmaken, leden uitnodigen, inschrijvingen beheren,
+                    trainers toewijzen</li>
+                <li><strong>Categorieën</strong> — Leeftijds- en gewichtscategorieën per land configureren</li>
+                <li><strong>Gebruikersbeheer</strong> — Rollen toewijzen, accounts goedkeuren, leden koppelen aan
+                    gebruikers</li>
+                <li><strong>Communicatie</strong> — Automatische e-mailuitnodigingen voor toernooien met RSVP-links</li>
+            </ul>
+
+            <!-- ROLLEN -->
+            <h2 id="rollen">Gebruikersrollen</h2>
+            <p>Elke gebruiker krijgt een rol toegewezen door een beheerder. De rol bepaalt welke onderdelen zichtbaar en
+                toegankelijk zijn.</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rol</th>
+                        <th>Label</th>
+                        <th>Rechten</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="badge badge-red">admin</span></td>
+                        <td>Beheerder</td>
+                        <td>Volledige toegang: ledenbeheer, toernooien, categorieën, gebruikersbeheer</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-blue">coach</span></td>
+                        <td>Trainer</td>
+                        <td>Inzicht in leden, kan als trainer aan toernooien worden gekoppeld</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-green">parent</span></td>
+                        <td>Ouder</td>
+                        <td>Beperkte gegevens van eigen kinderen (leden) beheren, toernooi-informatie bekijken</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-gray">member</span></td>
+                        <td>Lid</td>
+                        <td>Eigen gegevens bekijken, toernooi-uitnodigingen ontvangen</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- REGISTRATIE & INLOGGEN -->
+            <h2 id="registratie">Registratie &amp; Inloggen</h2>
+
+            <h3>Nieuw account aanmaken</h3>
+            <ol>
+                <li>Ga naar de <strong>registratiepagina</strong> (<kbd>/register</kbd>).</li>
+                <li>Vul je <strong>naam</strong>, <strong>e-mailadres</strong> en <strong>wachtwoord</strong> in.</li>
+                <li>Klik op <strong>Registreren</strong>.</li>
+                <li>Controleer je inbox en klik op de <strong>verificatielink</strong> in de e-mail.</li>
+                <li>Na verificatie verschijnt een wachtpagina. Een beheerder moet je account <strong>goedkeuren</strong>
+                    en een rol toewijzen.</li>
+            </ol>
+
+            <div class="box box-info">
+                <div class="box-title">Tip</div>
+                Geen verificatie-e-mail ontvangen? Klik op "Verificatie opnieuw versturen" op de verificatiepagina.
+            </div>
+
+            <h3>Inloggen</h3>
+            <ol>
+                <li>Ga naar de <strong>inlogpagina</strong> (<kbd>/login</kbd>).</li>
+                <li>Vul je <strong>e-mailadres</strong> en <strong>wachtwoord</strong> in.</li>
+                <li>Optioneel: vink <strong>"Onthoud mij"</strong> aan om ingelogd te blijven.</li>
+                <li>Klik op <strong>Inloggen</strong>.</li>
+            </ol>
+
+            <!-- DASHBOARD -->
+            <h2 id="dashboard">Dashboard</h2>
+            <p>Na het inloggen verschijnt het dashboard. Wat je ziet hangt af van je rol:</p>
+
+            <h4>Snelkoppelingen</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Knop</th>
+                        <th>Zichtbaar voor</th>
+                        <th>Beschrijving</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Mijn Leden</td>
+                        <td>Iedereen</td>
+                        <td>Ga naar je gekoppelde leden</td>
+                    </tr>
+                    <tr>
+                        <td>Leden</td>
+                        <td>Beheerder</td>
+                        <td>Ga naar het volledige ledenregister</td>
+                    </tr>
+                    <tr>
+                        <td>Toernooien</td>
+                        <td>Beheerder</td>
+                        <td>Ga naar toernooibeheer</td>
+                    </tr>
+                    <tr>
+                        <td>Admin</td>
+                        <td>Beheerder</td>
+                        <td>Ga naar het admin-paneel</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h4>Actieve toernooien</h4>
+            <p>Toernooien met de status <span class="badge badge-green">Gestart</span> worden prominent op het dashboard
+                getoond, inclusief een kaartweergave. Klik op een toernooi om de <strong>toernooikaart</strong> te openen met alle details en deelnemers.</p>
+
+            <h4>Mijn toernooien</h4>
+            <p>Toernooien waarvoor je gekoppelde leden zijn uitgenodigd. Per toernooi zie je:</p>
+            <ul>
+                <li>Naam, datum en locatie (met kaart)</li>
+                <li>Status van elke deelnemer (geaccepteerd, uitgenodigd, afgeslagen)</li>
+                <li>Bijlagen (downloadbare bestanden)</li>
+            </ul>
+
+            <!-- MIJN LEDEN -->
+            <h2 id="mijn-leden">Mijn Leden</h2>
+            <p>Op de pagina <strong>Mijn Leden</strong> (<kbd>/mijn-leden</kbd>) beheer je de leden die aan jouw account
+                zijn gekoppeld.</p>
+
+            <h4>Wat zie je per lid?</h4>
+            <ul>
+                <li>Foto, naam en gordelrang</li>
+                <li>Gewichtscategorie en leeftijdscategorie</li>
+                <li>Lidkaart met alle gegevens</li>
+            </ul>
+
+            <h4>Wat kun je aanpassen?</h4>
+            <ul>
+                <li><strong>E-mailadres</strong> en <strong>telefoonnummer</strong></li>
+                <li><strong>Adres</strong> (straat, postcode, stad)</li>
+                <li><strong>Gewichtscategorie</strong> (gefilterd op leeftijd en geslacht)</li>
+                <li><strong>Foto</strong> uploaden of wijzigen</li>
+            </ul>
+
+            <div class="box box-warning">
+                <div class="box-title">Let op</div>
+                Bepaalde velden (naam, geboortedatum, geslacht, lidmaatschap) kunnen alleen door een beheerder worden
+                gewijzigd.
+            </div>
+
+            <!-- TOERNOOIKAART -->
+            <h2 id="toernooi-detail">Toernooikaart</h2>
+            <p>De toernooikaart (<kbd>/toernooien/{id}</kbd>) toont alle details van een lopend toernooi. Elke ingelogde gebruiker kan deze pagina openen door op een actief toernooi te klikken op het dashboard.</p>
+
+            <h4>Wat zie je op de toernooikaart?</h4>
+            <ul>
+                <li><strong>Details</strong> — naam, datum, locatie (met kaart), land en het totaal aantal deelnemers</li>
+                <li><strong>Trainers</strong> — de trainers die de begeleiding doen</li>
+                <li><strong>Bijlagen</strong> — downloadbare documenten bij het toernooi</li>
+                <li><strong>Deelnemers</strong> — alle effectieve deelnemers, gegroepeerd per <em>leeftijdscategorie</em> en vervolgens per <em>gewichtscategorie</em></li>
+            </ul>
+
+            <div class="box box-info">
+                <div class="box-title">Effectieve deelnemers</div>
+                Bij een gestart of afgelopen toernooi worden alleen deelnemers getoond die zowel hebben <strong>geaccepteerd</strong> als effectief <strong>ingeschreven</strong> zijn. Zo heb je altijd een actueel overzicht van wie er daadwerkelijk meevecht.
+            </div>
+
+            <!-- TOERNOOI-UITNODIGINGEN -->
+            <h2 id="toernooi-uitnodigingen">Toernooi-uitnodigingen</h2>
+            <p>Wanneer een lid wordt uitgenodigd voor een toernooi, ontvangt de verantwoordelijke (ouder of lid zelf)
+                een <strong>e-mail</strong> met:</p>
+            <ul>
+                <li>De naam en datum van het toernooi</li>
+                <li>Het adres en een kaartje van de locatie</li>
+                <li>De deadline om te reageren</li>
+                <li>Eventuele bijlagen (documenten)</li>
+                <li>Twee knoppen: <strong>Accepteren</strong> of <strong>Weigeren</strong></li>
+            </ul>
+            <p>Door op een knop te klikken wordt de uitnodiging direct beantwoord. Er is geen inloggen nodig — de link
+                bevat een unieke token.</p>
+
+            <div class="box box-info">
+                <div class="box-title">Voor minderjarigen</div>
+                De uitnodiging wordt gestuurd naar het e-mailadres van de primaire voogd (ouder). Voor volwassen leden
+                gaat de e-mail naar het lid zelf.
+            </div>
+
+            <!-- ADMIN DASHBOARD -->
+            <h2 id="admin-dashboard">Admin Dashboard</h2>
+            <p>Het admin dashboard (<kbd>/admin</kbd>) is het startpunt voor alle beheertaken. Alleen gebruikers met de
+                rol <span class="badge badge-red">Beheerder</span> hebben toegang.</p>
+
+            <h3 id="gebruikersbeheer">Gebruikersbeheer</h3>
+
+            <h4>Nieuwe gebruikers goedkeuren</h4>
+            <p>Bovenaan het admin dashboard zie je gebruikers die wachten op goedkeuring (e-mail geverifieerd, maar nog
+                geen rol).</p>
+            <ol>
+                <li>Kies een <strong>rol</strong> uit het dropdownmenu (Beheerder, Trainer, Ouder, Lid).</li>
+                <li>Klik op <strong>Goedkeuren</strong>.</li>
+            </ol>
+
+            <h4>Gebruikers beheren</h4>
+            <p>Voor bestaande gebruikers kun je:</p>
+            <ul>
+                <li><strong>Bewerken</strong> — naam, e-mailadres en rol wijzigen</li>
+                <li><strong>Leden koppelen</strong> — klik op <strong>Leden</strong> naast een gebruiker om via
+                    checkboxes leden aan het account te koppelen of ontkoppelen</li>
+                <li><strong>Deactiveren / Activeren</strong> — een gedeactiveerde gebruiker kan niet meer inloggen,
+                    weergegeven met een <span class="badge badge-gray">Inactief</span> badge</li>
+            </ul>
+
+            <div class="box box-warning">
+                <div class="box-title">Let op</div>
+                Je kunt jezelf niet deactiveren, en je kunt de rol van de laatste beheerder niet wijzigen.
+            </div>
+
+            <!-- LEDENBEHEER -->
+            <h2 id="ledenbeheer">Ledenbeheer</h2>
+            <p>De ledenpagina (<kbd>/admin/members</kbd>) toont alle leden van de club. Alleen beheerders hebben
+                toegang.</p>
+
+            <h3>Leden zoeken</h3>
+            <p>Gebruik het zoekveld om te filteren op voornaam, achternaam, licentienummer of e-mailadres. De lijst
+                wordt real-time gefilterd.</p>
+
+            <h3>Lid toevoegen</h3>
+            <p>Klik op <strong>"Lid toevoegen"</strong> en vul het formulier in:</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Veld</th>
+                        <th>Verplicht</th>
+                        <th>Toelichting</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Voornaam</td>
+                        <td>Ja</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Achternaam</td>
+                        <td>Ja</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Geboortedatum</td>
+                        <td>Ja</td>
+                        <td>Bepaalt automatisch de leeftijdscategorie</td>
+                    </tr>
+                    <tr>
+                        <td>Geslacht</td>
+                        <td>Ja</td>
+                        <td>Man of Vrouw</td>
+                    </tr>
+                    <tr>
+                        <td>E-mail</td>
+                        <td>Nee</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Telefoon</td>
+                        <td>Nee</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Licentienummer</td>
+                        <td>Nee</td>
+                        <td>Moet uniek zijn</td>
+                    </tr>
+                    <tr>
+                        <td>Gewichtscategorie</td>
+                        <td>Nee</td>
+                        <td>Gefilterd op leeftijd en geslacht</td>
+                    </tr>
+                    <tr>
+                        <td>Gordelrang</td>
+                        <td>Nee</td>
+                        <td>Wordt opgeslagen in gordelhistoriek</td>
+                    </tr>
+                    <tr>
+                        <td>Adres</td>
+                        <td>Nee</td>
+                        <td>Straat, postcode, stad</td>
+                    </tr>
+                    <tr>
+                        <td>Lidmaatschapsstatus</td>
+                        <td>Ja</td>
+                        <td>Actief, Inactief, Geschorst, In afwachting</td>
+                    </tr>
+                    <tr>
+                        <td>Competitie</td>
+                        <td>Nee</td>
+                        <td>Aanvinken als het lid aan competities deelneemt</td>
+                    </tr>
+                    <tr>
+                        <td>Foto</td>
+                        <td>Nee</td>
+                        <td>Profielfoto uploaden</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Lid bewerken</h3>
+            <p>Klik op <strong>Bewerken</strong> naast een lid om alle velden aan te passen. Wijzigingen worden direct
+                opgeslagen bij klikken op <strong>Opslaan</strong>.</p>
+
+            <h3>Lid verwijderen</h3>
+            <p>Klik op <strong>Verwijderen</strong> en bevestig. Het lid wordt <em>soft-deleted</em> (niet permanent
+                verwijderd uit de database).</p>
+
+            <!-- CATEGORIEËN -->
+            <h2 id="categorieen">Categorieën</h2>
+
+            <h3 id="leeftijdscategorieen">Leeftijdscategorieën</h3>
+            <p>Leeftijdscategorieën worden per <strong>land</strong> geconfigureerd. Elk land kan een ander systeem
+                hanteren:</p>
+            <ul>
+                <li><strong>België (BE)</strong> — Jaargebaseerd: leeftijd op 31 december van het huidige jaar</li>
+                <li><strong>Frankrijk (FR)</strong> — Seisoengebaseerd: leeftijd op een vaste peildatum (cutoff date)
+                </li>
+            </ul>
+
+            <h4>Categorie toevoegen / bewerken</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Veld</th>
+                        <th>Voorbeeld</th>
+                        <th>Toelichting</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Naam</td>
+                        <td>U15</td>
+                        <td>Weergavenaam</td>
+                    </tr>
+                    <tr>
+                        <td>Land</td>
+                        <td>BE</td>
+                        <td>Landcode (2 letters)</td>
+                    </tr>
+                    <tr>
+                        <td>Minimumleeftijd</td>
+                        <td>12</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Maximumleeftijd</td>
+                        <td>14</td>
+                        <td>Moet ≥ minimumleeftijd zijn</td>
+                    </tr>
+                    <tr>
+                        <td>Peildatum</td>
+                        <td>09-01</td>
+                        <td>Optioneel, formaat MM-DD (voor seizoenssysteem)</td>
+                    </tr>
+                    <tr>
+                        <td>Volgorde</td>
+                        <td>3</td>
+                        <td>Bepaalt de weergavevolgorde</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h4>Herberekenen</h4>
+            <p>Klik op <strong>"Herberekenen"</strong> om alle leden automatisch opnieuw in te delen in de juiste
+                leeftijdscategorie op basis van hun geboortedatum.</p>
+
+            <h3 id="gewichtscategorieen">Gewichtscategorieën</h3>
+            <p>Gewichtscategorieën zijn gekoppeld aan een leeftijdscategorie en gescheiden per geslacht.</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Veld</th>
+                        <th>Voorbeeld</th>
+                        <th>Toelichting</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Naam</td>
+                        <td>-60</td>
+                        <td>Weergavenaam</td>
+                    </tr>
+                    <tr>
+                        <td>Leeftijdscategorie</td>
+                        <td>U18</td>
+                        <td>Koppeling aan leeftijdscategorie</td>
+                    </tr>
+                    <tr>
+                        <td>Geslacht</td>
+                        <td>Man / Vrouw</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Max gewicht (kg)</td>
+                        <td>60.0</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Volgorde</td>
+                        <td>2</td>
+                        <td>Weergavevolgorde</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- TOERNOOIEN -->
+            <h2 id="toernooien">Toernooien</h2>
+            <p>Toernooien worden beheerd op de toernooipagina (<kbd>/admin/tournaments</kbd>). Hier doorloop je het
+                volledige proces van aanmaken tot afsluiten.</p>
+
+            <h3 id="toernooi-aanmaken">Toernooi aanmaken</h3>
+            <p>Klik op <strong>"Toernooi toevoegen"</strong> en vul het formulier in:</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Veld</th>
+                        <th>Verplicht</th>
+                        <th>Toelichting</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Naam</td>
+                        <td>Ja</td>
+                        <td>Naam van het toernooi</td>
+                    </tr>
+                    <tr>
+                        <td>Land</td>
+                        <td>Ja</td>
+                        <td>Bepaalt welke leeftijdscategorieën beschikbaar zijn</td>
+                    </tr>
+                    <tr>
+                        <td>Toernooidatum</td>
+                        <td>Ja</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Straat + nr</td>
+                        <td>Nee</td>
+                        <td>Adres van de locatie</td>
+                    </tr>
+                    <tr>
+                        <td>Postcode</td>
+                        <td>Nee</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Stad</td>
+                        <td>Nee</td>
+                        <td>Na invoer wordt de locatie automatisch op de kaart getoond</td>
+                    </tr>
+                    <tr>
+                        <td>Uitnodiging deadline</td>
+                        <td>Nee</td>
+                        <td>Wordt vermeld in de uitnodigingsmail</td>
+                    </tr>
+                    <tr>
+                        <td>Inschrijving deadline</td>
+                        <td>Nee</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Leeftijdscategorieën</td>
+                        <td>Nee</td>
+                        <td>Vink aan welke categorieën mogen deelnemen</td>
+                    </tr>
+                    <tr>
+                        <td>Bijlagen</td>
+                        <td>Nee</td>
+                        <td>Bestanden uploaden (max 10 MB per bestand)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="box box-info">
+                <div class="box-title">Automatische locatie</div>
+                Wanneer je het adres invult, zoekt de applicatie automatisch de coördinaten op en toont een kaart in het
+                formulier. Dit wordt ook op het dashboard en in uitnodigingsmails weergegeven.
+            </div>
+
+            <h3 id="toernooi-workflow">Toernooi-workflow</h3>
+            <p>Elk toernooi doorloopt een vaste reeks statussen. De beschikbare acties hangen af van de huidige status.
+            </p>
+
+            <div class="flow">
+                <div class="flow-step"><span class="badge badge-gray">Voorbereiding</span></div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step"><span class="badge badge-blue">Uitnodigingen verstuurd</span></div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step"><span class="badge badge-yellow">Inschrijvingen gestart</span></div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step"><span class="badge badge-orange">Inschrijvingen voltooid</span></div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step"><span class="badge badge-green">Gestart</span></div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step"><span class="badge badge-purple">Afgelopen</span></div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Status</th>
+                        <th>Beschikbare acties</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="badge badge-gray">Voorbereiding</span></td>
+                        <td>
+                            Leden toevoegen (automatisch of individueel), uitnodigen, verwijderen, trainers toewijzen.
+                            Klik op <strong>"Uitnodigingen afsluiten"</strong> om naar de volgende stap te gaan.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-blue">Uitnodigingen verstuurd</span></td>
+                        <td>
+                            Wachten op reacties van deelnemers. Klik op <strong>"Inschrijvingen starten"</strong> zodra
+                            genoeg reacties binnen zijn.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-yellow">Inschrijvingen gestart</span></td>
+                        <td>
+                            Leden die hebben geaccepteerd <strong>inschrijven</strong> (bevestig op externe
+                            wedstrijdsite).
+                            <strong>Uitschrijven</strong> is ook mogelijk. Klik op <strong>"Inschrijvingen
+                                afsluiten"</strong> als alle inschrijvingen zijn verwerkt.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-orange">Inschrijvingen voltooid</span></td>
+                        <td>
+                            Klik op <strong>"Toernooi starten"</strong> om het toernooi te starten.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-green">Gestart</span></td>
+                        <td>
+                            Toernooi is bezig. Wordt op het dashboard van alle gebruikers getoond.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-purple">Afgelopen</span></td>
+                        <td>
+                            Toernooi is afgelopen.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="box box-info">
+                <div class="box-title">Status terugzetten</div>
+                Met de knop <strong>"← Vorige status"</strong> kun je terugkeren naar de vorige stap. Dit is niet
+                mogelijk voor de statussen <em>Gestart</em> en <em>Afgelopen</em>.
+            </div>
+
+            <h3 id="toernooi-leden">Leden &amp; Uitnodigingen</h3>
+            <p>Klik op <strong>"Leden (X)"</strong> bij een toernooi om het ledenpaneel te openen.</p>
+
+            <h4>Leden toevoegen</h4>
+            <ul>
+                <li><strong>Automatisch:</strong> klik op <strong>"Leden toevoegen"</strong> — alle competitieleden die
+                    in een geselecteerde leeftijdscategorie vallen worden automatisch toegevoegd.</li>
+                <li><strong>Individueel:</strong> kies een lid uit het dropdownmenu rechts en klik op
+                    <strong>+</strong>.</li>
+            </ul>
+
+            <h4>Uitnodigen</h4>
+            <ul>
+                <li><strong>Allen uitnodigen:</strong> klik op <strong>"Alle uitnodigen (X)"</strong> om alle
+                    nog-niet-uitgenodigde leden in één keer een e-mail te sturen.</li>
+                <li><strong>Individueel:</strong> klik op <strong>"Uitnodigen"</strong> naast een specifiek lid.</li>
+            </ul>
+
+            <h4>Uitnodigingsstatussen</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Status</th>
+                        <th>Betekenis</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="badge badge-gray">Nog niet uitgenodigd</span></td>
+                        <td>Lid is toegevoegd maar nog geen e-mail verstuurd</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-blue">Uitgenodigd</span></td>
+                        <td>E-mail is verstuurd, wachtend op reactie</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-green">Neemt deel</span></td>
+                        <td>Lid heeft de uitnodiging geaccepteerd</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-red">Neemt niet deel</span></td>
+                        <td>Lid heeft de uitnodiging afgeslagen</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h4>Inschrijvingen</h4>
+            <p>Tijdens de fase <span class="badge badge-yellow">Inschrijvingen gestart</span> kun je leden die hebben
+                geaccepteerd inschrijven:</p>
+            <ul>
+                <li>Klik op <strong>"Inschrijven"</strong> naast een lid om te bevestigen dat de inschrijving op de
+                    externe wedstrijdsite is gedaan.</li>
+                <li>Klik op <strong>"Uitschrijven"</strong> om een inschrijving ongedaan te maken.</li>
+                <li>Het lid ontvangt een e-mail bij zowel inschrijving als uitschrijving.</li>
+            </ul>
+
+            <!-- TOERNOOI-TRAINERS -->
+            <h3 id="toernooi-trainers">Trainers toewijzen</h3>
+            <p>Onder de ledenlijst van elk toernooi staat een sectie <strong>"Trainers"</strong>. Hier wijs je aan welke
+                trainers de begeleiding van de deelnemers op zich nemen.</p>
+
+            <h4>Wie zijn trainers?</h4>
+            <p>Trainers zijn <strong>leden</strong> die gekoppeld zijn aan een gebruikersaccount met de rol <span
+                    class="badge badge-blue">Trainer</span>. Een lid verschijnt alleen in de dropdown als aan beide
+                voorwaarden is voldaan:</p>
+            <ol>
+                <li>Er bestaat een <strong>lid</strong> in het ledenregister.</li>
+                <li>Er bestaat een <strong>gebruiker</strong> met de rol <em>Trainer</em>, en dat lid is aan die
+                    gebruiker <strong>gekoppeld</strong>.</li>
+            </ol>
+
+            <h4>Trainer toevoegen</h4>
+            <ol>
+                <li>Open het ledenpaneel van een toernooi (klik op <strong>"Leden"</strong>).</li>
+                <li>Scroll naar de sectie <strong>"Trainers"</strong> onderaan.</li>
+                <li>Kies een trainer uit het dropdownmenu <strong>"Trainer toevoegen..."</strong>.</li>
+                <li>Klik op <strong>+</strong> om toe te voegen.</li>
+            </ol>
+
+            <h4>Trainer verwijderen</h4>
+            <p>Klik op het <strong>✕</strong> naast de naam van de trainer en bevestig.</p>
+
+            <div class="box box-info">
+                <div class="box-title">Trainer koppelen aan gebruiker</div>
+                Om een lid als trainer beschikbaar te maken: ga naar <strong>Admin Dashboard → Gebruikers</strong>, klik
+                op <strong>"Leden"</strong> naast de trainer-gebruiker, en koppel het juiste lid via de checkboxes.
+            </div>
+
+            <!-- IMPORT / EXPORT -->
+            <h2 id="import-export">Import / Export</h2>
+            <p>De applicatie ondersteunt het importeren en exporteren van gegevens via Excel-bestanden.</p>
+
+            <h3>Leden importeren / exporteren</h3>
+            <ul>
+                <li><strong>Exporteren:</strong> klik op <strong>"Exporteren"</strong> op de ledenpagina om een
+                    Excel-bestand te downloaden met alle leden.</li>
+                <li><strong>Importeren:</strong> klik op <strong>"Importeren"</strong> en upload een <kbd>.xlsx</kbd>,
+                    <kbd>.xls</kbd> of <kbd>.csv</kbd> bestand.</li>
+            </ul>
+
+            <h3>Categorieën importeren / exporteren</h3>
+            <ul>
+                <li><strong>Leeftijdscategorieën</strong> en <strong>gewichtscategorieën</strong> kunnen apart worden
+                    geïmporteerd en geëxporteerd via het admin dashboard.</li>
+            </ul>
+
+            <div class="box box-warning">
+                <div class="box-title">Let op bij import</div>
+                Zorg dat de kolomnamen in het Excel-bestand overeenkomen met het verwachte formaat. Exporteer eerst een
+                bestand om het juiste sjabloon te zien.
+            </div>
+
+            <!-- STATUSSEN & LABELS -->
+            <h2 id="statussen">Statussen &amp; Labels</h2>
+
+            <h3>Lidmaatschapsstatus</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Waarde</th>
+                        <th>Label</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>active</td>
+                        <td><span class="badge badge-green">Actief</span></td>
+                    </tr>
+                    <tr>
+                        <td>inactive</td>
+                        <td><span class="badge badge-gray">Inactief</span></td>
+                    </tr>
+                    <tr>
+                        <td>suspended</td>
+                        <td><span class="badge badge-red">Geschorst</span></td>
+                    </tr>
+                    <tr>
+                        <td>pending</td>
+                        <td><span class="badge badge-yellow">In afwachting</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Toernooi-status</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Waarde</th>
+                        <th>Label</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>preparation</td>
+                        <td><span class="badge badge-gray">Voorbereiding</span></td>
+                    </tr>
+                    <tr>
+                        <td>invitations_sent</td>
+                        <td><span class="badge badge-blue">Uitnodigingen verstuurd</span></td>
+                    </tr>
+                    <tr>
+                        <td>registrations_open</td>
+                        <td><span class="badge badge-yellow">Inschrijvingen gestart</span></td>
+                    </tr>
+                    <tr>
+                        <td>registrations_closed</td>
+                        <td><span class="badge badge-orange">Inschrijvingen voltooid</span></td>
+                    </tr>
+                    <tr>
+                        <td>started</td>
+                        <td><span class="badge badge-green">Gestart</span></td>
+                    </tr>
+                    <tr>
+                        <td>finished</td>
+                        <td><span class="badge badge-purple">Afgelopen</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Geslacht</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Waarde</th>
+                        <th>Label</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>male</td>
+                        <td>Man</td>
+                    </tr>
+                    <tr>
+                        <td>female</td>
+                        <td>Vrouw</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Voogdrelatie</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Waarde</th>
+                        <th>Label</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>father</td>
+                        <td>Vader</td>
+                    </tr>
+                    <tr>
+                        <td>mother</td>
+                        <td>Moeder</td>
+                    </tr>
+                    <tr>
+                        <td>guardian</td>
+                        <td>Voogd</td>
+                    </tr>
+                    <tr>
+                        <td>other</td>
+                        <td>Andere</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- GORDELS -->
+            <h2 id="gordels">Gordelrangen</h2>
+            <p>De applicatie ondersteunt een volledige gordelhistoriek per lid. Bij het toekennen van een nieuwe
+                gordelrang wordt de datum, locatie en examinator opgeslagen.</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Kleur</th>
+                        <th>Label</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="belt belt-white"></span> Wit</td>
+                        <td>white</td>
+                    </tr>
+                    <tr>
+                        <td><span class="belt belt-yellow"></span> Geel</td>
+                        <td>yellow</td>
+                    </tr>
+                    <tr>
+                        <td><span class="belt belt-orange"></span> Oranje</td>
+                        <td>orange</td>
+                    </tr>
+                    <tr>
+                        <td><span class="belt belt-green"></span> Groen</td>
+                        <td>green</td>
+                    </tr>
+                    <tr>
+                        <td><span class="belt belt-blue"></span> Blauw</td>
+                        <td>blue</td>
+                    </tr>
+                    <tr>
+                        <td><span class="belt belt-brown"></span> Bruin</td>
+                        <td>brown</td>
+                    </tr>
+                    <tr>
+                        <td><span class="belt belt-black"></span> Zwart 1e Dan</td>
+                        <td>black_1dan</td>
+                    </tr>
+                    <tr>
+                        <td><span class="belt belt-black"></span> Zwart 2e Dan</td>
+                        <td>black_2dan</td>
+                    </tr>
+                    <tr>
+                        <td><span class="belt belt-black"></span> Zwart 3e Dan</td>
+                        <td>black_3dan</td>
+                    </tr>
+                    <tr>
+                        <td><span class="belt belt-black"></span> Zwart 4e Dan</td>
+                        <td>black_4dan</td>
+                    </tr>
+                    <tr>
+                        <td><span class="belt belt-black"></span> Zwart 5e Dan</td>
+                        <td>black_5dan</td>
+                    </tr>
+                    <tr>
+                        <td><span class="belt belt-black"></span> Zwart 6e Dan — 10e Dan</td>
+                        <td>black_6dan — black_10dan</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p
+                style="margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--gray-200); color: var(--gray-500); font-size: 13px;">
+                JCA Handleiding — Laatste update: maart 2026
+            </p>
+
+        </main>
+    </div>
 </body>
+
 </html>

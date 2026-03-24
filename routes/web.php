@@ -20,6 +20,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MyMembersController;
+use App\Http\Controllers\TournamentDetailController;
 use App\Http\Controllers\TournamentRsvpController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -63,6 +64,9 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
     // My members (for ouder/lid roles)
     Route::get('/mijn-leden', [MyMembersController::class, 'index'])->name('my-members.index');
     Route::patch('/mijn-leden/{member}', [MyMembersController::class, 'update'])->name('my-members.update');
+
+    // Tournament detail (any authenticated user)
+    Route::get('/toernooien/{tournament}', TournamentDetailController::class)->name('tournament.detail');
 
     // Admin routes
     Route::middleware('admin')->prefix('admin')->group(function () {

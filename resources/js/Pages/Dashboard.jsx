@@ -108,13 +108,13 @@ function ActiveTournaments({ tournaments }) {
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Lopende Toernooien</h2>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {tournaments.map(t => (
-                    <div key={t.id} className="bg-white rounded-lg shadow-sm border-2 border-red-300 overflow-hidden">
+                    <Link key={t.id} href={`/toernooien/${t.id}`} className="bg-white rounded-lg shadow-sm border-2 border-red-300 overflow-hidden hover:shadow-md transition-shadow">
                         {t.latitude && t.longitude && (
                             <iframe
                                 title={`Locatie ${t.name}`}
                                 width="100%"
                                 height="140"
-                                className="border-b border-gray-200"
+                                className="border-b border-gray-200 pointer-events-none"
                                 src={`https://www.openstreetmap.org/export/embed.html?bbox=${t.longitude - 0.01},${t.latitude - 0.01},${parseFloat(t.longitude) + 0.01},${parseFloat(t.latitude) + 0.01}&layer=mapnik&marker=${t.latitude},${t.longitude}`}
                             />
                         )}
@@ -127,8 +127,9 @@ function ActiveTournaments({ tournaments }) {
                             <p className="text-xs text-gray-400 mt-1">
                                 {[t.address_street, t.address_postal_code, t.address_city].filter(Boolean).join(', ') || 'Geen adres'}
                             </p>
+                            <p className="mt-2 text-xs text-blue-600">Bekijk details →</p>
                         </div>
-                    </div>
+                    </Link>
                 ))}
             </div>
         </div>
