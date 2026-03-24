@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -20,11 +20,19 @@ class EmailVerificationController extends Controller
         return Inertia::render('Auth/VerifyEmail');
     }
 
-    public function verify(EmailVerificationRequest $request): RedirectResponse
+    public function verify(Request $request): RedirectResponse
     {
-        $request->fulfill();
+        $user = User::findOrFail($request->route('id'));
 
-        return $this->redirectAfterVerification($request->user());
+        if (!hash_equals((string) $request->route('hash'), sha1($user->getEmailForVerification()))) {
+            abort(403, 'Invalid verification link.');
+        }
+
+        if (!$user->hasVerifiedEmail()) {
+            $user->markEmailAsVerified();
+        }
+
+        return $this->redirectAfterVerification($user);
     }
 
     public function resend(Request $request): RedirectResponse
