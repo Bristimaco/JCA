@@ -44,6 +44,6 @@ class MemberFactory extends Factory
 
     public function withLicense(): static
     {
-        return $this->state(['license_number' => 'JCA-'.fake()->unique()->numerify('######')]);
+        return $this->state(['license_number' => 'JCA-' . fake()->unique()->numerify('######')]);
     }
 }
