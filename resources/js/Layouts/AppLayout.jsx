@@ -26,6 +26,17 @@ export default function AppLayout({ children }) {
                                     <span className="ml-1 text-xs text-gray-400">({auth.user.role_label})</span>
                                 )}
                             </span>
+                            <a
+                                href="/handleiding.html"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                title="Handleiding"
+                                className="text-gray-400 hover:text-blue-600 transition-colors"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
+                                    <path fillRule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0ZM8.94 6.94a.75.75 0 1 1-1.061-1.061 3.25 3.25 0 1 1 4.596 4.596l-.459.459a1.75 1.75 0 0 0-.513 1.237V13a.75.75 0 0 1-1.5 0v-.878c0-.894.355-1.752.988-2.384l.459-.459a1.75 1.75 0 0 0-2.51-2.34ZM10 16a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clipRule="evenodd" />
+                                </svg>
+                            </a>
                             <button
                                 onClick={handleLogout}
                                 disabled={logoutForm.processing}
