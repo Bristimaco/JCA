@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback } from 'react';
+import { useRef, useState, useCallback, useEffect } from 'react';
 
 function hasCameraApi() {
     return typeof navigator !== 'undefined'
@@ -14,6 +14,12 @@ export default function PhotoCapture({ onCapture, error }) {
     const [preview, setPreview] = useState(null);
     const [cameraError, setCameraError] = useState(null);
 
+    useEffect(() => {
+        if (videoRef.current && stream) {
+            videoRef.current.srcObject = stream;
+        }
+    }, [stream, cameraActive]);
+
     const startCamera = useCallback(async () => {
         setCameraError(null);
         if (!hasCameraApi()) {
@@ -26,11 +32,6 @@ export default function PhotoCapture({ onCapture, error }) {
             });
             setStream(mediaStream);
             setCameraActive(true);
-            requestAnimationFrame(() => {
-                if (videoRef.current) {
-                    videoRef.current.srcObject = mediaStream;
-                }
-            });
         } catch (err) {
             const msg = err.name === 'NotAllowedError'
                 ? 'Cameratoegang geweigerd. Sta de camera toe in je browserinstellingen.'
