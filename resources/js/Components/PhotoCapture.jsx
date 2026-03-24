@@ -1,8 +1,10 @@
 import { useRef, useState, useCallback } from 'react';
 
-const hasCameraApi = typeof navigator !== 'undefined'
-    && navigator.mediaDevices
-    && typeof navigator.mediaDevices.getUserMedia === 'function';
+function hasCameraApi() {
+    return typeof navigator !== 'undefined'
+        && !!navigator.mediaDevices
+        && typeof navigator.mediaDevices.getUserMedia === 'function';
+}
 
 export default function PhotoCapture({ onCapture, error }) {
     const videoRef = useRef(null);
@@ -14,7 +16,7 @@ export default function PhotoCapture({ onCapture, error }) {
 
     const startCamera = useCallback(async () => {
         setCameraError(null);
-        if (!hasCameraApi) {
+        if (!hasCameraApi()) {
             setCameraError('Camera is niet beschikbaar. Gebruik HTTPS of kies een bestand.');
             return;
         }
@@ -112,7 +114,7 @@ export default function PhotoCapture({ onCapture, error }) {
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                     <input type="file" accept="image/*" capture="environment" onChange={handleFileChange}
                         className="w-full text-sm text-gray-500 file:mr-2 file:rounded-md file:border-0 file:bg-gray-100 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-gray-700 hover:file:bg-gray-200" />
-                    {hasCameraApi && (
+                    {hasCameraApi() && (
                         <button type="button" onClick={startCamera}
                             className="inline-flex items-center gap-1.5 rounded-md bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-200 whitespace-nowrap">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
