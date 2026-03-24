@@ -16,7 +16,16 @@
                     {{-- Header --}}
                     <tr>
                         <td style="background-color:#1e40af;padding:24px 32px;">
-                            <h1 style="color:#ffffff;margin:0;font-size:22px;">Uitnodiging Toernooi</h1>
+                            <table cellpadding="0" cellspacing="0"><tr>
+                                @if($club->logo_data)
+                                    <td style="padding-right:16px;vertical-align:middle;">
+                                        <img src="{{ route('club.logo') }}" alt="" width="40" height="40" style="display:block;border-radius:4px;" />
+                                    </td>
+                                @endif
+                                <td style="vertical-align:middle;">
+                                    <h1 style="color:#ffffff;margin:0;font-size:22px;">Uitnodiging Toernooi</h1>
+                                </td>
+                            </tr></table>
                         </td>
                     </tr>
 
@@ -84,7 +93,7 @@
                                 <div style="margin-bottom:24px;">
                                     <p style="font-size:14px;font-weight:bold;color:#374151;margin:0 0 8px;">Bijlagen:</p>
                                     @foreach($tournament->attachments as $attachment)
-                                        <a href="{{ asset('storage/' . $attachment->file_path) }}" target="_blank"
+                                        <a href="{{ route('attachments.show', $attachment) }}" target="_blank"
                                             style="display:inline-block;margin-right:8px;margin-bottom:4px;font-size:13px;color:#2563eb;text-decoration:underline;">
                                             {{ $attachment->original_name }}
                                         </a>
@@ -120,7 +129,7 @@
                     <tr>
                         <td style="background-color:#f9fafb;padding:16px 32px;border-top:1px solid #e5e7eb;">
                             <p style="font-size:12px;color:#9ca3af;margin:0;text-align:center;">
-                                {{ config('app.name') }} &mdash; Deze e-mail is automatisch verzonden.
+                                {{ $club->name }} &mdash; Deze e-mail is automatisch verzonden.
                             </p>
                         </td>
                     </tr>

@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Models\ClubSettings;
 use App\Models\Tournament;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
@@ -33,6 +34,7 @@ class TournamentReport extends Mailable
             with: [
                 'tournament' => $this->tournament,
                 'resultGroups' => $this->resultGroups,
+                'club' => ClubSettings::current(),
             ],
         );
     }

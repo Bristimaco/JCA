@@ -3,12 +3,16 @@ import { useState } from 'react';
 import AgeCategoriesSection from './AgeCategoriesSection';
 import WeightCategoriesSection from './WeightCategoriesSection';
 
-export default function AdminPanel({ pendingUsers, users, roles, ageCategories, weightCategories, allMembers }) {
+export default function AdminPanel({ pendingUsers, users, roles, ageCategories, weightCategories, allMembers, clubSettings }) {
     return (
         <div>
             <h1 className="text-2xl font-bold text-gray-900 mb-6">Beheerder Dashboard</h1>
 
-            <PendingUsersSection pendingUsers={pendingUsers} roles={roles} />
+            <ClubSettingsSection clubSettings={clubSettings} />
+
+            <div className="mt-8">
+                <PendingUsersSection pendingUsers={pendingUsers} roles={roles} />
+            </div>
 
             <div className="mt-8">
                 <UsersSection users={users} roles={roles} allMembers={allMembers} />
@@ -21,6 +25,111 @@ export default function AdminPanel({ pendingUsers, users, roles, ageCategories, 
             <div className="mt-8">
                 <WeightCategoriesSection ageCategories={ageCategories} weightCategories={weightCategories} />
             </div>
+        </div>
+    );
+}
+
+function ClubSettingsSection({ clubSettings }) {
+    const form = useForm({
+        name: clubSettings.name || '',
+        address_street: clubSettings.address_street || '',
+        address_city: clubSettings.address_city || '',
+        address_postal_code: clubSettings.address_postal_code || '',
+        logo: null,
+    });
+
+    const [logoPreview, setLogoPreview] = useState(
+        clubSettings.logo_data ? '/club-logo' : null
+    );
+
+    const handleLogoChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            form.setData('logo', file);
+            setLogoPreview(URL.createObjectURL(file));
+        }
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        form.patch('/admin/club-settings', {
+            forceFormData: true,
+            preserveScroll: true,
+        });
+    };
+
+    return (
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+            <div className="px-6 py-4 border-b border-gray-200">
+                <h2 className="text-lg font-semibold text-gray-900">Club Instellingen</h2>
+            </div>
+            <form onSubmit={handleSubmit} className="p-6 space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Clubnaam *</label>
+                        <input
+                            type="text"
+                            value={form.data.name}
+                            onChange={(e) => form.setData('name', e.target.value)}
+                            className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+                        />
+                        {form.errors.name && <p className="text-sm text-red-600 mt-1">{form.errors.name}</p>}
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Postcode</label>
+                        <input
+                            type="text"
+                            value={form.data.address_postal_code}
+                            onChange={(e) => form.setData('address_postal_code', e.target.value)}
+                            className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Straat + nummer</label>
+                        <input
+                            type="text"
+                            value={form.data.address_street}
+                            onChange={(e) => form.setData('address_street', e.target.value)}
+                            className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Gemeente</label>
+                        <input
+                            type="text"
+                            value={form.data.address_city}
+                            onChange={(e) => form.setData('address_city', e.target.value)}
+                            className="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+                        />
+                    </div>
+                </div>
+
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Logo</label>
+                    <div className="flex items-center gap-4">
+                        {logoPreview && (
+                            <img src={logoPreview} alt="Logo" className="h-16 w-16 object-contain rounded border border-gray-200" />
+                        )}
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleLogoChange}
+                            className="text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                        />
+                    </div>
+                    {form.errors.logo && <p className="text-sm text-red-600 mt-1">{form.errors.logo}</p>}
+                </div>
+
+                <div className="flex justify-end">
+                    <button
+                        type="submit"
+                        disabled={form.processing}
+                        className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+                    >
+                        Opslaan
+                    </button>
+                </div>
+            </form>
         </div>
     );
 }

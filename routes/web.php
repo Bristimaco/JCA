@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AgeCategoryController;
 use App\Http\Controllers\Admin\ApproveUserController;
 use App\Http\Controllers\Admin\CategoryExcelController;
+use App\Http\Controllers\Admin\ClubSettingsController;
 use App\Http\Controllers\Admin\MemberController;
 use App\Http\Controllers\Admin\MemberExcelController;
 use App\Http\Controllers\Admin\MemberIndexController;
@@ -19,6 +20,7 @@ use App\Http\Controllers\ArchivedTournamentsController;
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\ClubLogoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MyMembersController;
 use App\Http\Controllers\TournamentAttachmentController;
@@ -30,6 +32,9 @@ use Inertia\Inertia;
 
 // Public RSVP route (no auth required)
 Route::get('/tournaments/rsvp/{token}/{response}', TournamentRsvpController::class)->name('tournament.rsvp');
+
+// Public club logo (for favicon/emails)
+Route::get('/club-logo', ClubLogoController::class)->name('club.logo');
 
 // Guest routes (unauthenticated only)
 Route::middleware('guest')->group(function () {
@@ -87,6 +92,7 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
     // Admin routes
     Route::middleware('admin')->prefix('admin')->group(function () {
         Route::get('/', AdminDashboardController::class)->name('admin.dashboard');
+        Route::patch('/club-settings', [ClubSettingsController::class, 'update'])->name('admin.club-settings.update');
         Route::patch('/users/{user}/approve', ApproveUserController::class)->name('admin.users.approve');
         Route::patch('/users/{user}/toggle-active', ToggleUserActiveController::class)->name('admin.users.toggle-active');
         Route::patch('/users/{user}', UpdateUserController::class)->name('admin.users.update');

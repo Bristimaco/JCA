@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\ClubSettings;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -50,6 +51,10 @@ class HandleInertiaRequests extends Middleware
             ],
             'flash' => [
                 'status' => $request->session()->get('status'),
+            ],
+            'club' => fn () => [
+                'name' => ClubSettings::current()->name,
+                'has_logo' => (bool) ClubSettings::current()->logo_data,
             ],
         ];
     }

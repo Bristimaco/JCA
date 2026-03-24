@@ -16,12 +16,21 @@
                     {{-- Header --}}
                     <tr>
                         <td style="background-color:#7c3aed;padding:24px 32px;">
-                            <h1 style="color:#ffffff;margin:0;font-size:22px;">
-                                Toernooiverslag
-                            </h1>
-                            <p style="color:#e9d5ff;margin:8px 0 0;font-size:14px;">
-                                {{ $tournament->name }}
-                            </p>
+                            <table cellpadding="0" cellspacing="0"><tr>
+                                @if($club->logo_data)
+                                    <td style="padding-right:16px;vertical-align:middle;">
+                                        <img src="{{ route('club.logo') }}" alt="" width="40" height="40" style="display:block;border-radius:4px;" />
+                                    </td>
+                                @endif
+                                <td style="vertical-align:middle;">
+                                    <h1 style="color:#ffffff;margin:0;font-size:22px;">
+                                        Toernooiverslag
+                                    </h1>
+                                    <p style="color:#e9d5ff;margin:8px 0 0;font-size:14px;">
+                                        {{ $tournament->name }}
+                                    </p>
+                                </td>
+                            </tr></table>
                         </td>
                     </tr>
 
@@ -92,6 +101,14 @@
                             <p style="font-size:13px;color:#6b7280;margin:24px 0 0;">
                                 Je ontvangt deze e-mail omdat je hebt aangegeven interesse te hebben in de resultaten
                                 van de club.
+                            </p>
+                        </td>
+                    </tr>
+                    {{-- Footer --}}
+                    <tr>
+                        <td style="background-color:#f9fafb;padding:16px 32px;border-top:1px solid #e5e7eb;">
+                            <p style="font-size:12px;color:#9ca3af;margin:0;text-align:center;">
+                                {{ $club->name }} &mdash; Deze e-mail is automatisch verzonden.
                             </p>
                         </td>
                     </tr>

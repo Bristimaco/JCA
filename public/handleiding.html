@@ -426,6 +426,7 @@
 
                 <div class="section-title">Beheer (Admin)</div>
                 <a href="#admin-dashboard">Admin Dashboard</a>
+                <a href="#club-instellingen">Club Instellingen</a>
                 <a href="#gebruikersbeheer">Gebruikersbeheer</a>
                 <a href="#ledenbeheer">Ledenbeheer</a>
                 <a href="#categorieen">Categorieën</a>
@@ -668,6 +669,25 @@
             <h2 id="admin-dashboard">Admin Dashboard</h2>
             <p>Het admin dashboard (<kbd>/admin</kbd>) is het startpunt voor alle beheertaken. Alleen gebruikers met de
                 rol <span class="badge badge-red">Beheerder</span> hebben toegang.</p>
+
+            <h3 id="club-instellingen">Club Instellingen</h3>
+            <p>Helemaal bovenaan het admin dashboard vind je de <strong>Club Instellingen</strong>. Hier stel je de
+                basisgegevens van je club in:</p>
+            <ul>
+                <li><strong>Clubnaam</strong> — Wordt getoond in de navigatiebalk, login-pagina, browser-tab en e-mails.
+                </li>
+                <li><strong>Adres</strong> (straat, postcode, gemeente) — Optionele adresgegevens van de club.</li>
+                <li><strong>Logo</strong> — Upload een afbeelding (max 2 MB). Het logo verschijnt als:
+                    <ul>
+                        <li>Favicon (icoon in de browser-tab)</li>
+                        <li>Naast de clubnaam in de navigatiebalk</li>
+                        <li>Op de login/registratiepagina</li>
+                        <li>In de header van alle e-mails (uitnodigingen, inschrijvingen, verslagen)</li>
+                    </ul>
+                </li>
+            </ul>
+            <p>Klik op <strong>Opslaan</strong> om de wijzigingen door te voeren. Het logo wordt als Base64 opgeslagen
+                in de database, dus er zijn geen bestanden op de server nodig.</p>
 
             <h3 id="gebruikersbeheer">Gebruikersbeheer</h3>
 

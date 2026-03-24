@@ -11,7 +11,7 @@ class TournamentAttachmentController extends Controller
     {
         return response($this->decode($attachment->file_data))
             ->header('Content-Type', $attachment->mime_type ?? 'application/octet-stream')
-            ->header('Content-Disposition', 'inline; filename="' . $attachment->original_name . '"');
+            ->header('Content-Disposition', 'inline; filename="'.$attachment->original_name.'"');
     }
 
     private function decode(string $data): string

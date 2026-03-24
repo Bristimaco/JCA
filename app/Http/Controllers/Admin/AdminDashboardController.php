@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Models\AgeCategory;
+use App\Models\ClubSettings;
 use App\Models\Member;
 use App\Models\User;
 use App\Models\WeightCategory;
@@ -53,6 +54,7 @@ class AdminDashboardController extends Controller
             'ageCategories' => $ageCategories,
             'weightCategories' => $weightCategories,
             'allMembers' => $allMembers,
+            'clubSettings' => ClubSettings::current(),
         ]);
     }
 }

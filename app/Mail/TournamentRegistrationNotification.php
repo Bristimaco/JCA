@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Models\ClubSettings;
 use App\Models\Member;
 use App\Models\Tournament;
 use Illuminate\Bus\Queueable;
@@ -50,6 +51,7 @@ class TournamentRegistrationNotification extends Mailable
                 'registered' => $this->registered,
                 'ageCategory' => $ageCategory?->name,
                 'weightCategory' => $weightCategory,
+                'club' => ClubSettings::current(),
             ],
         );
     }

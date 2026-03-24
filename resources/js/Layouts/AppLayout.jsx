@@ -1,7 +1,7 @@
 import { Link, usePage, useForm } from '@inertiajs/react';
 
 export default function AppLayout({ children }) {
-    const { auth } = usePage().props;
+    const { auth, club } = usePage().props;
     const logoutForm = useForm();
 
     const handleLogout = (e) => {
@@ -15,8 +15,11 @@ export default function AppLayout({ children }) {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
                         <div className="flex items-center">
-                            <Link href="/" className="text-xl font-bold text-gray-900">
-                                JCA
+                            <Link href="/" className="flex items-center gap-2 text-xl font-bold text-gray-900">
+                                {club?.has_logo && (
+                                    <img src="/club-logo" alt="" className="h-8 w-8 object-contain" />
+                                )}
+                                {club?.name || 'JCA'}
                             </Link>
                         </div>
                         <div className="flex items-center gap-4">

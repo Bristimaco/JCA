@@ -4,7 +4,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ config('app.name', 'JCA') }}</title>
+    <title>{{ \App\Models\ClubSettings::current()->name }}</title>
+    <link rel="icon" href="{{ route('club.logo') }}">
     @viteReactRefresh
     @vite(['resources/css/app.css', 'resources/js/app.jsx'])
     @inertiaHead

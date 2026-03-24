@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Models\ClubSettings;
 use App\Models\Member;
 use App\Models\Tournament;
 use Illuminate\Bus\Queueable;
@@ -38,6 +39,7 @@ class TournamentInvitation extends Mailable
                 'member' => $this->member,
                 'acceptUrl' => url("/tournaments/rsvp/{$this->token}/accept"),
                 'declineUrl' => url("/tournaments/rsvp/{$this->token}/decline"),
+                'club' => ClubSettings::current(),
             ],
         );
     }
