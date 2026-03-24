@@ -21,7 +21,36 @@ export default function MyMembers({ members, ageCategories, weightCategories }) 
                         </button>
                     </div>
                     <div className="p-6">
-                        <MemberCard member={viewingMember} ageCategories={ageCategories} />
+                        <div className="grid gap-6 lg:grid-cols-2">
+                            <MemberCard member={viewingMember} ageCategories={ageCategories} />
+                            {viewingMember.is_competition && viewingMember.tournament_results && viewingMember.tournament_results.length > 0 && (
+                                <div>
+                                    <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">Uitslagen</h3>
+                                    <div className="space-y-2.5 max-h-[500px] overflow-y-auto">
+                                        {viewingMember.tournament_results.map((r) => (
+                                            <div key={r.id} className="rounded-md border border-gray-100 bg-gray-50 p-3">
+                                                <div className="flex items-start justify-between gap-2">
+                                                    <div className="min-w-0 flex-1">
+                                                        <p className="text-sm font-medium text-gray-700 truncate">{r.tournament_name}</p>
+                                                        <p className="text-xs text-gray-400">{new Date(r.tournament_date).toLocaleDateString('nl-BE', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                                                    </div>
+                                                    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium flex-shrink-0 ${r.result.includes('1e') ? 'bg-yellow-100 text-yellow-800' :
+                                                            r.result.includes('2e') ? 'bg-gray-200 text-gray-700' :
+                                                                r.result.includes('3e') ? 'bg-amber-100 text-amber-800' :
+                                                                    'bg-gray-100 text-gray-600'
+                                                        }`}>
+                                                        {r.result}
+                                                    </span>
+                                                </div>
+                                                {r.notes && (
+                                                    <p className="text-xs text-gray-500 mt-1.5 break-words italic">{r.notes}</p>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
             </AppLayout>

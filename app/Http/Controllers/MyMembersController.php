@@ -22,7 +22,7 @@ class MyMembersController extends Controller
                 'weight_category_name' => $m->weightCategory?->name,
                 'current_belt' => $m->currentBelt()?->value,
                 'current_belt_label' => $m->currentBelt()?->label(),
-                'tournament_results' => $m->is_competition ? $m->tournamentResults->map(fn ($r) => [
+                'tournament_results' => $m->is_competition ? $m->tournamentResults->sortByDesc(fn ($r) => $r->tournament->tournament_date)->map(fn ($r) => [
                     'id' => $r->id,
                     'tournament_name' => $r->tournament->name,
                     'tournament_date' => $r->tournament->tournament_date->toDateString(),
