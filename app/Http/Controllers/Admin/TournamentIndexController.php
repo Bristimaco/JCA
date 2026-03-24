@@ -27,7 +27,7 @@ class TournamentIndexController extends Controller
                 'attachments' => $t->attachments->map(fn($a) => [
                     'id' => $a->id,
                     'original_name' => $a->original_name,
-                    'url' => asset('storage/' . $a->file_path),
+                    'url' => route('attachments.show', $a),
                 ]),
                 'tournament_coaches' => $t->coaches->map(fn(Member $m) => [
                     'id' => $m->id,

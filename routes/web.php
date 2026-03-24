@@ -21,6 +21,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MyMembersController;
+use App\Http\Controllers\TournamentAttachmentController;
 use App\Http\Controllers\TournamentDetailController;
 use App\Http\Controllers\TournamentRsvpController;
 use App\Http\Controllers\Trainer\TrainerTournamentController;
@@ -68,6 +69,9 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
     Route::patch('/mijn-leden/{member}', [MyMembersController::class, 'update'])->name('my-members.update');
 
     // Tournament detail (any authenticated user)
+
+    // Tournament attachment download
+    Route::get('/bijlagen/{attachment}', TournamentAttachmentController::class)->name('attachments.show');
     Route::get('/toernooien/{tournament}', TournamentDetailController::class)->name('tournament.detail');
 
     // Archived tournaments (any authenticated user)

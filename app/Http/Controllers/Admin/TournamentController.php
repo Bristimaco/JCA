@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Tournament;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class TournamentController extends Controller
 {
@@ -39,7 +38,8 @@ class TournamentController extends Controller
 
         foreach ($attachments as $file) {
             $tournament->attachments()->create([
-                'file_path' => $file->store('tournament-attachments', 'public'),
+                'file_data' => base64_encode(file_get_contents($file->getRealPath())),
+                'mime_type' => $file->getMimeType(),
                 'original_name' => $file->getClientOriginalName(),
             ]);
         }
@@ -78,17 +78,14 @@ class TournamentController extends Controller
 
         // Remove attachments
         if ($removeAttachmentIds) {
-            $toRemove = $tournament->attachments()->whereIn('id', $removeAttachmentIds)->get();
-            foreach ($toRemove as $attachment) {
-                Storage::disk('public')->delete($attachment->file_path);
-                $attachment->delete();
-            }
+            $tournament->attachments()->whereIn('id', $removeAttachmentIds)->delete();
         }
 
         // Add new attachments
         foreach ($attachments as $file) {
             $tournament->attachments()->create([
-                'file_path' => $file->store('tournament-attachments', 'public'),
+                'file_data' => base64_encode(file_get_contents($file->getRealPath())),
+                'mime_type' => $file->getMimeType(),
                 'original_name' => $file->getClientOriginalName(),
             ]);
         }
@@ -99,10 +96,6 @@ class TournamentController extends Controller
     public function destroy(Tournament $tournament): RedirectResponse
     {
         $name = $tournament->name;
-
-        foreach ($tournament->attachments as $attachment) {
-            Storage::disk('public')->delete($attachment->file_path);
-        }
 
         $tournament->delete();
 

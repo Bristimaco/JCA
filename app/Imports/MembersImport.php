@@ -13,7 +13,7 @@ class MembersImport implements ToModel, WithHeadingRow, WithValidation
     {
         // Update if id exists, else create
         $member = isset($row['id']) ? Member::find($row['id']) : null;
-        if (!$member) {
+        if (! $member) {
             $member = new Member;
         }
         $member->fill([
