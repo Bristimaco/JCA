@@ -2,6 +2,7 @@ import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import AppLayout from '../Layouts/AppLayout';
 import MemberCard from './Dashboard/MemberCard';
+import PhotoCapture from '../Components/PhotoCapture';
 
 export default function MyMembers({ members, ageCategories, weightCategories }) {
     const { flash } = usePage().props;
@@ -184,10 +185,7 @@ function MyMemberForm({ member, ageCategories, weightCategories, onSuccess, onCa
                     {form.errors.weight_category_id && <p className="text-xs text-red-600 mt-1">{form.errors.weight_category_id}</p>}
                 </div>
                 <div>
-                    <label className="block text-xs font-medium text-gray-500 mb-1">Foto</label>
-                    <input type="file" accept="image/*" onChange={(e) => form.setData('photo', e.target.files[0])}
-                        className="w-full text-sm text-gray-500 file:mr-2 file:rounded-md file:border-0 file:bg-gray-100 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-gray-700 hover:file:bg-gray-200" />
-                    {form.errors.photo && <p className="text-xs text-red-600 mt-1">{form.errors.photo}</p>}
+                    <PhotoCapture onCapture={(file) => form.setData('photo', file)} error={form.errors.photo} />
                 </div>
             </div>
             <div className="flex gap-2">
