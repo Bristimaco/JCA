@@ -313,4 +313,27 @@ class TournamentMembersController extends Controller
 
         return $member->users()->first()?->email;
     }
+
+    public function addCoach(Request $request, Tournament $tournament): RedirectResponse
+    {
+        $validated = $request->validate([
+            'member_id' => ['required', 'integer', 'exists:members,id'],
+        ]);
+
+        if ($tournament->coaches()->where('members.id', $validated['member_id'])->exists()) {
+            return back()->with('status', 'Deze trainer is al toegevoegd.');
+        }
+
+        $member = Member::findOrFail($validated['member_id']);
+        $tournament->coaches()->attach($member->id);
+
+        return back()->with('status', $member->fullName() . ' is toegevoegd als trainer.');
+    }
+
+    public function removeCoach(Tournament $tournament, Member $member): RedirectResponse
+    {
+        $tournament->coaches()->detach($member->id);
+
+        return back()->with('status', $member->fullName() . ' is verwijderd als trainer.');
+    }
 }

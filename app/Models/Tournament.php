@@ -39,4 +39,10 @@ class Tournament extends Model
             ->withPivot(['id', 'invitation_status', 'registration_status', 'invited_at', 'responded_at', 'invitation_token'])
             ->withTimestamps();
     }
+
+    public function coaches(): BelongsToMany
+    {
+        return $this->belongsToMany(Member::class, 'tournament_coaches')
+            ->withTimestamps();
+    }
 }

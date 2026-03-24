@@ -120,5 +120,9 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::post('/tournaments/{tournament}/unregister/{member}', [TournamentMembersController::class, 'unregister'])->name('admin.tournaments.unregister');
         Route::post('/tournaments/{tournament}/close-registrations', [TournamentMembersController::class, 'closeRegistrations'])->name('admin.tournaments.close-registrations');
         Route::post('/tournaments/{tournament}/start', [TournamentMembersController::class, 'startTournament'])->name('admin.tournaments.start');
+
+        // Tournament coaches (trainers)
+        Route::post('/tournaments/{tournament}/coaches', [TournamentMembersController::class, 'addCoach'])->name('admin.tournaments.add-coach');
+        Route::delete('/tournaments/{tournament}/coaches/{member}', [TournamentMembersController::class, 'removeCoach'])->name('admin.tournaments.remove-coach');
     });
 });

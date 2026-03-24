@@ -1,7 +1,7 @@
 import { useForm, usePage, router } from '@inertiajs/react';
 import { useState } from 'react';
 
-export default function TournamentsSection({ tournaments, ageCategories, competitionMembers, statuses }) {
+export default function TournamentsSection({ tournaments, ageCategories, competitionMembers, statuses, availableCoaches }) {
     const { flash } = usePage().props;
     const [showAddForm, setShowAddForm] = useState(false);
     const [editingTournament, setEditingTournament] = useState(null);
@@ -69,6 +69,7 @@ export default function TournamentsSection({ tournaments, ageCategories, competi
                             statusColors={statusColors}
                             statuses={statuses}
                             competitionMembers={competitionMembers}
+                            availableCoaches={availableCoaches}
                             isExpanded={expandedId === tournament.id}
                             isEditing={editingTournament?.id === tournament.id}
                             onToggleExpand={() => setExpandedId(expandedId === tournament.id ? null : tournament.id)}
@@ -81,7 +82,7 @@ export default function TournamentsSection({ tournaments, ageCategories, competi
     );
 }
 
-function TournamentRow({ tournament, statusColors, statuses, competitionMembers, isExpanded, isEditing, onToggleExpand, onEdit }) {
+function TournamentRow({ tournament, statusColors, statuses, competitionMembers, availableCoaches, isExpanded, isEditing, onToggleExpand, onEdit }) {
     const deleteForm = useForm({});
     const statusLabel = statuses.find(s => s.value === tournament.status)?.label || tournament.status;
     const members = tournament.tournament_members || [];
@@ -179,13 +180,14 @@ function TournamentRow({ tournament, statusColors, statuses, competitionMembers,
                     tournament={tournament}
                     members={members}
                     competitionMembers={competitionMembers}
+                    availableCoaches={availableCoaches}
                 />
             )}
         </div>
     );
 }
 
-function TournamentMembersPanel({ tournament, members, competitionMembers }) {
+function TournamentMembersPanel({ tournament, members, competitionMembers, availableCoaches }) {
     const populateForm = useForm({});
     const inviteAllForm = useForm({});
     const closeForm = useForm({});
@@ -194,6 +196,7 @@ function TournamentMembersPanel({ tournament, members, competitionMembers }) {
     const closeRegForm = useForm({});
     const startForm = useForm({});
     const addMemberForm = useForm({ member_id: '' });
+    const addCoachForm = useForm({ member_id: '' });
     const [processing, setProcessing] = useState({});
 
     const invitationStatusColors = {
@@ -290,6 +293,24 @@ function TournamentMembersPanel({ tournament, members, competitionMembers }) {
     const handleRemove = (memberId, memberName) => {
         if (confirm(`${memberName} verwijderen van het toernooi?`)) {
             router.delete(`/admin/tournaments/${tournament.id}/members/${memberId}`);
+        }
+    };
+
+    const coaches = tournament.tournament_coaches || [];
+    const existingCoachIds = coaches.map(c => c.id);
+    const filteredCoaches = availableCoaches.filter(c => !existingCoachIds.includes(c.id));
+
+    const handleAddCoach = (e) => {
+        e.preventDefault();
+        if (!addCoachForm.data.member_id) return;
+        addCoachForm.post(`/admin/tournaments/${tournament.id}/coaches`, {
+            onSuccess: () => addCoachForm.reset(),
+        });
+    };
+
+    const handleRemoveCoach = (coachId, coachName) => {
+        if (confirm(`${coachName} verwijderen als trainer?`)) {
+            router.delete(`/admin/tournaments/${tournament.id}/coaches/${coachId}`);
         }
     };
 
@@ -492,6 +513,53 @@ function TournamentMembersPanel({ tournament, members, competitionMembers }) {
                     </>
                 );
             })()}
+
+            {/* Trainers section */}
+            <div className="border-t border-gray-200">
+                <div className="px-4 py-3 flex items-center justify-between gap-2 bg-gray-100">
+                    <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                        Trainers ({coaches.length})
+                    </span>
+                    <form onSubmit={handleAddCoach} className="flex items-center gap-1">
+                        <select
+                            value={addCoachForm.data.member_id}
+                            onChange={e => addCoachForm.setData('member_id', e.target.value)}
+                            className="rounded-md border border-gray-300 text-xs py-1 px-2 max-w-[200px]"
+                        >
+                            <option value="">Trainer toevoegen...</option>
+                            {filteredCoaches.map(c => (
+                                <option key={c.id} value={c.id}>{c.name}</option>
+                            ))}
+                        </select>
+                        <button
+                            type="submit"
+                            disabled={addCoachForm.processing || !addCoachForm.data.member_id}
+                            className="rounded-md bg-gray-600 px-2 py-1 text-xs font-medium text-white hover:bg-gray-700 disabled:opacity-50"
+                        >
+                            +
+                        </button>
+                    </form>
+                </div>
+                {coaches.length === 0 ? (
+                    <div className="px-4 py-4 text-center text-xs text-gray-400">
+                        Nog geen trainers toegewezen.
+                    </div>
+                ) : (
+                    <div className="divide-y divide-gray-200">
+                        {coaches.map(coach => (
+                            <div key={coach.id} className="px-4 py-2 flex items-center justify-between gap-3">
+                                <span className="text-sm text-gray-900">{coach.name}</span>
+                                <button
+                                    onClick={() => handleRemoveCoach(coach.id, coach.name)}
+                                    className="text-xs text-red-500 hover:text-red-700"
+                                >
+                                    ✕
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
         </div>
     );
 }
