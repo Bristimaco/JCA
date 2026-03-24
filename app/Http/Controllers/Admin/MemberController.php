@@ -28,6 +28,7 @@ class MemberController extends Controller
             'weight_category_id' => ['nullable', 'integer', 'exists:weight_categories,id'],
             'membership_status' => ['required', 'string', 'in:active,inactive,suspended,pending'],
             'is_competition' => ['boolean'],
+            'is_trainer' => ['boolean'],
             'photo' => ['nullable', 'image', 'max:2048'],
             'belt_rank' => ['nullable', 'string', Rule::in(array_column(BeltRank::cases(), 'value'))],
         ]);
@@ -67,6 +68,7 @@ class MemberController extends Controller
             'weight_category_id' => ['nullable', 'integer', 'exists:weight_categories,id'],
             'membership_status' => ['required', 'string', 'in:active,inactive,suspended,pending'],
             'is_competition' => ['boolean'],
+            'is_trainer' => ['boolean'],
             'photo' => ['nullable', 'image', 'max:2048'],
             'belt_rank' => ['nullable', 'string', Rule::in(array_column(BeltRank::cases(), 'value'))],
         ]);

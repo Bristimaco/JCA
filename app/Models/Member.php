@@ -29,6 +29,7 @@ class Member extends Model
             'membership_end_date' => 'date',
             'photo_consent' => 'boolean',
             'is_competition' => 'boolean',
+            'is_trainer' => 'boolean',
         ];
     }
 

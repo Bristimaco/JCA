@@ -67,7 +67,8 @@ class TournamentIndexController extends Controller
         ])->values()->all();
 
         // Members linked to users with Coach role = trainers
-        $availableCoaches = Member::whereHas('users', fn ($q) => $q->where('role', UserRole::Coach->value))
+        $availableCoaches = Member::where('is_trainer', true)
+            ->whereHas('users', fn ($q) => $q->where('role', UserRole::Coach->value))
             ->orderBy('last_name')
             ->orderBy('first_name')
             ->get(['id', 'first_name', 'last_name'])

@@ -31,6 +31,7 @@ class MembersImport implements ToModel, WithHeadingRow, WithValidation
             'membership_start_date' => $row['membership_start_date'] ?? null,
             'membership_end_date' => $row['membership_end_date'] ?? null,
             'is_competition' => $row['is_competition'] ?? null,
+            'is_trainer' => $row['is_trainer'] ?? null,
             'nationality' => $row['nationality'] ?? null,
             'national_member_id' => $row['national_member_id'] ?? null,
             'emergency_contact_name' => $row['emergency_contact_name'] ?? null,

@@ -240,6 +240,7 @@ function MemberForm({ member, onSuccess, onCancel, ageCategories, weightCategori
         belt_rank: member?.current_belt || '',
         membership_status: member?.membership_status || 'active',
         is_competition: member?.is_competition || false,
+        is_trainer: member?.is_trainer || false,
         photo: null,
     });
 
@@ -391,6 +392,13 @@ function MemberForm({ member, onSuccess, onCancel, ageCategories, weightCategori
                         <input type="checkbox" checked={form.data.is_competition} onChange={(e) => form.setData('is_competition', e.target.checked)}
                             className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
                         Competitie
+                    </label>
+                </div>
+                <div className="flex items-end pb-1">
+                    <label className="flex items-center gap-2 text-sm text-gray-700">
+                        <input type="checkbox" checked={form.data.is_trainer} onChange={(e) => form.setData('is_trainer', e.target.checked)}
+                            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
+                        Trainer
                     </label>
                 </div>
                 <div>
