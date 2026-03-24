@@ -35,7 +35,7 @@ class DashboardController extends Controller
         $props['activeTournaments'] = Tournament::where('status', TournamentStatus::Started)
             ->orderByDesc('tournament_date')
             ->get()
-            ->map(fn (Tournament $t) => [
+            ->map(fn(Tournament $t) => [
                 'id' => $t->id,
                 'name' => $t->name,
                 'tournament_date' => $t->tournament_date->toDateString(),
@@ -46,15 +46,35 @@ class DashboardController extends Controller
                 'longitude' => $t->longitude,
             ]);
 
+        // Coach: load tournaments where the user's members are coaches
+        if ($request->user()->isCoach()) {
+            $coachMemberIds = $request->user()->members()->pluck('members.id');
+            $props['coachTournaments'] = Tournament::whereHas('coaches', fn($q) => $q->whereIn('members.id', $coachMemberIds))
+                ->whereIn('status', [TournamentStatus::Started, TournamentStatus::Finished])
+                ->orderByDesc('tournament_date')
+                ->get()
+                ->map(fn(Tournament $t) => [
+                    'id' => $t->id,
+                    'name' => $t->name,
+                    'tournament_date' => $t->tournament_date->toDateString(),
+                    'address_street' => $t->address_street,
+                    'address_postal_code' => $t->address_postal_code,
+                    'address_city' => $t->address_city,
+                    'status' => $t->status->value,
+                    'status_label' => $t->status->label(),
+                    'participant_count' => $t->members()->count(),
+                ]);
+        }
+
         // Load tournaments for the user's linked members
         $memberIds = $request->user()->members()->pluck('members.id');
         if ($memberIds->isNotEmpty()) {
-            $props['myTournaments'] = Tournament::whereHas('members', fn ($q) => $q->whereIn('members.id', $memberIds))
+            $props['myTournaments'] = Tournament::whereHas('members', fn($q) => $q->whereIn('members.id', $memberIds))
                 ->with(['members', 'attachments'])
                 ->orderByDesc('tournament_date')
                 ->get()
                 ->map(function (Tournament $t) use ($memberIds) {
-                    $myMember = $t->members->firstWhere(fn ($m) => $memberIds->contains($m->id));
+                    $myMember = $t->members->firstWhere(fn($m) => $memberIds->contains($m->id));
 
                     return [
                         'id' => $t->id,
@@ -68,15 +88,15 @@ class DashboardController extends Controller
                         'invitation_status' => $myMember?->pivot->invitation_status,
                         'invitation_status_label' => InvitationStatus::tryFrom($myMember?->pivot->invitation_status)?->label(),
                         'participants' => $t->members
-                            ->filter(fn ($m) => $m->pivot->invitation_status === InvitationStatus::Accepted->value)
-                            ->map(fn ($m) => [
+                            ->filter(fn($m) => $m->pivot->invitation_status === InvitationStatus::Accepted->value)
+                            ->map(fn($m) => [
                                 'id' => $m->id,
                                 'name' => $m->fullName(),
                             ])->values()->all(),
-                        'attachments' => $t->attachments->map(fn ($a) => [
+                        'attachments' => $t->attachments->map(fn($a) => [
                             'id' => $a->id,
                             'original_name' => $a->original_name,
-                            'url' => asset('storage/'.$a->file_path),
+                            'url' => asset('storage/' . $a->file_path),
                         ])->values()->all(),
                     ];
                 });

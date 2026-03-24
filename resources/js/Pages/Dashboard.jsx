@@ -9,7 +9,7 @@ const modules = [
     { name: 'Admin', href: '/admin', roles: ['admin'] },
 ];
 
-export default function Dashboard({ pendingCount, memberStats, myMemberCount, myTournaments, activeTournaments }) {
+export default function Dashboard({ pendingCount, memberStats, myMemberCount, myTournaments, activeTournaments, coachTournaments }) {
     const { auth } = usePage().props;
     const role = auth.user.role;
 
@@ -88,6 +88,10 @@ export default function Dashboard({ pendingCount, memberStats, myMemberCount, my
 
             {activeTournaments && activeTournaments.length > 0 && (
                 <ActiveTournaments tournaments={activeTournaments} />
+            )}
+
+            {coachTournaments && coachTournaments.length > 0 && (
+                <CoachTournaments tournaments={coachTournaments} />
             )}
 
             {myTournaments && myTournaments.length > 0 && (
@@ -219,6 +223,56 @@ function MyTournaments({ tournaments }) {
                     </div>
                 );
             })}
+        </div>
+    );
+}
+
+function CoachTournaments({ tournaments }) {
+    const formatDate = (dateStr) => {
+        if (!dateStr) return '-';
+        return new Date(dateStr).toLocaleDateString('nl-BE');
+    };
+
+    const statusColors = {
+        started: 'bg-green-100 text-green-700',
+        finished: 'bg-purple-100 text-purple-700',
+    };
+
+    return (
+        <div className="mt-8">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                Mijn Toernooien als Trainer
+                <span className="ml-2 inline-flex items-center rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-700">
+                    {tournaments.length}
+                </span>
+            </h2>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {tournaments.map(t => (
+                    <Link
+                        key={t.id}
+                        href={`/trainer/toernooien/${t.id}`}
+                        className="bg-white rounded-lg shadow-sm border-2 border-amber-300 overflow-hidden hover:shadow-md transition-shadow"
+                    >
+                        <div className="p-4">
+                            <div className="flex items-center gap-2 mb-1">
+                                <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${statusColors[t.status] || 'bg-gray-100 text-gray-700'}`}>
+                                    {t.status_label}
+                                </span>
+                                <span className="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700">
+                                    Trainer
+                                </span>
+                            </div>
+                            <p className="font-medium text-gray-900">{t.name}</p>
+                            <p className="text-sm text-gray-500 mt-1">{formatDate(t.tournament_date)}</p>
+                            <p className="text-xs text-gray-400 mt-1">
+                                {[t.address_street, t.address_postal_code, t.address_city].filter(Boolean).join(', ') || 'Geen adres'}
+                            </p>
+                            <p className="text-xs text-gray-500 mt-1">{t.participant_count} deelnemers</p>
+                            <p className="mt-2 text-xs text-amber-600 font-medium">Resultaten invullen →</p>
+                        </div>
+                    </Link>
+                ))}
+            </div>
         </div>
     );
 }

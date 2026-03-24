@@ -106,6 +106,35 @@ export default function MemberCard({ member, ageCategories }) {
                             </span>
                         )}
                     </div>
+
+                    {/* Competition History */}
+                    {member.is_competition && member.tournament_results && member.tournament_results.length > 0 && (
+                        <div className="mt-4 pt-3 border-t border-gray-100">
+                            <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Competitie Historiek</h4>
+                            <div className="space-y-2.5 max-h-48 overflow-y-auto">
+                                {member.tournament_results.map((r) => (
+                                    <div key={r.id} className="rounded-md border border-gray-100 bg-gray-50 p-2">
+                                        <div className="flex items-start justify-between gap-2">
+                                            <div className="min-w-0 flex-1">
+                                                <p className="text-xs font-medium text-gray-700 truncate">{r.tournament_name}</p>
+                                                <p className="text-xs text-gray-400">{new Date(r.tournament_date).toLocaleDateString('nl-BE')}</p>
+                                            </div>
+                                            <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium flex-shrink-0 ${r.result.includes('1e') ? 'bg-yellow-100 text-yellow-800' :
+                                                    r.result.includes('2e') ? 'bg-gray-200 text-gray-700' :
+                                                        r.result.includes('3e') ? 'bg-amber-100 text-amber-800' :
+                                                            'bg-gray-100 text-gray-600'
+                                                }`}>
+                                                {r.result}
+                                            </span>
+                                        </div>
+                                        {r.notes && (
+                                            <p className="text-xs text-gray-500 mt-1 break-words">{r.notes}</p>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

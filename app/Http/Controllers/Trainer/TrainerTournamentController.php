@@ -1,21 +1,25 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Trainer;
 
 use App\Enums\InvitationStatus;
 use App\Enums\TournamentStatus;
+use App\Http\Controllers\Controller;
 use App\Models\Member;
 use App\Models\Tournament;
+use App\Models\TournamentResult;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class TournamentDetailController extends Controller
+class TrainerTournamentController extends Controller
 {
-    public function __invoke(Tournament $tournament): Response
+    public function show(Request $request, Tournament $tournament): Response
     {
         $tournament->load(['ageCategories.weightCategories', 'attachments', 'coaches', 'members.weightCategory.ageCategory']);
 
-        // Only show participants who are effectively participating
+        // Only show participants who accepted & registered (for live/finished tournaments)
         $isLive = in_array($tournament->status, [TournamentStatus::Started, TournamentStatus::Finished], true);
 
         $participants = $tournament->members->filter(function (Member $m) use ($isLive) {
@@ -27,6 +31,11 @@ class TournamentDetailController extends Controller
             return $m->pivot->invitation_status === InvitationStatus::Accepted->value;
         });
 
+        // Load existing results for this tournament
+        $existingResults = TournamentResult::where('tournament_id', $tournament->id)
+            ->get()
+            ->keyBy('member_id');
+
         // Group participants by age category, then by weight category
         $grouped = [];
         foreach ($participants as $member) {
@@ -36,11 +45,11 @@ class TournamentDetailController extends Controller
 
             $weightCat = $member->weightCategory;
             $weightName = $weightCat
-                ? $weightCat->max_weight_kg.'kg'
+                ? $weightCat->max_weight_kg . 'kg'
                 : 'Geen gewichtscategorie';
             $weightOrder = $weightCat?->display_order ?? 999;
 
-            if (! isset($grouped[$ageName])) {
+            if (!isset($grouped[$ageName])) {
                 $grouped[$ageName] = [
                     'name' => $ageName,
                     'order' => $ageOrder,
@@ -48,7 +57,7 @@ class TournamentDetailController extends Controller
                 ];
             }
 
-            if (! isset($grouped[$ageName]['weights'][$weightName])) {
+            if (!isset($grouped[$ageName]['weights'][$weightName])) {
                 $grouped[$ageName]['weights'][$weightName] = [
                     'name' => $weightName,
                     'order' => $weightOrder,
@@ -56,23 +65,26 @@ class TournamentDetailController extends Controller
                 ];
             }
 
+            $result = $existingResults->get($member->id);
             $grouped[$ageName]['weights'][$weightName]['members'][] = [
                 'id' => $member->id,
                 'name' => $member->fullName(),
                 'date_of_birth' => $member->date_of_birth->toDateString(),
+                'result' => $result?->result,
+                'notes' => $result?->notes,
             ];
         }
 
-        // Sort age categories by display_order, and weight categories within each
-        usort($grouped, fn ($a, $b) => $a['order'] <=> $b['order']);
+        // Sort
+        usort($grouped, fn($a, $b) => $a['order'] <=> $b['order']);
         foreach ($grouped as &$ageGroup) {
             $weights = array_values($ageGroup['weights']);
-            usort($weights, fn ($a, $b) => $a['order'] <=> $b['order']);
+            usort($weights, fn($a, $b) => $a['order'] <=> $b['order']);
             $ageGroup['weights'] = $weights;
         }
         unset($ageGroup);
 
-        return Inertia::render('TournamentDetail', [
+        return Inertia::render('Trainer/TournamentDetail', [
             'tournament' => [
                 'id' => $tournament->id,
                 'name' => $tournament->name,
@@ -85,12 +97,12 @@ class TournamentDetailController extends Controller
                 'longitude' => $tournament->longitude,
                 'status' => $tournament->status->value,
                 'status_label' => $tournament->status->label(),
-                'attachments' => $tournament->attachments->map(fn ($a) => [
+                'attachments' => $tournament->attachments->map(fn($a) => [
                     'id' => $a->id,
                     'original_name' => $a->original_name,
-                    'url' => asset('storage/'.$a->file_path),
+                    'url' => asset('storage/' . $a->file_path),
                 ])->values()->all(),
-                'coaches' => $tournament->coaches->map(fn (Member $m) => [
+                'coaches' => $tournament->coaches->map(fn(Member $m) => [
                     'id' => $m->id,
                     'name' => $m->fullName(),
                 ])->values()->all(),
@@ -98,5 +110,38 @@ class TournamentDetailController extends Controller
             'participantGroups' => array_values($grouped),
             'totalParticipants' => $participants->count(),
         ]);
+    }
+
+    public function storeResults(Request $request, Tournament $tournament)
+    {
+        $validated = Validator::make($request->all(), [
+            'results' => ['required', 'array'],
+            'results.*.member_id' => ['required', 'integer', 'exists:members,id'],
+            'results.*.result' => ['required', 'string', 'max:100'],
+            'results.*.notes' => ['nullable', 'string', 'max:500'],
+        ])->validate();
+
+        // Verify all members belong to the tournament
+        $tournamentMemberIds = $tournament->members()->pluck('members.id')->toArray();
+
+        foreach ($validated['results'] as $entry) {
+            if (!in_array($entry['member_id'], $tournamentMemberIds)) {
+                continue;
+            }
+
+            TournamentResult::updateOrCreate(
+                [
+                    'tournament_id' => $tournament->id,
+                    'member_id' => $entry['member_id'],
+                ],
+                [
+                    'result' => $entry['result'],
+                    'notes' => $entry['notes'] ?? null,
+                    'recorded_by' => $request->user()->id,
+                ]
+            );
+        }
+
+        return redirect()->back()->with('status', 'Resultaten opgeslagen.');
     }
 }

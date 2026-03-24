@@ -73,7 +73,7 @@ class Member extends Model
 
     public function fullName(): string
     {
-        return $this->first_name.' '.$this->last_name;
+        return $this->first_name . ' ' . $this->last_name;
     }
 
     public function isActive(): bool
@@ -89,6 +89,11 @@ class Member extends Model
     public function ageCategory(): BelongsTo
     {
         return $this->belongsTo(AgeCategory::class);
+    }
+
+    public function tournamentResults(): HasMany
+    {
+        return $this->hasMany(TournamentResult::class)->orderByDesc('created_at');
     }
 
     public function calculateAgeCategory(string $countryCode = 'BE', ?Carbon $referenceDate = null): ?AgeCategory

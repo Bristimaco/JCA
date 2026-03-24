@@ -22,6 +22,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MyMembersController;
 use App\Http\Controllers\TournamentDetailController;
 use App\Http\Controllers\TournamentRsvpController;
+use App\Http\Controllers\Trainer\TrainerTournamentController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -67,6 +68,12 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
 
     // Tournament detail (any authenticated user)
     Route::get('/toernooien/{tournament}', TournamentDetailController::class)->name('tournament.detail');
+
+    // Trainer routes
+    Route::middleware('coach')->prefix('trainer')->group(function () {
+        Route::get('/toernooien/{tournament}', [TrainerTournamentController::class, 'show'])->name('trainer.tournament.show');
+        Route::post('/toernooien/{tournament}/resultaten', [TrainerTournamentController::class, 'storeResults'])->name('trainer.tournament.results');
+    });
 
     // Admin routes
     Route::middleware('admin')->prefix('admin')->group(function () {
