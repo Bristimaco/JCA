@@ -37,7 +37,8 @@
                                             <tr>
                                                 <td style="padding:4px 16px 4px 0;font-weight:bold;">Datum:</td>
                                                 <td style="padding:4px 0;">
-                                                    {{ $tournament->tournament_date->format('d/m/Y') }}</td>
+                                                    {{ $tournament->tournament_date->format('d/m/Y') }}
+                                                </td>
                                             </tr>
                                             @if ($tournament->address_street || $tournament->address_city)
                                                 <tr>
@@ -68,8 +69,7 @@
                                     </tr>
                                     @foreach ($group['results'] as $result)
                                         <tr style="border-top:1px solid #f3f4f6;">
-                                            <td
-                                                style="padding:8px 16px;font-size:14px;color:#374151;width:50%;">
+                                            <td style="padding:8px 16px;font-size:14px;color:#374151;width:50%;">
                                                 {{ $result['name'] }}
                                             </td>
                                             <td

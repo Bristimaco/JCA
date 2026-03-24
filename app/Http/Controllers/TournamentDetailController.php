@@ -6,6 +6,7 @@ use App\Enums\InvitationStatus;
 use App\Enums\TournamentStatus;
 use App\Models\Member;
 use App\Models\Tournament;
+use App\Models\TournamentResult;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -28,6 +29,10 @@ class TournamentDetailController extends Controller
         });
 
         // Group participants by age category, then by weight category
+        $existingResults = TournamentResult::where('tournament_id', $tournament->id)
+            ->get()
+            ->keyBy('member_id');
+
         $grouped = [];
         foreach ($participants as $member) {
             $ageCategory = $member->calculateAgeCategory($tournament->country_code, $tournament->tournament_date);
@@ -36,11 +41,11 @@ class TournamentDetailController extends Controller
 
             $weightCat = $member->weightCategory;
             $weightName = $weightCat
-                ? $weightCat->max_weight_kg.'kg'
+                ? $weightCat->max_weight_kg . 'kg'
                 : 'Geen gewichtscategorie';
             $weightOrder = $weightCat?->display_order ?? 999;
 
-            if (! isset($grouped[$ageName])) {
+            if (!isset($grouped[$ageName])) {
                 $grouped[$ageName] = [
                     'name' => $ageName,
                     'order' => $ageOrder,
@@ -48,7 +53,7 @@ class TournamentDetailController extends Controller
                 ];
             }
 
-            if (! isset($grouped[$ageName]['weights'][$weightName])) {
+            if (!isset($grouped[$ageName]['weights'][$weightName])) {
                 $grouped[$ageName]['weights'][$weightName] = [
                     'name' => $weightName,
                     'order' => $weightOrder,
@@ -56,18 +61,21 @@ class TournamentDetailController extends Controller
                 ];
             }
 
+            $result = $existingResults->get($member->id);
+
             $grouped[$ageName]['weights'][$weightName]['members'][] = [
                 'id' => $member->id,
                 'name' => $member->fullName(),
                 'date_of_birth' => $member->date_of_birth->toDateString(),
+                'result' => $result?->result,
             ];
         }
 
         // Sort age categories by display_order, and weight categories within each
-        usort($grouped, fn ($a, $b) => $a['order'] <=> $b['order']);
+        usort($grouped, fn($a, $b) => $a['order'] <=> $b['order']);
         foreach ($grouped as &$ageGroup) {
             $weights = array_values($ageGroup['weights']);
-            usort($weights, fn ($a, $b) => $a['order'] <=> $b['order']);
+            usort($weights, fn($a, $b) => $a['order'] <=> $b['order']);
             $ageGroup['weights'] = $weights;
         }
         unset($ageGroup);
@@ -85,12 +93,12 @@ class TournamentDetailController extends Controller
                 'longitude' => $tournament->longitude,
                 'status' => $tournament->status->value,
                 'status_label' => $tournament->status->label(),
-                'attachments' => $tournament->attachments->map(fn ($a) => [
+                'attachments' => $tournament->attachments->map(fn($a) => [
                     'id' => $a->id,
                     'original_name' => $a->original_name,
-                    'url' => asset('storage/'.$a->file_path),
+                    'url' => asset('storage/' . $a->file_path),
                 ])->values()->all(),
-                'coaches' => $tournament->coaches->map(fn (Member $m) => [
+                'coaches' => $tournament->coaches->map(fn(Member $m) => [
                     'id' => $m->id,
                     'name' => $m->fullName(),
                 ])->values()->all(),

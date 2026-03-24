@@ -141,8 +141,17 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                                                     </h4>
                                                     <ul className="space-y-1">
                                                         {weightGroup.members.map(member => (
-                                                            <li key={member.id} className="text-sm text-gray-700">
-                                                                {member.name}
+                                                            <li key={member.id} className="flex items-center justify-between text-sm text-gray-700">
+                                                                <span>{member.name}</span>
+                                                                {member.result && (
+                                                                    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${member.result === '1e plaats' ? 'bg-yellow-100 text-yellow-800' :
+                                                                            member.result === '2e plaats' ? 'bg-gray-200 text-gray-800' :
+                                                                                member.result === '3e plaats' ? 'bg-amber-100 text-amber-800' :
+                                                                                    'bg-gray-100 text-gray-600'
+                                                                        }`}>
+                                                                        {member.result}
+                                                                    </span>
+                                                                )}
                                                             </li>
                                                         ))}
                                                     </ul>
