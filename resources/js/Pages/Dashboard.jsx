@@ -9,7 +9,7 @@ const modules = [
     { name: 'Archief', href: '/archief', roles: ['parent', 'member', 'admin', 'coach'] },
 ];
 
-export default function Dashboard({ pendingCount, pendingUsers, adminCounters, memberStats, myMemberCount, myTournaments, activeTournaments, coachTournaments }) {
+export default function Dashboard({ pendingCount, pendingUsers, adminCounters, memberStats, myMemberCount, myTournaments, activeTournaments, coachTournaments, nextTournament, recentArchived }) {
     const { auth } = usePage().props;
     const role = auth.user.role;
 
@@ -51,6 +51,44 @@ export default function Dashboard({ pendingCount, pendingUsers, adminCounters, m
                                     </span>
                                 )}
                             </div>
+
+                            {m.name === 'Toernooien' && nextTournament && (
+                                <Link
+                                    href={`/toernooien/${nextTournament.id}`}
+                                    className="block mt-3 pt-3 border-t border-gray-100 text-left hover:bg-gray-50 -mx-2 px-2 rounded"
+                                    onClick={(e) => e.stopPropagation()}
+                                >
+                                    <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Eerstvolgende</p>
+                                    <p className="text-sm font-medium text-blue-600 truncate">{nextTournament.name}</p>
+                                    <p className="text-xs text-gray-500">{new Date(nextTournament.tournament_date).toLocaleDateString('nl-BE', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                                    {nextTournament.age_categories && nextTournament.age_categories.length > 0 && (
+                                        <p className="text-xs text-gray-500 mt-1 truncate">{nextTournament.age_categories.join(', ')}</p>
+                                    )}
+                                    {nextTournament.coaches && nextTournament.coaches.length > 0 && (
+                                        <p className="text-xs text-gray-500 mt-1 truncate">Coach: {nextTournament.coaches.join(', ')}</p>
+                                    )}
+                                </Link>
+                            )}
+
+                            {m.name === 'Archief' && recentArchived && recentArchived.length > 0 && (
+                                <div className="mt-3 pt-3 border-t border-gray-100 text-left">
+                                    <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Laatste toernooien</p>
+                                    <ul className="space-y-1">
+                                        {recentArchived.map((t) => (
+                                            <li key={t.id}>
+                                                <Link
+                                                    href={`/toernooien/${t.id}`}
+                                                    className="block text-sm text-blue-600 hover:text-blue-800 hover:underline truncate"
+                                                    onClick={(e) => e.stopPropagation()}
+                                                >
+                                                    {t.name}
+                                                    <span className="text-xs text-gray-400 ml-1">{new Date(t.tournament_date).toLocaleDateString('nl-BE')}</span>
+                                                </Link>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
 
                             {m.name === 'Leden' && memberStats && (memberStats.gender.length > 0 || memberStats.belts.length > 0) && (
                                 <div className="mt-3 pt-3 border-t border-gray-100 space-y-2 text-left">
@@ -119,8 +157,8 @@ function AdminTile({ pendingCount, pendingUsers, adminCounters }) {
         <Link
             href="/admin"
             className={`block mb-6 rounded-lg shadow-sm border-2 p-6 transition-all hover:shadow-md ${hasPending
-                    ? 'border-amber-400 bg-amber-50 hover:border-amber-500'
-                    : 'border-gray-200 bg-white hover:border-blue-400'
+                ? 'border-amber-400 bg-amber-50 hover:border-amber-500'
+                : 'border-gray-200 bg-white hover:border-blue-400'
                 }`}
         >
             <div className="flex items-center justify-between mb-4">

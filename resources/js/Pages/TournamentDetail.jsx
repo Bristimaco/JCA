@@ -74,6 +74,48 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                         </div>
                     )}
 
+                    {/* Attachments / Flyers */}
+                    {t.attachments.length > 0 && (
+                        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                            <div className="px-5 py-3 border-b border-gray-100">
+                                <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">Bijlagen</h2>
+                            </div>
+                            <div className="space-y-3 p-4">
+                                {t.attachments.map(att => (
+                                    <div key={att.id}>
+                                        {att.mime_type && att.mime_type.startsWith('image/') ? (
+                                            <a href={att.url} target="_blank" rel="noopener noreferrer">
+                                                <img
+                                                    src={att.url}
+                                                    alt={att.original_name}
+                                                    className="w-full rounded border border-gray-200"
+                                                />
+                                            </a>
+                                        ) : att.mime_type === 'application/pdf' ? (
+                                            <div>
+                                                <iframe
+                                                    src={att.url}
+                                                    title={att.original_name}
+                                                    className="w-full rounded border border-gray-200"
+                                                    style={{ height: '400px' }}
+                                                />
+                                                <a href={att.url} target="_blank" rel="noopener noreferrer"
+                                                    className="text-xs text-blue-600 hover:underline mt-1 inline-block">
+                                                    {att.original_name}
+                                                </a>
+                                            </div>
+                                        ) : (
+                                            <a href={att.url} target="_blank" rel="noopener noreferrer"
+                                                className="text-sm text-blue-600 hover:underline">
+                                                {att.original_name}
+                                            </a>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
                     {/* Coaches */}
                     {t.coaches.length > 0 && (
                         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
@@ -81,23 +123,6 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                             <ul className="space-y-1">
                                 {t.coaches.map(c => (
                                     <li key={c.id} className="text-sm text-gray-900">{c.name}</li>
-                                ))}
-                            </ul>
-                        </div>
-                    )}
-
-                    {/* Attachments */}
-                    {t.attachments.length > 0 && (
-                        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
-                            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">Bijlagen</h2>
-                            <ul className="space-y-1">
-                                {t.attachments.map(att => (
-                                    <li key={att.id}>
-                                        <a href={att.url} target="_blank" rel="noopener noreferrer"
-                                            className="text-sm text-blue-600 hover:underline">
-                                            {att.original_name}
-                                        </a>
-                                    </li>
                                 ))}
                             </ul>
                         </div>

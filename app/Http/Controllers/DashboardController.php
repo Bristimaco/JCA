@@ -51,9 +51,43 @@ class DashboardController extends Controller
             ];
 
             $props['memberStats'] = $this->memberStats();
+
+            $nextTournament = Tournament::with(['ageCategories', 'coaches'])
+                ->whereIn('status', [
+                    TournamentStatus::Preparation,
+                    TournamentStatus::InvitationsSent,
+                    TournamentStatus::RegistrationsOpen,
+                    TournamentStatus::RegistrationsClosed,
+                ])
+                ->where('tournament_date', '>=', now()->toDateString())
+                ->orderBy('tournament_date')
+                ->first();
+
+            if ($nextTournament) {
+                $props['nextTournament'] = [
+                    'id' => $nextTournament->id,
+                    'name' => $nextTournament->name,
+                    'tournament_date' => $nextTournament->tournament_date->toDateString(),
+                    'age_categories' => $nextTournament->ageCategories->pluck('name')->values()->all(),
+                    'coaches' => $nextTournament->coaches->map(fn ($c) => $c->fullName())->values()->all(),
+                ];
+            }
         }
 
         $props['myMemberCount'] = $request->user()->members()->count();
+
+        $props['recentArchived'] = Tournament::whereIn('status', [
+            TournamentStatus::Finished,
+            TournamentStatus::Archived,
+        ])
+            ->orderByDesc('tournament_date')
+            ->take(3)
+            ->get()
+            ->map(fn (Tournament $t) => [
+                'id' => $t->id,
+                'name' => $t->name,
+                'tournament_date' => $t->tournament_date->toDateString(),
+            ]);
 
         // Active (started) tournaments for all users
         $props['activeTournaments'] = Tournament::where('status', TournamentStatus::Started)
