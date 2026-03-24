@@ -216,7 +216,7 @@ class TrainerTournamentController extends Controller
             ->get();
 
         foreach ($interestedUsers as $user) {
-            Mail::to($user->email)->queue(new TournamentReport($tournament, $resultGroups));
+            Mail::to($user->email)->send(new TournamentReport($tournament, $resultGroups));
         }
 
         $mailCount = $interestedUsers->count();
