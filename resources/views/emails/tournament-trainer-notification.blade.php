@@ -90,12 +90,16 @@
                                     <tr style="background-color:#f3f4f6;">
                                         <td style="padding:8px 12px;font-weight:bold;border-bottom:1px solid #e5e7eb;">Naam</td>
                                         <td style="padding:8px 12px;font-weight:bold;border-bottom:1px solid #e5e7eb;">Geboortedatum</td>
+                                        <td style="padding:8px 12px;font-weight:bold;border-bottom:1px solid #e5e7eb;">Categorie</td>
+                                        <td style="padding:8px 12px;font-weight:bold;border-bottom:1px solid #e5e7eb;">Gewicht</td>
                                         <td style="padding:8px 12px;font-weight:bold;border-bottom:1px solid #e5e7eb;">Status</td>
                                     </tr>
                                     @foreach($participants as $p)
                                         <tr>
                                             <td style="padding:8px 12px;border-bottom:1px solid #f3f4f6;">{{ $p['name'] }}</td>
                                             <td style="padding:8px 12px;border-bottom:1px solid #f3f4f6;">{{ $p['date_of_birth'] }}</td>
+                                            <td style="padding:8px 12px;border-bottom:1px solid #f3f4f6;">{{ $p['age_category'] ?? '-' }}</td>
+                                            <td style="padding:8px 12px;border-bottom:1px solid #f3f4f6;">{{ $p['weight_category'] ?? '-' }}</td>
                                             <td style="padding:8px 12px;border-bottom:1px solid #f3f4f6;">{{ $p['invitation_status'] }}</td>
                                         </tr>
                                     @endforeach
