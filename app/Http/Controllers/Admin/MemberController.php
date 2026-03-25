@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Member;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class MemberController extends Controller
@@ -34,7 +33,9 @@ class MemberController extends Controller
         ]);
 
         if ($request->hasFile('photo')) {
-            $validated['photo_path'] = $request->file('photo')->store('member-photos', 'public');
+            $file = $request->file('photo');
+            $validated['photo_data'] = base64_encode(file_get_contents($file->getRealPath()));
+            $validated['photo_mime'] = $file->getMimeType();
         }
 
         $beltRank = $validated['belt_rank'] ?? null;
@@ -64,7 +65,7 @@ class MemberController extends Controller
             'address_street' => ['nullable', 'string', 'max:255'],
             'address_city' => ['nullable', 'string', 'max:255'],
             'address_postal_code' => ['nullable', 'string', 'max:10'],
-            'license_number' => ['nullable', 'string', 'max:255', 'unique:members,license_number,'.$member->id],
+            'license_number' => ['nullable', 'string', 'max:255', 'unique:members,license_number,' . $member->id],
             'weight_category_id' => ['nullable', 'integer', 'exists:weight_categories,id'],
             'membership_status' => ['required', 'string', 'in:active,inactive,suspended,pending'],
             'is_competition' => ['boolean'],
@@ -74,10 +75,9 @@ class MemberController extends Controller
         ]);
 
         if ($request->hasFile('photo')) {
-            if ($member->photo_path) {
-                Storage::disk('public')->delete($member->photo_path);
-            }
-            $validated['photo_path'] = $request->file('photo')->store('member-photos', 'public');
+            $file = $request->file('photo');
+            $validated['photo_data'] = base64_encode(file_get_contents($file->getRealPath()));
+            $validated['photo_mime'] = $file->getMimeType();
         }
 
         $beltRank = $validated['belt_rank'] ?? null;
@@ -98,10 +98,6 @@ class MemberController extends Controller
     public function destroy(Member $member): RedirectResponse
     {
         $name = $member->fullName();
-
-        if ($member->photo_path) {
-            Storage::disk('public')->delete($member->photo_path);
-        }
 
         $member->delete();
 

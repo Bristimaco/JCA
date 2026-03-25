@@ -22,6 +22,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ClubLogoController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MemberPhotoController;
 use App\Http\Controllers\MyMembersController;
 use App\Http\Controllers\TournamentAttachmentController;
 use App\Http\Controllers\TournamentDetailController;
@@ -74,6 +75,9 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
     Route::patch('/mijn-leden/{member}', [MyMembersController::class, 'update'])->name('my-members.update');
 
     // Tournament detail (any authenticated user)
+
+    // Member photo
+    Route::get('/leden-foto/{member}', MemberPhotoController::class)->name('member-photo');
 
     // Tournament attachment download
     Route::get('/bijlagen/{attachment}', TournamentAttachmentController::class)->name('attachments.show');

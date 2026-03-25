@@ -7,7 +7,6 @@ use App\Models\Member;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class MyMembersTest extends TestCase
@@ -42,7 +41,7 @@ class MyMembersTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertInertia(
-            fn ($page) => $page
+            fn($page) => $page
                 ->component('MyMembers')
                 ->has('members', 2)
                 ->has('ageCategories')
@@ -147,8 +146,6 @@ class MyMembersTest extends TestCase
 
     public function test_user_can_upload_photo_for_linked_member(): void
     {
-        Storage::fake('public');
-
         $user = $this->parentUser();
         $member = Member::factory()->create();
         $user->members()->attach($member);
@@ -159,8 +156,8 @@ class MyMembersTest extends TestCase
 
         $response->assertRedirect();
         $member->refresh();
-        $this->assertNotNull($member->photo_path);
-        Storage::disk('public')->assertExists($member->photo_path);
+        $this->assertNotNull($member->photo_data);
+        $this->assertNotNull($member->photo_mime);
     }
 
     public function test_unauthenticated_user_cannot_access_my_members(): void
@@ -179,7 +176,7 @@ class MyMembersTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertInertia(
-            fn ($page) => $page
+            fn($page) => $page
                 ->component('Dashboard')
                 ->where('myMemberCount', 2)
         );

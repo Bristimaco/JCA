@@ -18,7 +18,7 @@ class MemberIndexController extends Controller
         $members = Member::with(['weightCategory', 'tournamentResults.tournament'])->orderBy('last_name')->orderBy('first_name')->get()
             ->map(fn(Member $m) => [
                 ...$m->toArray(),
-                'photo_url' => $m->photo_path ? asset('storage/' . $m->photo_path) : null,
+                'photo_url' => $m->photo_data ? route('member-photo', $m) : null,
                 'weight_category_name' => $m->weightCategory?->name,
                 'current_belt' => $m->currentBelt()?->value,
                 'current_belt_label' => $m->currentBelt()?->label(),

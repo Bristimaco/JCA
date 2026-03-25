@@ -9,7 +9,6 @@ use App\Models\User;
 use App\Models\WeightCategory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class MemberTest extends TestCase
@@ -56,8 +55,6 @@ class MemberTest extends TestCase
 
     public function test_admin_can_create_member_with_photo(): void
     {
-        Storage::fake('public');
-
         $response = $this->actingAs($this->admin())->post('/admin/members', $this->validData([
             'photo' => UploadedFile::fake()->image('photo.jpg', 200, 200),
         ]));
@@ -65,8 +62,8 @@ class MemberTest extends TestCase
         $response->assertRedirect();
 
         $member = Member::first();
-        $this->assertNotNull($member->photo_path);
-        Storage::disk('public')->assertExists($member->photo_path);
+        $this->assertNotNull($member->photo_data);
+        $this->assertNotNull($member->photo_mime);
     }
 
     public function test_admin_can_create_member_with_license(): void
@@ -155,10 +152,7 @@ class MemberTest extends TestCase
 
     public function test_admin_can_update_member_photo(): void
     {
-        Storage::fake('public');
-
-        $member = Member::factory()->create(['photo_path' => 'member-photos/old.jpg']);
-        Storage::disk('public')->put('member-photos/old.jpg', 'old');
+        $member = Member::factory()->create(['photo_data' => base64_encode('old'), 'photo_mime' => 'image/jpeg']);
 
         $response = $this->actingAs($this->admin())->patch("/admin/members/{$member->id}", $this->validData([
             'photo' => UploadedFile::fake()->image('new.jpg', 200, 200),
@@ -167,9 +161,8 @@ class MemberTest extends TestCase
         $response->assertRedirect();
 
         $member->refresh();
-        $this->assertNotEquals('member-photos/old.jpg', $member->photo_path);
-        Storage::disk('public')->assertExists($member->photo_path);
-        Storage::disk('public')->assertMissing('member-photos/old.jpg');
+        $this->assertNotEquals(base64_encode('old'), $member->photo_data);
+        $this->assertNotNull($member->photo_data);
     }
 
     public function test_license_number_unique_ignores_self_on_update(): void
@@ -196,14 +189,11 @@ class MemberTest extends TestCase
 
     public function test_deleting_member_removes_photo(): void
     {
-        Storage::fake('public');
-
-        $member = Member::factory()->create(['photo_path' => 'member-photos/test.jpg']);
-        Storage::disk('public')->put('member-photos/test.jpg', 'content');
+        $member = Member::factory()->create(['photo_data' => base64_encode('content'), 'photo_mime' => 'image/jpeg']);
 
         $this->actingAs($this->admin())->delete("/admin/members/{$member->id}");
 
-        Storage::disk('public')->assertMissing('member-photos/test.jpg');
+        $this->assertSoftDeleted('members', ['id' => $member->id]);
     }
 
     public function test_non_admin_cannot_manage_members(): void
@@ -226,7 +216,7 @@ class MemberTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertInertia(
-            fn ($page) => $page
+            fn($page) => $page
                 ->component('Admin/Members')
                 ->has('members', 3)
                 ->has('ageCategories')
