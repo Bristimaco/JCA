@@ -39,7 +39,8 @@
                                 Beste trainer,
                             </p>
                             <p style="font-size:15px;color:#374151;margin:0 0 24px;">
-                                De uitnodigingsfase voor het volgende toernooi is afgesloten. Hieronder vind je de toernooigegevens en de deelnemerslijst.
+                                De uitnodigingsfase voor het volgende toernooi is afgesloten. Hieronder vind je de
+                                toernooigegevens en de deelnemerslijst.
                             </p>
 
                             {{-- Tournament details --}}
@@ -53,7 +54,8 @@
                                         <table cellpadding="0" cellspacing="0" style="font-size:14px;color:#374151;">
                                             <tr>
                                                 <td style="padding:4px 16px 4px 0;font-weight:bold;">Datum:</td>
-                                                <td style="padding:4px 0;">{{ $tournament->tournament_date->format('d/m/Y') }}</td>
+                                                <td style="padding:4px 0;">
+                                                    {{ $tournament->tournament_date->format('d/m/Y') }}</td>
                                             </tr>
                                             @if($tournament->address_street || $tournament->address_city)
                                                 <tr>
@@ -65,14 +67,18 @@
                                             @endif
                                             @if($tournament->invitation_deadline)
                                                 <tr>
-                                                    <td style="padding:4px 16px 4px 0;font-weight:bold;">Uitnodiging deadline:</td>
-                                                    <td style="padding:4px 0;">{{ $tournament->invitation_deadline->format('d/m/Y') }}</td>
+                                                    <td style="padding:4px 16px 4px 0;font-weight:bold;">Uitnodiging
+                                                        deadline:</td>
+                                                    <td style="padding:4px 0;">
+                                                        {{ $tournament->invitation_deadline->format('d/m/Y') }}</td>
                                                 </tr>
                                             @endif
                                             @if($tournament->registration_deadline)
                                                 <tr>
-                                                    <td style="padding:4px 16px 4px 0;font-weight:bold;">Inschrijving deadline:</td>
-                                                    <td style="padding:4px 0;">{{ $tournament->registration_deadline->format('d/m/Y') }}</td>
+                                                    <td style="padding:4px 16px 4px 0;font-weight:bold;">Inschrijving
+                                                        deadline:</td>
+                                                    <td style="padding:4px 0;">
+                                                        {{ $tournament->registration_deadline->format('d/m/Y') }}</td>
                                                 </tr>
                                             @endif
                                         </table>
@@ -81,26 +87,36 @@
                             </table>
 
                             {{-- Participants --}}
-                            <h3 style="color:#111827;font-size:16px;margin:0 0 12px;">Deelnemers ({{ $participants->count() }})</h3>
+                            <h3 style="color:#111827;font-size:16px;margin:0 0 12px;">Deelnemers
+                                ({{ $participants->count() }})</h3>
                             @if($participants->isEmpty())
                                 <p style="font-size:14px;color:#6b7280;">Nog geen bevestigde deelnemers.</p>
                             @else
                                 <table width="100%" cellpadding="0" cellspacing="0"
                                     style="font-size:14px;color:#374151;border-collapse:collapse;">
                                     <tr style="background-color:#f3f4f6;">
-                                        <td style="padding:8px 12px;font-weight:bold;border-bottom:1px solid #e5e7eb;">Naam</td>
-                                        <td style="padding:8px 12px;font-weight:bold;border-bottom:1px solid #e5e7eb;">Geboortedatum</td>
-                                        <td style="padding:8px 12px;font-weight:bold;border-bottom:1px solid #e5e7eb;">Categorie</td>
-                                        <td style="padding:8px 12px;font-weight:bold;border-bottom:1px solid #e5e7eb;">Gewicht</td>
-                                        <td style="padding:8px 12px;font-weight:bold;border-bottom:1px solid #e5e7eb;">Status</td>
+                                        <td style="padding:8px 12px;font-weight:bold;border-bottom:1px solid #e5e7eb;">Naam
+                                        </td>
+                                        <td style="padding:8px 12px;font-weight:bold;border-bottom:1px solid #e5e7eb;">
+                                            Geboortedatum</td>
+                                        <td style="padding:8px 12px;font-weight:bold;border-bottom:1px solid #e5e7eb;">
+                                            Categorie</td>
+                                        <td style="padding:8px 12px;font-weight:bold;border-bottom:1px solid #e5e7eb;">
+                                            Gewicht</td>
+                                        <td style="padding:8px 12px;font-weight:bold;border-bottom:1px solid #e5e7eb;">
+                                            Status</td>
                                     </tr>
                                     @foreach($participants as $p)
                                         <tr>
                                             <td style="padding:8px 12px;border-bottom:1px solid #f3f4f6;">{{ $p['name'] }}</td>
-                                            <td style="padding:8px 12px;border-bottom:1px solid #f3f4f6;">{{ $p['date_of_birth'] }}</td>
-                                            <td style="padding:8px 12px;border-bottom:1px solid #f3f4f6;">{{ $p['age_category'] ?? '-' }}</td>
-                                            <td style="padding:8px 12px;border-bottom:1px solid #f3f4f6;">{{ $p['weight_category'] ?? '-' }}</td>
-                                            <td style="padding:8px 12px;border-bottom:1px solid #f3f4f6;">{{ $p['invitation_status'] }}</td>
+                                            <td style="padding:8px 12px;border-bottom:1px solid #f3f4f6;">
+                                                {{ $p['date_of_birth'] }}</td>
+                                            <td style="padding:8px 12px;border-bottom:1px solid #f3f4f6;">
+                                                {{ $p['age_category'] ?? '-' }}</td>
+                                            <td style="padding:8px 12px;border-bottom:1px solid #f3f4f6;">
+                                                {{ $p['weight_category'] ?? '-' }}</td>
+                                            <td style="padding:8px 12px;border-bottom:1px solid #f3f4f6;">
+                                                {{ $p['invitation_status'] }}</td>
                                         </tr>
                                     @endforeach
                                 </table>
