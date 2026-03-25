@@ -8,10 +8,10 @@ export default function Tournaments({ tournaments, ageCategories, competitionMem
             <Head title="Toernooien" />
 
             <div className="mb-6 flex items-center gap-4">
-                <Link href="/" className="text-sm text-gray-500 hover:text-gray-700">
+                <Link href="/" className="text-sm text-slate-500 hover:text-slate-700">
                     &larr; Dashboard
                 </Link>
-                <h1 className="text-2xl font-bold text-gray-900">Toernooien</h1>
+                <h1 className="text-2xl font-bold text-slate-900">Toernooien</h1>
                 <Link href="/archief" className="text-sm text-purple-600 hover:text-purple-800">
                     Archief →
                 </Link>

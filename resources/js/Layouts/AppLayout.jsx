@@ -1,52 +1,95 @@
 import { Link, usePage, useForm } from '@inertiajs/react';
+import { useState, useRef, useEffect } from 'react';
 
 export default function AppLayout({ children }) {
     const { auth, club } = usePage().props;
     const logoutForm = useForm();
+    const [userMenuOpen, setUserMenuOpen] = useState(false);
+    const menuRef = useRef(null);
 
     const handleLogout = (e) => {
         e.preventDefault();
         logoutForm.post('/logout');
     };
 
+    useEffect(() => {
+        function handleClickOutside(e) {
+            if (menuRef.current && !menuRef.current.contains(e.target)) {
+                setUserMenuOpen(false);
+            }
+        }
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
     return (
-        <div className="min-h-screen bg-gray-50">
-            <nav className="bg-white border-b border-gray-200">
+        <div className="min-h-screen bg-slate-50">
+            <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-slate-200/60 shadow-sm">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
                         <div className="flex items-center">
-                            <Link href="/" className="flex items-center gap-2 text-xl font-bold text-gray-900">
+                            <Link href="/" className="flex items-center gap-2.5 group">
                                 {club?.has_logo && (
-                                    <img src="/club-logo" alt="" className="h-8 w-8 object-contain" />
+                                    <img src="/club-logo" alt="" className="h-9 w-9 object-contain rounded-lg shadow-sm ring-1 ring-slate-200/50" />
                                 )}
-                                {club?.name || 'JCA'}
+                                <span className="text-lg font-bold text-slate-900 tracking-tight group-hover:text-indigo-600">
+                                    {club?.name || 'JCA'}
+                                </span>
                             </Link>
                         </div>
-                        <div className="flex items-center gap-4">
-                            <span className="text-sm text-gray-600">
-                                {auth.user.name}
-                                {auth.user.role_label && (
-                                    <span className="ml-1 text-xs text-gray-400">({auth.user.role_label})</span>
-                                )}
-                            </span>
+                        <div className="flex items-center gap-2">
                             <a
                                 href="/handleiding.html"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 title="Handleiding"
-                                className="text-gray-400 hover:text-blue-600 transition-colors"
+                                className="inline-flex items-center justify-center w-9 h-9 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
                                     <path fillRule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0ZM8.94 6.94a.75.75 0 1 1-1.061-1.061 3.25 3.25 0 1 1 4.596 4.596l-.459.459a1.75 1.75 0 0 0-.513 1.237V13a.75.75 0 0 1-1.5 0v-.878c0-.894.355-1.752.988-2.384l.459-.459a1.75 1.75 0 0 0-2.51-2.34ZM10 16a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clipRule="evenodd" />
                                 </svg>
                             </a>
-                            <button
-                                onClick={handleLogout}
-                                disabled={logoutForm.processing}
-                                className="text-sm text-gray-500 hover:text-gray-700"
-                            >
-                                Uitloggen
-                            </button>
+
+                            <div className="relative" ref={menuRef}>
+                                <button
+                                    onClick={() => setUserMenuOpen(!userMenuOpen)}
+                                    className="flex items-center gap-2 rounded-lg px-3 py-2 hover:bg-slate-100"
+                                >
+                                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-sm font-semibold shadow-sm">
+                                        {auth.user.name.charAt(0).toUpperCase()}
+                                    </div>
+                                    <div className="hidden sm:block text-left">
+                                        <p className="text-sm font-medium text-slate-700 leading-tight">{auth.user.name}</p>
+                                        {auth.user.role_label && (
+                                            <p className="text-xs text-slate-400 leading-tight">{auth.user.role_label}</p>
+                                        )}
+                                    </div>
+                                    <svg className="w-4 h-4 text-slate-400 hidden sm:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+
+                                {userMenuOpen && (
+                                    <div className="absolute right-0 mt-2 w-48 rounded-xl bg-white shadow-lg ring-1 ring-slate-200/50 py-1.5 z-50">
+                                        <div className="px-3 py-2 border-b border-slate-100 sm:hidden">
+                                            <p className="text-sm font-medium text-slate-700">{auth.user.name}</p>
+                                            {auth.user.role_label && (
+                                                <p className="text-xs text-slate-400">{auth.user.role_label}</p>
+                                            )}
+                                        </div>
+                                        <button
+                                            onClick={handleLogout}
+                                            disabled={logoutForm.processing}
+                                            className="w-full text-left px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 flex items-center gap-2"
+                                        >
+                                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                            </svg>
+                                            Uitloggen
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>

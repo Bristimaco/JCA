@@ -66,11 +66,11 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
     };
 
     const statusColors = {
-        preparation: 'bg-gray-100 text-gray-700',
-        invitations_sent: 'bg-blue-100 text-blue-700',
+        preparation: 'bg-slate-100 text-slate-700',
+        invitations_sent: 'bg-blue-100 text-indigo-700',
         registrations_open: 'bg-yellow-100 text-yellow-700',
         registrations_closed: 'bg-orange-100 text-orange-700',
-        started: 'bg-green-100 text-green-700',
+        started: 'bg-emerald-100 text-emerald-700',
         finished: 'bg-purple-100 text-purple-700',
         archived: 'bg-purple-100 text-purple-700',
     };
@@ -90,10 +90,10 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
             <Head title={`Trainer - ${t.name}`} />
 
             <div className="mb-6 flex items-center gap-4">
-                <Link href="/" className="text-sm text-gray-500 hover:text-gray-700">
+                <Link href="/" className="text-sm text-slate-500 hover:text-slate-700">
                     &larr; Dashboard
                 </Link>
-                <h1 className="text-2xl font-bold text-gray-900">{t.name}</h1>
+                <h1 className="text-2xl font-bold text-slate-900">{t.name}</h1>
                 <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${statusColors[t.status] || ''}`}>
                     {t.status_label}
                 </span>
@@ -103,44 +103,44 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
             </div>
 
             {flash.status && (
-                <div className="mb-4 rounded-md bg-green-50 border border-green-200 p-3">
-                    <p className="text-sm text-green-800">{flash.status}</p>
+                <div className="mb-4 rounded-md bg-emerald-50 border ring-1 ring-emerald-200/50 p-3">
+                    <p className="text-sm text-emerald-800">{flash.status}</p>
                 </div>
             )}
 
             <div className="grid gap-6 lg:grid-cols-3">
                 {/* Left column: Info + map */}
                 <div className="lg:col-span-1 space-y-4">
-                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
-                        <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">Details</h2>
+                    <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-5">
+                        <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">Details</h2>
                         <dl className="space-y-3 text-sm">
                             <div>
-                                <dt className="text-gray-500">Datum</dt>
-                                <dd className="font-medium text-gray-900">{formatDate(t.tournament_date)}</dd>
+                                <dt className="text-slate-500">Datum</dt>
+                                <dd className="font-medium text-slate-900">{formatDate(t.tournament_date)}</dd>
                             </div>
                             <div>
-                                <dt className="text-gray-500">Locatie</dt>
-                                <dd className="font-medium text-gray-900">
+                                <dt className="text-slate-500">Locatie</dt>
+                                <dd className="font-medium text-slate-900">
                                     {[t.address_street, t.address_postal_code, t.address_city].filter(Boolean).join(', ') || 'Geen adres'}
                                 </dd>
                             </div>
                             <div>
-                                <dt className="text-gray-500">Land</dt>
-                                <dd className="font-medium text-gray-900">{t.country_code}</dd>
+                                <dt className="text-slate-500">Land</dt>
+                                <dd className="font-medium text-slate-900">{t.country_code}</dd>
                             </div>
                             <div>
-                                <dt className="text-gray-500">Deelnemers</dt>
-                                <dd className="font-medium text-gray-900">{totalParticipants}</dd>
+                                <dt className="text-slate-500">Deelnemers</dt>
+                                <dd className="font-medium text-slate-900">{totalParticipants}</dd>
                             </div>
                             <div>
-                                <dt className="text-gray-500">Resultaten ingevuld</dt>
-                                <dd className="font-medium text-gray-900">{filledCount} / {totalParticipants}</dd>
+                                <dt className="text-slate-500">Resultaten ingevuld</dt>
+                                <dd className="font-medium text-slate-900">{filledCount} / {totalParticipants}</dd>
                             </div>
                         </dl>
                     </div>
 
                     {hasMap && (
-                        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                        <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
                             <iframe
                                 title="Locatie"
                                 width="100%"
@@ -151,24 +151,24 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                     )}
 
                     {t.coaches.length > 0 && (
-                        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
-                            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">Trainers</h2>
+                        <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-5">
+                            <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">Trainers</h2>
                             <ul className="space-y-1">
                                 {t.coaches.map(c => (
-                                    <li key={c.id} className="text-sm text-gray-900">{c.name}</li>
+                                    <li key={c.id} className="text-sm text-slate-900">{c.name}</li>
                                 ))}
                             </ul>
                         </div>
                     )}
 
                     {t.attachments.length > 0 && (
-                        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
-                            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">Bijlagen</h2>
+                        <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-5">
+                            <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">Bijlagen</h2>
                             <ul className="space-y-1">
                                 {t.attachments.map(att => (
                                     <li key={att.id}>
                                         <a href={att.url} target="_blank" rel="noopener noreferrer"
-                                            className="text-sm text-blue-600 hover:underline">
+                                            className="text-sm text-indigo-600 hover:underline">
                                             {att.original_name}
                                         </a>
                                     </li>
@@ -182,7 +182,7 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                         <button
                             onClick={handleSave}
                             disabled={form.processing}
-                            className="w-full rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                            className="w-full rounded-lg bg-indigo-600 px-4 py-3 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50 transition-colors"
                         >
                             {form.processing ? 'Opslaan...' : 'Resultaten opslaan'}
                         </button>
@@ -209,51 +209,51 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
 
                 {/* Right column: Participants with result inputs */}
                 <div className="lg:col-span-2">
-                    <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-                        <div className="px-5 py-4 border-b border-gray-200">
-                            <h2 className="text-lg font-semibold text-gray-900">
+                    <div className="bg-white rounded-lg shadow-sm border border-slate-200">
+                        <div className="px-5 py-4 border-b border-slate-200">
+                            <h2 className="text-lg font-semibold text-slate-900">
                                 Deelnemers & Resultaten
-                                <span className="ml-2 inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600">
+                                <span className="ml-2 inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600">
                                     {totalParticipants}
                                 </span>
                             </h2>
                         </div>
 
                         {participantGroups.length === 0 ? (
-                            <div className="px-5 py-8 text-center text-gray-500">
+                            <div className="px-5 py-8 text-center text-slate-500">
                                 Nog geen deelnemers.
                             </div>
                         ) : (
-                            <div className="divide-y divide-gray-200">
+                            <div className="divide-y divide-slate-100">
                                 {participantGroups.map(ageGroup => (
                                     <div key={ageGroup.name} className="px-5 py-4">
-                                        <h3 className="text-sm font-semibold text-gray-800 mb-3">
-                                            <span className="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700">
+                                        <h3 className="text-sm font-semibold text-slate-800 mb-3">
+                                            <span className="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-indigo-700">
                                                 {ageGroup.name}
                                             </span>
                                         </h3>
                                         <div className="space-y-3">
                                             {ageGroup.weights.map(weightGroup => (
-                                                <div key={weightGroup.name} className="rounded-lg border border-gray-100 bg-gray-50 p-3">
+                                                <div key={weightGroup.name} className="rounded-lg border border-slate-100 bg-slate-50 p-3">
                                                     <h4 className="text-xs font-semibold text-amber-700 mb-2">
                                                         <span className="inline-flex items-center rounded-full bg-amber-50 px-2 py-0.5">
                                                             {weightGroup.name}
                                                         </span>
-                                                        <span className="ml-1.5 text-gray-400 font-normal">
+                                                        <span className="ml-1.5 text-slate-400 font-normal">
                                                             ({weightGroup.members.length})
                                                         </span>
                                                     </h4>
                                                     <div className="space-y-2">
                                                         {weightGroup.members.map(member => (
-                                                            <div key={member.id} className="flex items-center gap-3 bg-white rounded-md p-2 border border-gray-100">
+                                                            <div key={member.id} className="flex items-center gap-3 bg-white rounded-md p-2 border border-slate-100">
                                                                 <div className="flex-1 min-w-0">
-                                                                    <p className="text-sm font-medium text-gray-900 truncate">{member.name}</p>
+                                                                    <p className="text-sm font-medium text-slate-900 truncate">{member.name}</p>
                                                                 </div>
                                                                 <select
                                                                     value={results[member.id]?.result || ''}
                                                                     onChange={(e) => updateResult(member.id, 'result', e.target.value)}
                                                                     disabled={isFinished}
-                                                                    className={`rounded-md border border-gray-300 text-sm py-1 px-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${isFinished ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+                                                                    className={`rounded-md border border-slate-300 text-sm py-1 px-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${isFinished ? 'bg-slate-100 cursor-not-allowed' : ''}`}
                                                                 >
                                                                     {resultOptions.map(opt => (
                                                                         <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -266,7 +266,7 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                                                                     disabled={isFinished}
                                                                     rows={1}
                                                                     onInput={(e) => { e.target.style.height = 'auto'; e.target.style.height = e.target.scrollHeight + 'px'; }}
-                                                                    className={`min-w-32 flex-1 rounded-md border border-gray-300 text-sm py-1 px-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none overflow-hidden ${isFinished ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+                                                                    className={`min-w-32 flex-1 rounded-md border border-slate-300 text-sm py-1 px-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none overflow-hidden ${isFinished ? 'bg-slate-100 cursor-not-allowed' : ''}`}
                                                                 />
                                                             </div>
                                                         ))}

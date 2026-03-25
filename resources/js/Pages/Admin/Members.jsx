@@ -8,10 +8,10 @@ export default function Members({ members, ageCategories, weightCategories, belt
             <Head title="Leden" />
 
             <div className="mb-6 flex items-center gap-4">
-                <Link href="/" className="text-sm text-gray-500 hover:text-gray-700">
+                <Link href="/" className="text-sm text-slate-500 hover:text-slate-700">
                     &larr; Dashboard
                 </Link>
-                <h1 className="text-2xl font-bold text-gray-900">Ledenlijst</h1>
+                <h1 className="text-2xl font-bold text-slate-900">Ledenlijst</h1>
             </div>
 
             <MembersSection members={members} ageCategories={ageCategories} weightCategories={weightCategories} beltRanks={beltRanks} />
