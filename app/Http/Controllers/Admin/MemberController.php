@@ -65,7 +65,7 @@ class MemberController extends Controller
             'address_street' => ['nullable', 'string', 'max:255'],
             'address_city' => ['nullable', 'string', 'max:255'],
             'address_postal_code' => ['nullable', 'string', 'max:10'],
-            'license_number' => ['nullable', 'string', 'max:255', 'unique:members,license_number,' . $member->id],
+            'license_number' => ['nullable', 'string', 'max:255', 'unique:members,license_number,'.$member->id],
             'weight_category_id' => ['nullable', 'integer', 'exists:weight_categories,id'],
             'membership_status' => ['required', 'string', 'in:active,inactive,suspended,pending'],
             'is_competition' => ['boolean'],

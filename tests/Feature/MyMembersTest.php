@@ -41,7 +41,7 @@ class MyMembersTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertInertia(
-            fn($page) => $page
+            fn ($page) => $page
                 ->component('MyMembers')
                 ->has('members', 2)
                 ->has('ageCategories')
@@ -176,7 +176,7 @@ class MyMembersTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertInertia(
-            fn($page) => $page
+            fn ($page) => $page
                 ->component('Dashboard')
                 ->where('myMemberCount', 2)
         );

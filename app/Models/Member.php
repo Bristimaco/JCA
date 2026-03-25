@@ -19,6 +19,8 @@ class Member extends Model
 
     protected $guarded = ['id'];
 
+    protected $hidden = ['photo_data'];
+
     protected function casts(): array
     {
         return [
