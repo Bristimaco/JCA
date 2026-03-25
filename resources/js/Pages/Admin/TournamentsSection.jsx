@@ -472,28 +472,30 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
                 }
 
                 const renderMember = (member) => (
-                    <div key={member.id} className="px-4 py-2 flex items-center justify-between gap-3">
-                        <div className="min-w-0 flex-1 flex items-center gap-3">
-                            <span className="text-sm text-gray-900">{member.name}</span>
-                            <span className="text-xs text-gray-400">{member.date_of_birth}</span>
-                            {member.license_number && (
-                                <span className="text-xs text-gray-400">#{member.license_number}</span>
-                            )}
-                            {member.age_category && (
+                    <tr key={member.id} className="border-t border-gray-100">
+                        <td className="px-3 py-2 text-sm text-gray-900 whitespace-nowrap">{member.name}</td>
+                        <td className="px-3 py-2 text-xs text-gray-400 whitespace-nowrap">{member.date_of_birth}</td>
+                        <td className="px-3 py-2 text-xs text-gray-400 whitespace-nowrap">{member.license_number ? `#${member.license_number}` : '-'}</td>
+                        <td className="px-3 py-2 whitespace-nowrap">
+                            {member.age_category ? (
                                 <span className="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700">
                                     {member.age_category}
                                 </span>
-                            )}
-                            {member.weight_category && (
+                            ) : <span className="text-xs text-gray-300">-</span>}
+                        </td>
+                        <td className="px-3 py-2 whitespace-nowrap">
+                            {member.weight_category ? (
                                 <span className="inline-flex items-center rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700">
                                     {member.weight_category}
                                 </span>
-                            )}
-                        </div>
-                        <div className="flex items-center gap-2">
+                            ) : <span className="text-xs text-gray-300">-</span>}
+                        </td>
+                        <td className="px-3 py-2 whitespace-nowrap">
                             <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${invitationStatusColors[member.invitation_status] || ''}`}>
                                 {member.invitation_status_label}
                             </span>
+                        </td>
+                        <td className="px-3 py-2 whitespace-nowrap">
                             {member.registration_status === 'registered' && (
                                 <span className="inline-flex items-center rounded-full bg-emerald-100 text-emerald-700 px-2 py-0.5 text-xs font-medium">
                                     Ingeschreven
@@ -504,78 +506,102 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
                                     Uitgeschreven
                                 </span>
                             )}
-                            {member.invitation_status === 'pending' && tournament.status === 'preparation' && (
-                                <button
-                                    onClick={() => handleInvite(member.id)}
-                                    disabled={processing[member.id]}
-                                    className="text-xs text-green-600 hover:text-green-800 disabled:opacity-50"
-                                >
-                                    Uitnodigen
-                                </button>
-                            )}
-                            {member.invitation_status === 'invited' && (
-                                <>
+                        </td>
+                        <td className="px-3 py-2 whitespace-nowrap text-right">
+                            <div className="flex items-center justify-end gap-2">
+                                {member.invitation_status === 'pending' && tournament.status === 'preparation' && (
                                     <button
-                                        onClick={() => handleAdminAccept(member.id)}
+                                        onClick={() => handleInvite(member.id)}
                                         disabled={processing[member.id]}
                                         className="text-xs text-green-600 hover:text-green-800 disabled:opacity-50"
-                                        title="Accepteren namens lid"
                                     >
-                                        ✓
+                                        Uitnodigen
                                     </button>
+                                )}
+                                {member.invitation_status === 'invited' && (
+                                    <>
+                                        <button
+                                            onClick={() => handleAdminAccept(member.id)}
+                                            disabled={processing[member.id]}
+                                            className="text-xs text-green-600 hover:text-green-800 disabled:opacity-50"
+                                            title="Accepteren namens lid"
+                                        >
+                                            ✓
+                                        </button>
+                                        <button
+                                            onClick={() => handleAdminDecline(member.id)}
+                                            disabled={processing[member.id]}
+                                            className="text-xs text-red-500 hover:text-red-700 disabled:opacity-50"
+                                            title="Afslaan namens lid"
+                                        >
+                                            ✗
+                                        </button>
+                                    </>
+                                )}
+                                {tournament.status === 'registrations_open' && member.invitation_status === 'accepted' && member.registration_status !== 'registered' && (
                                     <button
-                                        onClick={() => handleAdminDecline(member.id)}
+                                        onClick={() => handleRegister(member.id)}
+                                        disabled={processing[member.id]}
+                                        className="text-xs text-emerald-600 hover:text-emerald-800 disabled:opacity-50"
+                                    >
+                                        Inschrijven
+                                    </button>
+                                )}
+                                {tournament.status === 'registrations_open' && member.registration_status === 'registered' && (
+                                    <button
+                                        onClick={() => handleUnregister(member.id, member.name)}
                                         disabled={processing[member.id]}
                                         className="text-xs text-red-500 hover:text-red-700 disabled:opacity-50"
-                                        title="Afslaan namens lid"
                                     >
-                                        ✗
+                                        Uitschrijven
                                     </button>
-                                </>
-                            )}
-                            {tournament.status === 'registrations_open' && member.invitation_status === 'accepted' && member.registration_status !== 'registered' && (
-                                <button
-                                    onClick={() => handleRegister(member.id)}
-                                    disabled={processing[member.id]}
-                                    className="text-xs text-emerald-600 hover:text-emerald-800 disabled:opacity-50"
-                                >
-                                    Inschrijven
-                                </button>
-                            )}
-                            {tournament.status === 'registrations_open' && member.registration_status === 'registered' && (
-                                <button
-                                    onClick={() => handleUnregister(member.id, member.name)}
-                                    disabled={processing[member.id]}
-                                    className="text-xs text-red-500 hover:text-red-700 disabled:opacity-50"
-                                >
-                                    Uitschrijven
-                                </button>
-                            )}
-                            {tournament.status === 'preparation' && (
-                                <button
-                                    onClick={() => handleRemove(member.id, member.name)}
-                                    className="text-xs text-red-500 hover:text-red-700"
-                                >
-                                    ✕
-                                </button>
-                            )}
-                        </div>
-                    </div>
+                                )}
+                                {tournament.status === 'preparation' && (
+                                    <button
+                                        onClick={() => handleRemove(member.id, member.name)}
+                                        className="text-xs text-red-500 hover:text-red-700"
+                                    >
+                                        ✕
+                                    </button>
+                                )}
+                            </div>
+                        </td>
+                    </tr>
+                );
+
+                const tableHeader = (
+                    <thead>
+                        <tr className="bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                            <th className="px-3 py-2">Naam</th>
+                            <th className="px-3 py-2">Geboortedatum</th>
+                            <th className="px-3 py-2">Licentie</th>
+                            <th className="px-3 py-2">Categorie</th>
+                            <th className="px-3 py-2">Gewicht</th>
+                            <th className="px-3 py-2">Uitnodiging</th>
+                            <th className="px-3 py-2">Inschrijving</th>
+                            <th className="px-3 py-2 text-right">Acties</th>
+                        </tr>
+                    </thead>
                 );
 
                 return (
                     <>
-                        <div className="divide-y divide-gray-200">
-                            {participating.map(renderMember)}
-                        </div>
+                        <table className="w-full">
+                            {tableHeader}
+                            <tbody>
+                                {participating.map(renderMember)}
+                            </tbody>
+                        </table>
                         {notParticipating.length > 0 && (
                             <>
                                 <div className="px-4 py-2 bg-gray-100 border-t border-b border-gray-200">
                                     <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Niet-deelnemers ({notParticipating.length})</span>
                                 </div>
-                                <div className="divide-y divide-gray-200 opacity-60">
-                                    {notParticipating.map(renderMember)}
-                                </div>
+                                <table className="w-full opacity-60">
+                                    <tbody>
+                                        {notParticipating.map(renderMember)}
+                                    </tbody>
+                                </table>
                             </>
                         )}
                     </>
