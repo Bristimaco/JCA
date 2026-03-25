@@ -7,6 +7,7 @@ use App\Enums\TournamentStatus;
 use App\Http\Controllers\Controller;
 use App\Mail\TournamentInvitation;
 use App\Mail\TournamentRegistrationNotification;
+use App\Mail\TournamentTrainerNotification;
 use App\Models\Member;
 use App\Models\Tournament;
 use Illuminate\Http\RedirectResponse;
@@ -160,7 +161,21 @@ class TournamentMembersController extends Controller
      */
     public function closeInvitations(Tournament $tournament): RedirectResponse
     {
+        $notInvited = $tournament->members()
+            ->wherePivot('invitation_status', InvitationStatus::Pending->value)
+            ->count();
+
+        if ($notInvited > 0) {
+            return back()->with('status', "Kan niet afsluiten: {$notInvited} leden zijn nog niet uitgenodigd.");
+        }
+
+        if ($tournament->coaches()->count() === 0) {
+            return back()->with('status', 'Kan niet afsluiten: wijs eerst minstens één trainer toe.');
+        }
+
         $tournament->update(['status' => TournamentStatus::InvitationsSent]);
+
+        $this->notifyCoaches($tournament);
 
         return back()->with('status', 'Uitnodigingsfase afgesloten. Status: Uitnodigingen verstuurd.');
     }
@@ -275,6 +290,29 @@ class TournamentMembersController extends Controller
         return back()->with('status', 'Status teruggezet naar: '.$previous->label().'.');
     }
 
+    private function notifyCoaches(Tournament $tournament): void
+    {
+        $coaches = $tournament->coaches()->with('users')->get();
+
+        if ($coaches->isEmpty()) {
+            return;
+        }
+
+        $participants = $tournament->members()->get()->map(fn (Member $m) => [
+            'name' => $m->fullName(),
+            'date_of_birth' => $m->date_of_birth->format('d/m/Y'),
+            'invitation_status' => InvitationStatus::tryFrom($m->pivot->invitation_status)?->label() ?? $m->pivot->invitation_status,
+        ]);
+
+        foreach ($coaches as $coach) {
+            $email = $coach->email ?? $coach->users->first()?->email;
+
+            if ($email) {
+                Mail::to($email)->send(new TournamentTrainerNotification($tournament, $participants));
+            }
+        }
+    }
+
     private function sendInvitation(Tournament $tournament, Member $member, $pivot): void
     {
         $email = $this->resolveEmail($member, $tournament);
@@ -335,5 +373,47 @@ class TournamentMembersController extends Controller
         $tournament->coaches()->detach($member->id);
 
         return back()->with('status', $member->fullName().' is verwijderd als trainer.');
+    }
+
+    /**
+     * Admin manually accepts a member's RSVP.
+     */
+    public function adminAccept(Tournament $tournament, Member $member): RedirectResponse
+    {
+        $pivot = $tournament->members()->where('members.id', $member->id)->first()?->pivot;
+
+        if (! $pivot) {
+            return back()->with('status', 'Dit lid staat niet op de lijst.');
+        }
+
+        DB::table('member_tournament')
+            ->where('id', $pivot->id)
+            ->update([
+                'invitation_status' => InvitationStatus::Accepted->value,
+                'responded_at' => now(),
+            ]);
+
+        return back()->with('status', $member->fullName().' is geaccepteerd.');
+    }
+
+    /**
+     * Admin manually declines a member's RSVP.
+     */
+    public function adminDecline(Tournament $tournament, Member $member): RedirectResponse
+    {
+        $pivot = $tournament->members()->where('members.id', $member->id)->first()?->pivot;
+
+        if (! $pivot) {
+            return back()->with('status', 'Dit lid staat niet op de lijst.');
+        }
+
+        DB::table('member_tournament')
+            ->where('id', $pivot->id)
+            ->update([
+                'invitation_status' => InvitationStatus::Declined->value,
+                'responded_at' => now(),
+            ]);
+
+        return back()->with('status', $member->fullName().' is afgeslagen.');
     }
 }

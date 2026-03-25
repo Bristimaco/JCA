@@ -9,7 +9,7 @@ const modules = [
     { name: 'Archief', href: '/archief', roles: ['parent', 'member', 'admin', 'coach'] },
 ];
 
-export default function Dashboard({ pendingCount, pendingUsers, adminCounters, memberStats, myMemberCount, myTournaments, activeTournaments, coachTournaments, nextTournament, recentArchived }) {
+export default function Dashboard({ pendingCount, pendingUsers, adminCounters, memberStats, myMemberCount, myTournaments, activeTournaments, coachTournaments, upcomingTournaments, recentArchived }) {
     const { auth } = usePage().props;
     const role = auth.user.role;
 
@@ -45,29 +45,37 @@ export default function Dashboard({ pendingCount, pendingUsers, adminCounters, m
                                         {memberStats.total}
                                     </span>
                                 )}
-                                {m.name === 'Mijn Leden' && myMemberCount > 0 && (
+                                {m.name === 'Mijn Leden' && myMemberCount !== undefined && (
                                     <span className="ml-2 inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-700">
                                         {myMemberCount}
                                     </span>
                                 )}
                             </div>
 
-                            {m.name === 'Toernooien' && nextTournament && (
-                                <Link
-                                    href={`/toernooien/${nextTournament.id}`}
-                                    className="block mt-3 pt-3 border-t border-gray-100 text-left hover:bg-gray-50 -mx-2 px-2 rounded"
-                                    onClick={(e) => e.stopPropagation()}
-                                >
-                                    <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Eerstvolgende</p>
-                                    <p className="text-sm font-medium text-blue-600 truncate">{nextTournament.name}</p>
-                                    <p className="text-xs text-gray-500">{new Date(nextTournament.tournament_date).toLocaleDateString('nl-BE', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' })}</p>
-                                    {nextTournament.age_categories && nextTournament.age_categories.length > 0 && (
-                                        <p className="text-xs text-gray-500 mt-1 truncate">{nextTournament.age_categories.join(', ')}</p>
+                            {m.name === 'Toernooien' && (
+                                <div className="mt-3 pt-3 border-t border-gray-100 text-left">
+                                    {upcomingTournaments && upcomingTournaments.length > 0 ? (
+                                        <>
+                                            <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">Komende toernooien</p>
+                                            <ul className="space-y-1">
+                                                {upcomingTournaments.map((t) => (
+                                                    <li key={t.id}>
+                                                        <Link
+                                                            href={`/toernooien/${t.id}`}
+                                                            className="block text-sm text-blue-600 hover:text-blue-800 hover:underline truncate"
+                                                            onClick={(e) => e.stopPropagation()}
+                                                        >
+                                                            {t.name}
+                                                            <span className="text-xs text-gray-400 ml-1">{new Date(t.tournament_date).toLocaleDateString('nl-BE')}</span>
+                                                        </Link>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </>
+                                    ) : (
+                                        <p className="text-sm text-gray-400">Geen geplande toernooien</p>
                                     )}
-                                    {nextTournament.coaches && nextTournament.coaches.length > 0 && (
-                                        <p className="text-xs text-gray-500 mt-1 truncate">Coach: {nextTournament.coaches.join(', ')}</p>
-                                    )}
-                                </Link>
+                                </div>
                             )}
 
                             {m.name === 'Archief' && recentArchived && recentArchived.length > 0 && (
@@ -170,11 +178,11 @@ function AdminTile({ pendingCount, pendingUsers, adminCounters }) {
                 )}
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+            <div className="space-y-1.5 mb-4">
                 {counters.map((c) => (
-                    <div key={c.label} className="rounded-lg bg-white/70 p-3 text-center">
-                        <p className={`text-2xl font-bold ${c.text}`}>{c.value}</p>
-                        <p className="text-xs text-gray-500 mt-0.5">{c.label}</p>
+                    <div key={c.label} className="flex items-center justify-between rounded-lg bg-white/70 px-3 py-1.5">
+                        <span className="text-sm text-gray-600">{c.label}</span>
+                        <span className={`text-lg font-bold ${c.text}`}>{c.value}</span>
                     </div>
                 ))}
             </div>

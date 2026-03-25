@@ -47,7 +47,11 @@
 
 <body>
     <div class="card">
-        @if($status === \App\Enums\InvitationStatus::Accepted)
+        @if($expired ?? false)
+            <div class="icon">⏰</div>
+            <h1>Deadline verlopen</h1>
+            <p>De uitnodigingsdeadline voor <strong>{{ $tournamentName }}</strong> is verlopen. Neem contact op met de club als je toch wilt reageren.</p>
+        @elseif($status === \App\Enums\InvitationStatus::Accepted)
             <div class="icon">✅</div>
             <h1>Bedankt, {{ $memberName }}!</h1>
             <p>Je deelname aan <strong>{{ $tournamentName }}</strong> is bevestigd.</p>

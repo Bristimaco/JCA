@@ -147,31 +147,40 @@ function TournamentRow({ tournament, statusColors, statuses, competitionMembers,
                             ))}
                         </div>
                     )}
-                    {tournament.attachments && tournament.attachments.length > 0 && (
-                        <div className="flex gap-2 mt-2">
-                            {tournament.attachments.map(att => (
-                                <a key={att.id} href={att.url} target="_blank" rel="noopener noreferrer"
-                                    className="text-xs text-blue-600 hover:underline">
-                                    {att.original_name}
-                                </a>
-                            ))}
-                        </div>
-                    )}
                 </div>
 
-                {/* Right: map factbox (hidden when editing to avoid duplicate with form map) */}
-                {hasMap && !isEditing && (
-                    <div className="hidden sm:block shrink-0 w-56">
-                        <iframe
-                            title="Locatie"
-                            width="100%"
-                            height="140"
-                            className="rounded-md border border-gray-200"
-                            src={`https://www.openstreetmap.org/export/embed.html?bbox=${tournament.longitude - 0.01},${tournament.latitude - 0.01},${parseFloat(tournament.longitude) + 0.01},${parseFloat(tournament.latitude) + 0.01}&layer=mapnik&marker=${tournament.latitude},${tournament.longitude}`}
-                        />
-                        <p className="mt-1 text-center text-xs text-gray-400">
-                            {tournament.address_city || 'Locatie'}
-                        </p>
+                {/* Right: map & attachments factbox (hidden when editing) */}
+                {!isEditing && (hasMap || (tournament.attachments && tournament.attachments.length > 0)) && (
+                    <div className="hidden sm:block shrink-0 w-56 space-y-3">
+                        {hasMap && (
+                            <div>
+                                <iframe
+                                    title="Locatie"
+                                    width="100%"
+                                    height="140"
+                                    className="rounded-md border border-gray-200"
+                                    src={`https://www.openstreetmap.org/export/embed.html?bbox=${tournament.longitude - 0.01},${tournament.latitude - 0.01},${parseFloat(tournament.longitude) + 0.01},${parseFloat(tournament.latitude) + 0.01}&layer=mapnik&marker=${tournament.latitude},${tournament.longitude}`}
+                                />
+                                <p className="mt-1 text-center text-xs text-gray-400">
+                                    {tournament.address_city || 'Locatie'}
+                                </p>
+                            </div>
+                        )}
+                        {tournament.attachments && tournament.attachments.length > 0 && (
+                            <div className="rounded-md border border-gray-200 bg-gray-50 p-3">
+                                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Bijlagen</p>
+                                <ul className="space-y-1">
+                                    {tournament.attachments.map(att => (
+                                        <li key={att.id}>
+                                            <a href={att.url} target="_blank" rel="noopener noreferrer"
+                                                className="text-xs text-blue-600 hover:underline truncate block">
+                                                📎 {att.original_name}
+                                            </a>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
                     </div>
                 )}
             </div>
@@ -236,8 +245,13 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
     };
 
     const handleOpenRegistrations = () => {
+        if (tournament.invitation_deadline && new Date(tournament.invitation_deadline) >= new Date().setHours(0,0,0,0)) {
+            if (!confirm('De uitnodigingsdeadline is nog niet verlopen. Toch inschrijvingen starten?')) {
+                return;
+            }
+        }
         if (confirm('Inschrijvingen starten?')) {
-            openRegForm.post(`/admin/tournaments/${tournament.id}/open-registrations`);
+            router.post(`/admin/tournaments/${tournament.id}/open-registrations`, { confirmed: '1' });
         }
     };
 
@@ -320,6 +334,20 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
         if (confirm(`${coachName} verwijderen als trainer?`)) {
             router.delete(`/admin/tournaments/${tournament.id}/coaches/${coachId}`);
         }
+    };
+
+    const handleAdminAccept = (memberId) => {
+        setProcessing(prev => ({ ...prev, [memberId]: true }));
+        router.post(`/admin/tournaments/${tournament.id}/accept/${memberId}`, {}, {
+            onFinish: () => setProcessing(prev => ({ ...prev, [memberId]: false })),
+        });
+    };
+
+    const handleAdminDecline = (memberId) => {
+        setProcessing(prev => ({ ...prev, [memberId]: true }));
+        router.post(`/admin/tournaments/${tournament.id}/decline/${memberId}`, {}, {
+            onFinish: () => setProcessing(prev => ({ ...prev, [memberId]: false })),
+        });
     };
 
     return (
@@ -448,6 +476,9 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
                         <div className="min-w-0 flex-1 flex items-center gap-3">
                             <span className="text-sm text-gray-900">{member.name}</span>
                             <span className="text-xs text-gray-400">{member.date_of_birth}</span>
+                            {member.license_number && (
+                                <span className="text-xs text-gray-400">#{member.license_number}</span>
+                            )}
                             {member.age_category && (
                                 <span className="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700">
                                     {member.age_category}
@@ -481,6 +512,26 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
                                 >
                                     Uitnodigen
                                 </button>
+                            )}
+                            {member.invitation_status === 'invited' && (
+                                <>
+                                    <button
+                                        onClick={() => handleAdminAccept(member.id)}
+                                        disabled={processing[member.id]}
+                                        className="text-xs text-green-600 hover:text-green-800 disabled:opacity-50"
+                                        title="Accepteren namens lid"
+                                    >
+                                        ✓
+                                    </button>
+                                    <button
+                                        onClick={() => handleAdminDecline(member.id)}
+                                        disabled={processing[member.id]}
+                                        className="text-xs text-red-500 hover:text-red-700 disabled:opacity-50"
+                                        title="Afslaan namens lid"
+                                    >
+                                        ✗
+                                    </button>
+                                </>
                             )}
                             {tournament.status === 'registrations_open' && member.invitation_status === 'accepted' && member.registration_status !== 'registered' && (
                                 <button
@@ -674,12 +725,6 @@ function TournamentForm({ tournament, ageCategories, onSuccess, onCancel }) {
                             </select>
                         </div>
                         <div>
-                            <label className="block text-xs font-medium text-gray-500 mb-1">Toernooidatum *</label>
-                            <input type="date" value={form.data.tournament_date} onChange={e => form.setData('tournament_date', e.target.value)}
-                                className="w-full rounded-md border border-gray-300 text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
-                            {form.errors.tournament_date && <p className="text-xs text-red-600 mt-1">{form.errors.tournament_date}</p>}
-                        </div>
-                        <div>
                             <label className="block text-xs font-medium text-gray-500 mb-1">Straat + nr</label>
                             <input type="text" value={form.data.address_street} onChange={e => form.setData('address_street', e.target.value)}
                                 className="w-full rounded-md border border-gray-300 text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
@@ -695,16 +740,35 @@ function TournamentForm({ tournament, ageCategories, onSuccess, onCancel }) {
                                 onBlur={geocodeAddress}
                                 className="w-full rounded-md border border-gray-300 text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
                         </div>
-                        <div>
-                            <label className="block text-xs font-medium text-gray-500 mb-1">Uitnodiging deadline</label>
-                            <input type="date" value={form.data.invitation_deadline} onChange={e => form.setData('invitation_deadline', e.target.value)}
-                                className="w-full rounded-md border border-gray-300 text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                    </div>
+
+                    {/* Datums block */}
+                    <div className="mb-3 rounded-lg border border-gray-200 bg-white/50 p-3">
+                        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Datums</p>
+                        <div className="grid grid-cols-3 gap-3">
+                            <div>
+                                <label className="block text-xs font-medium text-gray-500 mb-1">Uitnodiging deadline *</label>
+                                <input type="date" value={form.data.invitation_deadline} onChange={e => form.setData('invitation_deadline', e.target.value)}
+                                    className="w-full rounded-md border border-gray-300 text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                                {form.errors.invitation_deadline && <p className="text-xs text-red-600 mt-1">{form.errors.invitation_deadline}</p>}
+                            </div>
+                            <div>
+                                <label className="block text-xs font-medium text-gray-500 mb-1">Inschrijving deadline *</label>
+                                <input type="date" value={form.data.registration_deadline} onChange={e => form.setData('registration_deadline', e.target.value)}
+                                    className="w-full rounded-md border border-gray-300 text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                                {form.errors.registration_deadline && <p className="text-xs text-red-600 mt-1">{form.errors.registration_deadline}</p>}
+                            </div>
+                            <div>
+                                <label className="block text-xs font-medium text-gray-500 mb-1">Toernooidatum *</label>
+                                <input type="date" value={form.data.tournament_date} onChange={e => form.setData('tournament_date', e.target.value)}
+                                    className="w-full rounded-md border border-gray-300 text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                                {form.errors.tournament_date && <p className="text-xs text-red-600 mt-1">{form.errors.tournament_date}</p>}
+                            </div>
                         </div>
-                        <div>
-                            <label className="block text-xs font-medium text-gray-500 mb-1">Inschrijving deadline</label>
-                            <input type="date" value={form.data.registration_deadline} onChange={e => form.setData('registration_deadline', e.target.value)}
-                                className="w-full rounded-md border border-gray-300 text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
-                        </div>
+                        <p className="text-xs text-gray-400 mt-1">Uitnodiging deadline &lt; Inschrijving deadline &lt; Toernooidatum</p>
+                    </div>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
                         <div className="col-span-2">
                             <label className="block text-xs font-medium text-gray-500 mb-1">Bijlagen</label>
                             <input type="file" multiple onChange={e => form.setData('attachments', Array.from(e.target.files))}
@@ -731,7 +795,8 @@ function TournamentForm({ tournament, ageCategories, onSuccess, onCancel }) {
 
                     {/* Age categories checkboxes */}
                     <div className="mb-3">
-                        <label className="block text-xs font-medium text-gray-500 mb-1">Leeftijdscategorieën ({form.data.country_code})</label>
+                        <label className="block text-xs font-medium text-gray-500 mb-1">Leeftijdscategorieën ({form.data.country_code}) *</label>
+                        {form.errors.age_category_ids && <p className="text-xs text-red-600 mb-1">{form.errors.age_category_ids}</p>}
                         {filteredAgeCategories.length === 0 ? (
                             <p className="text-xs text-gray-400">Geen categorieën voor {form.data.country_code}</p>
                         ) : (

@@ -38,9 +38,8 @@ class TournamentIndexController extends Controller
                     'name' => $m->fullName(),
                     'date_of_birth' => $m->date_of_birth->toDateString(),
                     'age_category' => $m->calculateAgeCategory($t->country_code, $t->tournament_date)?->name,
-                    'weight_category' => $m->weightCategory?->ageCategory?->name
-                        ? $m->weightCategory->ageCategory->name.' — '.$m->weightCategory->max_weight_kg.'kg'
-                        : ($m->weightCategory ? $m->weightCategory->max_weight_kg.'kg' : null),
+                    'weight_category' => $m->weightCategory?->name,
+                    'license_number' => $m->license_number,
                     'invitation_status' => $m->pivot->invitation_status,
                     'invitation_status_label' => InvitationStatus::tryFrom($m->pivot->invitation_status)?->label() ?? $m->pivot->invitation_status,
                     'registration_status' => $m->pivot->registration_status,
