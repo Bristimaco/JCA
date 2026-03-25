@@ -16,12 +16,12 @@ export default function Login() {
     return (
         <GuestLayout>
             <Head title="Inloggen" />
-            <h2 className="text-xl font-bold text-slate-900 mb-1">Inloggen</h2>
-            <p className="text-sm text-slate-500 mb-6">Welkom terug bij je club</p>
+            <h2 className="text-xl font-bold text-white mb-1">Inloggen</h2>
+            <p className="text-sm text-slate-400 mb-6">Welkom terug op de tatami</p>
 
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-1">
+                    <label htmlFor="email" className="block text-sm font-medium text-slate-300 mb-1">
                         E-mailadres
                     </label>
                     <input
@@ -29,7 +29,7 @@ export default function Login() {
                         type="email"
                         value={data.email}
                         onChange={e => setData('email', e.target.value)}
-                        className="w-full rounded-lg border border-slate-300 bg-slate-50/50 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:bg-white"
+                        className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-3.5 py-2.5 text-sm text-white placeholder:text-slate-500 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:bg-slate-700"
                         placeholder="naam@voorbeeld.be"
                         required
                         autoFocus
@@ -38,7 +38,7 @@ export default function Login() {
                 </div>
 
                 <div>
-                    <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-1">
+                    <label htmlFor="password" className="block text-sm font-medium text-slate-300 mb-1">
                         Wachtwoord
                     </label>
                     <input
@@ -46,7 +46,7 @@ export default function Login() {
                         type="password"
                         value={data.password}
                         onChange={e => setData('password', e.target.value)}
-                        className="w-full rounded-lg border border-slate-300 bg-slate-50/50 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 focus:bg-white"
+                        className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-3.5 py-2.5 text-sm text-white placeholder:text-slate-500 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 focus:bg-slate-700"
                         required
                     />
                     {errors.password && <p className="mt-1.5 text-sm text-red-600">{errors.password}</p>}
@@ -58,9 +58,9 @@ export default function Login() {
                         type="checkbox"
                         checked={data.remember}
                         onChange={e => setData('remember', e.target.checked)}
-                        className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                        className="h-4 w-4 rounded border-slate-600 bg-slate-700 text-amber-500 focus:ring-amber-500"
                     />
-                    <label htmlFor="remember" className="ml-2 text-sm text-slate-600">
+                    <label htmlFor="remember" className="ml-2 text-sm text-slate-400">
                         Onthoud mij
                     </label>
                 </div>
@@ -68,15 +68,15 @@ export default function Login() {
                 <button
                     type="submit"
                     disabled={processing}
-                    className="w-full bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-lg py-2.5 text-sm font-semibold hover:from-indigo-700 hover:to-indigo-800 disabled:opacity-50 shadow-sm shadow-indigo-200"
+                    className="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-lg py-2.5 text-sm font-semibold hover:from-amber-600 hover:to-orange-700 disabled:opacity-50 shadow-sm shadow-amber-900/30"
                 >
                     Inloggen
                 </button>
             </form>
 
-            <p className="mt-6 text-center text-sm text-slate-500">
+            <p className="mt-6 text-center text-sm text-slate-400">
                 Nog geen account?{' '}
-                <Link href="/register" className="font-medium text-indigo-600 hover:text-indigo-800">
+                <Link href="/register" className="font-medium text-amber-400 hover:text-amber-300">
                     Registreren
                 </Link>
             </p>

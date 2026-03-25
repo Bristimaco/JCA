@@ -84,13 +84,13 @@ export default function PhotoCapture({ onCapture, error }) {
 
     return (
         <div>
-            <label className="block text-xs font-medium text-slate-500 mb-1">Foto</label>
+            <label className="block text-xs font-medium text-slate-400 mb-1">Foto</label>
 
             {preview && (
                 <div className="mb-2 relative inline-block">
-                    <img src={preview} alt="Preview" className="w-32 h-32 object-cover rounded-lg border border-slate-200" />
+                    <img src={preview} alt="Preview" className="w-32 h-32 object-cover rounded-lg border border-slate-700" />
                     <button type="button" onClick={clearPhoto}
-                        className="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs leading-none hover:bg-red-600">
+                        className="absolute -top-1.5 -right-1.5 bg-red-900/300 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs leading-none hover:bg-red-600">
                         &times;
                     </button>
                 </div>
@@ -98,14 +98,14 @@ export default function PhotoCapture({ onCapture, error }) {
 
             {cameraActive ? (
                 <div className="space-y-2">
-                    <video ref={videoRef} autoPlay playsInline muted className="w-full max-w-sm rounded-lg border border-slate-200" />
+                    <video ref={videoRef} autoPlay playsInline muted className="w-full max-w-sm rounded-lg border border-slate-700" />
                     <div className="flex gap-2">
                         <button type="button" onClick={takePhoto}
-                            className="rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-700">
+                            className="rounded-md bg-amber-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-amber-600">
                             Foto nemen
                         </button>
                         <button type="button" onClick={stopCamera}
-                            className="rounded-md bg-white border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50">
+                            className="rounded-md bg-slate-700/50 border border-slate-600 px-3 py-1.5 text-sm font-medium text-slate-300 hover:bg-slate-700/50">
                             Annuleren
                         </button>
                     </div>
@@ -114,10 +114,10 @@ export default function PhotoCapture({ onCapture, error }) {
             ) : (
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                     <input type="file" accept="image/*" capture="environment" onChange={handleFileChange}
-                        className="w-full text-sm text-slate-500 file:mr-2 file:rounded-md file:border-0 file:bg-slate-100 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-slate-700 hover:file:bg-slate-200" />
+                        className="w-full text-sm text-slate-500 file:mr-2 file:rounded-md file:border-0 file:bg-slate-100 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-slate-300 hover:file:bg-slate-200" />
                     {hasCameraApi() && (
                         <button type="button" onClick={startCamera}
-                            className="inline-flex items-center gap-1.5 rounded-md bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-200 whitespace-nowrap">
+                            className="inline-flex items-center gap-1.5 rounded-md bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-300 hover:bg-slate-200 whitespace-nowrap">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
                                 <path d="M1 8a2 2 0 0 1 2-2h.93a2 2 0 0 0 1.664-.89l.812-1.22A2 2 0 0 1 8.07 3h3.86a2 2 0 0 1 1.664.89l.812 1.22A2 2 0 0 0 16.07 6H17a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8Z" />
                                 <path d="M10 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
@@ -128,8 +128,8 @@ export default function PhotoCapture({ onCapture, error }) {
                 </div>
             )}
 
-            {cameraError && <p className="text-xs text-red-600 mt-1">{cameraError}</p>}
-            {error && <p className="text-xs text-red-600 mt-1">{error}</p>}
+            {cameraError && <p className="text-xs text-red-400 mt-1">{cameraError}</p>}
+            {error && <p className="text-xs text-red-400 mt-1">{error}</p>}
         </div>
     );
 }

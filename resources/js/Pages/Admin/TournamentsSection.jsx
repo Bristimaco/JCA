@@ -8,35 +8,35 @@ export default function TournamentsSection({ tournaments, ageCategories, competi
     const [expandedId, setExpandedId] = useState(null);
 
     const statusColors = {
-        preparation: 'bg-slate-100 text-slate-700',
-        invitations_sent: 'bg-blue-100 text-indigo-700',
-        registrations_open: 'bg-yellow-100 text-yellow-700',
+        preparation: 'bg-slate-100 text-slate-300',
+        invitations_sent: 'bg-blue-900/40 text-amber-300',
+        registrations_open: 'bg-yellow-900/40 text-yellow-700',
         registrations_closed: 'bg-orange-100 text-orange-700',
-        started: 'bg-emerald-100 text-emerald-700',
-        finished: 'bg-purple-100 text-purple-700',
-        archived: 'bg-purple-100 text-purple-700',
+        started: 'bg-emerald-900/40 text-emerald-400',
+        finished: 'bg-purple-900/40 text-purple-400',
+        archived: 'bg-purple-900/40 text-purple-400',
     };
 
     return (
-        <div className="bg-white rounded-lg shadow-sm border border-slate-200">
-            <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-slate-900">
+        <div className="bg-slate-800 rounded-lg shadow-sm border border-slate-700">
+            <div className="px-6 py-4 border-b border-slate-700 flex items-center justify-between">
+                <h2 className="text-lg font-semibold text-white">
                     Toernooien
-                    <span className="ml-2 inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600">
+                    <span className="ml-2 inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-400">
                         {tournaments.length}
                     </span>
                 </h2>
                 <button
                     onClick={() => { setShowAddForm(!showAddForm); setEditingTournament(null); }}
-                    className="rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-700"
+                    className="rounded-md bg-amber-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-amber-600"
                 >
                     {showAddForm ? 'Annuleren' : 'Toernooi toevoegen'}
                 </button>
             </div>
 
             {flash.status && (
-                <div className="mx-6 mt-4 rounded-md bg-emerald-50 border ring-1 ring-emerald-200/50 p-3">
-                    <p className="text-sm text-emerald-800">{flash.status}</p>
+                <div className="mx-6 mt-4 rounded-md bg-emerald-900/30 border ring-1 ring-emerald-700/30 p-3">
+                    <p className="text-sm text-emerald-400">{flash.status}</p>
                 </div>
             )}
 
@@ -62,7 +62,7 @@ export default function TournamentsSection({ tournaments, ageCategories, competi
                     Nog geen toernooien.
                 </div>
             ) : (
-                <div className="divide-y divide-slate-100">
+                <div className="divide-y divide-slate-700">
                     {tournaments.map((tournament) => (
                         <TournamentRow
                             key={tournament.id}
@@ -108,7 +108,7 @@ function TournamentRow({ tournament, statusColors, statuses, competitionMembers,
                 <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-4 mb-2">
                         <div className="min-w-0 flex-1">
-                            <p className="font-medium text-slate-900">{tournament.name}</p>
+                            <p className="font-medium text-white">{tournament.name}</p>
                             <p className="text-sm text-slate-500">
                                 {[tournament.address_street, tournament.address_postal_code, tournament.address_city].filter(Boolean).join(', ') || 'Geen adres'}
                                 {' · '}{tournament.country_code}
@@ -118,16 +118,16 @@ function TournamentRow({ tournament, statusColors, statuses, competitionMembers,
                             <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${statusColors[tournament.status] || ''}`}>
                                 {statusLabel}
                             </span>
-                            <button onClick={onToggleExpand} className="text-sm text-slate-600 hover:text-slate-800">
+                            <button onClick={onToggleExpand} className="text-sm text-slate-400 hover:text-slate-200">
                                 Leden ({members.length}) {isExpanded ? '▲' : '▼'}
                             </button>
-                            <button onClick={onEdit} className="text-sm text-indigo-600 hover:text-indigo-800">
+                            <button onClick={onEdit} className="text-sm text-amber-400 hover:text-amber-300">
                                 Bewerken
                             </button>
                             <button
                                 onClick={handleDelete}
                                 disabled={deleteForm.processing}
-                                className="text-sm text-red-600 hover:text-red-800"
+                                className="text-sm text-red-400 hover:text-red-800"
                             >
                                 Verwijderen
                             </button>
@@ -141,7 +141,7 @@ function TournamentRow({ tournament, statusColors, statuses, competitionMembers,
                     {tournament.age_categories && tournament.age_categories.length > 0 && (
                         <div className="flex gap-1.5 mt-2">
                             {tournament.age_categories.map(cat => (
-                                <span key={cat.id} className="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-indigo-700">
+                                <span key={cat.id} className="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-amber-300">
                                     {cat.name}
                                 </span>
                             ))}
@@ -158,7 +158,7 @@ function TournamentRow({ tournament, statusColors, statuses, competitionMembers,
                                     title="Locatie"
                                     width="100%"
                                     height="140"
-                                    className="rounded-md border border-slate-200"
+                                    className="rounded-md border border-slate-700"
                                     src={`https://www.openstreetmap.org/export/embed.html?bbox=${tournament.longitude - 0.01},${tournament.latitude - 0.01},${parseFloat(tournament.longitude) + 0.01},${parseFloat(tournament.latitude) + 0.01}&layer=mapnik&marker=${tournament.latitude},${tournament.longitude}`}
                                 />
                                 <p className="mt-1 text-center text-xs text-slate-400">
@@ -167,13 +167,13 @@ function TournamentRow({ tournament, statusColors, statuses, competitionMembers,
                             </div>
                         )}
                         {tournament.attachments && tournament.attachments.length > 0 && (
-                            <div className="rounded-md border border-slate-200 bg-slate-50 p-3">
-                                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Bijlagen</p>
+                            <div className="rounded-md border border-slate-700 bg-slate-700/50 p-3">
+                                <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Bijlagen</p>
                                 <ul className="space-y-1">
                                     {tournament.attachments.map(att => (
                                         <li key={att.id}>
                                             <a href={att.url} target="_blank" rel="noopener noreferrer"
-                                                className="text-xs text-indigo-600 hover:underline truncate block">
+                                                className="text-xs text-amber-400 hover:underline truncate block">
                                                 📎 {att.original_name}
                                             </a>
                                         </li>
@@ -211,10 +211,10 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
     const [processing, setProcessing] = useState({});
 
     const invitationStatusColors = {
-        pending: 'bg-slate-100 text-slate-600',
-        invited: 'bg-blue-100 text-indigo-700',
-        accepted: 'bg-emerald-100 text-emerald-700',
-        declined: 'bg-red-100 text-red-700',
+        pending: 'bg-slate-100 text-slate-400',
+        invited: 'bg-blue-900/40 text-amber-300',
+        accepted: 'bg-emerald-900/40 text-emerald-400',
+        declined: 'bg-red-900/40 text-red-400',
     };
 
     const hasAgeCategories = tournament.age_categories && tournament.age_categories.length > 0;
@@ -351,14 +351,14 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
     };
 
     return (
-        <div className="mt-4 border border-slate-200 rounded-lg bg-slate-50">
-            <div className="px-4 py-3 border-b border-slate-200 flex flex-wrap items-center gap-2">
+        <div className="mt-4 border border-slate-700 rounded-lg bg-slate-700/50">
+            <div className="px-4 py-3 border-b border-slate-700 flex flex-wrap items-center gap-2">
                 {tournament.status === 'preparation' && (
                     <button
                         onClick={handlePopulate}
                         disabled={populateForm.processing || !hasAgeCategories}
                         title={!hasAgeCategories ? 'Voeg eerst leeftijdscategorieën toe' : ''}
-                        className="rounded-md bg-indigo-600 px-2.5 py-1 text-xs font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+                        className="rounded-md bg-amber-500 px-2.5 py-1 text-xs font-medium text-white hover:bg-amber-600 disabled:opacity-50"
                     >
                         Leden toevoegen
                     </button>
@@ -421,7 +421,7 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
                     <button
                         onClick={handleRevertStatus}
                         disabled={revertForm.processing}
-                        className="rounded-md bg-slate-400 px-2.5 py-1 text-xs font-medium text-white hover:bg-slate-500 disabled:opacity-50"
+                        className="rounded-md bg-slate-400 px-2.5 py-1 text-xs font-medium text-white hover:bg-slate-700/500 disabled:opacity-50"
                     >
                         ← Vorige status
                     </button>
@@ -433,7 +433,7 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
                         <select
                             value={addMemberForm.data.member_id}
                             onChange={e => addMemberForm.setData('member_id', e.target.value)}
-                            className="rounded-md border border-slate-300 text-xs py-1 px-2 max-w-[200px]"
+                            className="rounded-md border border-slate-600 bg-slate-700/50 text-white text-xs py-1 px-2 max-w-[200px]"
                         >
                             <option value="">Lid toevoegen...</option>
                             {availableMembers.map(m => (
@@ -472,20 +472,20 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
                 }
 
                 const renderMember = (member) => (
-                    <tr key={member.id} className="border-t border-slate-100">
-                        <td className="px-3 py-2 text-sm text-slate-900 whitespace-nowrap">{member.name}</td>
+                    <tr key={member.id} className="border-t border-slate-700">
+                        <td className="px-3 py-2 text-sm text-white whitespace-nowrap">{member.name}</td>
                         <td className="px-3 py-2 text-xs text-slate-400 whitespace-nowrap">{member.date_of_birth}</td>
                         <td className="px-3 py-2 text-xs text-slate-400 whitespace-nowrap">{member.license_number ? `#${member.license_number}` : '-'}</td>
                         <td className="px-3 py-2 whitespace-nowrap">
                             {member.age_category ? (
-                                <span className="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-indigo-700">
+                                <span className="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-amber-300">
                                     {member.age_category}
                                 </span>
                             ) : <span className="text-xs text-slate-300">-</span>}
                         </td>
                         <td className="px-3 py-2 whitespace-nowrap">
                             {member.weight_category ? (
-                                <span className="inline-flex items-center rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700">
+                                <span className="inline-flex items-center rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-400">
                                     {member.weight_category}
                                 </span>
                             ) : <span className="text-xs text-slate-300">-</span>}
@@ -497,12 +497,12 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
                         </td>
                         <td className="px-3 py-2 whitespace-nowrap">
                             {member.registration_status === 'registered' && (
-                                <span className="inline-flex items-center rounded-full bg-emerald-100 text-emerald-700 px-2 py-0.5 text-xs font-medium">
+                                <span className="inline-flex items-center rounded-full bg-emerald-900/40 text-emerald-400 px-2 py-0.5 text-xs font-medium">
                                     Ingeschreven
                                 </span>
                             )}
                             {member.registration_status === 'unregistered' && (
-                                <span className="inline-flex items-center rounded-full bg-red-100 text-red-700 px-2 py-0.5 text-xs font-medium">
+                                <span className="inline-flex items-center rounded-full bg-red-900/40 text-red-400 px-2 py-0.5 text-xs font-medium">
                                     Uitgeschreven
                                 </span>
                             )}
@@ -513,7 +513,7 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
                                     <button
                                         onClick={() => handleInvite(member.id)}
                                         disabled={processing[member.id]}
-                                        className="text-xs text-emerald-600 hover:text-emerald-800 disabled:opacity-50"
+                                        className="text-xs text-emerald-600 hover:text-emerald-400 disabled:opacity-50"
                                     >
                                         Uitnodigen
                                     </button>
@@ -523,7 +523,7 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
                                         <button
                                             onClick={() => handleAdminAccept(member.id)}
                                             disabled={processing[member.id]}
-                                            className="text-xs text-emerald-600 hover:text-emerald-800 disabled:opacity-50"
+                                            className="text-xs text-emerald-600 hover:text-emerald-400 disabled:opacity-50"
                                             title="Accepteren namens lid"
                                         >
                                             ✓
@@ -531,7 +531,7 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
                                         <button
                                             onClick={() => handleAdminDecline(member.id)}
                                             disabled={processing[member.id]}
-                                            className="text-xs text-red-500 hover:text-red-700 disabled:opacity-50"
+                                            className="text-xs text-red-500 hover:text-red-400 disabled:opacity-50"
                                             title="Afslaan namens lid"
                                         >
                                             ✗
@@ -542,7 +542,7 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
                                     <button
                                         onClick={() => handleRegister(member.id)}
                                         disabled={processing[member.id]}
-                                        className="text-xs text-emerald-600 hover:text-emerald-800 disabled:opacity-50"
+                                        className="text-xs text-emerald-600 hover:text-emerald-400 disabled:opacity-50"
                                     >
                                         Inschrijven
                                     </button>
@@ -551,7 +551,7 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
                                     <button
                                         onClick={() => handleUnregister(member.id, member.name)}
                                         disabled={processing[member.id]}
-                                        className="text-xs text-red-500 hover:text-red-700 disabled:opacity-50"
+                                        className="text-xs text-red-500 hover:text-red-400 disabled:opacity-50"
                                     >
                                         Uitschrijven
                                     </button>
@@ -559,7 +559,7 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
                                 {tournament.status === 'preparation' && (
                                     <button
                                         onClick={() => handleRemove(member.id, member.name)}
-                                        className="text-xs text-red-500 hover:text-red-700"
+                                        className="text-xs text-red-500 hover:text-red-400"
                                     >
                                         ✕
                                     </button>
@@ -571,7 +571,7 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
 
                 const tableHeader = (
                     <thead>
-                        <tr className="bg-slate-50 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                        <tr className="bg-slate-700/50 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">
                             <th className="px-3 py-2">Naam</th>
                             <th className="px-3 py-2">Geboortedatum</th>
                             <th className="px-3 py-2">Licentie</th>
@@ -594,8 +594,8 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
                         </table>
                         {notParticipating.length > 0 && (
                             <>
-                                <div className="px-4 py-2 bg-slate-100 border-t border-b border-slate-200">
-                                    <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Niet-deelnemers ({notParticipating.length})</span>
+                                <div className="px-4 py-2 bg-slate-100 border-t border-b border-slate-700">
+                                    <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Niet-deelnemers ({notParticipating.length})</span>
                                 </div>
                                 <table className="w-full opacity-60">
                                     <tbody>
@@ -609,16 +609,16 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
             })()}
 
             {/* Trainers section */}
-            <div className="border-t border-slate-200">
+            <div className="border-t border-slate-700">
                 <div className="px-4 py-3 flex items-center justify-between gap-2 bg-slate-100">
-                    <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                    <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
                         Trainers ({coaches.length})
                     </span>
                     <form onSubmit={handleAddCoach} className="flex items-center gap-1">
                         <select
                             value={addCoachForm.data.member_id}
                             onChange={e => addCoachForm.setData('member_id', e.target.value)}
-                            className="rounded-md border border-slate-300 text-xs py-1 px-2 max-w-[200px]"
+                            className="rounded-md border border-slate-600 bg-slate-700/50 text-white text-xs py-1 px-2 max-w-[200px]"
                         >
                             <option value="">Trainer toevoegen...</option>
                             {filteredCoaches.map(c => (
@@ -639,13 +639,13 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
                         Nog geen trainers toegewezen.
                     </div>
                 ) : (
-                    <div className="divide-y divide-slate-100">
+                    <div className="divide-y divide-slate-700">
                         {coaches.map(coach => (
                             <div key={coach.id} className="px-4 py-2 flex items-center justify-between gap-3">
-                                <span className="text-sm text-slate-900">{coach.name}</span>
+                                <span className="text-sm text-white">{coach.name}</span>
                                 <button
                                     onClick={() => handleRemoveCoach(coach.id, coach.name)}
-                                    className="text-xs text-red-500 hover:text-red-700"
+                                    className="text-xs text-red-500 hover:text-red-400"
                                 >
                                     ✕
                                 </button>
@@ -729,8 +729,8 @@ function TournamentForm({ tournament, ageCategories, onSuccess, onCancel }) {
     const hasMap = form.data.latitude && form.data.longitude;
 
     return (
-        <form onSubmit={handleSubmit} className="px-6 py-4 bg-slate-50 border-b border-slate-200">
-            <h3 className="text-sm font-semibold text-slate-700 mb-3">
+        <form onSubmit={handleSubmit} className="px-6 py-4 bg-slate-700/50 border-b border-slate-700">
+            <h3 className="text-sm font-semibold text-slate-300 mb-3">
                 {isEditing ? `Bewerk: ${tournament.name}` : 'Nieuw toernooi'}
             </h3>
             <div className="flex gap-6">
@@ -738,57 +738,57 @@ function TournamentForm({ tournament, ageCategories, onSuccess, onCancel }) {
                 <div className="min-w-0 flex-1">
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
                         <div className="col-span-2">
-                            <label className="block text-xs font-medium text-slate-500 mb-1">Naam *</label>
+                            <label className="block text-xs font-medium text-slate-400 mb-1">Naam *</label>
                             <input type="text" value={form.data.name} onChange={e => form.setData('name', e.target.value)}
-                                className="w-full rounded-md border border-slate-300 text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
-                            {form.errors.name && <p className="text-xs text-red-600 mt-1">{form.errors.name}</p>}
+                                className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500" />
+                            {form.errors.name && <p className="text-xs text-red-400 mt-1">{form.errors.name}</p>}
                         </div>
                         <div>
-                            <label className="block text-xs font-medium text-slate-500 mb-1">Land *</label>
+                            <label className="block text-xs font-medium text-slate-400 mb-1">Land *</label>
                             <select value={form.data.country_code} onChange={e => form.setData('country_code', e.target.value)}
-                                className="w-full rounded-md border border-slate-300 text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
                                 {countries.map(c => <option key={c} value={c}>{c}</option>)}
                             </select>
                         </div>
                         <div>
-                            <label className="block text-xs font-medium text-slate-500 mb-1">Straat + nr</label>
+                            <label className="block text-xs font-medium text-slate-400 mb-1">Straat + nr</label>
                             <input type="text" value={form.data.address_street} onChange={e => form.setData('address_street', e.target.value)}
-                                className="w-full rounded-md border border-slate-300 text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
+                                className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500" />
                         </div>
                         <div>
-                            <label className="block text-xs font-medium text-slate-500 mb-1">Postcode</label>
+                            <label className="block text-xs font-medium text-slate-400 mb-1">Postcode</label>
                             <input type="text" value={form.data.address_postal_code} onChange={e => form.setData('address_postal_code', e.target.value)}
-                                className="w-full rounded-md border border-slate-300 text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
+                                className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500" />
                         </div>
                         <div>
-                            <label className="block text-xs font-medium text-slate-500 mb-1">Stad</label>
+                            <label className="block text-xs font-medium text-slate-400 mb-1">Stad</label>
                             <input type="text" value={form.data.address_city} onChange={e => form.setData('address_city', e.target.value)}
                                 onBlur={geocodeAddress}
-                                className="w-full rounded-md border border-slate-300 text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
+                                className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500" />
                         </div>
                     </div>
 
                     {/* Datums block */}
-                    <div className="mb-3 rounded-lg border border-slate-200 bg-white/50 p-3">
-                        <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Datums</p>
+                    <div className="mb-3 rounded-lg border border-slate-700 bg-slate-800/50 p-3">
+                        <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Datums</p>
                         <div className="grid grid-cols-3 gap-3">
                             <div>
-                                <label className="block text-xs font-medium text-slate-500 mb-1">Uitnodiging deadline *</label>
+                                <label className="block text-xs font-medium text-slate-400 mb-1">Uitnodiging deadline *</label>
                                 <input type="date" value={form.data.invitation_deadline} onChange={e => form.setData('invitation_deadline', e.target.value)}
-                                    className="w-full rounded-md border border-slate-300 text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
-                                {form.errors.invitation_deadline && <p className="text-xs text-red-600 mt-1">{form.errors.invitation_deadline}</p>}
+                                    className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500" />
+                                {form.errors.invitation_deadline && <p className="text-xs text-red-400 mt-1">{form.errors.invitation_deadline}</p>}
                             </div>
                             <div>
-                                <label className="block text-xs font-medium text-slate-500 mb-1">Inschrijving deadline *</label>
+                                <label className="block text-xs font-medium text-slate-400 mb-1">Inschrijving deadline *</label>
                                 <input type="date" value={form.data.registration_deadline} onChange={e => form.setData('registration_deadline', e.target.value)}
-                                    className="w-full rounded-md border border-slate-300 text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
-                                {form.errors.registration_deadline && <p className="text-xs text-red-600 mt-1">{form.errors.registration_deadline}</p>}
+                                    className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500" />
+                                {form.errors.registration_deadline && <p className="text-xs text-red-400 mt-1">{form.errors.registration_deadline}</p>}
                             </div>
                             <div>
-                                <label className="block text-xs font-medium text-slate-500 mb-1">Toernooidatum *</label>
+                                <label className="block text-xs font-medium text-slate-400 mb-1">Toernooidatum *</label>
                                 <input type="date" value={form.data.tournament_date} onChange={e => form.setData('tournament_date', e.target.value)}
-                                    className="w-full rounded-md border border-slate-300 text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
-                                {form.errors.tournament_date && <p className="text-xs text-red-600 mt-1">{form.errors.tournament_date}</p>}
+                                    className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500" />
+                                {form.errors.tournament_date && <p className="text-xs text-red-400 mt-1">{form.errors.tournament_date}</p>}
                             </div>
                         </div>
                         <p className="text-xs text-slate-400 mt-1">Uitnodiging deadline &lt; Inschrijving deadline &lt; Toernooidatum</p>
@@ -796,23 +796,23 @@ function TournamentForm({ tournament, ageCategories, onSuccess, onCancel }) {
 
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
                         <div className="col-span-2">
-                            <label className="block text-xs font-medium text-slate-500 mb-1">Bijlagen</label>
+                            <label className="block text-xs font-medium text-slate-400 mb-1">Bijlagen</label>
                             <input type="file" multiple onChange={e => form.setData('attachments', Array.from(e.target.files))}
-                                className="w-full text-sm text-slate-500 file:mr-2 file:rounded-md file:border-0 file:bg-slate-100 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-slate-700 hover:file:bg-slate-200" />
-                            {form.errors.attachments && <p className="text-xs text-red-600 mt-1">{form.errors.attachments}</p>}
+                                className="w-full text-sm text-slate-500 file:mr-2 file:rounded-md file:border-0 file:bg-slate-100 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-slate-300 hover:file:bg-slate-200" />
+                            {form.errors.attachments && <p className="text-xs text-red-400 mt-1">{form.errors.attachments}</p>}
                         </div>
                     </div>
 
                     {/* Existing attachments (edit mode) */}
                     {isEditing && tournament.attachments && tournament.attachments.length > 0 && (
                         <div className="mb-3">
-                            <label className="block text-xs font-medium text-slate-500 mb-1">Bestaande bijlagen</label>
+                            <label className="block text-xs font-medium text-slate-400 mb-1">Bestaande bijlagen</label>
                             <div className="flex flex-wrap gap-2">
                                 {tournament.attachments.map(att => (
-                                    <span key={att.id} className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${form.data.remove_attachment_ids.includes(att.id) ? 'bg-red-100 text-red-700 line-through' : 'bg-slate-100 text-slate-700'}`}>
+                                    <span key={att.id} className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${form.data.remove_attachment_ids.includes(att.id) ? 'bg-red-900/40 text-red-400 line-through' : 'bg-slate-100 text-slate-300'}`}>
                                         <a href={att.url} target="_blank" rel="noopener noreferrer" className="hover:underline">{att.original_name}</a>
                                         <button type="button" onClick={() => toggleRemoveAttachment(att.id)}
-                                            className="ml-0.5 text-slate-500 hover:text-red-600">&times;</button>
+                                            className="ml-0.5 text-slate-500 hover:text-red-400">&times;</button>
                                     </span>
                                 ))}
                             </div>
@@ -821,18 +821,18 @@ function TournamentForm({ tournament, ageCategories, onSuccess, onCancel }) {
 
                     {/* Age categories checkboxes */}
                     <div className="mb-3">
-                        <label className="block text-xs font-medium text-slate-500 mb-1">Leeftijdscategorieën ({form.data.country_code}) *</label>
-                        {form.errors.age_category_ids && <p className="text-xs text-red-600 mb-1">{form.errors.age_category_ids}</p>}
+                        <label className="block text-xs font-medium text-slate-400 mb-1">Leeftijdscategorieën ({form.data.country_code}) *</label>
+                        {form.errors.age_category_ids && <p className="text-xs text-red-400 mb-1">{form.errors.age_category_ids}</p>}
                         {filteredAgeCategories.length === 0 ? (
                             <p className="text-xs text-slate-400">Geen categorieën voor {form.data.country_code}</p>
                         ) : (
                             <div className="flex flex-wrap gap-2">
                                 {filteredAgeCategories.map(cat => (
-                                    <label key={cat.id} className="flex items-center gap-1.5 text-sm text-slate-700">
+                                    <label key={cat.id} className="flex items-center gap-1.5 text-sm text-slate-300">
                                         <input type="checkbox"
                                             checked={form.data.age_category_ids.includes(cat.id)}
                                             onChange={() => toggleAgeCategory(cat.id)}
-                                            className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
+                                            className="rounded border-slate-600 bg-slate-700 text-amber-400 focus:ring-amber-500" />
                                         {cat.name} ({cat.min_age}–{cat.max_age})
                                     </label>
                                 ))}
@@ -844,12 +844,12 @@ function TournamentForm({ tournament, ageCategories, onSuccess, onCancel }) {
                 {/* Right: map factbox */}
                 {hasMap && (
                     <div className="hidden sm:block shrink-0 w-56">
-                        <label className="block text-xs font-medium text-slate-500 mb-1">Locatie</label>
+                        <label className="block text-xs font-medium text-slate-400 mb-1">Locatie</label>
                         <iframe
                             title="Locatie"
                             width="100%"
                             height="180"
-                            className="rounded-md border border-slate-200"
+                            className="rounded-md border border-slate-700"
                             src={`https://www.openstreetmap.org/export/embed.html?bbox=${form.data.longitude - 0.01},${form.data.latitude - 0.01},${parseFloat(form.data.longitude) + 0.01},${parseFloat(form.data.latitude) + 0.01}&layer=mapnik&marker=${form.data.latitude},${form.data.longitude}`}
                         />
                         <p className="mt-1 text-center text-xs text-slate-400">
@@ -861,11 +861,11 @@ function TournamentForm({ tournament, ageCategories, onSuccess, onCancel }) {
 
             <div className="flex gap-2">
                 <button type="submit" disabled={form.processing}
-                    className="rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50">
+                    className="rounded-md bg-amber-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-amber-600 disabled:opacity-50">
                     {isEditing ? 'Opslaan' : 'Toernooi aanmaken'}
                 </button>
                 <button type="button" onClick={onCancel}
-                    className="rounded-md bg-white border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50">
+                    className="rounded-md bg-slate-700/50 border border-slate-600 px-3 py-1.5 text-sm font-medium text-slate-300 hover:bg-slate-700/50">
                     Annuleren
                 </button>
             </div>

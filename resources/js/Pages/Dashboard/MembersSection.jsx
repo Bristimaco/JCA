@@ -51,12 +51,12 @@ export default function MembersSection({ members, ageCategories, weightCategorie
 
     if (viewingMember) {
         return (
-            <div className="bg-white rounded-lg shadow-sm border border-slate-200">
-                <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
-                    <h2 className="text-lg font-semibold text-slate-900">Lidkaart</h2>
+            <div className="bg-slate-800 rounded-lg shadow-sm border border-slate-700">
+                <div className="px-6 py-4 border-b border-slate-700 flex items-center justify-between">
+                    <h2 className="text-lg font-semibold text-white">Lidkaart</h2>
                     <button
                         onClick={() => setViewingMember(null)}
-                        className="text-sm text-slate-500 hover:text-slate-700"
+                        className="text-sm text-slate-500 hover:text-slate-300"
                     >
                         ← Terug naar lijst
                     </button>
@@ -69,19 +69,19 @@ export default function MembersSection({ members, ageCategories, weightCategorie
                         />
                         {viewingMember.is_competition && viewingMember.tournament_results && viewingMember.tournament_results.length > 0 && (
                             <div>
-                                <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">Uitslagen</h3>
+                                <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">Uitslagen</h3>
                                 <div className="space-y-2.5 max-h-[500px] overflow-y-auto">
                                     {viewingMember.tournament_results.map((r) => (
-                                        <div key={r.id} className="rounded-md border border-slate-100 bg-slate-50 p-3">
+                                        <div key={r.id} className="rounded-md border border-slate-700 bg-slate-700/50 p-3">
                                             <div className="flex items-start justify-between gap-2">
                                                 <div className="min-w-0 flex-1">
-                                                    <p className="text-sm font-medium text-slate-700 truncate">{r.tournament_name}</p>
+                                                    <p className="text-sm font-medium text-slate-300 truncate">{r.tournament_name}</p>
                                                     <p className="text-xs text-slate-400">{new Date(r.tournament_date).toLocaleDateString('nl-BE', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
                                                 </div>
-                                                <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium flex-shrink-0 ${r.result.includes('1e') ? 'bg-yellow-100 text-yellow-800' :
-                                                        r.result.includes('2e') ? 'bg-slate-200 text-slate-700' :
-                                                            r.result.includes('3e') ? 'bg-amber-100 text-amber-800' :
-                                                                'bg-slate-100 text-slate-600'
+                                                <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium flex-shrink-0 ${r.result.includes('1e') ? 'bg-yellow-900/40 text-yellow-400' :
+                                                        r.result.includes('2e') ? 'bg-slate-200 text-slate-300' :
+                                                            r.result.includes('3e') ? 'bg-amber-900/40 text-amber-300' :
+                                                                'bg-slate-100 text-slate-400'
                                                     }`}>
                                                     {r.result}
                                                 </span>
@@ -101,11 +101,11 @@ export default function MembersSection({ members, ageCategories, weightCategorie
     }
 
     return (
-        <div className="bg-white rounded-lg shadow-sm border border-slate-200">
-            <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-slate-900">
+        <div className="bg-slate-800 rounded-lg shadow-sm border border-slate-700">
+            <div className="px-6 py-4 border-b border-slate-700 flex items-center justify-between">
+                <h2 className="text-lg font-semibold text-white">
                     Leden
-                    <span className="ml-2 inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600">
+                    <span className="ml-2 inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-400">
                         {members.length}
                     </span>
                 </h2>
@@ -115,11 +115,11 @@ export default function MembersSection({ members, ageCategories, weightCategorie
                         placeholder="Zoeken..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="rounded-md border border-slate-300 text-sm py-1 px-3 text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                        className="rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
                     />
                     <a
                         href="/admin/members/export"
-                        className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                        className="rounded-md border border-slate-600 bg-slate-800 px-3 py-1.5 text-sm font-medium text-slate-300 hover:bg-slate-700/50"
                     >
                         Export
                     </a>
@@ -133,13 +133,13 @@ export default function MembersSection({ members, ageCategories, weightCategorie
                     <button
                         onClick={() => importFileRef.current?.click()}
                         disabled={importing}
-                        className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+                        className="rounded-md border border-slate-600 bg-slate-800 px-3 py-1.5 text-sm font-medium text-slate-300 hover:bg-slate-700/50 disabled:opacity-50"
                     >
                         {importing ? 'Importeren...' : 'Import'}
                     </button>
                     <button
                         onClick={() => { setShowAddForm(!showAddForm); setEditingMember(null); }}
-                        className="rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-700"
+                        className="rounded-md bg-amber-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-amber-600"
                     >
                         {showAddForm ? 'Annuleren' : 'Lid toevoegen'}
                     </button>
@@ -147,8 +147,8 @@ export default function MembersSection({ members, ageCategories, weightCategorie
             </div>
 
             {flash.status && (
-                <div className="mx-6 mt-4 rounded-md bg-emerald-50 border ring-1 ring-emerald-200/50 p-3">
-                    <p className="text-sm text-emerald-800">{flash.status}</p>
+                <div className="mx-6 mt-4 rounded-md bg-emerald-900/30 border ring-1 ring-emerald-700/30 p-3">
+                    <p className="text-sm text-emerald-400">{flash.status}</p>
                 </div>
             )}
 
@@ -178,7 +178,7 @@ export default function MembersSection({ members, ageCategories, weightCategorie
                     {search ? 'Geen leden gevonden.' : 'Nog geen leden.'}
                 </div>
             ) : (
-                <div className="divide-y divide-slate-100">
+                <div className="divide-y divide-slate-700">
                     {filtered.map((member) => (
                         <MemberRow
                             key={member.id}
@@ -198,7 +198,7 @@ export default function MembersSection({ members, ageCategories, weightCategorie
 function MemberRow({ member, ageCategoryName, weightCategoryName, onView, onEdit }) {
     const deleteForm = useForm({});
     const statusLabels = { active: 'Actief', inactive: 'Inactief', suspended: 'Geschorst', pending: 'In afwachting' };
-    const statusColors = { active: 'bg-emerald-100 text-emerald-700', inactive: 'bg-slate-100 text-slate-600', suspended: 'bg-red-100 text-red-700', pending: 'bg-yellow-100 text-yellow-700' };
+    const statusColors = { active: 'bg-emerald-900/40 text-emerald-400', inactive: 'bg-slate-100 text-slate-400', suspended: 'bg-red-900/40 text-red-400', pending: 'bg-yellow-900/40 text-yellow-700' };
 
     const handleDelete = () => {
         if (confirm(`Weet je zeker dat je "${member.first_name} ${member.last_name}" wilt verwijderen?`)) {
@@ -217,7 +217,7 @@ function MemberRow({ member, ageCategoryName, weightCategoryName, onView, onEdit
                     </div>
                 )}
                 <div className="min-w-0">
-                    <p className="font-medium text-slate-900 truncate">
+                    <p className="font-medium text-white truncate">
                         {member.first_name} {member.last_name}
                         {member.license_number && (
                             <span className="ml-2 text-xs text-slate-400">#{member.license_number}</span>
@@ -226,7 +226,7 @@ function MemberRow({ member, ageCategoryName, weightCategoryName, onView, onEdit
                     <p className="text-xs text-slate-500">
                         {ageCategoryName} · {weightCategoryName} · {member.current_belt_label || '-'} · {member.gender === 'male' ? 'M' : 'V'}
                         {member.is_competition && (
-                            <span className="ml-1 text-indigo-600">· Competitie</span>
+                            <span className="ml-1 text-amber-400">· Competitie</span>
                         )}
                     </p>
                 </div>
@@ -235,16 +235,16 @@ function MemberRow({ member, ageCategoryName, weightCategoryName, onView, onEdit
                 <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${statusColors[member.membership_status] || ''}`}>
                     {statusLabels[member.membership_status] || member.membership_status}
                 </span>
-                <button onClick={onView} className="text-sm text-slate-600 hover:text-slate-800">
+                <button onClick={onView} className="text-sm text-slate-400 hover:text-slate-200">
                     Kaart
                 </button>
-                <button onClick={onEdit} className="text-sm text-indigo-600 hover:text-indigo-800">
+                <button onClick={onEdit} className="text-sm text-amber-400 hover:text-amber-300">
                     Bewerken
                 </button>
                 <button
                     onClick={handleDelete}
                     disabled={deleteForm.processing}
-                    className="text-sm text-red-600 hover:text-red-800"
+                    className="text-sm text-red-400 hover:text-red-800"
                 >
                     Verwijderen
                 </button>
@@ -318,59 +318,59 @@ function MemberForm({ member, onSuccess, onCancel, ageCategories, weightCategori
     };
 
     return (
-        <form onSubmit={handleSubmit} className="px-6 py-4 bg-slate-50 border-b border-slate-200">
-            <h3 className="text-sm font-semibold text-slate-700 mb-3">
+        <form onSubmit={handleSubmit} className="px-6 py-4 bg-slate-700/50 border-b border-slate-700">
+            <h3 className="text-sm font-semibold text-slate-300 mb-3">
                 {isEditing ? `Bewerk: ${member.first_name} ${member.last_name}` : 'Nieuw lid'}
             </h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
                 <div>
-                    <label className="block text-xs font-medium text-slate-500 mb-1">Voornaam *</label>
+                    <label className="block text-xs font-medium text-slate-400 mb-1">Voornaam *</label>
                     <input type="text" value={form.data.first_name} onChange={(e) => form.setData('first_name', e.target.value)}
-                        className="w-full rounded-md border border-slate-300 text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
-                    {form.errors.first_name && <p className="text-xs text-red-600 mt-1">{form.errors.first_name}</p>}
+                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500" />
+                    {form.errors.first_name && <p className="text-xs text-red-400 mt-1">{form.errors.first_name}</p>}
                 </div>
                 <div>
-                    <label className="block text-xs font-medium text-slate-500 mb-1">Naam *</label>
+                    <label className="block text-xs font-medium text-slate-400 mb-1">Naam *</label>
                     <input type="text" value={form.data.last_name} onChange={(e) => form.setData('last_name', e.target.value)}
-                        className="w-full rounded-md border border-slate-300 text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
-                    {form.errors.last_name && <p className="text-xs text-red-600 mt-1">{form.errors.last_name}</p>}
+                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500" />
+                    {form.errors.last_name && <p className="text-xs text-red-400 mt-1">{form.errors.last_name}</p>}
                 </div>
                 <div>
-                    <label className="block text-xs font-medium text-slate-500 mb-1">Geboortedatum *</label>
+                    <label className="block text-xs font-medium text-slate-400 mb-1">Geboortedatum *</label>
                     <input type="date" value={form.data.date_of_birth} onChange={(e) => form.setData('date_of_birth', e.target.value)}
-                        className="w-full rounded-md border border-slate-300 text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
-                    {form.errors.date_of_birth && <p className="text-xs text-red-600 mt-1">{form.errors.date_of_birth}</p>}
+                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500" />
+                    {form.errors.date_of_birth && <p className="text-xs text-red-400 mt-1">{form.errors.date_of_birth}</p>}
                 </div>
                 <div>
-                    <label className="block text-xs font-medium text-slate-500 mb-1">Geslacht *</label>
+                    <label className="block text-xs font-medium text-slate-400 mb-1">Geslacht *</label>
                     <select value={form.data.gender} onChange={(e) => form.setData('gender', e.target.value)}
-                        className="w-full rounded-md border border-slate-300 text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
                         <option value="male">Man</option>
                         <option value="female">Vrouw</option>
                     </select>
                 </div>
                 <div>
-                    <label className="block text-xs font-medium text-slate-500 mb-1">E-mail</label>
+                    <label className="block text-xs font-medium text-slate-400 mb-1">E-mail</label>
                     <input type="email" value={form.data.email} onChange={(e) => form.setData('email', e.target.value)}
-                        className="w-full rounded-md border border-slate-300 text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
-                    {form.errors.email && <p className="text-xs text-red-600 mt-1">{form.errors.email}</p>}
+                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500" />
+                    {form.errors.email && <p className="text-xs text-red-400 mt-1">{form.errors.email}</p>}
                 </div>
                 <div>
-                    <label className="block text-xs font-medium text-slate-500 mb-1">Telefoon</label>
+                    <label className="block text-xs font-medium text-slate-400 mb-1">Telefoon</label>
                     <input type="text" value={form.data.phone} onChange={(e) => form.setData('phone', e.target.value)}
-                        className="w-full rounded-md border border-slate-300 text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
-                    {form.errors.phone && <p className="text-xs text-red-600 mt-1">{form.errors.phone}</p>}
+                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500" />
+                    {form.errors.phone && <p className="text-xs text-red-400 mt-1">{form.errors.phone}</p>}
                 </div>
                 <div>
-                    <label className="block text-xs font-medium text-slate-500 mb-1">Licentienummer</label>
+                    <label className="block text-xs font-medium text-slate-400 mb-1">Licentienummer</label>
                     <input type="text" value={form.data.license_number} onChange={(e) => form.setData('license_number', e.target.value)}
-                        className="w-full rounded-md border border-slate-300 text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
-                    {form.errors.license_number && <p className="text-xs text-red-600 mt-1">{form.errors.license_number}</p>}
+                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500" />
+                    {form.errors.license_number && <p className="text-xs text-red-400 mt-1">{form.errors.license_number}</p>}
                 </div>
                 <div>
-                    <label className="block text-xs font-medium text-slate-500 mb-1">Gewichtsklasse</label>
+                    <label className="block text-xs font-medium text-slate-400 mb-1">Gewichtsklasse</label>
                     <select value={form.data.weight_category_id} onChange={(e) => form.setData('weight_category_id', e.target.value)}
-                        className="w-full rounded-md border border-slate-300 text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
                         <option value="">Geen</option>
                         {availableWeightCategories.map((wc) => (
                             <option key={wc.id} value={wc.id}>{wc.name}</option>
@@ -379,38 +379,38 @@ function MemberForm({ member, onSuccess, onCancel, ageCategories, weightCategori
                     {availableWeightCategories.length === 0 && form.data.date_of_birth && (
                         <p className="text-xs text-slate-400 mt-1">Geen klasses voor deze leeftijd/geslacht</p>
                     )}
-                    {form.errors.weight_category_id && <p className="text-xs text-red-600 mt-1">{form.errors.weight_category_id}</p>}
+                    {form.errors.weight_category_id && <p className="text-xs text-red-400 mt-1">{form.errors.weight_category_id}</p>}
                 </div>
                 <div>
-                    <label className="block text-xs font-medium text-slate-500 mb-1">Gordel</label>
+                    <label className="block text-xs font-medium text-slate-400 mb-1">Gordel</label>
                     <select value={form.data.belt_rank} onChange={(e) => form.setData('belt_rank', e.target.value)}
-                        className="w-full rounded-md border border-slate-300 text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
                         <option value="">Geen</option>
                         {(beltRanks || []).map((br) => (
                             <option key={br.value} value={br.value}>{br.label}</option>
                         ))}
                     </select>
-                    {form.errors.belt_rank && <p className="text-xs text-red-600 mt-1">{form.errors.belt_rank}</p>}
+                    {form.errors.belt_rank && <p className="text-xs text-red-400 mt-1">{form.errors.belt_rank}</p>}
                 </div>
                 <div>
-                    <label className="block text-xs font-medium text-slate-500 mb-1">Straat + nr</label>
+                    <label className="block text-xs font-medium text-slate-400 mb-1">Straat + nr</label>
                     <input type="text" value={form.data.address_street} onChange={(e) => form.setData('address_street', e.target.value)}
-                        className="w-full rounded-md border border-slate-300 text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
+                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500" />
                 </div>
                 <div>
-                    <label className="block text-xs font-medium text-slate-500 mb-1">Postcode</label>
+                    <label className="block text-xs font-medium text-slate-400 mb-1">Postcode</label>
                     <input type="text" value={form.data.address_postal_code} onChange={(e) => form.setData('address_postal_code', e.target.value)}
-                        className="w-full rounded-md border border-slate-300 text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
+                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500" />
                 </div>
                 <div>
-                    <label className="block text-xs font-medium text-slate-500 mb-1">Stad</label>
+                    <label className="block text-xs font-medium text-slate-400 mb-1">Stad</label>
                     <input type="text" value={form.data.address_city} onChange={(e) => form.setData('address_city', e.target.value)}
-                        className="w-full rounded-md border border-slate-300 text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
+                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500" />
                 </div>
                 <div>
-                    <label className="block text-xs font-medium text-slate-500 mb-1">Status *</label>
+                    <label className="block text-xs font-medium text-slate-400 mb-1">Status *</label>
                     <select value={form.data.membership_status} onChange={(e) => form.setData('membership_status', e.target.value)}
-                        className="w-full rounded-md border border-slate-300 text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
                         <option value="active">Actief</option>
                         <option value="inactive">Inactief</option>
                         <option value="suspended">Geschorst</option>
@@ -418,16 +418,16 @@ function MemberForm({ member, onSuccess, onCancel, ageCategories, weightCategori
                     </select>
                 </div>
                 <div className="flex items-end pb-1">
-                    <label className="flex items-center gap-2 text-sm text-slate-700">
+                    <label className="flex items-center gap-2 text-sm text-slate-300">
                         <input type="checkbox" checked={form.data.is_competition} onChange={(e) => form.setData('is_competition', e.target.checked)}
-                            className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
+                            className="rounded border-slate-600 bg-slate-700 text-amber-400 focus:ring-amber-500" />
                         Competitie
                     </label>
                 </div>
                 <div className="flex items-end pb-1">
-                    <label className="flex items-center gap-2 text-sm text-slate-700">
+                    <label className="flex items-center gap-2 text-sm text-slate-300">
                         <input type="checkbox" checked={form.data.is_trainer} onChange={(e) => form.setData('is_trainer', e.target.checked)}
-                            className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
+                            className="rounded border-slate-600 bg-slate-700 text-amber-400 focus:ring-amber-500" />
                         Trainer
                     </label>
                 </div>
@@ -437,11 +437,11 @@ function MemberForm({ member, onSuccess, onCancel, ageCategories, weightCategori
             </div>
             <div className="flex gap-2">
                 <button type="submit" disabled={form.processing}
-                    className="rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50">
+                    className="rounded-md bg-amber-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-amber-600 disabled:opacity-50">
                     {isEditing ? 'Opslaan' : 'Lid aanmaken'}
                 </button>
                 <button type="button" onClick={onCancel}
-                    className="rounded-md bg-white border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50">
+                    className="rounded-md bg-slate-700/50 border border-slate-600 px-3 py-1.5 text-sm font-medium text-slate-300 hover:bg-slate-700/50">
                     Annuleren
                 </button>
             </div>

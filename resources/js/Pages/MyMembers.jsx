@@ -13,10 +13,10 @@ export default function MyMembers({ members, ageCategories, weightCategories }) 
         return (
             <AppLayout>
                 <Head title="Mijn Leden" />
-                <div className="bg-white rounded-xl shadow-sm ring-1 ring-slate-200/60">
-                    <div className="px-6 py-4 border-b border-slate-200/60 flex items-center justify-between">
-                        <h2 className="text-lg font-semibold text-slate-900">Lidkaart</h2>
-                        <button onClick={() => setViewingMember(null)} className="text-sm font-medium text-slate-500 hover:text-slate-700">
+                <div className="bg-slate-800 rounded-xl shadow-sm ring-1 ring-slate-700/60">
+                    <div className="px-6 py-4 border-b border-slate-700/60 flex items-center justify-between">
+                        <h2 className="text-lg font-semibold text-white">Lidkaart</h2>
+                        <button onClick={() => setViewingMember(null)} className="text-sm font-medium text-slate-400 hover:text-slate-200">
                             ← Terug naar lijst
                         </button>
                     </div>
@@ -25,19 +25,19 @@ export default function MyMembers({ members, ageCategories, weightCategories }) 
                             <MemberCard member={viewingMember} ageCategories={ageCategories} />
                             {viewingMember.is_competition && viewingMember.tournament_results && viewingMember.tournament_results.length > 0 && (
                                 <div>
-                                    <h3 className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-3">Uitslagen</h3>
+                                    <h3 className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-3">Uitslagen</h3>
                                     <div className="space-y-2.5 max-h-[500px] overflow-y-auto">
                                         {viewingMember.tournament_results.map((r) => (
-                                            <div key={r.id} className="rounded-lg ring-1 ring-slate-100 bg-slate-50/50 p-3">
+                                            <div key={r.id} className="rounded-lg ring-1 ring-slate-700 bg-slate-700/50 p-3">
                                                 <div className="flex items-start justify-between gap-2">
                                                     <div className="min-w-0 flex-1">
-                                                        <p className="text-sm font-medium text-slate-700 truncate">{r.tournament_name}</p>
-                                                        <p className="text-xs text-slate-400">{new Date(r.tournament_date).toLocaleDateString('nl-BE', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                                                        <p className="text-sm font-medium text-slate-200 truncate">{r.tournament_name}</p>
+                                                        <p className="text-xs text-slate-500">{new Date(r.tournament_date).toLocaleDateString('nl-BE', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
                                                     </div>
-                                                    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold flex-shrink-0 ${r.result.includes('1e') ? 'bg-yellow-100 text-yellow-800' :
-                                                        r.result.includes('2e') ? 'bg-slate-200 text-slate-700' :
-                                                            r.result.includes('3e') ? 'bg-amber-100 text-amber-800' :
-                                                                'bg-slate-100 text-slate-600'
+                                                    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold flex-shrink-0 ${r.result.includes('1e') ? 'bg-yellow-900/40 text-yellow-400' :
+                                                        r.result.includes('2e') ? 'bg-slate-600 text-slate-200' :
+                                                            r.result.includes('3e') ? 'bg-amber-900/40 text-amber-400' :
+                                                                'bg-slate-700 text-slate-300'
                                                         }`}>
                                                         {r.result}
                                                     </span>
@@ -62,16 +62,16 @@ export default function MyMembers({ members, ageCategories, weightCategories }) 
             <Head title="Mijn Leden" />
 
             <div className="mb-6 flex items-center gap-4">
-                <Link href="/" className="text-sm font-medium text-slate-400 hover:text-slate-600">
+                <Link href="/" className="text-sm font-medium text-slate-500 hover:text-slate-300">
                     &larr; Dashboard
                 </Link>
-                <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Mijn Leden</h1>
+                <h1 className="text-2xl font-bold text-white tracking-tight">Mijn Leden</h1>
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm ring-1 ring-slate-200/60">
+            <div className="bg-slate-800 rounded-xl shadow-sm ring-1 ring-slate-700/60">
                 {flash.status && (
-                    <div className="mx-6 mt-4 rounded-lg bg-emerald-50 ring-1 ring-emerald-200/50 p-3">
-                        <p className="text-sm text-emerald-800">{flash.status}</p>
+                    <div className="mx-6 mt-4 rounded-lg bg-emerald-900/30 ring-1 ring-emerald-700/30 p-3">
+                        <p className="text-sm text-emerald-400">{flash.status}</p>
                     </div>
                 )}
 
@@ -86,24 +86,24 @@ export default function MyMembers({ members, ageCategories, weightCategories }) 
                 )}
 
                 {members.length === 0 ? (
-                    <div className="px-6 py-12 text-center text-slate-400">
-                        <svg className="mx-auto h-12 w-12 text-slate-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" /></svg>
+                    <div className="px-6 py-12 text-center text-slate-500">
+                        <svg className="mx-auto h-12 w-12 text-slate-600 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" /></svg>
                         Geen leden aan je account gekoppeld.
                     </div>
                 ) : (
-                    <div className="divide-y divide-slate-100">
+                    <div className="divide-y divide-slate-700">
                         {members.map((member) => (
-                            <div key={member.id} className="px-6 py-4 flex items-center justify-between gap-4 hover:bg-slate-50/50">
+                            <div key={member.id} className="px-6 py-4 flex items-center justify-between gap-4 hover:bg-slate-700/30">
                                 <div className="flex items-center gap-3 min-w-0 flex-1">
                                     {member.photo_url ? (
                                         <img src={member.photo_url} alt="" className="w-10 h-10 rounded-full object-cover ring-2 ring-white shadow-sm" />
                                     ) : (
-                                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-sm font-semibold shadow-sm">
+                                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white text-sm font-semibold shadow-sm">
                                             {member.first_name[0]}{member.last_name[0]}
                                         </div>
                                     )}
                                     <div className="min-w-0">
-                                        <p className="font-medium text-slate-900 truncate">
+                                        <p className="font-medium text-white truncate">
                                             {member.first_name} {member.last_name}
                                         </p>
                                         <p className="text-xs text-slate-500">
@@ -112,10 +112,10 @@ export default function MyMembers({ members, ageCategories, weightCategories }) 
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <button onClick={() => setViewingMember(member)} className="rounded-lg px-3 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-100">
+                                    <button onClick={() => setViewingMember(member)} className="rounded-lg px-3 py-1.5 text-sm font-medium text-slate-300 hover:bg-slate-700">
                                         Kaart
                                     </button>
-                                    <button onClick={() => { setEditingMember(member); }} className="rounded-lg px-3 py-1.5 text-sm font-medium text-indigo-600 hover:bg-indigo-50">
+                                    <button onClick={() => { setEditingMember(member); }} className="rounded-lg px-3 py-1.5 text-sm font-medium text-amber-400 hover:bg-amber-900/30">
                                         Bewerken
                                     </button>
                                 </div>
@@ -171,48 +171,48 @@ function MyMemberForm({ member, ageCategories, weightCategories, onSuccess, onCa
     };
 
     return (
-        <form onSubmit={handleSubmit} className="px-6 py-4 bg-slate-50/50 border-b border-slate-200/60">
-            <h3 className="text-sm font-semibold text-slate-700 mb-3">
+        <form onSubmit={handleSubmit} className="px-6 py-4 bg-slate-700/30 border-b border-slate-700/60">
+            <h3 className="text-sm font-semibold text-slate-200 mb-3">
                 Bewerk: {member.first_name} {member.last_name}
             </h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
                 <div>
-                    <label className="block text-xs font-medium text-slate-500 mb-1">E-mail</label>
+                    <label className="block text-xs font-medium text-slate-400 mb-1">E-mail</label>
                     <input type="email" value={form.data.email} onChange={(e) => form.setData('email', e.target.value)}
-                        className="w-full rounded-lg border border-slate-300 bg-white text-sm py-1.5 px-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20" />
-                    {form.errors.email && <p className="text-xs text-red-600 mt-1">{form.errors.email}</p>}
+                        className="w-full rounded-lg border border-slate-600 bg-slate-700/50 text-sm text-white py-1.5 px-3 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20" />
+                    {form.errors.email && <p className="text-xs text-red-400 mt-1">{form.errors.email}</p>}
                 </div>
                 <div>
-                    <label className="block text-xs font-medium text-slate-500 mb-1">Telefoon</label>
+                    <label className="block text-xs font-medium text-slate-400 mb-1">Telefoon</label>
                     <input type="text" value={form.data.phone} onChange={(e) => form.setData('phone', e.target.value)}
-                        className="w-full rounded-lg border border-slate-300 bg-white text-sm py-1.5 px-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20" />
-                    {form.errors.phone && <p className="text-xs text-red-600 mt-1">{form.errors.phone}</p>}
+                        className="w-full rounded-lg border border-slate-600 bg-slate-700/50 text-sm text-white py-1.5 px-3 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20" />
+                    {form.errors.phone && <p className="text-xs text-red-400 mt-1">{form.errors.phone}</p>}
                 </div>
                 <div>
-                    <label className="block text-xs font-medium text-slate-500 mb-1">Straat + nr</label>
+                    <label className="block text-xs font-medium text-slate-400 mb-1">Straat + nr</label>
                     <input type="text" value={form.data.address_street} onChange={(e) => form.setData('address_street', e.target.value)}
-                        className="w-full rounded-lg border border-slate-300 bg-white text-sm py-1.5 px-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20" />
+                        className="w-full rounded-lg border border-slate-600 bg-slate-700/50 text-sm text-white py-1.5 px-3 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20" />
                 </div>
                 <div>
-                    <label className="block text-xs font-medium text-slate-500 mb-1">Postcode</label>
+                    <label className="block text-xs font-medium text-slate-400 mb-1">Postcode</label>
                     <input type="text" value={form.data.address_postal_code} onChange={(e) => form.setData('address_postal_code', e.target.value)}
-                        className="w-full rounded-lg border border-slate-300 bg-white text-sm py-1.5 px-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20" />
+                        className="w-full rounded-lg border border-slate-600 bg-slate-700/50 text-sm text-white py-1.5 px-3 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20" />
                 </div>
                 <div>
-                    <label className="block text-xs font-medium text-slate-500 mb-1">Stad</label>
+                    <label className="block text-xs font-medium text-slate-400 mb-1">Stad</label>
                     <input type="text" value={form.data.address_city} onChange={(e) => form.setData('address_city', e.target.value)}
-                        className="w-full rounded-lg border border-slate-300 bg-white text-sm py-1.5 px-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20" />
+                        className="w-full rounded-lg border border-slate-600 bg-slate-700/50 text-sm text-white py-1.5 px-3 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20" />
                 </div>
                 <div>
-                    <label className="block text-xs font-medium text-slate-500 mb-1">Gewichtsklasse</label>
+                    <label className="block text-xs font-medium text-slate-400 mb-1">Gewichtsklasse</label>
                     <select value={form.data.weight_category_id} onChange={(e) => form.setData('weight_category_id', e.target.value)}
-                        className="w-full rounded-lg border border-slate-300 bg-white text-sm py-1.5 px-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20">
+                        className="w-full rounded-lg border border-slate-600 bg-slate-700/50 text-sm text-white py-1.5 px-3 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20">
                         <option value="">Geen</option>
                         {availableWeightCategories.map((wc) => (
                             <option key={wc.id} value={wc.id}>{wc.name}</option>
                         ))}
                     </select>
-                    {form.errors.weight_category_id && <p className="text-xs text-red-600 mt-1">{form.errors.weight_category_id}</p>}
+                    {form.errors.weight_category_id && <p className="text-xs text-red-400 mt-1">{form.errors.weight_category_id}</p>}
                 </div>
                 <div>
                     <PhotoCapture onCapture={(file) => form.setData('photo', file)} error={form.errors.photo} />
@@ -220,11 +220,11 @@ function MyMemberForm({ member, ageCategories, weightCategories, onSuccess, onCa
             </div>
             <div className="flex gap-2">
                 <button type="submit" disabled={form.processing}
-                    className="rounded-lg bg-indigo-600 px-4 py-1.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50 shadow-sm">
+                    className="rounded-lg bg-amber-500 px-4 py-1.5 text-sm font-semibold text-white hover:bg-amber-600 disabled:opacity-50 shadow-sm">
                     Opslaan
                 </button>
                 <button type="button" onClick={onCancel}
-                    className="rounded-lg bg-white ring-1 ring-slate-200 px-4 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50">
+                    className="rounded-lg bg-slate-700 ring-1 ring-slate-600 px-4 py-1.5 text-sm font-medium text-slate-200 hover:bg-slate-600">
                     Annuleren
                 </button>
             </div>

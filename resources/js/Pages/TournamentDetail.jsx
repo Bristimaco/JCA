@@ -11,13 +11,13 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
     };
 
     const statusColors = {
-        preparation: 'bg-slate-100 text-slate-700',
-        invitations_sent: 'bg-blue-100 text-blue-700',
-        registrations_open: 'bg-yellow-100 text-yellow-700',
+        preparation: 'bg-slate-100 text-slate-300',
+        invitations_sent: 'bg-blue-900/40 text-blue-400',
+        registrations_open: 'bg-yellow-900/40 text-yellow-700',
         registrations_closed: 'bg-orange-100 text-orange-700',
-        started: 'bg-emerald-100 text-emerald-700',
-        finished: 'bg-purple-100 text-purple-700',
-        archived: 'bg-purple-100 text-purple-700',
+        started: 'bg-emerald-900/40 text-emerald-400',
+        finished: 'bg-purple-900/40 text-purple-400',
+        archived: 'bg-purple-900/40 text-purple-400',
     };
 
     return (
@@ -25,10 +25,10 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
             <Head title={t.name} />
 
             <div className="mb-6 flex items-center gap-4">
-                <Link href="/" className="text-sm font-medium text-slate-400 hover:text-slate-600">
+                <Link href="/" className="text-sm font-medium text-slate-400 hover:text-slate-400">
                     &larr; Dashboard
                 </Link>
-                <h1 className="text-2xl font-bold text-slate-900 tracking-tight">{t.name}</h1>
+                <h1 className="text-2xl font-bold text-white tracking-tight">{t.name}</h1>
                 <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${statusColors[t.status] || ''}`}>
                     {t.status_label}
                 </span>
@@ -38,33 +38,33 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                 {/* Left column: Info + map */}
                 <div className="lg:col-span-1 space-y-4">
                     {/* Tournament info card */}
-                    <div className="bg-white rounded-xl shadow-sm ring-1 ring-slate-200/60 p-5">
+                    <div className="bg-slate-800 rounded-xl shadow-sm ring-1 ring-slate-700/60 p-5">
                         <h2 className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-3">Details</h2>
                         <dl className="space-y-3 text-sm">
                             <div>
                                 <dt className="text-slate-400 text-xs">Datum</dt>
-                                <dd className="font-medium text-slate-900">{formatDate(t.tournament_date)}</dd>
+                                <dd className="font-medium text-white">{formatDate(t.tournament_date)}</dd>
                             </div>
                             <div>
                                 <dt className="text-slate-400 text-xs">Locatie</dt>
-                                <dd className="font-medium text-slate-900">
+                                <dd className="font-medium text-white">
                                     {[t.address_street, t.address_postal_code, t.address_city].filter(Boolean).join(', ') || 'Geen adres'}
                                 </dd>
                             </div>
                             <div>
                                 <dt className="text-slate-400 text-xs">Land</dt>
-                                <dd className="font-medium text-slate-900">{t.country_code}</dd>
+                                <dd className="font-medium text-white">{t.country_code}</dd>
                             </div>
                             <div>
                                 <dt className="text-slate-400 text-xs">Deelnemers</dt>
-                                <dd className="font-medium text-slate-900">{totalParticipants}</dd>
+                                <dd className="font-medium text-white">{totalParticipants}</dd>
                             </div>
                         </dl>
                     </div>
 
                     {/* Map */}
                     {hasMap && (
-                        <div className="bg-white rounded-xl shadow-sm ring-1 ring-slate-200/60 overflow-hidden">
+                        <div className="bg-slate-800 rounded-xl shadow-sm ring-1 ring-slate-700/60 overflow-hidden">
                             <iframe
                                 title="Locatie"
                                 width="100%"
@@ -76,8 +76,8 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
 
                     {/* Attachments / Flyers */}
                     {t.attachments.length > 0 && (
-                        <div className="bg-white rounded-xl shadow-sm ring-1 ring-slate-200/60 overflow-hidden">
-                            <div className="px-5 py-3 border-b border-slate-100">
+                        <div className="bg-slate-800 rounded-xl shadow-sm ring-1 ring-slate-700/60 overflow-hidden">
+                            <div className="px-5 py-3 border-b border-slate-700">
                                 <h2 className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Bijlagen</h2>
                             </div>
                             <div className="space-y-3 p-4">
@@ -88,7 +88,7 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                                                 <img
                                                     src={att.url}
                                                     alt={att.original_name}
-                                                    className="w-full rounded-lg ring-1 ring-slate-200/60"
+                                                    className="w-full rounded-lg ring-1 ring-slate-700/60"
                                                 />
                                             </a>
                                         ) : att.mime_type === 'application/pdf' ? (
@@ -96,17 +96,17 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                                                 <iframe
                                                     src={att.url}
                                                     title={att.original_name}
-                                                    className="w-full rounded-lg ring-1 ring-slate-200/60"
+                                                    className="w-full rounded-lg ring-1 ring-slate-700/60"
                                                     style={{ height: '400px' }}
                                                 />
                                                 <a href={att.url} target="_blank" rel="noopener noreferrer"
-                                                    className="text-xs text-indigo-600 hover:underline mt-1 inline-block">
+                                                    className="text-xs text-amber-400 hover:underline mt-1 inline-block">
                                                     {att.original_name}
                                                 </a>
                                             </div>
                                         ) : (
                                             <a href={att.url} target="_blank" rel="noopener noreferrer"
-                                                className="text-sm text-indigo-600 hover:underline">
+                                                className="text-sm text-amber-400 hover:underline">
                                                 {att.original_name}
                                             </a>
                                         )}
@@ -118,11 +118,11 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
 
                     {/* Coaches */}
                     {t.coaches.length > 0 && (
-                        <div className="bg-white rounded-xl shadow-sm ring-1 ring-slate-200/60 p-5">
+                        <div className="bg-slate-800 rounded-xl shadow-sm ring-1 ring-slate-700/60 p-5">
                             <h2 className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-3">Trainers</h2>
                             <ul className="space-y-1">
                                 {t.coaches.map(c => (
-                                    <li key={c.id} className="text-sm text-slate-900">{c.name}</li>
+                                    <li key={c.id} className="text-sm text-white">{c.name}</li>
                                 ))}
                             </ul>
                         </div>
@@ -131,11 +131,11 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
 
                 {/* Right column: Participants grouped by age/weight */}
                 <div className="lg:col-span-2">
-                    <div className="bg-white rounded-xl shadow-sm ring-1 ring-slate-200/60">
-                        <div className="px-5 py-4 border-b border-slate-200/60">
-                            <h2 className="text-lg font-semibold text-slate-900">
+                    <div className="bg-slate-800 rounded-xl shadow-sm ring-1 ring-slate-700/60">
+                        <div className="px-5 py-4 border-b border-slate-700/60">
+                            <h2 className="text-lg font-semibold text-white">
                                 Deelnemers
-                                <span className="ml-2 inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600">
+                                <span className="ml-2 inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-400">
                                     {totalParticipants}
                                 </span>
                             </h2>
@@ -146,18 +146,18 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                                 Nog geen deelnemers.
                             </div>
                         ) : (
-                            <div className="divide-y divide-slate-100">
+                            <div className="divide-y divide-slate-700">
                                 {participantGroups.map(ageGroup => (
                                     <div key={ageGroup.name} className="px-5 py-4">
-                                        <h3 className="text-sm font-semibold text-slate-800 mb-3">
-                                            <span className="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-semibold text-indigo-700">
+                                        <h3 className="text-sm font-semibold text-slate-200 mb-3">
+                                            <span className="inline-flex items-center rounded-full bg-amber-900/30 px-2.5 py-0.5 text-xs font-semibold text-amber-300">
                                                 {ageGroup.name}
                                             </span>
                                         </h3>
                                         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                                             {ageGroup.weights.map(weightGroup => (
-                                                <div key={weightGroup.name} className="rounded-xl ring-1 ring-slate-100 bg-slate-50/50 p-3">
-                                                    <h4 className="text-xs font-semibold text-amber-700 mb-2">
+                                                <div key={weightGroup.name} className="rounded-xl ring-1 ring-slate-700 bg-slate-700/30 p-3">
+                                                    <h4 className="text-xs font-semibold text-amber-400 mb-2">
                                                         <span className="inline-flex items-center rounded-full bg-amber-50 px-2 py-0.5">
                                                             {weightGroup.name}
                                                         </span>
@@ -167,13 +167,13 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                                                     </h4>
                                                     <ul className="space-y-1">
                                                         {weightGroup.members.map(member => (
-                                                            <li key={member.id} className="flex items-center justify-between text-sm text-slate-700">
+                                                            <li key={member.id} className="flex items-center justify-between text-sm text-slate-300">
                                                                 <span>{member.name}</span>
                                                                 {member.result && (
-                                                                    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ${member.result === '1e plaats' ? 'bg-yellow-100 text-yellow-800' :
-                                                                        member.result === '2e plaats' ? 'bg-slate-200 text-slate-800' :
-                                                                            member.result === '3e plaats' ? 'bg-amber-100 text-amber-800' :
-                                                                                'bg-slate-100 text-slate-600'
+                                                                    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ${member.result === '1e plaats' ? 'bg-yellow-900/40 text-yellow-400' :
+                                                                        member.result === '2e plaats' ? 'bg-slate-200 text-slate-200' :
+                                                                            member.result === '3e plaats' ? 'bg-amber-900/40 text-amber-300' :
+                                                                                'bg-slate-100 text-slate-400'
                                                                         }`}>
                                                                         {member.result}
                                                                     </span>
