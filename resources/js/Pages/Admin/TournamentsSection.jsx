@@ -245,7 +245,7 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
     };
 
     const handleOpenRegistrations = () => {
-        if (tournament.invitation_deadline && new Date(tournament.invitation_deadline) >= new Date().setHours(0,0,0,0)) {
+        if (tournament.invitation_deadline && new Date(tournament.invitation_deadline) >= new Date().setHours(0, 0, 0, 0)) {
             if (!confirm('De uitnodigingsdeadline is nog niet verlopen. Toch inschrijvingen starten?')) {
                 return;
             }
