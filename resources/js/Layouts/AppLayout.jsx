@@ -38,6 +38,15 @@ export default function AppLayout({ children }) {
                             </Link>
                         </div>
                         <div className="flex items-center gap-2">
+                            <button
+                                onClick={() => { window.location.reload(); }}
+                                title="Pagina herladen"
+                                className="inline-flex items-center justify-center w-9 h-9 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-slate-800/60"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
+                                    <path fillRule="evenodd" d="M15.312 11.424a5.5 5.5 0 0 1-9.201 2.466l-.312-.311h2.451a.75.75 0 0 0 0-1.5H4.5a.75.75 0 0 0-.75.75v3.75a.75.75 0 0 0 1.5 0v-2.033l.364.363a7 7 0 0 0 11.712-3.138.75.75 0 0 0-1.449-.39l-.065.043Zm-10.624-2.85a5.5 5.5 0 0 1 9.201-2.465l.312.31H11.75a.75.75 0 0 0 0 1.5H15.5a.75.75 0 0 0 .75-.75V3.42a.75.75 0 0 0-1.5 0v2.033l-.364-.364A7 7 0 0 0 2.674 8.228a.75.75 0 0 0 1.449.39l.065-.044Z" clipRule="evenodd" />
+                                </svg>
+                            </button>
                             <a
                                 href="/handleiding.html"
                                 target="_blank"
