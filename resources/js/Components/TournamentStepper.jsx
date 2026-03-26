@@ -40,6 +40,22 @@ export default function TournamentStepper({ status, compact = false, interactive
             const routeFn = FORWARD_ROUTES[currentValue];
             if (!routeFn) return;
 
+            // Special case: closing registrations needs confirmation
+            if (currentValue === 'registrations_open') {
+                if (!confirm('Inschrijvingen afsluiten? Niet-ingeschreven deelnemers worden uitgesloten.')) return;
+                setLoading(true);
+                router.post(routeFn(tournamentId), { confirmed: '1' }, {
+                    preserveScroll: true,
+                    onError: (errors) => {
+                        setLoading(false);
+                        if (onTransitionError) onTransitionError(errors);
+                    },
+                    onSuccess: () => setLoading(false),
+                    onFinish: () => setLoading(false),
+                });
+                return;
+            }
+
             setLoading(true);
             router.post(routeFn(tournamentId), {}, {
                 preserveScroll: true,
@@ -160,7 +176,7 @@ export default function TournamentStepper({ status, compact = false, interactive
                                     ${state === 'current' ? 'text-white font-semibold' :
                                         state === 'completed' ? 'text-rose-400' : 'text-slate-500'}
                                 `}>
-                                    {step.short}
+                                    {step.label}
                                 </span>
                             </div>
 
