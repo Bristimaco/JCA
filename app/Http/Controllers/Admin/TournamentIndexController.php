@@ -25,26 +25,26 @@ class TournamentIndexController extends Controller
             ->orderBy('tournament_date');
 
         // Coaches only see tournaments where they are assigned as coach
-        if (!$isAdmin) {
+        if (! $isAdmin) {
             $coachMemberIds = $user->members()->pluck('members.id');
-            $query->whereHas('coaches', fn($q) => $q->whereIn('members.id', $coachMemberIds));
+            $query->whereHas('coaches', fn ($q) => $q->whereIn('members.id', $coachMemberIds));
         }
 
         $tournaments = $query->get()
-            ->map(fn(Tournament $t) => [
+            ->map(fn (Tournament $t) => [
                 ...$t->toArray(),
                 'status_label' => $t->status->label(),
                 'age_category_ids' => $t->ageCategories->pluck('id')->values()->all(),
-                'attachments' => $t->attachments->map(fn($a) => [
+                'attachments' => $t->attachments->map(fn ($a) => [
                     'id' => $a->id,
                     'original_name' => $a->original_name,
                     'url' => route('attachments.show', $a),
                 ]),
-                'tournament_coaches' => $t->coaches->map(fn(Member $m) => [
+                'tournament_coaches' => $t->coaches->map(fn (Member $m) => [
                     'id' => $m->id,
                     'name' => $m->fullName(),
                 ]),
-                'tournament_members' => $t->members->map(fn(Member $m) => [
+                'tournament_members' => $t->members->map(fn (Member $m) => [
                     'id' => $m->id,
                     'name' => $m->fullName(),
                     'date_of_birth' => $m->date_of_birth->toDateString(),
@@ -66,23 +66,23 @@ class TournamentIndexController extends Controller
             ->orderBy('last_name')
             ->orderBy('first_name')
             ->get(['id', 'first_name', 'last_name'])
-            ->map(fn(Member $m) => [
+            ->map(fn (Member $m) => [
                 'id' => $m->id,
                 'name' => $m->fullName(),
             ]);
 
-        $statuses = collect(TournamentStatus::cases())->map(fn(TournamentStatus $s) => [
+        $statuses = collect(TournamentStatus::cases())->map(fn (TournamentStatus $s) => [
             'value' => $s->value,
             'label' => $s->label(),
         ])->values()->all();
 
         // Members linked to users with Coach role = trainers
         $availableCoaches = Member::where('is_trainer', true)
-            ->whereHas('users', fn($q) => $q->where('role', UserRole::Coach->value))
+            ->whereHas('users', fn ($q) => $q->where('role', UserRole::Coach->value))
             ->orderBy('last_name')
             ->orderBy('first_name')
             ->get(['id', 'first_name', 'last_name'])
-            ->map(fn(Member $m) => [
+            ->map(fn (Member $m) => [
                 'id' => $m->id,
                 'name' => $m->fullName(),
             ]);
