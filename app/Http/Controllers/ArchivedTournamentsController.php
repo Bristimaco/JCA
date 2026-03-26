@@ -32,13 +32,13 @@ class ArchivedTournamentsController extends Controller
                     'longitude' => $t->longitude,
                     'status' => $t->status->value,
                     'status_label' => $t->status->label(),
-                    'coaches' => $t->coaches->map(fn($m) => $m->fullName())->values()->all(),
-                    'attachments' => $t->attachments->map(fn($a) => [
+                    'coaches' => $t->coaches->map(fn ($m) => $m->fullName())->values()->all(),
+                    'attachments' => $t->attachments->map(fn ($a) => [
                         'id' => $a->id,
                         'original_name' => $a->original_name,
                         'url' => route('attachments.show', $a),
                     ])->values()->all(),
-                    'results' => $results->map(fn($r) => [
+                    'results' => $results->map(fn ($r) => [
                         'member_name' => $r->member->fullName(),
                         'result' => $r->result,
                         'notes' => $r->notes,

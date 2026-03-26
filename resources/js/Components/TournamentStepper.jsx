@@ -20,7 +20,7 @@ const FORWARD_ROUTES = {
     finished: (id) => `/admin/tournaments/${id}/archive`,
 };
 
-export default function TournamentStepper({ status, compact = false, interactive = false, tournamentId = null, onTransitionError = null, onTransitionStart = null }) {
+export default function TournamentStepper({ status, compact = false, interactive = false, tournamentId = null, onTransitionError = null, onTransitionStart = null, userRole = null }) {
     const [loading, setLoading] = useState(false);
     const currentIndex = STEPS.findIndex(s => s.value === status);
 
@@ -34,8 +34,18 @@ export default function TournamentStepper({ status, compact = false, interactive
         if (stepIndex === currentIndex + 1) {
             const currentValue = STEPS[currentIndex].value;
 
-            // started → finished is trainer-only
+            // started → finished is trainer-only (handled via trainer page)
             if (currentValue === 'started') return;
+
+            // Role-based forward restrictions
+            if (userRole === 'coach') {
+                // Coach can only: preparation→invitations_sent, registrations_closed→started
+                if (!['preparation', 'registrations_closed'].includes(currentValue)) return;
+            }
+            if (userRole === 'admin') {
+                // Admin cannot: registrations_closed→started (coach only)
+                if (currentValue === 'registrations_closed') return;
+            }
 
             const routeFn = FORWARD_ROUTES[currentValue];
             if (!routeFn) return;
@@ -76,6 +86,16 @@ export default function TournamentStepper({ status, compact = false, interactive
             // Backend blocks revert for started and finished
             if (status === 'started' || status === 'finished') return;
 
+            // Role-based revert restrictions
+            if (userRole === 'coach') {
+                // Coach can only revert from invitations_sent
+                if (status !== 'invitations_sent') return;
+            }
+            if (userRole === 'admin') {
+                // Admin can revert from: registrations_open, registrations_closed, archived
+                if (!['registrations_open', 'registrations_closed', 'archived'].includes(status)) return;
+            }
+
             if (onTransitionStart) onTransitionStart();
             setLoading(true);
             router.post(`/admin/tournaments/${tournamentId}/revert-status`, {}, {
@@ -100,13 +120,20 @@ export default function TournamentStepper({ status, compact = false, interactive
         if (!interactive || loading) return false;
         // Next step (forward)
         if (index === currentIndex + 1) {
+            const currentValue = STEPS[currentIndex].value;
             // started → finished is trainer only
-            if (STEPS[currentIndex].value === 'started') return false;
-            return !!FORWARD_ROUTES[STEPS[currentIndex].value];
+            if (currentValue === 'started') return false;
+            // Role-based forward checks
+            if (userRole === 'coach' && !['preparation', 'registrations_closed'].includes(currentValue)) return false;
+            if (userRole === 'admin' && currentValue === 'registrations_closed') return false;
+            return !!FORWARD_ROUTES[currentValue];
         }
         // Previous step (revert) — only to immediate previous
         if (index === currentIndex - 1) {
-            return status !== 'started' && status !== 'finished' && status !== 'preparation';
+            if (status === 'started' || status === 'finished' || status === 'preparation') return false;
+            if (userRole === 'coach' && status !== 'invitations_sent') return false;
+            if (userRole === 'admin' && !['registrations_open', 'registrations_closed', 'archived'].includes(status)) return false;
+            return true;
         }
         return false;
     };

@@ -130,34 +130,42 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::post('/weight-categories/import', [CategoryExcelController::class, 'importWeightCategories'])->name('admin.weight-categories.import');
 
         // Tournaments
-        Route::get('/tournaments', TournamentIndexController::class)->name('admin.tournaments.index');
         Route::post('/tournaments', [TournamentController::class, 'store'])->name('admin.tournaments.store');
-        Route::post('/tournaments/{tournament}', [TournamentController::class, 'update'])->name('admin.tournaments.update');
         Route::delete('/tournaments/{tournament}', [TournamentController::class, 'destroy'])->name('admin.tournaments.destroy');
 
-        // Tournament members & invitations
+        // Tournament registrations (admin-only)
+        Route::post('/tournaments/{tournament}/open-registrations', [TournamentMembersController::class, 'openRegistrations'])->name('admin.tournaments.open-registrations');
+        Route::post('/tournaments/{tournament}/register/{member}', [TournamentMembersController::class, 'register'])->name('admin.tournaments.register');
+        Route::post('/tournaments/{tournament}/unregister/{member}', [TournamentMembersController::class, 'unregister'])->name('admin.tournaments.unregister');
+        Route::post('/tournaments/{tournament}/close-registrations', [TournamentMembersController::class, 'closeRegistrations'])->name('admin.tournaments.close-registrations');
+        Route::post('/tournaments/{tournament}/archive', [TournamentController::class, 'archive'])->name('admin.tournaments.archive');
+
+        // Tournament coaches (admin-only)
+        Route::post('/tournaments/{tournament}/coaches', [TournamentMembersController::class, 'addCoach'])->name('admin.tournaments.add-coach');
+        Route::delete('/tournaments/{tournament}/coaches/{member}', [TournamentMembersController::class, 'removeCoach'])->name('admin.tournaments.remove-coach');
+    });
+
+    // Tournament routes (shared: admin + coach)
+    Route::middleware('coach')->prefix('admin')->group(function () {
+        Route::get('/tournaments', TournamentIndexController::class)->name('admin.tournaments.index');
+        Route::post('/tournaments/{tournament}', [TournamentController::class, 'update'])->name('admin.tournaments.update');
+
+        // Member list management (coach-only, enforced in controller)
         Route::post('/tournaments/{tournament}/populate', [TournamentMembersController::class, 'populate'])->name('admin.tournaments.populate');
         Route::post('/tournaments/{tournament}/members', [TournamentMembersController::class, 'addMember'])->name('admin.tournaments.add-member');
         Route::delete('/tournaments/{tournament}/members/{member}', [TournamentMembersController::class, 'removeMember'])->name('admin.tournaments.remove-member');
+
+        // Invitations (both admin + coach)
         Route::post('/tournaments/{tournament}/invite-all', [TournamentMembersController::class, 'inviteAll'])->name('admin.tournaments.invite-all');
         Route::post('/tournaments/{tournament}/invite/{member}', [TournamentMembersController::class, 'invite'])->name('admin.tournaments.invite');
         Route::post('/tournaments/{tournament}/close-invitations', [TournamentMembersController::class, 'closeInvitations'])->name('admin.tournaments.close-invitations');
         Route::post('/tournaments/{tournament}/revert-status', [TournamentMembersController::class, 'revertStatus'])->name('admin.tournaments.revert-status');
 
-        // Tournament registrations
-        Route::post('/tournaments/{tournament}/open-registrations', [TournamentMembersController::class, 'openRegistrations'])->name('admin.tournaments.open-registrations');
-        Route::post('/tournaments/{tournament}/register/{member}', [TournamentMembersController::class, 'register'])->name('admin.tournaments.register');
-        Route::post('/tournaments/{tournament}/unregister/{member}', [TournamentMembersController::class, 'unregister'])->name('admin.tournaments.unregister');
-        Route::post('/tournaments/{tournament}/close-registrations', [TournamentMembersController::class, 'closeRegistrations'])->name('admin.tournaments.close-registrations');
-        Route::post('/tournaments/{tournament}/start', [TournamentMembersController::class, 'startTournament'])->name('admin.tournaments.start');
-        Route::post('/tournaments/{tournament}/archive', [TournamentController::class, 'archive'])->name('admin.tournaments.archive');
-
-        // Tournament coaches (trainers)
-        Route::post('/tournaments/{tournament}/coaches', [TournamentMembersController::class, 'addCoach'])->name('admin.tournaments.add-coach');
-        Route::delete('/tournaments/{tournament}/coaches/{member}', [TournamentMembersController::class, 'removeCoach'])->name('admin.tournaments.remove-coach');
-
-        // Admin manual RSVP
+        // RSVP management (both admin + coach)
         Route::post('/tournaments/{tournament}/accept/{member}', [TournamentMembersController::class, 'adminAccept'])->name('admin.tournaments.accept');
         Route::post('/tournaments/{tournament}/decline/{member}', [TournamentMembersController::class, 'adminDecline'])->name('admin.tournaments.decline');
+
+        // Start tournament (coach-only, enforced in controller)
+        Route::post('/tournaments/{tournament}/start', [TournamentMembersController::class, 'startTournament'])->name('admin.tournaments.start');
     });
 });

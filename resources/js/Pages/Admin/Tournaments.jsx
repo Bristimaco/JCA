@@ -2,7 +2,7 @@ import { Head, Link } from '@inertiajs/react';
 import AppLayout from '../../Layouts/AppLayout';
 import TournamentsSection from './TournamentsSection';
 
-export default function Tournaments({ tournaments, ageCategories, competitionMembers, statuses, availableCoaches }) {
+export default function Tournaments({ tournaments, ageCategories, competitionMembers, statuses, availableCoaches, userRole }) {
     return (
         <AppLayout>
             <Head title="Toernooien" />
@@ -17,7 +17,7 @@ export default function Tournaments({ tournaments, ageCategories, competitionMem
                 </Link>
             </div>
 
-            <TournamentsSection tournaments={tournaments} ageCategories={ageCategories} competitionMembers={competitionMembers} statuses={statuses} availableCoaches={availableCoaches} />
+            <TournamentsSection tournaments={tournaments} ageCategories={ageCategories} competitionMembers={competitionMembers} statuses={statuses} availableCoaches={availableCoaches} userRole={userRole} />
         </AppLayout>
     );
 }

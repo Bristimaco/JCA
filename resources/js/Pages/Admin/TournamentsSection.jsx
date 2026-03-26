@@ -2,7 +2,7 @@ import { useForm, usePage, router } from '@inertiajs/react';
 import { useState } from 'react';
 import TournamentStepper from '../../Components/TournamentStepper';
 
-export default function TournamentsSection({ tournaments, ageCategories, competitionMembers, statuses, availableCoaches }) {
+export default function TournamentsSection({ tournaments, ageCategories, competitionMembers, statuses, availableCoaches, userRole }) {
     const { flash } = usePage().props;
     const [showAddForm, setShowAddForm] = useState(false);
     const [editingTournament, setEditingTournament] = useState(null);
@@ -28,12 +28,14 @@ export default function TournamentsSection({ tournaments, ageCategories, competi
                         {tournaments.length}
                     </span>
                 </h2>
-                <button
-                    onClick={() => { setShowAddForm(!showAddForm); setEditingTournament(null); }}
-                    className="rounded-md bg-rose-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-rose-700"
-                >
-                    {showAddForm ? 'Annuleren' : 'Toernooi toevoegen'}
-                </button>
+                {userRole === 'admin' && (
+                    <button
+                        onClick={() => { setShowAddForm(!showAddForm); setEditingTournament(null); }}
+                        className="rounded-md bg-rose-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-rose-700"
+                    >
+                        {showAddForm ? 'Annuleren' : 'Toernooi toevoegen'}
+                    </button>
+                )}
             </div>
 
 
@@ -75,6 +77,7 @@ export default function TournamentsSection({ tournaments, ageCategories, competi
                             onEdit={() => { setEditingTournament(tournament); setShowAddForm(false); }}
                             flashMessage={flashTournamentId === tournament.id ? flash.status : null}
                             onStepperTransition={() => setFlashTournamentId(tournament.id)}
+                            userRole={userRole}
                         />
                     ))}
                 </div>
@@ -83,7 +86,7 @@ export default function TournamentsSection({ tournaments, ageCategories, competi
     );
 }
 
-function TournamentRow({ tournament, statusColors, statuses, competitionMembers, availableCoaches, isExpanded, isEditing, onToggleExpand, onEdit, flashMessage, onStepperTransition }) {
+function TournamentRow({ tournament, statusColors, statuses, competitionMembers, availableCoaches, isExpanded, isEditing, onToggleExpand, onEdit, flashMessage, onStepperTransition, userRole }) {
     const deleteForm = useForm({});
     const statusLabel = statuses.find(s => s.value === tournament.status)?.label || tournament.status;
     const members = tournament.tournament_members || [];
@@ -103,7 +106,7 @@ function TournamentRow({ tournament, statusColors, statuses, competitionMembers,
 
     return (
         <div className="bg-slate-900 rounded-lg shadow-sm border border-slate-800 border-t-2 border-t-rose-700 px-6 py-4">
-            <TournamentStepper status={tournament.status} interactive={true} tournamentId={tournament.id} onTransitionStart={onStepperTransition} />
+            <TournamentStepper status={tournament.status} interactive={true} tournamentId={tournament.id} onTransitionStart={onStepperTransition} userRole={userRole} />
             {flashMessage && (
                 <div className="mb-3 rounded-md bg-emerald-900/30 border ring-1 ring-emerald-700/30 p-3">
                     <p className="text-sm text-emerald-400">{flashMessage}</p>
@@ -127,13 +130,15 @@ function TournamentRow({ tournament, statusColors, statuses, competitionMembers,
                             <button onClick={onEdit} className="text-sm text-rose-400 hover:text-rose-300">
                                 Bewerken
                             </button>
-                            <button
-                                onClick={handleDelete}
-                                disabled={deleteForm.processing}
-                                className="text-sm text-red-400 hover:text-red-800"
-                            >
-                                Verwijderen
-                            </button>
+                            {userRole === 'admin' && (
+                                <button
+                                    onClick={handleDelete}
+                                    disabled={deleteForm.processing}
+                                    className="text-sm text-red-400 hover:text-red-800"
+                                >
+                                    Verwijderen
+                                </button>
+                            )}
                         </div>
                     </div>
                     <div className="flex gap-6 text-xs text-slate-500">
@@ -194,13 +199,14 @@ function TournamentRow({ tournament, statusColors, statuses, competitionMembers,
                     members={members}
                     competitionMembers={competitionMembers}
                     availableCoaches={availableCoaches}
+                    userRole={userRole}
                 />
             )}
         </div>
     );
 }
 
-function TournamentMembersPanel({ tournament, members, competitionMembers, availableCoaches }) {
+function TournamentMembersPanel({ tournament, members, competitionMembers, availableCoaches, userRole }) {
     const populateForm = useForm({});
     const inviteAllForm = useForm({});
     const addMemberForm = useForm({ member_id: '' });
@@ -314,7 +320,7 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
     return (
         <div className="mt-4 border border-slate-800 rounded-lg bg-slate-700/50">
             <div className="px-4 py-3 border-b border-slate-800 flex flex-wrap items-center gap-2">
-                {tournament.status === 'preparation' && (
+                {tournament.status === 'preparation' && userRole === 'coach' && (
                     <button
                         onClick={handlePopulate}
                         disabled={populateForm.processing || !hasAgeCategories}
@@ -336,7 +342,7 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
 
 
                 {/* Add individual member */}
-                {tournament.status === 'preparation' && (
+                {tournament.status === 'preparation' && userRole === 'coach' && (
                     <form onSubmit={handleAddMember} className="flex items-center gap-1 ml-auto">
                         <select
                             value={addMemberForm.data.member_id}
@@ -446,7 +452,7 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
                                         </button>
                                     </>
                                 )}
-                                {tournament.status === 'registrations_open' && member.invitation_status === 'accepted' && member.registration_status !== 'registered' && (
+                                {tournament.status === 'registrations_open' && member.invitation_status === 'accepted' && member.registration_status !== 'registered' && userRole === 'admin' && (
                                     <button
                                         onClick={() => handleRegister(member.id)}
                                         disabled={processing[member.id]}
@@ -455,7 +461,7 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
                                         Inschrijven
                                     </button>
                                 )}
-                                {tournament.status === 'registrations_open' && member.registration_status === 'registered' && (
+                                {tournament.status === 'registrations_open' && member.registration_status === 'registered' && userRole === 'admin' && (
                                     <button
                                         onClick={() => handleUnregister(member.id, member.name)}
                                         disabled={processing[member.id]}
@@ -464,7 +470,7 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
                                         Uitschrijven
                                     </button>
                                 )}
-                                {tournament.status === 'preparation' && (
+                                {tournament.status === 'preparation' && userRole === 'coach' && (
                                     <button
                                         onClick={() => handleRemove(member.id, member.name)}
                                         className="text-xs text-red-500 hover:text-red-400"
@@ -522,25 +528,27 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
                     <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
                         Trainers ({coaches.length})
                     </span>
-                    <form onSubmit={handleAddCoach} className="flex items-center gap-1">
-                        <select
-                            value={addCoachForm.data.member_id}
-                            onChange={e => addCoachForm.setData('member_id', e.target.value)}
-                            className="rounded-md border border-slate-600 bg-slate-700/50 text-white text-xs py-1 px-2 max-w-[200px]"
-                        >
-                            <option value="">Trainer toevoegen...</option>
-                            {filteredCoaches.map(c => (
-                                <option key={c.id} value={c.id}>{c.name}</option>
-                            ))}
-                        </select>
-                        <button
-                            type="submit"
-                            disabled={addCoachForm.processing || !addCoachForm.data.member_id}
-                            className="rounded-md bg-gray-600 px-2 py-1 text-xs font-medium text-white hover:bg-gray-700 disabled:opacity-50"
-                        >
-                            +
-                        </button>
-                    </form>
+                    {userRole === 'admin' && (
+                        <form onSubmit={handleAddCoach} className="flex items-center gap-1">
+                            <select
+                                value={addCoachForm.data.member_id}
+                                onChange={e => addCoachForm.setData('member_id', e.target.value)}
+                                className="rounded-md border border-slate-600 bg-slate-700/50 text-white text-xs py-1 px-2 max-w-[200px]"
+                            >
+                                <option value="">Trainer toevoegen...</option>
+                                {filteredCoaches.map(c => (
+                                    <option key={c.id} value={c.id}>{c.name}</option>
+                                ))}
+                            </select>
+                            <button
+                                type="submit"
+                                disabled={addCoachForm.processing || !addCoachForm.data.member_id}
+                                className="rounded-md bg-gray-600 px-2 py-1 text-xs font-medium text-white hover:bg-gray-700 disabled:opacity-50"
+                            >
+                                +
+                            </button>
+                        </form>
+                    )}
                 </div>
                 {coaches.length === 0 ? (
                     <div className="px-4 py-4 text-center text-xs text-slate-400">
@@ -551,12 +559,14 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
                         {coaches.map(coach => (
                             <div key={coach.id} className="px-4 py-2 flex items-center justify-between gap-3">
                                 <span className="text-sm text-white">{coach.name}</span>
-                                <button
-                                    onClick={() => handleRemoveCoach(coach.id, coach.name)}
-                                    className="text-xs text-red-500 hover:text-red-400"
-                                >
-                                    ✕
-                                </button>
+                                {userRole === 'admin' && (
+                                    <button
+                                        onClick={() => handleRemoveCoach(coach.id, coach.name)}
+                                        className="text-xs text-red-500 hover:text-red-400"
+                                    >
+                                        ✕
+                                    </button>
+                                )}
                             </div>
                         ))}
                     </div>
