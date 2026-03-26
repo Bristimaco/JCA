@@ -8,13 +8,13 @@ export default function AwaitingApproval() {
         <GuestLayout>
             <Head title="Wachten op goedkeuring" />
             <div className="text-center">
-                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-900/30">
-                    <svg className="h-7 w-7 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-900/30">
+                    <svg className="h-7 w-7 text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                 </div>
 
-                <h2 className="text-xl font-bold text-white mb-2">Wachten op goedkeuring</h2>
+                <h2 className="text-xl font-bold text-stone-100 mb-2">Wachten op goedkeuring</h2>
 
                 <p className="text-sm text-slate-400 mb-6">
                     Je e-mailadres is geverifieerd. Een beheerder moet je account nog goedkeuren

@@ -18,10 +18,10 @@ const moduleIcons = {
 };
 
 const moduleColors = {
-    'Mijn Leden': 'from-amber-500 to-orange-500',
-    'Leden': 'from-amber-600 to-amber-500',
-    'Toernooien': 'from-red-600 to-orange-500',
-    'Archief': 'from-slate-500 to-slate-400',
+    'Mijn Leden': 'from-rose-600 to-red-800',
+    'Leden': 'from-rose-700 to-rose-600',
+    'Toernooien': 'from-red-700 to-rose-600',
+    'Archief': 'from-slate-600 to-slate-500',
 };
 
 const modules = [
@@ -44,7 +44,7 @@ export default function Dashboard({ pendingCount, pendingUsers, adminCounters, m
             <Head title="Dashboard" />
 
             <div className="mb-8">
-                <h1 className="text-3xl font-bold text-white tracking-tight">Dashboard</h1>
+                <h1 className="text-3xl font-bold text-stone-100 tracking-tight">Dashboard</h1>
                 <p className="text-slate-400 mt-1">Welkom terug, {auth.user.name}</p>
             </div>
 
@@ -58,7 +58,7 @@ export default function Dashboard({ pendingCount, pendingUsers, adminCounters, m
                         <Link
                             key={m.name}
                             href={m.href}
-                            className="group bg-slate-800 rounded-xl shadow-sm ring-1 ring-slate-700/60 p-5 hover:shadow-md hover:ring-amber-500/40 hover:-translate-y-0.5"
+                            className="group bg-slate-900 rounded-xl shadow-sm ring-1 ring-slate-800 border-t-2 border-t-rose-700/40 p-5 hover:shadow-md hover:ring-rose-500/40 hover:-translate-y-0.5"
                         >
                             <div className="flex flex-col items-center text-center">
                                 <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${moduleColors[m.name]} flex items-center justify-center text-white mb-3 shadow-sm group-hover:scale-105`}>
@@ -66,19 +66,19 @@ export default function Dashboard({ pendingCount, pendingUsers, adminCounters, m
                                 </div>
                                 <span className="text-base font-semibold text-white">{m.name}</span>
                                 {m.name === 'Leden' && memberStats && (
-                                    <span className="mt-1 inline-flex items-center rounded-full bg-slate-700 px-2 py-0.5 text-xs font-medium text-slate-300">
+                                    <span className="mt-1 inline-flex items-center rounded-full bg-slate-800 px-2 py-0.5 text-xs font-medium text-slate-300">
                                         {memberStats.total}
                                     </span>
                                 )}
                                 {m.name === 'Mijn Leden' && myMemberCount !== undefined && (
-                                    <span className="mt-1 inline-flex items-center rounded-full bg-slate-700 px-2 py-0.5 text-xs font-medium text-slate-300">
+                                    <span className="mt-1 inline-flex items-center rounded-full bg-slate-800 px-2 py-0.5 text-xs font-medium text-slate-300">
                                         {myMemberCount}
                                     </span>
                                 )}
                             </div>
 
                             {m.name === 'Toernooien' && (
-                                <div className="mt-3 pt-3 border-t border-slate-700 text-left">
+                                <div className="mt-3 pt-3 border-t border-slate-800 text-left">
                                     {upcomingTournaments && upcomingTournaments.length > 0 ? (
                                         <>
                                             <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Komende toernooien</p>
@@ -87,7 +87,7 @@ export default function Dashboard({ pendingCount, pendingUsers, adminCounters, m
                                                     <li key={t.id}>
                                                         <Link
                                                             href={`/toernooien/${t.id}`}
-                                                            className="block text-sm text-amber-400 hover:text-amber-300 hover:underline truncate"
+                                                            className="block text-sm text-rose-400 hover:text-rose-300 hover:underline truncate"
                                                             onClick={(e) => e.stopPropagation()}
                                                         >
                                                             {t.name}
@@ -104,14 +104,14 @@ export default function Dashboard({ pendingCount, pendingUsers, adminCounters, m
                             )}
 
                             {m.name === 'Archief' && recentArchived && recentArchived.length > 0 && (
-                                <div className="mt-3 pt-3 border-t border-slate-700 text-left">
+                                <div className="mt-3 pt-3 border-t border-slate-800 text-left">
                                     <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Laatste toernooien</p>
                                     <ul className="space-y-1">
                                         {recentArchived.map((t) => (
                                             <li key={t.id}>
                                                 <Link
                                                     href={`/toernooien/${t.id}`}
-                                                    className="block text-sm text-amber-400 hover:text-amber-300 hover:underline truncate"
+                                                    className="block text-sm text-rose-400 hover:text-rose-300 hover:underline truncate"
                                                     onClick={(e) => e.stopPropagation()}
                                                 >
                                                     {t.name}
@@ -124,7 +124,7 @@ export default function Dashboard({ pendingCount, pendingUsers, adminCounters, m
                             )}
 
                             {m.name === 'Leden' && memberStats && (memberStats.gender.length > 0 || memberStats.belts.length > 0) && (
-                                <div className="mt-3 pt-3 border-t border-slate-700 space-y-2 text-left">
+                                <div className="mt-3 pt-3 border-t border-slate-800 space-y-2 text-left">
                                     {memberStats.gender.length > 0 && (
                                         <div>
                                             <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Geslacht</p>
@@ -180,7 +180,7 @@ function AdminTile({ pendingCount, pendingUsers, adminCounters }) {
     };
 
     const counters = [
-        { label: 'Nieuwe aanvragen', value: pendingCount, icon: '👤', bg: 'bg-amber-900/30', text: 'text-amber-400', ring: 'ring-amber-700/30' },
+        { label: 'Nieuwe aanvragen', value: pendingCount, icon: '👤', bg: 'bg-rose-900/30', text: 'text-rose-400', ring: 'ring-rose-700/30' },
         { label: 'Inactieve leden', value: adminCounters?.inactiveMemberCount ?? 0, icon: '⏸', bg: 'bg-slate-700/50', text: 'text-slate-300', ring: 'ring-slate-600/30' },
         { label: 'Komende toernooien', value: adminCounters?.upcomingTournamentCount ?? 0, icon: '📅', bg: 'bg-blue-900/30', text: 'text-blue-400', ring: 'ring-blue-700/30' },
         { label: 'Actieve toernooien', value: adminCounters?.activeTournamentCount ?? 0, icon: '🏆', bg: 'bg-emerald-900/30', text: 'text-emerald-400', ring: 'ring-emerald-700/30' },
@@ -189,9 +189,9 @@ function AdminTile({ pendingCount, pendingUsers, adminCounters }) {
     return (
         <Link
             href="/admin"
-            className={`group block mb-6 rounded-xl shadow-sm ring-1 p-6 hover:shadow-md hover:-translate-y-0.5 ${hasPending
-                ? 'ring-amber-600/50 bg-gradient-to-br from-amber-900/30 to-orange-900/20 hover:ring-amber-500/60'
-                : 'ring-slate-700/60 bg-slate-800 hover:ring-amber-500/40'
+            className={`group block mb-6 rounded-xl shadow-sm ring-1 border-t-2 border-t-rose-700/40 p-6 hover:shadow-md hover:-translate-y-0.5 ${hasPending
+                ? 'ring-rose-600/50 bg-gradient-to-br from-rose-900/30 to-red-900/20 hover:ring-rose-500/60'
+                : 'ring-slate-800 bg-slate-900 hover:ring-rose-500/40'
                 }`}
         >
             <div className="flex items-center justify-between mb-4">
@@ -202,7 +202,7 @@ function AdminTile({ pendingCount, pendingUsers, adminCounters }) {
                     <h2 className="text-lg font-bold text-white">Beheer</h2>
                 </div>
                 {hasPending && (
-                    <span className="inline-flex items-center rounded-full bg-amber-500 px-2.5 py-1 text-xs font-bold text-white shadow-sm animate-pulse">
+                    <span className="inline-flex items-center rounded-full bg-rose-600 px-2.5 py-1 text-xs font-bold text-white shadow-sm animate-pulse">
                         {pendingCount} {pendingCount === 1 ? 'aanvraag' : 'aanvragen'}
                     </span>
                 )}
@@ -218,7 +218,7 @@ function AdminTile({ pendingCount, pendingUsers, adminCounters }) {
             </div>
 
             {pendingUsers && pendingUsers.length > 0 && (
-                <div className="border-t border-slate-700/60 pt-3">
+                <div className="border-t border-slate-800/60 pt-3">
                     <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-2">Recente aanvragen</p>
                     <ul className="space-y-1.5">
                         {pendingUsers.map((u, i) => (
@@ -231,7 +231,7 @@ function AdminTile({ pendingCount, pendingUsers, adminCounters }) {
                             </li>
                         ))}
                     </ul>
-                    <p className="mt-2 text-xs text-amber-400 font-semibold group-hover:text-amber-300">Bekijk alle →</p>
+                    <p className="mt-2 text-xs text-rose-400 font-semibold group-hover:text-rose-300">Bekijk alle →</p>
                 </div>
             )}
         </Link>
@@ -255,13 +255,13 @@ function ActiveTournaments({ tournaments }) {
             </div>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {tournaments.map(t => (
-                    <Link key={t.id} href={`/toernooien/${t.id}`} className="group bg-slate-800 rounded-xl shadow-sm ring-2 ring-red-700/50 overflow-hidden hover:shadow-md hover:ring-red-500/60 hover:-translate-y-0.5">
+                    <Link key={t.id} href={`/toernooien/${t.id}`} className="group bg-slate-900 rounded-xl shadow-sm ring-2 ring-red-700/50 overflow-hidden hover:shadow-md hover:ring-red-500/60 hover:-translate-y-0.5">
                         {t.latitude && t.longitude && (
                             <iframe
                                 title={`Locatie ${t.name}`}
                                 width="100%"
                                 height="140"
-                                className="border-b border-slate-700 pointer-events-none"
+                                className="border-b border-slate-800 pointer-events-none"
                                 src={`https://www.openstreetmap.org/export/embed.html?bbox=${t.longitude - 0.01},${t.latitude - 0.01},${parseFloat(t.longitude) + 0.01},${parseFloat(t.latitude) + 0.01}&layer=mapnik&marker=${t.latitude},${t.longitude}`}
                             />
                         )}
@@ -277,7 +277,7 @@ function ActiveTournaments({ tournaments }) {
                             <p className="text-xs text-slate-500 mt-1">
                                 {[t.address_street, t.address_postal_code, t.address_city].filter(Boolean).join(', ') || 'Geen adres'}
                             </p>
-                            <p className="mt-3 text-xs font-medium text-amber-400 group-hover:text-amber-300">Bekijk details →</p>
+                            <p className="mt-3 text-xs font-medium text-rose-400 group-hover:text-rose-300">Bekijk details →</p>
                         </div>
                     </Link>
                 ))}
@@ -317,13 +317,13 @@ function MyTournaments({ tournaments }) {
                         </h3>
                         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                             {items.map(t => (
-                                <div key={t.id} className="bg-slate-800 rounded-xl shadow-sm ring-1 ring-slate-700/60 overflow-hidden hover:shadow-md hover:-translate-y-0.5">
+                                <div key={t.id} className="bg-slate-900 rounded-xl shadow-sm ring-1 ring-slate-800 overflow-hidden hover:shadow-md hover:-translate-y-0.5">
                                     {t.latitude && t.longitude && (
                                         <iframe
                                             title={`Locatie ${t.name}`}
                                             width="100%"
                                             height="140"
-                                            className="border-b border-slate-700 pointer-events-none"
+                                            className="border-b border-slate-800 pointer-events-none"
                                             src={`https://www.openstreetmap.org/export/embed.html?bbox=${t.longitude - 0.01},${t.latitude - 0.01},${parseFloat(t.longitude) + 0.01},${parseFloat(t.latitude) + 0.01}&layer=mapnik&marker=${t.latitude},${t.longitude}`}
                                         />
                                     )}
@@ -337,7 +337,7 @@ function MyTournaments({ tournaments }) {
                                             <div className="flex flex-wrap gap-2 mt-2">
                                                 {t.attachments.map(att => (
                                                     <a key={att.id} href={att.url} target="_blank" rel="noopener noreferrer"
-                                                        className="text-xs text-amber-400 hover:underline">
+                                                        className="text-xs text-rose-400 hover:underline">
                                                         {att.original_name}
                                                     </a>
                                                 ))}
@@ -345,12 +345,12 @@ function MyTournaments({ tournaments }) {
                                         )}
                                         <button
                                             onClick={() => setExpandedId(expandedId === t.id ? null : t.id)}
-                                            className="mt-2 text-xs font-medium text-amber-400 hover:text-amber-300"
+                                            className="mt-2 text-xs font-medium text-rose-400 hover:text-rose-300"
                                         >
                                             Deelnemers ({t.participants.length}) {expandedId === t.id ? '▲' : '▼'}
                                         </button>
                                         {expandedId === t.id && (
-                                            <div className="mt-2 pt-2 border-t border-slate-700">
+                                            <div className="mt-2 pt-2 border-t border-slate-800">
                                                 {t.participants.length === 0 ? (
                                                     <p className="text-xs text-slate-500">Nog geen bevestigde deelnemers.</p>
                                                 ) : (
@@ -399,7 +399,7 @@ function CoachTournaments({ tournaments }) {
         <div className="mt-10">
             <h2 className="text-lg font-semibold text-white mb-4">
                 Mijn Toernooien als Trainer
-                <span className="ml-2 inline-flex items-center rounded-full bg-amber-900/40 px-2.5 py-0.5 text-xs font-medium text-amber-400">
+                <span className="ml-2 inline-flex items-center rounded-full bg-rose-900/40 px-2.5 py-0.5 text-xs font-medium text-rose-400">
                     {tournaments.length}
                 </span>
             </h2>
@@ -408,14 +408,14 @@ function CoachTournaments({ tournaments }) {
                     <Link
                         key={t.id}
                         href={`/trainer/toernooien/${t.id}`}
-                        className="group bg-slate-800 rounded-xl shadow-sm ring-2 ring-amber-700/40 overflow-hidden hover:shadow-md hover:ring-amber-500/50 hover:-translate-y-0.5"
+                        className="group bg-slate-900 rounded-xl shadow-sm ring-2 ring-rose-700/40 overflow-hidden hover:shadow-md hover:ring-rose-500/50 hover:-translate-y-0.5"
                     >
                         <div className="p-4">
                             <div className="flex items-center gap-2 mb-1">
                                 <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ${statusColors[t.status] || 'bg-slate-700 text-slate-300'}`}>
                                     {t.status_label}
                                 </span>
-                                <span className="inline-flex items-center rounded-full bg-amber-900/40 px-2 py-0.5 text-xs font-semibold text-amber-400">
+                                <span className="inline-flex items-center rounded-full bg-rose-900/40 px-2 py-0.5 text-xs font-semibold text-rose-400">
                                     Trainer
                                 </span>
                             </div>
@@ -425,7 +425,7 @@ function CoachTournaments({ tournaments }) {
                                 {[t.address_street, t.address_postal_code, t.address_city].filter(Boolean).join(', ') || 'Geen adres'}
                             </p>
                             <p className="text-xs text-slate-500 mt-1">{t.participant_count} deelnemers</p>
-                            <p className="mt-3 text-xs text-amber-400 font-semibold group-hover:text-amber-300">Resultaten invullen →</p>
+                            <p className="mt-3 text-xs text-rose-400 font-semibold group-hover:text-rose-300">Resultaten invullen →</p>
                         </div>
                     </Link>
                 ))}

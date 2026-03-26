@@ -59,8 +59,8 @@ function ClubSettingsSection({ clubSettings }) {
     };
 
     return (
-        <div className="bg-slate-800 rounded-lg shadow-sm border border-slate-700">
-            <div className="px-6 py-4 border-b border-slate-700">
+        <div className="bg-slate-900 rounded-lg shadow-sm border border-slate-800 border-t-2 border-t-rose-700">
+            <div className="px-6 py-4 border-b border-slate-800">
                 <h2 className="text-lg font-semibold text-white">Club Instellingen</h2>
             </div>
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
@@ -71,7 +71,7 @@ function ClubSettingsSection({ clubSettings }) {
                             type="text"
                             value={form.data.name}
                             onChange={(e) => form.setData('name', e.target.value)}
-                            className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-amber-500 focus:ring-amber-500 text-sm"
+                            className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-rose-500 focus:ring-rose-500 text-sm"
                         />
                         {form.errors.name && <p className="text-sm text-red-400 mt-1">{form.errors.name}</p>}
                     </div>
@@ -81,7 +81,7 @@ function ClubSettingsSection({ clubSettings }) {
                             type="text"
                             value={form.data.address_postal_code}
                             onChange={(e) => form.setData('address_postal_code', e.target.value)}
-                            className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-amber-500 focus:ring-amber-500 text-sm"
+                            className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-rose-500 focus:ring-rose-500 text-sm"
                         />
                     </div>
                     <div>
@@ -90,7 +90,7 @@ function ClubSettingsSection({ clubSettings }) {
                             type="text"
                             value={form.data.address_street}
                             onChange={(e) => form.setData('address_street', e.target.value)}
-                            className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-amber-500 focus:ring-amber-500 text-sm"
+                            className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-rose-500 focus:ring-rose-500 text-sm"
                         />
                     </div>
                     <div>
@@ -99,7 +99,7 @@ function ClubSettingsSection({ clubSettings }) {
                             type="text"
                             value={form.data.address_city}
                             onChange={(e) => form.setData('address_city', e.target.value)}
-                            className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-amber-500 focus:ring-amber-500 text-sm"
+                            className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-rose-500 focus:ring-rose-500 text-sm"
                         />
                     </div>
                 </div>
@@ -114,7 +114,7 @@ function ClubSettingsSection({ clubSettings }) {
                             type="file"
                             accept="image/*"
                             onChange={handleLogoChange}
-                            className="text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-amber-900/30 file:text-amber-300 hover:file:bg-amber-900/30"
+                            className="text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-rose-900/30 file:text-rose-300 hover:file:bg-rose-900/30"
                         />
                     </div>
                     {form.errors.logo && <p className="text-sm text-red-400 mt-1">{form.errors.logo}</p>}
@@ -124,7 +124,7 @@ function ClubSettingsSection({ clubSettings }) {
                     <button
                         type="submit"
                         disabled={form.processing}
-                        className="rounded-md bg-amber-500 px-4 py-2 text-sm font-medium text-white hover:bg-amber-600 disabled:opacity-50"
+                        className="rounded-md bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-700 disabled:opacity-50"
                     >
                         Opslaan
                     </button>
@@ -138,12 +138,12 @@ function PendingUsersSection({ pendingUsers, roles }) {
     const { flash } = usePage().props;
 
     return (
-        <div className="bg-slate-800 rounded-lg shadow-sm border border-slate-700">
-            <div className="px-6 py-4 border-b border-slate-700">
+        <div className="bg-slate-900 rounded-lg shadow-sm border border-slate-800 border-t-2 border-t-rose-700">
+            <div className="px-6 py-4 border-b border-slate-800">
                 <h2 className="text-lg font-semibold text-white">
                     Nieuwe aanvragen
                     {pendingUsers.length > 0 && (
-                        <span className="ml-2 inline-flex items-center rounded-full bg-blue-900/40 px-2.5 py-0.5 text-xs font-medium text-amber-300">
+                        <span className="ml-2 inline-flex items-center rounded-full bg-rose-900/30 px-2.5 py-0.5 text-xs font-medium text-rose-300">
                             {pendingUsers.length}
                         </span>
                     )}
@@ -194,7 +194,7 @@ function PendingUserRow({ user, roles }) {
                 <select
                     value={selectedRole}
                     onChange={(e) => setSelectedRole(e.target.value)}
-                    className="rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                    className="rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
                 >
                     <option value="">Kies rol...</option>
                     {roles.map((role) => (
@@ -206,7 +206,7 @@ function PendingUserRow({ user, roles }) {
                 <button
                     type="submit"
                     disabled={!selectedRole || form.processing}
-                    className="rounded-md bg-amber-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="rounded-md bg-rose-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-rose-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     Goedkeuren
                 </button>
@@ -219,11 +219,11 @@ function UsersSection({ users, roles, allMembers }) {
     const { flash } = usePage().props;
 
     return (
-        <div className="bg-slate-800 rounded-lg shadow-sm border border-slate-700">
-            <div className="px-6 py-4 border-b border-slate-700">
+        <div className="bg-slate-900 rounded-lg shadow-sm border border-slate-800 border-t-2 border-t-rose-700">
+            <div className="px-6 py-4 border-b border-slate-800">
                 <h2 className="text-lg font-semibold text-white">
                     Gebruikers
-                    <span className="ml-2 inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-400">
+                    <span className="ml-2 inline-flex items-center rounded-full bg-slate-800 px-2.5 py-0.5 text-xs font-medium text-slate-400">
                         {users.length}
                     </span>
                 </h2>
@@ -279,7 +279,7 @@ function UserRow({ user, roles, allMembers }) {
                             type="text"
                             value={form.data.name}
                             onChange={(e) => form.setData('name', e.target.value)}
-                            className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                            className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
                         />
                         {form.errors.name && <p className="text-xs text-red-400 mt-1">{form.errors.name}</p>}
                     </div>
@@ -289,7 +289,7 @@ function UserRow({ user, roles, allMembers }) {
                             type="email"
                             value={form.data.email}
                             onChange={(e) => form.setData('email', e.target.value)}
-                            className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                            className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
                         />
                         {form.errors.email && <p className="text-xs text-red-400 mt-1">{form.errors.email}</p>}
                     </div>
@@ -298,7 +298,7 @@ function UserRow({ user, roles, allMembers }) {
                         <select
                             value={form.data.role}
                             onChange={(e) => form.setData('role', e.target.value)}
-                            className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                            className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
                         >
                             {roles.map((role) => (
                                 <option key={role.value} value={role.value}>
@@ -315,7 +315,7 @@ function UserRow({ user, roles, allMembers }) {
                             type="checkbox"
                             checked={form.data.results_interest}
                             onChange={(e) => form.setData('results_interest', e.target.checked)}
-                            className="rounded border-slate-600 bg-slate-700 text-amber-400 focus:ring-amber-500"
+                            className="rounded border-slate-600 bg-slate-700 text-rose-400 focus:ring-rose-500"
                         />
                         Interesse in toernooiresultaten
                     </label>
@@ -324,7 +324,7 @@ function UserRow({ user, roles, allMembers }) {
                     <button
                         type="submit"
                         disabled={form.processing}
-                        className="rounded-md bg-amber-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-amber-600 disabled:opacity-50"
+                        className="rounded-md bg-rose-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-rose-700 disabled:opacity-50"
                     >
                         Opslaan
                     </button>
@@ -378,7 +378,7 @@ function UserRow({ user, roles, allMembers }) {
                     </button>
                     <button
                         onClick={() => { setEditing(true); setManagingMembers(false); }}
-                        className="text-sm text-amber-400 hover:text-amber-300"
+                        className="text-sm text-rose-400 hover:text-rose-300"
                     >
                         Bewerken
                     </button>
@@ -399,10 +399,10 @@ function UserRow({ user, roles, allMembers }) {
                         {membersForm.data.member_ids.map((mid) => {
                             const m = allMembers.find((am) => am.id === mid);
                             return m ? (
-                                <span key={mid} className="inline-flex items-center gap-1 rounded-full bg-blue-900/40 px-2.5 py-0.5 text-xs font-medium text-amber-300">
+                                <span key={mid} className="inline-flex items-center gap-1 rounded-full bg-rose-900/30 px-2.5 py-0.5 text-xs font-medium text-rose-300">
                                     {m.name}
                                     <button type="button" onClick={() => membersForm.setData('member_ids', membersForm.data.member_ids.filter((id) => id !== mid))}
-                                        className="text-amber-400 hover:text-blue-900 ml-0.5">&times;</button>
+                                        className="text-rose-400 hover:text-blue-900 ml-0.5">&times;</button>
                                 </span>
                             ) : null;
                         })}
@@ -419,7 +419,7 @@ function UserRow({ user, roles, allMembers }) {
                                 }
                                 e.target.value = '';
                             }}
-                            className="rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1 px-2 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                            className="rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1 px-2 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
                         >
                             <option value="">Lid toevoegen...</option>
                             {allMembers.filter((am) => !membersForm.data.member_ids.includes(am.id)).map((am) => (
@@ -430,7 +430,7 @@ function UserRow({ user, roles, allMembers }) {
                             type="button"
                             disabled={membersForm.processing}
                             onClick={() => membersForm.put(`/admin/users/${user.id}/members`, { onSuccess: () => setManagingMembers(false) })}
-                            className="rounded-md bg-amber-500 px-3 py-1 text-xs font-medium text-white hover:bg-amber-600 disabled:opacity-50"
+                            className="rounded-md bg-rose-600 px-3 py-1 text-xs font-medium text-white hover:bg-rose-700 disabled:opacity-50"
                         >
                             Opslaan
                         </button>
@@ -467,7 +467,7 @@ function UserRow({ user, roles, allMembers }) {
     </form>
     <a
         href="/admin/members/export"
-        className="rounded-md bg-amber-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-amber-600"
+        className="rounded-md bg-rose-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-rose-700"
     >
         Exporteren
     </a>

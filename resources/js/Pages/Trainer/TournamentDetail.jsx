@@ -66,8 +66,8 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
     };
 
     const statusColors = {
-        preparation: 'bg-slate-100 text-slate-300',
-        invitations_sent: 'bg-blue-900/40 text-amber-300',
+        preparation: 'bg-slate-800 text-slate-300',
+        invitations_sent: 'bg-rose-900/30 text-rose-300',
         registrations_open: 'bg-yellow-900/40 text-yellow-700',
         registrations_closed: 'bg-orange-100 text-orange-700',
         started: 'bg-emerald-900/40 text-emerald-400',
@@ -97,7 +97,7 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                 <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${statusColors[t.status] || ''}`}>
                     {t.status_label}
                 </span>
-                <span className="inline-flex items-center rounded-full bg-amber-900/40 px-2.5 py-0.5 text-xs font-medium text-amber-400">
+                <span className="inline-flex items-center rounded-full bg-rose-900/30 px-2.5 py-0.5 text-xs font-medium text-rose-400">
                     Trainer modus
                 </span>
             </div>
@@ -111,7 +111,7 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
             <div className="grid gap-6 lg:grid-cols-3">
                 {/* Left column: Info + map */}
                 <div className="lg:col-span-1 space-y-4">
-                    <div className="bg-slate-800 rounded-lg shadow-sm border border-slate-700 p-5">
+                    <div className="bg-slate-900 rounded-lg shadow-sm border border-slate-800 border-t-2 border-t-rose-700 p-5">
                         <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">Details</h2>
                         <dl className="space-y-3 text-sm">
                             <div>
@@ -140,7 +140,7 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                     </div>
 
                     {hasMap && (
-                        <div className="bg-slate-800 rounded-lg shadow-sm border border-slate-700 overflow-hidden">
+                        <div className="bg-slate-900 rounded-lg shadow-sm border border-slate-800 border-t-2 border-t-rose-700 overflow-hidden">
                             <iframe
                                 title="Locatie"
                                 width="100%"
@@ -151,7 +151,7 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                     )}
 
                     {t.coaches.length > 0 && (
-                        <div className="bg-slate-800 rounded-lg shadow-sm border border-slate-700 p-5">
+                        <div className="bg-slate-900 rounded-lg shadow-sm border border-slate-800 border-t-2 border-t-rose-700 p-5">
                             <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">Trainers</h2>
                             <ul className="space-y-1">
                                 {t.coaches.map(c => (
@@ -162,13 +162,13 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                     )}
 
                     {t.attachments.length > 0 && (
-                        <div className="bg-slate-800 rounded-lg shadow-sm border border-slate-700 p-5">
+                        <div className="bg-slate-900 rounded-lg shadow-sm border border-slate-800 border-t-2 border-t-rose-700 p-5">
                             <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">Bijlagen</h2>
                             <ul className="space-y-1">
                                 {t.attachments.map(att => (
                                     <li key={att.id}>
                                         <a href={att.url} target="_blank" rel="noopener noreferrer"
-                                            className="text-sm text-amber-400 hover:underline">
+                                            className="text-sm text-rose-400 hover:underline">
                                             {att.original_name}
                                         </a>
                                     </li>
@@ -182,7 +182,7 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                         <button
                             onClick={handleSave}
                             disabled={form.processing}
-                            className="w-full rounded-lg bg-amber-500 px-4 py-3 text-sm font-semibold text-white hover:bg-amber-600 disabled:opacity-50 transition-colors"
+                            className="w-full rounded-lg bg-rose-600 px-4 py-3 text-sm font-semibold text-white hover:bg-rose-700 disabled:opacity-50 transition-colors"
                         >
                             {form.processing ? 'Opslaan...' : 'Resultaten opslaan'}
                         </button>
@@ -199,7 +199,7 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                                 {closeForm.processing ? 'Afsluiten...' : 'Toernooi afsluiten'}
                             </button>
                             {!allFilled && (
-                                <p className="text-xs text-amber-600 text-center">
+                                <p className="text-xs text-rose-600 text-center">
                                     Alle deelnemers moeten eerst een resultaat hebben voordat het toernooi kan worden afgesloten.
                                 </p>
                             )}
@@ -209,11 +209,11 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
 
                 {/* Right column: Participants with result inputs */}
                 <div className="lg:col-span-2">
-                    <div className="bg-slate-800 rounded-lg shadow-sm border border-slate-700">
-                        <div className="px-5 py-4 border-b border-slate-700">
+                    <div className="bg-slate-900 rounded-lg shadow-sm border border-slate-800 border-t-2 border-t-rose-700">
+                        <div className="px-5 py-4 border-b border-slate-800">
                             <h2 className="text-lg font-semibold text-white">
                                 Deelnemers & Resultaten
-                                <span className="ml-2 inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-400">
+                                <span className="ml-2 inline-flex items-center rounded-full bg-slate-800 px-2.5 py-0.5 text-xs font-medium text-slate-400">
                                     {totalParticipants}
                                 </span>
                             </h2>
@@ -228,15 +228,15 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                                 {participantGroups.map(ageGroup => (
                                     <div key={ageGroup.name} className="px-5 py-4">
                                         <h3 className="text-sm font-semibold text-slate-200 mb-3">
-                                            <span className="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-amber-300">
+                                            <span className="inline-flex items-center rounded-full bg-rose-900/30 px-2.5 py-0.5 text-xs font-medium text-rose-300">
                                                 {ageGroup.name}
                                             </span>
                                         </h3>
                                         <div className="space-y-3">
                                             {ageGroup.weights.map(weightGroup => (
-                                                <div key={weightGroup.name} className="rounded-lg border border-slate-700 bg-slate-700/50 p-3">
-                                                    <h4 className="text-xs font-semibold text-amber-400 mb-2">
-                                                        <span className="inline-flex items-center rounded-full bg-amber-50 px-2 py-0.5">
+                                                <div key={weightGroup.name} className="rounded-lg border border-slate-800 bg-slate-700/50 p-3">
+                                                    <h4 className="text-xs font-semibold text-rose-400 mb-2">
+                                                        <span className="inline-flex items-center rounded-full bg-rose-900/30 px-2 py-0.5">
                                                             {weightGroup.name}
                                                         </span>
                                                         <span className="ml-1.5 text-slate-400 font-normal">
@@ -245,7 +245,7 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                                                     </h4>
                                                     <div className="space-y-2">
                                                         {weightGroup.members.map(member => (
-                                                            <div key={member.id} className="flex items-center gap-3 bg-slate-800 rounded-md p-2 border border-slate-700">
+                                                            <div key={member.id} className="flex items-center gap-3 bg-slate-800 rounded-md p-2 border border-slate-800">
                                                                 <div className="flex-1 min-w-0">
                                                                     <p className="text-sm font-medium text-white truncate">{member.name}</p>
                                                                 </div>
@@ -253,7 +253,7 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                                                                     value={results[member.id]?.result || ''}
                                                                     onChange={(e) => updateResult(member.id, 'result', e.target.value)}
                                                                     disabled={isFinished}
-                                                                    className={`rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1 px-2 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 ${isFinished ? 'bg-slate-100 cursor-not-allowed' : ''}`}
+                                                                    className={`rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1 px-2 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500 ${isFinished ? 'bg-slate-800 cursor-not-allowed' : ''}`}
                                                                 >
                                                                     {resultOptions.map(opt => (
                                                                         <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -266,7 +266,7 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                                                                     disabled={isFinished}
                                                                     rows={1}
                                                                     onInput={(e) => { e.target.style.height = 'auto'; e.target.style.height = e.target.scrollHeight + 'px'; }}
-                                                                    className={`min-w-32 flex-1 rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1 px-2 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 resize-none overflow-hidden ${isFinished ? 'bg-slate-100 cursor-not-allowed' : ''}`}
+                                                                    className={`min-w-32 flex-1 rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1 px-2 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500 resize-none overflow-hidden ${isFinished ? 'bg-slate-800 cursor-not-allowed' : ''}`}
                                                                 />
                                                             </div>
                                                         ))}

@@ -12,14 +12,15 @@ export default function MemberCard({ member, ageCategories }) {
 
     return (
         <div className="max-w-md mx-auto">
-            <div className="bg-slate-800 rounded-2xl shadow-lg ring-1 ring-slate-700/60 overflow-hidden">
+            <div className="bg-slate-900 rounded-2xl shadow-lg ring-1 ring-slate-800 overflow-hidden">
                 {/* Header */}
-                <div className="bg-gradient-to-r from-amber-600 to-orange-700 px-6 py-4 flex items-center justify-between">
-                    <div>
+                <div className="bg-gradient-to-r from-amber-600 to-yellow-700 px-6 py-4 flex items-center justify-between relative overflow-hidden">
+                    <div className="absolute inset-0 seigaiha opacity-20"></div>
+                    <div className="relative z-10">
                         <p className="text-amber-200 text-xs font-semibold uppercase tracking-wider">柔道 Judo Club</p>
                         <p className="text-white text-lg font-bold">Lidkaart</p>
                     </div>
-                    <div className={`w-3 h-3 rounded-full ${statusColors[member.membership_status] || 'bg-slate-400'} ring-2 ring-white/30`}
+                    <div className={`relative z-10 w-3 h-3 rounded-full ${statusColors[member.membership_status] || 'bg-slate-400'} ring-2 ring-white/30`}
                         title={statusLabels[member.membership_status]} />
                 </div>
 
@@ -67,7 +68,7 @@ export default function MemberCard({ member, ageCategories }) {
                             {member.photo_url ? (
                                 <img src={member.photo_url} alt="" className="w-24 h-28 rounded-xl object-cover ring-1 ring-slate-600/60 shadow-sm" />
                             ) : (
-                                <div className="w-24 h-28 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-sm">
+                                <div className="w-24 h-28 rounded-xl bg-gradient-to-br from-rose-600 to-red-800 flex items-center justify-center shadow-sm">
                                     <span className="text-2xl font-bold text-white">
                                         {member.first_name[0]}{member.last_name[0]}
                                     </span>
@@ -77,7 +78,7 @@ export default function MemberCard({ member, ageCategories }) {
                     </div>
 
                     {/* Contact & Address */}
-                    <div className="mt-4 pt-4 border-t border-slate-700 grid grid-cols-2 gap-3 text-sm text-slate-400">
+                    <div className="mt-4 pt-4 border-t border-slate-800 grid grid-cols-2 gap-3 text-sm text-slate-400">
                         <div>
                             {member.email && (
                                 <p className="truncate">{member.email}</p>
@@ -95,13 +96,13 @@ export default function MemberCard({ member, ageCategories }) {
                     </div>
 
                     {/* Footer badges */}
-                    <div className="mt-4 pt-3 border-t border-slate-700 flex items-center gap-2">
+                    <div className="mt-4 pt-3 border-t border-slate-800 flex items-center gap-2">
                         <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${member.membership_status === 'active' ? 'bg-emerald-900/40 text-emerald-400' : 'bg-slate-700 text-slate-300'
                             }`}>
                             {statusLabels[member.membership_status]}
                         </span>
                         {member.is_competition && (
-                            <span className="inline-flex items-center rounded-full bg-amber-900/40 px-2.5 py-0.5 text-xs font-semibold text-amber-400">
+                            <span className="inline-flex items-center rounded-full bg-rose-900/40 px-2.5 py-0.5 text-xs font-semibold text-rose-400">
                                 Competitie
                             </span>
                         )}

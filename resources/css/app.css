@@ -6,7 +6,7 @@
 @source '../**/*.js';
 
 @theme {
-    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    --font-sans: 'Zen Kaku Gothic New', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
@@ -25,10 +25,19 @@ html {
     transition-duration: 150ms;
 }
 
-/* Refined focus rings — judo gold */
+/* Refined focus rings — crimson */
 :focus-visible {
-    outline: 2px solid var(--color-amber-500);
+    outline: 2px solid var(--color-rose-500);
     outline-offset: 2px;
+}
+
+/* Seigaiha wave pattern — Japanese decorative */
+.seigaiha {
+    background-image:
+        radial-gradient(circle at 100% 150%, rgba(51, 65, 85, 0.4) 24%, rgba(30, 41, 59, 0.3) 24%, rgba(30, 41, 59, 0.3) 28%, transparent 28%, transparent 36%, rgba(51, 65, 85, 0.4) 36%, rgba(51, 65, 85, 0.4) 40%, transparent 40%, transparent),
+        radial-gradient(circle at 0% 150%, rgba(51, 65, 85, 0.4) 24%, rgba(30, 41, 59, 0.3) 24%, rgba(30, 41, 59, 0.3) 28%, transparent 28%, transparent 36%, rgba(51, 65, 85, 0.4) 36%, rgba(51, 65, 85, 0.4) 40%, transparent 40%, transparent),
+        radial-gradient(circle at 50% 100%, rgba(30, 41, 59, 0.3) 10%, rgba(51, 65, 85, 0.4) 10%, rgba(51, 65, 85, 0.4) 23%, rgba(30, 41, 59, 0.3) 23%, rgba(30, 41, 59, 0.3) 30%, transparent 30%, transparent 43%, rgba(51, 65, 85, 0.4) 43%, rgba(51, 65, 85, 0.4) 50%, transparent 50%, transparent);
+    background-size: 40px 20px;
 }
 
 /* Dark scrollbar */
@@ -37,14 +46,14 @@ html {
 }
 
 ::-webkit-scrollbar-track {
-    background: #1e293b;
+    background: #020617;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #475569;
+    background: #334155;
     border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #64748b;
+    background: #475569;
 }

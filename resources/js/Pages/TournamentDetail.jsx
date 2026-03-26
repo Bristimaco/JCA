@@ -11,8 +11,8 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
     };
 
     const statusColors = {
-        preparation: 'bg-slate-100 text-slate-300',
-        invitations_sent: 'bg-blue-900/40 text-blue-400',
+        preparation: 'bg-slate-800 text-slate-300',
+        invitations_sent: 'bg-rose-900/30 text-blue-400',
         registrations_open: 'bg-yellow-900/40 text-yellow-700',
         registrations_closed: 'bg-orange-100 text-orange-700',
         started: 'bg-emerald-900/40 text-emerald-400',
@@ -38,7 +38,7 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                 {/* Left column: Info + map */}
                 <div className="lg:col-span-1 space-y-4">
                     {/* Tournament info card */}
-                    <div className="bg-slate-800 rounded-xl shadow-sm ring-1 ring-slate-700/60 p-5">
+                    <div className="bg-slate-900 rounded-xl shadow-sm ring-1 ring-slate-800/60 border-t-2 border-t-rose-700 p-5">
                         <h2 className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-3">Details</h2>
                         <dl className="space-y-3 text-sm">
                             <div>
@@ -64,7 +64,7 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
 
                     {/* Map */}
                     {hasMap && (
-                        <div className="bg-slate-800 rounded-xl shadow-sm ring-1 ring-slate-700/60 overflow-hidden">
+                        <div className="bg-slate-900 rounded-xl shadow-sm ring-1 ring-slate-800/60 border-t-2 border-t-rose-700 overflow-hidden">
                             <iframe
                                 title="Locatie"
                                 width="100%"
@@ -76,8 +76,8 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
 
                     {/* Attachments / Flyers */}
                     {t.attachments.length > 0 && (
-                        <div className="bg-slate-800 rounded-xl shadow-sm ring-1 ring-slate-700/60 overflow-hidden">
-                            <div className="px-5 py-3 border-b border-slate-700">
+                        <div className="bg-slate-900 rounded-xl shadow-sm ring-1 ring-slate-800/60 border-t-2 border-t-rose-700 overflow-hidden">
+                            <div className="px-5 py-3 border-b border-slate-800">
                                 <h2 className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Bijlagen</h2>
                             </div>
                             <div className="space-y-3 p-4">
@@ -88,7 +88,7 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                                                 <img
                                                     src={att.url}
                                                     alt={att.original_name}
-                                                    className="w-full rounded-lg ring-1 ring-slate-700/60"
+                                                    className="w-full rounded-lg ring-1 ring-slate-800/60"
                                                 />
                                             </a>
                                         ) : att.mime_type === 'application/pdf' ? (
@@ -96,17 +96,17 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                                                 <iframe
                                                     src={att.url}
                                                     title={att.original_name}
-                                                    className="w-full rounded-lg ring-1 ring-slate-700/60"
+                                                    className="w-full rounded-lg ring-1 ring-slate-800/60"
                                                     style={{ height: '400px' }}
                                                 />
                                                 <a href={att.url} target="_blank" rel="noopener noreferrer"
-                                                    className="text-xs text-amber-400 hover:underline mt-1 inline-block">
+                                                    className="text-xs text-rose-400 hover:underline mt-1 inline-block">
                                                     {att.original_name}
                                                 </a>
                                             </div>
                                         ) : (
                                             <a href={att.url} target="_blank" rel="noopener noreferrer"
-                                                className="text-sm text-amber-400 hover:underline">
+                                                className="text-sm text-rose-400 hover:underline">
                                                 {att.original_name}
                                             </a>
                                         )}
@@ -118,7 +118,7 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
 
                     {/* Coaches */}
                     {t.coaches.length > 0 && (
-                        <div className="bg-slate-800 rounded-xl shadow-sm ring-1 ring-slate-700/60 p-5">
+                        <div className="bg-slate-900 rounded-xl shadow-sm ring-1 ring-slate-800/60 border-t-2 border-t-rose-700 p-5">
                             <h2 className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-3">Trainers</h2>
                             <ul className="space-y-1">
                                 {t.coaches.map(c => (
@@ -131,11 +131,11 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
 
                 {/* Right column: Participants grouped by age/weight */}
                 <div className="lg:col-span-2">
-                    <div className="bg-slate-800 rounded-xl shadow-sm ring-1 ring-slate-700/60">
-                        <div className="px-5 py-4 border-b border-slate-700/60">
+                    <div className="bg-slate-900 rounded-xl shadow-sm ring-1 ring-slate-800/60 border-t-2 border-t-rose-700">
+                        <div className="px-5 py-4 border-b border-slate-800/60">
                             <h2 className="text-lg font-semibold text-white">
                                 Deelnemers
-                                <span className="ml-2 inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-400">
+                                <span className="ml-2 inline-flex items-center rounded-full bg-slate-800 px-2.5 py-0.5 text-xs font-medium text-slate-400">
                                     {totalParticipants}
                                 </span>
                             </h2>
@@ -150,15 +150,15 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                                 {participantGroups.map(ageGroup => (
                                     <div key={ageGroup.name} className="px-5 py-4">
                                         <h3 className="text-sm font-semibold text-slate-200 mb-3">
-                                            <span className="inline-flex items-center rounded-full bg-amber-900/30 px-2.5 py-0.5 text-xs font-semibold text-amber-300">
+                                            <span className="inline-flex items-center rounded-full bg-rose-900/30 px-2.5 py-0.5 text-xs font-semibold text-rose-300">
                                                 {ageGroup.name}
                                             </span>
                                         </h3>
                                         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                                             {ageGroup.weights.map(weightGroup => (
-                                                <div key={weightGroup.name} className="rounded-xl ring-1 ring-slate-700 bg-slate-700/30 p-3">
-                                                    <h4 className="text-xs font-semibold text-amber-400 mb-2">
-                                                        <span className="inline-flex items-center rounded-full bg-amber-50 px-2 py-0.5">
+                                                <div key={weightGroup.name} className="rounded-xl ring-1 ring-slate-800 bg-slate-700/30 p-3">
+                                                    <h4 className="text-xs font-semibold text-rose-400 mb-2">
+                                                        <span className="inline-flex items-center rounded-full bg-rose-900/30 px-2 py-0.5">
                                                             {weightGroup.name}
                                                         </span>
                                                         <span className="ml-1.5 text-slate-400 font-normal">
@@ -173,7 +173,7 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                                                                     <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ${member.result === '1e plaats' ? 'bg-yellow-900/40 text-yellow-400' :
                                                                         member.result === '2e plaats' ? 'bg-slate-200 text-slate-200' :
                                                                             member.result === '3e plaats' ? 'bg-amber-900/40 text-amber-300' :
-                                                                                'bg-slate-100 text-slate-400'
+                                                                                'bg-slate-800 text-slate-400'
                                                                         }`}>
                                                                         {member.result}
                                                                     </span>

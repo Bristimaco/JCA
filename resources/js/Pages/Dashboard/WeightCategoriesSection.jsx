@@ -32,11 +32,11 @@ export default function WeightCategoriesSection({ ageCategories, weightCategorie
         weightCategories.filter((w) => w.age_category_id === ageCategoryId);
 
     return (
-        <div className="bg-slate-800 rounded-lg shadow-sm border border-slate-700">
-            <div className="px-6 py-4 border-b border-slate-700 flex items-center justify-between">
+        <div className="bg-slate-900 rounded-lg shadow-sm border border-slate-800 border-t-2 border-t-rose-700">
+            <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
                 <h2 className="text-lg font-semibold text-white">
                     Gewichtscategorieën
-                    <span className="ml-2 inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-400">
+                    <span className="ml-2 inline-flex items-center rounded-full bg-slate-800 px-2.5 py-0.5 text-xs font-medium text-slate-400">
                         {weightCategories.length}
                     </span>
                 </h2>
@@ -48,7 +48,7 @@ export default function WeightCategoriesSection({ ageCategories, weightCategorie
                             setSelectedCountry(e.target.value);
                             setExpandedAgeCategory(null);
                         }}
-                        className="rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1 px-2 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                        className="rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1 px-2 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
                     >
                         {countries.map((c) => (
                             <option key={c} value={c}>{c}</option>
@@ -144,7 +144,7 @@ function AgeCategoryWeightBlock({ ageCategory, weights, isExpanded, onToggle }) 
                     <div className="flex items-center justify-end mb-3">
                         <button
                             onClick={() => setShowAddForm(!showAddForm)}
-                            className="rounded-md bg-amber-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-amber-600"
+                            className="rounded-md bg-rose-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-rose-700"
                         >
                             {showAddForm ? 'Annuleren' : 'Toevoegen'}
                         </button>
@@ -212,7 +212,7 @@ function AddWeightCategoryForm({ ageCategoryId, onSuccess }) {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="p-4 bg-slate-700/50 rounded-md border border-slate-700 mb-3">
+        <form onSubmit={handleSubmit} className="p-4 bg-slate-700/50 rounded-md border border-slate-800 mb-3">
             <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-3">
                 <div>
                     <label className="block text-xs font-medium text-slate-400 mb-1">Naam</label>
@@ -221,7 +221,7 @@ function AddWeightCategoryForm({ ageCategoryId, onSuccess }) {
                         value={form.data.name}
                         onChange={(e) => form.setData('name', e.target.value)}
                         placeholder="bv. -60"
-                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
                     />
                     {form.errors.name && <p className="text-xs text-red-400 mt-1">{form.errors.name}</p>}
                 </div>
@@ -230,7 +230,7 @@ function AddWeightCategoryForm({ ageCategoryId, onSuccess }) {
                     <select
                         value={form.data.gender}
                         onChange={(e) => form.setData('gender', e.target.value)}
-                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
                     >
                         <option value="male">Man</option>
                         <option value="female">Vrouw</option>
@@ -245,7 +245,7 @@ function AddWeightCategoryForm({ ageCategoryId, onSuccess }) {
                         value={form.data.max_weight_kg}
                         onChange={(e) => form.setData('max_weight_kg', e.target.value)}
                         min="0" max="999.9"
-                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
                     />
                     {form.errors.max_weight_kg && <p className="text-xs text-red-400 mt-1">{form.errors.max_weight_kg}</p>}
                 </div>
@@ -256,7 +256,7 @@ function AddWeightCategoryForm({ ageCategoryId, onSuccess }) {
                         value={form.data.display_order}
                         onChange={(e) => form.setData('display_order', e.target.value)}
                         min="0"
-                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
                     />
                     {form.errors.display_order && <p className="text-xs text-red-400 mt-1">{form.errors.display_order}</p>}
                 </div>
@@ -264,7 +264,7 @@ function AddWeightCategoryForm({ ageCategoryId, onSuccess }) {
             <button
                 type="submit"
                 disabled={form.processing}
-                className="rounded-md bg-amber-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-amber-600 disabled:opacity-50"
+                className="rounded-md bg-rose-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-rose-700 disabled:opacity-50"
             >
                 Opslaan
             </button>
@@ -297,7 +297,7 @@ function WeightCategoryRow({ weight }) {
 
     if (editing) {
         return (
-            <form onSubmit={handleSave} className="p-3 bg-slate-700/50 rounded-md border border-slate-700">
+            <form onSubmit={handleSave} className="p-3 bg-slate-700/50 rounded-md border border-slate-800">
                 <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-3">
                     <div>
                         <label className="block text-xs font-medium text-slate-400 mb-1">Naam</label>
@@ -305,7 +305,7 @@ function WeightCategoryRow({ weight }) {
                             type="text"
                             value={form.data.name}
                             onChange={(e) => form.setData('name', e.target.value)}
-                            className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                            className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
                         />
                         {form.errors.name && <p className="text-xs text-red-400 mt-1">{form.errors.name}</p>}
                     </div>
@@ -314,7 +314,7 @@ function WeightCategoryRow({ weight }) {
                         <select
                             value={form.data.gender}
                             onChange={(e) => form.setData('gender', e.target.value)}
-                            className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                            className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
                         >
                             <option value="male">Man</option>
                             <option value="female">Vrouw</option>
@@ -329,7 +329,7 @@ function WeightCategoryRow({ weight }) {
                             value={form.data.max_weight_kg}
                             onChange={(e) => form.setData('max_weight_kg', e.target.value)}
                             min="0" max="999.9"
-                            className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                            className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
                         />
                         {form.errors.max_weight_kg && <p className="text-xs text-red-400 mt-1">{form.errors.max_weight_kg}</p>}
                     </div>
@@ -340,7 +340,7 @@ function WeightCategoryRow({ weight }) {
                             value={form.data.display_order}
                             onChange={(e) => form.setData('display_order', e.target.value)}
                             min="0"
-                            className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                            className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
                         />
                         {form.errors.display_order && <p className="text-xs text-red-400 mt-1">{form.errors.display_order}</p>}
                     </div>
@@ -349,7 +349,7 @@ function WeightCategoryRow({ weight }) {
                     <button
                         type="submit"
                         disabled={form.processing}
-                        className="rounded-md bg-amber-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-amber-600 disabled:opacity-50"
+                        className="rounded-md bg-rose-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-rose-700 disabled:opacity-50"
                     >
                         Opslaan
                     </button>
@@ -377,7 +377,7 @@ function WeightCategoryRow({ weight }) {
             <div className="flex items-center gap-3">
                 <button
                     onClick={() => setEditing(true)}
-                    className="text-sm text-amber-400 hover:text-amber-300"
+                    className="text-sm text-rose-400 hover:text-rose-300"
                 >
                     Bewerken
                 </button>

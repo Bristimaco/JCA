@@ -8,8 +8,8 @@ export default function TournamentsSection({ tournaments, ageCategories, competi
     const [expandedId, setExpandedId] = useState(null);
 
     const statusColors = {
-        preparation: 'bg-slate-100 text-slate-300',
-        invitations_sent: 'bg-blue-900/40 text-amber-300',
+        preparation: 'bg-slate-800 text-slate-300',
+        invitations_sent: 'bg-blue-900/40 text-rose-300',
         registrations_open: 'bg-yellow-900/40 text-yellow-700',
         registrations_closed: 'bg-orange-100 text-orange-700',
         started: 'bg-emerald-900/40 text-emerald-400',
@@ -18,17 +18,17 @@ export default function TournamentsSection({ tournaments, ageCategories, competi
     };
 
     return (
-        <div className="bg-slate-800 rounded-lg shadow-sm border border-slate-700">
-            <div className="px-6 py-4 border-b border-slate-700 flex items-center justify-between">
+        <div className="bg-slate-900 rounded-lg shadow-sm border border-slate-800 border-t-2 border-t-rose-700">
+            <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
                 <h2 className="text-lg font-semibold text-white">
                     Toernooien
-                    <span className="ml-2 inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-400">
+                    <span className="ml-2 inline-flex items-center rounded-full bg-slate-800 px-2.5 py-0.5 text-xs font-medium text-slate-400">
                         {tournaments.length}
                     </span>
                 </h2>
                 <button
                     onClick={() => { setShowAddForm(!showAddForm); setEditingTournament(null); }}
-                    className="rounded-md bg-amber-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-amber-600"
+                    className="rounded-md bg-rose-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-rose-700"
                 >
                     {showAddForm ? 'Annuleren' : 'Toernooi toevoegen'}
                 </button>
@@ -121,7 +121,7 @@ function TournamentRow({ tournament, statusColors, statuses, competitionMembers,
                             <button onClick={onToggleExpand} className="text-sm text-slate-400 hover:text-slate-200">
                                 Leden ({members.length}) {isExpanded ? '▲' : '▼'}
                             </button>
-                            <button onClick={onEdit} className="text-sm text-amber-400 hover:text-amber-300">
+                            <button onClick={onEdit} className="text-sm text-rose-400 hover:text-rose-300">
                                 Bewerken
                             </button>
                             <button
@@ -141,7 +141,7 @@ function TournamentRow({ tournament, statusColors, statuses, competitionMembers,
                     {tournament.age_categories && tournament.age_categories.length > 0 && (
                         <div className="flex gap-1.5 mt-2">
                             {tournament.age_categories.map(cat => (
-                                <span key={cat.id} className="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-amber-300">
+                                <span key={cat.id} className="inline-flex items-center rounded-full bg-rose-900/30 px-2 py-0.5 text-xs font-medium text-rose-300">
                                     {cat.name}
                                 </span>
                             ))}
@@ -167,13 +167,13 @@ function TournamentRow({ tournament, statusColors, statuses, competitionMembers,
                             </div>
                         )}
                         {tournament.attachments && tournament.attachments.length > 0 && (
-                            <div className="rounded-md border border-slate-700 bg-slate-700/50 p-3">
+                            <div className="rounded-md border border-slate-800 bg-slate-700/50 p-3">
                                 <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Bijlagen</p>
                                 <ul className="space-y-1">
                                     {tournament.attachments.map(att => (
                                         <li key={att.id}>
                                             <a href={att.url} target="_blank" rel="noopener noreferrer"
-                                                className="text-xs text-amber-400 hover:underline truncate block">
+                                                className="text-xs text-rose-400 hover:underline truncate block">
                                                 📎 {att.original_name}
                                             </a>
                                         </li>
@@ -211,8 +211,8 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
     const [processing, setProcessing] = useState({});
 
     const invitationStatusColors = {
-        pending: 'bg-slate-100 text-slate-400',
-        invited: 'bg-blue-900/40 text-amber-300',
+        pending: 'bg-slate-800 text-slate-400',
+        invited: 'bg-blue-900/40 text-rose-300',
         accepted: 'bg-emerald-900/40 text-emerald-400',
         declined: 'bg-red-900/40 text-red-400',
     };
@@ -351,14 +351,14 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
     };
 
     return (
-        <div className="mt-4 border border-slate-700 rounded-lg bg-slate-700/50">
-            <div className="px-4 py-3 border-b border-slate-700 flex flex-wrap items-center gap-2">
+        <div className="mt-4 border border-slate-800 rounded-lg bg-slate-700/50">
+            <div className="px-4 py-3 border-b border-slate-800 flex flex-wrap items-center gap-2">
                 {tournament.status === 'preparation' && (
                     <button
                         onClick={handlePopulate}
                         disabled={populateForm.processing || !hasAgeCategories}
                         title={!hasAgeCategories ? 'Voeg eerst leeftijdscategorieën toe' : ''}
-                        className="rounded-md bg-amber-500 px-2.5 py-1 text-xs font-medium text-white hover:bg-amber-600 disabled:opacity-50"
+                        className="rounded-md bg-rose-600 px-2.5 py-1 text-xs font-medium text-white hover:bg-rose-700 disabled:opacity-50"
                     >
                         Leden toevoegen
                     </button>
@@ -478,14 +478,14 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
                         <td className="px-3 py-2 text-xs text-slate-400 whitespace-nowrap">{member.license_number ? `#${member.license_number}` : '-'}</td>
                         <td className="px-3 py-2 whitespace-nowrap">
                             {member.age_category ? (
-                                <span className="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-amber-300">
+                                <span className="inline-flex items-center rounded-full bg-rose-900/30 px-2 py-0.5 text-xs font-medium text-rose-300">
                                     {member.age_category}
                                 </span>
                             ) : <span className="text-xs text-slate-300">-</span>}
                         </td>
                         <td className="px-3 py-2 whitespace-nowrap">
                             {member.weight_category ? (
-                                <span className="inline-flex items-center rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-400">
+                                <span className="inline-flex items-center rounded-full bg-rose-900/30 px-2 py-0.5 text-xs font-medium text-rose-400">
                                     {member.weight_category}
                                 </span>
                             ) : <span className="text-xs text-slate-300">-</span>}
@@ -594,7 +594,7 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
                         </table>
                         {notParticipating.length > 0 && (
                             <>
-                                <div className="px-4 py-2 bg-slate-100 border-t border-b border-slate-700">
+                                <div className="px-4 py-2 bg-slate-900 border-t border-b border-slate-800">
                                     <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Niet-deelnemers ({notParticipating.length})</span>
                                 </div>
                                 <table className="w-full opacity-60">
@@ -610,7 +610,7 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
 
             {/* Trainers section */}
             <div className="border-t border-slate-700">
-                <div className="px-4 py-3 flex items-center justify-between gap-2 bg-slate-100">
+                <div className="px-4 py-3 flex items-center justify-between gap-2 bg-slate-900">
                     <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
                         Trainers ({coaches.length})
                     </span>
@@ -729,7 +729,7 @@ function TournamentForm({ tournament, ageCategories, onSuccess, onCancel }) {
     const hasMap = form.data.latitude && form.data.longitude;
 
     return (
-        <form onSubmit={handleSubmit} className="px-6 py-4 bg-slate-700/50 border-b border-slate-700">
+        <form onSubmit={handleSubmit} className="px-6 py-4 bg-slate-700/50 border-b border-slate-800">
             <h3 className="text-sm font-semibold text-slate-300 mb-3">
                 {isEditing ? `Bewerk: ${tournament.name}` : 'Nieuw toernooi'}
             </h3>
@@ -740,54 +740,54 @@ function TournamentForm({ tournament, ageCategories, onSuccess, onCancel }) {
                         <div className="col-span-2">
                             <label className="block text-xs font-medium text-slate-400 mb-1">Naam *</label>
                             <input type="text" value={form.data.name} onChange={e => form.setData('name', e.target.value)}
-                                className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500" />
+                                className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500" />
                             {form.errors.name && <p className="text-xs text-red-400 mt-1">{form.errors.name}</p>}
                         </div>
                         <div>
                             <label className="block text-xs font-medium text-slate-400 mb-1">Land *</label>
                             <select value={form.data.country_code} onChange={e => form.setData('country_code', e.target.value)}
-                                className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
+                                className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500">
                                 {countries.map(c => <option key={c} value={c}>{c}</option>)}
                             </select>
                         </div>
                         <div>
                             <label className="block text-xs font-medium text-slate-400 mb-1">Straat + nr</label>
                             <input type="text" value={form.data.address_street} onChange={e => form.setData('address_street', e.target.value)}
-                                className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500" />
+                                className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500" />
                         </div>
                         <div>
                             <label className="block text-xs font-medium text-slate-400 mb-1">Postcode</label>
                             <input type="text" value={form.data.address_postal_code} onChange={e => form.setData('address_postal_code', e.target.value)}
-                                className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500" />
+                                className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500" />
                         </div>
                         <div>
                             <label className="block text-xs font-medium text-slate-400 mb-1">Stad</label>
                             <input type="text" value={form.data.address_city} onChange={e => form.setData('address_city', e.target.value)}
                                 onBlur={geocodeAddress}
-                                className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500" />
+                                className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500" />
                         </div>
                     </div>
 
                     {/* Datums block */}
-                    <div className="mb-3 rounded-lg border border-slate-700 bg-slate-800/50 p-3">
+                    <div className="mb-3 rounded-lg border border-slate-800 bg-slate-800/50 p-3">
                         <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Datums</p>
                         <div className="grid grid-cols-3 gap-3">
                             <div>
                                 <label className="block text-xs font-medium text-slate-400 mb-1">Uitnodiging deadline *</label>
                                 <input type="date" value={form.data.invitation_deadline} onChange={e => form.setData('invitation_deadline', e.target.value)}
-                                    className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500" />
+                                    className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500" />
                                 {form.errors.invitation_deadline && <p className="text-xs text-red-400 mt-1">{form.errors.invitation_deadline}</p>}
                             </div>
                             <div>
                                 <label className="block text-xs font-medium text-slate-400 mb-1">Inschrijving deadline *</label>
                                 <input type="date" value={form.data.registration_deadline} onChange={e => form.setData('registration_deadline', e.target.value)}
-                                    className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500" />
+                                    className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500" />
                                 {form.errors.registration_deadline && <p className="text-xs text-red-400 mt-1">{form.errors.registration_deadline}</p>}
                             </div>
                             <div>
                                 <label className="block text-xs font-medium text-slate-400 mb-1">Toernooidatum *</label>
                                 <input type="date" value={form.data.tournament_date} onChange={e => form.setData('tournament_date', e.target.value)}
-                                    className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500" />
+                                    className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500" />
                                 {form.errors.tournament_date && <p className="text-xs text-red-400 mt-1">{form.errors.tournament_date}</p>}
                             </div>
                         </div>
@@ -798,7 +798,7 @@ function TournamentForm({ tournament, ageCategories, onSuccess, onCancel }) {
                         <div className="col-span-2">
                             <label className="block text-xs font-medium text-slate-400 mb-1">Bijlagen</label>
                             <input type="file" multiple onChange={e => form.setData('attachments', Array.from(e.target.files))}
-                                className="w-full text-sm text-slate-500 file:mr-2 file:rounded-md file:border-0 file:bg-slate-100 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-slate-300 hover:file:bg-slate-200" />
+                                className="w-full text-sm text-slate-500 file:mr-2 file:rounded-md file:border-0 file:bg-slate-800 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-slate-300 hover:file:bg-slate-700" />
                             {form.errors.attachments && <p className="text-xs text-red-400 mt-1">{form.errors.attachments}</p>}
                         </div>
                     </div>
@@ -809,7 +809,7 @@ function TournamentForm({ tournament, ageCategories, onSuccess, onCancel }) {
                             <label className="block text-xs font-medium text-slate-400 mb-1">Bestaande bijlagen</label>
                             <div className="flex flex-wrap gap-2">
                                 {tournament.attachments.map(att => (
-                                    <span key={att.id} className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${form.data.remove_attachment_ids.includes(att.id) ? 'bg-red-900/40 text-red-400 line-through' : 'bg-slate-100 text-slate-300'}`}>
+                                    <span key={att.id} className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${form.data.remove_attachment_ids.includes(att.id) ? 'bg-red-900/40 text-red-400 line-through' : 'bg-slate-800 text-slate-300'}`}>
                                         <a href={att.url} target="_blank" rel="noopener noreferrer" className="hover:underline">{att.original_name}</a>
                                         <button type="button" onClick={() => toggleRemoveAttachment(att.id)}
                                             className="ml-0.5 text-slate-500 hover:text-red-400">&times;</button>
@@ -832,7 +832,7 @@ function TournamentForm({ tournament, ageCategories, onSuccess, onCancel }) {
                                         <input type="checkbox"
                                             checked={form.data.age_category_ids.includes(cat.id)}
                                             onChange={() => toggleAgeCategory(cat.id)}
-                                            className="rounded border-slate-600 bg-slate-700 text-amber-400 focus:ring-amber-500" />
+                                            className="rounded border-slate-600 bg-slate-700 text-rose-400 focus:ring-rose-500" />
                                         {cat.name} ({cat.min_age}–{cat.max_age})
                                     </label>
                                 ))}
@@ -861,7 +861,7 @@ function TournamentForm({ tournament, ageCategories, onSuccess, onCancel }) {
 
             <div className="flex gap-2">
                 <button type="submit" disabled={form.processing}
-                    className="rounded-md bg-amber-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-amber-600 disabled:opacity-50">
+                    className="rounded-md bg-rose-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-rose-700 disabled:opacity-50">
                     {isEditing ? 'Opslaan' : 'Toernooi aanmaken'}
                 </button>
                 <button type="button" onClick={onCancel}

@@ -31,11 +31,11 @@ export default function AgeCategoriesSection({ ageCategories }) {
     const filtered = ageCategories.filter((c) => c.country_code === selectedCountry);
 
     return (
-        <div className="bg-slate-800 rounded-lg shadow-sm border border-slate-700">
-            <div className="px-6 py-4 border-b border-slate-700 flex items-center justify-between">
+        <div className="bg-slate-900 rounded-lg shadow-sm border border-slate-800 border-t-2 border-t-rose-700">
+            <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
                 <h2 className="text-lg font-semibold text-white">
                     Leeftijdscategorieën
-                    <span className="ml-2 inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-400">
+                    <span className="ml-2 inline-flex items-center rounded-full bg-slate-800 px-2.5 py-0.5 text-xs font-medium text-slate-400">
                         {filtered.length}
                     </span>
                 </h2>
@@ -45,7 +45,7 @@ export default function AgeCategoriesSection({ ageCategories }) {
                         <select
                             value={selectedCountry}
                             onChange={(e) => setSelectedCountry(e.target.value)}
-                            className="rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1 px-2 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                            className="rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1 px-2 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
                         >
                             {countries.map((c) => (
                                 <option key={c} value={c}>{c}</option>
@@ -55,7 +55,7 @@ export default function AgeCategoriesSection({ ageCategories }) {
                             type="text"
                             placeholder="Nieuw land (bv. FR)"
                             maxLength={2}
-                            className="w-24 rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1 px-2 uppercase focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                            className="w-24 rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1 px-2 uppercase focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
                             onBlur={(e) => {
                                 const val = e.target.value.toUpperCase().trim();
                                 if (val.length === 2) {
@@ -73,7 +73,7 @@ export default function AgeCategoriesSection({ ageCategories }) {
                     </div>
                     <button
                         onClick={() => setShowAddForm(!showAddForm)}
-                        className="rounded-md bg-amber-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-amber-600"
+                        className="rounded-md bg-rose-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-rose-700"
                     >
                         {showAddForm ? 'Annuleren' : 'Toevoegen'}
                     </button>
@@ -177,7 +177,7 @@ function AddAgeCategoryForm({ countryCode, onSuccess }) {
                         value={form.data.name}
                         onChange={(e) => form.setData('name', e.target.value)}
                         placeholder="bv. U15"
-                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
                     />
                     {form.errors.name && <p className="text-xs text-red-400 mt-1">{form.errors.name}</p>}
                 </div>
@@ -188,7 +188,7 @@ function AddAgeCategoryForm({ countryCode, onSuccess }) {
                         value={form.data.min_age}
                         onChange={(e) => form.setData('min_age', e.target.value)}
                         min="0" max="99"
-                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
                     />
                     {form.errors.min_age && <p className="text-xs text-red-400 mt-1">{form.errors.min_age}</p>}
                 </div>
@@ -199,7 +199,7 @@ function AddAgeCategoryForm({ countryCode, onSuccess }) {
                         value={form.data.max_age}
                         onChange={(e) => form.setData('max_age', e.target.value)}
                         min="0" max="99"
-                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
                     />
                     {form.errors.max_age && <p className="text-xs text-red-400 mt-1">{form.errors.max_age}</p>}
                 </div>
@@ -210,7 +210,7 @@ function AddAgeCategoryForm({ countryCode, onSuccess }) {
                         value={form.data.cutoff_date}
                         onChange={(e) => form.setData('cutoff_date', e.target.value)}
                         placeholder="MM-DD (leeg = jaar)"
-                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
                     />
                     {form.errors.cutoff_date && <p className="text-xs text-red-400 mt-1">{form.errors.cutoff_date}</p>}
                 </div>
@@ -221,7 +221,7 @@ function AddAgeCategoryForm({ countryCode, onSuccess }) {
                         value={form.data.display_order}
                         onChange={(e) => form.setData('display_order', e.target.value)}
                         min="0"
-                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
                     />
                     {form.errors.display_order && <p className="text-xs text-red-400 mt-1">{form.errors.display_order}</p>}
                 </div>
@@ -229,7 +229,7 @@ function AddAgeCategoryForm({ countryCode, onSuccess }) {
             <button
                 type="submit"
                 disabled={form.processing}
-                className="rounded-md bg-amber-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-amber-600 disabled:opacity-50"
+                className="rounded-md bg-rose-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-rose-700 disabled:opacity-50"
             >
                 Opslaan
             </button>
@@ -275,7 +275,7 @@ function AgeCategoryRow({ category }) {
                             type="text"
                             value={form.data.name}
                             onChange={(e) => form.setData('name', e.target.value)}
-                            className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                            className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
                         />
                         {form.errors.name && <p className="text-xs text-red-400 mt-1">{form.errors.name}</p>}
                     </div>
@@ -286,7 +286,7 @@ function AgeCategoryRow({ category }) {
                             value={form.data.min_age}
                             onChange={(e) => form.setData('min_age', e.target.value)}
                             min="0" max="99"
-                            className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                            className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
                         />
                         {form.errors.min_age && <p className="text-xs text-red-400 mt-1">{form.errors.min_age}</p>}
                     </div>
@@ -297,7 +297,7 @@ function AgeCategoryRow({ category }) {
                             value={form.data.max_age}
                             onChange={(e) => form.setData('max_age', e.target.value)}
                             min="0" max="99"
-                            className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                            className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
                         />
                         {form.errors.max_age && <p className="text-xs text-red-400 mt-1">{form.errors.max_age}</p>}
                     </div>
@@ -308,7 +308,7 @@ function AgeCategoryRow({ category }) {
                             value={form.data.cutoff_date}
                             onChange={(e) => form.setData('cutoff_date', e.target.value)}
                             placeholder="MM-DD (leeg = jaar)"
-                            className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                            className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
                         />
                         {form.errors.cutoff_date && <p className="text-xs text-red-400 mt-1">{form.errors.cutoff_date}</p>}
                     </div>
@@ -319,7 +319,7 @@ function AgeCategoryRow({ category }) {
                             value={form.data.display_order}
                             onChange={(e) => form.setData('display_order', e.target.value)}
                             min="0"
-                            className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                            className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
                         />
                         {form.errors.display_order && <p className="text-xs text-red-400 mt-1">{form.errors.display_order}</p>}
                     </div>
@@ -328,7 +328,7 @@ function AgeCategoryRow({ category }) {
                     <button
                         type="submit"
                         disabled={form.processing}
-                        className="rounded-md bg-amber-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-amber-600 disabled:opacity-50"
+                        className="rounded-md bg-rose-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-rose-700 disabled:opacity-50"
                     >
                         Opslaan
                     </button>
@@ -363,7 +363,7 @@ function AgeCategoryRow({ category }) {
             <div className="flex items-center gap-3">
                 <button
                     onClick={() => setEditing(true)}
-                    className="text-sm text-amber-400 hover:text-amber-300"
+                    className="text-sm text-rose-400 hover:text-rose-300"
                 >
                     Bewerken
                 </button>
