@@ -293,6 +293,13 @@ const statusGroups = [
 
 function MyTournaments({ tournaments }) {
     const [expandedId, setExpandedId] = useState(null);
+    const [collapsedGroups, setCollapsedGroups] = useState(() => new Set(statusGroups.map(g => g.key)));
+
+    const toggleGroup = (key) => setCollapsedGroups(prev => {
+        const next = new Set(prev);
+        next.has(key) ? next.delete(key) : next.add(key);
+        return next;
+    });
 
     const formatDate = (dateStr) => {
         if (!dateStr) return '-';
@@ -307,13 +314,17 @@ function MyTournaments({ tournaments }) {
                 if (items.length === 0) return null;
                 return (
                     <div key={group.key} className="mb-6">
-                        <h3 className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-3">
+                        <button
+                            onClick={() => toggleGroup(group.key)}
+                            className="flex items-center gap-1.5 text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-3 hover:text-slate-300 transition-colors"
+                        >
+                            <span className="text-[10px]">{collapsedGroups.has(group.key) ? '▶' : '▼'}</span>
                             {group.label}
-                            <span className={`ml-2 inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${group.color}`}>
+                            <span className={`ml-1 inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${group.color}`}>
                                 {items.length}
                             </span>
-                        </h3>
-                        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                        </button>
+                        {!collapsedGroups.has(group.key) && <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                             {items.map(t => (
                                 <div key={t.id} className="bg-slate-900 rounded-xl shadow-sm ring-1 ring-slate-800 overflow-hidden hover:shadow-md hover:-translate-y-0.5">
                                     {t.latitude && t.longitude && (
@@ -377,7 +388,7 @@ function MyTournaments({ tournaments }) {
                                     </div>
                                 </div>
                             ))}
-                        </div>
+                        </div>}
                     </div>
                 );
             })}
