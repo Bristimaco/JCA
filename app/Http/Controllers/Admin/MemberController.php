@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Member;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Validation\Rule;
 
 class MemberController extends Controller
@@ -116,5 +117,14 @@ class MemberController extends Controller
         $member->delete();
 
         return back()->with('status', "Lid {$name} is verwijderd.");
+    }
+
+    public function sendRenewalReminders(): RedirectResponse
+    {
+        Artisan::call('membership:send-renewal-reminders');
+
+        $output = trim(Artisan::output());
+
+        return back()->with('status', $output ?: 'Herinnerings-e-mails verwerkt.');
     }
 }

@@ -11,6 +11,7 @@ export default function MembersSection({ members, ageCategories, weightCategorie
     const [editingMember, setEditingMember] = useState(null);
     const importFileRef = useRef(null);
     const [importing, setImporting] = useState(false);
+    const [sendingReminders, setSendingReminders] = useState(false);
 
     const filtered = members.filter((m) => {
         const q = search.toLowerCase();
@@ -143,6 +144,18 @@ export default function MembersSection({ members, ageCategories, weightCategorie
                         className="rounded-md bg-rose-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-rose-700"
                     >
                         {showAddForm ? 'Annuleren' : 'Lid toevoegen'}
+                    </button>
+                    <button
+                        onClick={() => {
+                            setSendingReminders(true);
+                            router.post('/admin/members/send-renewal-reminders', {}, {
+                                onFinish: () => setSendingReminders(false),
+                            });
+                        }}
+                        disabled={sendingReminders}
+                        className="rounded-md border border-slate-600 bg-slate-800 px-3 py-1.5 text-sm font-medium text-slate-300 hover:bg-slate-700/50 disabled:opacity-50"
+                    >
+                        {sendingReminders ? 'Versturen...' : 'Herinneringen versturen'}
                     </button>
                 </div>
             </div>
