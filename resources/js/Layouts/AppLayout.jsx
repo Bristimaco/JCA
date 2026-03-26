@@ -49,8 +49,6 @@ export default function AppLayout({ children }) {
                             </button>
                             <a
                                 href="/handleiding.html"
-                                target="_blank"
-                                rel="noopener noreferrer"
                                 title="Handleiding"
                                 className="inline-flex items-center justify-center w-9 h-9 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-slate-800/60"
                             >
