@@ -20,7 +20,7 @@ const FORWARD_ROUTES = {
     finished: (id) => `/admin/tournaments/${id}/archive`,
 };
 
-export default function TournamentStepper({ status, compact = false, interactive = false, tournamentId = null, onTransitionError = null }) {
+export default function TournamentStepper({ status, compact = false, interactive = false, tournamentId = null, onTransitionError = null, onTransitionStart = null }) {
     const [loading, setLoading] = useState(false);
     const currentIndex = STEPS.findIndex(s => s.value === status);
 
@@ -43,6 +43,7 @@ export default function TournamentStepper({ status, compact = false, interactive
             // Special case: closing registrations needs confirmation
             if (currentValue === 'registrations_open') {
                 if (!confirm('Inschrijvingen afsluiten? Niet-ingeschreven deelnemers worden uitgesloten.')) return;
+                if (onTransitionStart) onTransitionStart();
                 setLoading(true);
                 router.post(routeFn(tournamentId), { confirmed: '1' }, {
                     preserveScroll: true,
@@ -56,6 +57,7 @@ export default function TournamentStepper({ status, compact = false, interactive
                 return;
             }
 
+            if (onTransitionStart) onTransitionStart();
             setLoading(true);
             router.post(routeFn(tournamentId), {}, {
                 preserveScroll: true,
@@ -74,6 +76,7 @@ export default function TournamentStepper({ status, compact = false, interactive
             // Backend blocks revert for started and finished
             if (status === 'started' || status === 'finished') return;
 
+            if (onTransitionStart) onTransitionStart();
             setLoading(true);
             router.post(`/admin/tournaments/${tournamentId}/revert-status`, {}, {
                 preserveScroll: true,

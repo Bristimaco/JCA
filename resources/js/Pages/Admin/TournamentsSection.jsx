@@ -7,6 +7,7 @@ export default function TournamentsSection({ tournaments, ageCategories, competi
     const [showAddForm, setShowAddForm] = useState(false);
     const [editingTournament, setEditingTournament] = useState(null);
     const [expandedId, setExpandedId] = useState(null);
+    const [flashTournamentId, setFlashTournamentId] = useState(null);
 
     const statusColors = {
         preparation: 'bg-slate-800 text-slate-300',
@@ -19,8 +20,8 @@ export default function TournamentsSection({ tournaments, ageCategories, competi
     };
 
     return (
-        <div className="bg-slate-900 rounded-lg shadow-sm border border-slate-800 border-t-2 border-t-rose-700">
-            <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
+        <div>
+            <div className="bg-slate-900 rounded-lg shadow-sm border border-slate-800 border-t-2 border-t-rose-700 px-6 py-4 flex items-center justify-between">
                 <h2 className="text-lg font-semibold text-white">
                     Toernooien
                     <span className="ml-2 inline-flex items-center rounded-full bg-slate-800 px-2.5 py-0.5 text-xs font-medium text-slate-400">
@@ -35,11 +36,7 @@ export default function TournamentsSection({ tournaments, ageCategories, competi
                 </button>
             </div>
 
-            {flash.status && (
-                <div className="mx-6 mt-4 rounded-md bg-emerald-900/30 border ring-1 ring-emerald-700/30 p-3">
-                    <p className="text-sm text-emerald-400">{flash.status}</p>
-                </div>
-            )}
+
 
             {showAddForm && (
                 <TournamentForm
@@ -63,7 +60,7 @@ export default function TournamentsSection({ tournaments, ageCategories, competi
                     Nog geen toernooien.
                 </div>
             ) : (
-                <div className="divide-y divide-slate-700">
+                <div className="space-y-4 mt-4">
                     {tournaments.map((tournament) => (
                         <TournamentRow
                             key={tournament.id}
@@ -76,6 +73,8 @@ export default function TournamentsSection({ tournaments, ageCategories, competi
                             isEditing={editingTournament?.id === tournament.id}
                             onToggleExpand={() => setExpandedId(expandedId === tournament.id ? null : tournament.id)}
                             onEdit={() => { setEditingTournament(tournament); setShowAddForm(false); }}
+                            flashMessage={flashTournamentId === tournament.id ? flash.status : null}
+                            onStepperTransition={() => setFlashTournamentId(tournament.id)}
                         />
                     ))}
                 </div>
@@ -84,7 +83,7 @@ export default function TournamentsSection({ tournaments, ageCategories, competi
     );
 }
 
-function TournamentRow({ tournament, statusColors, statuses, competitionMembers, availableCoaches, isExpanded, isEditing, onToggleExpand, onEdit }) {
+function TournamentRow({ tournament, statusColors, statuses, competitionMembers, availableCoaches, isExpanded, isEditing, onToggleExpand, onEdit, flashMessage, onStepperTransition }) {
     const deleteForm = useForm({});
     const statusLabel = statuses.find(s => s.value === tournament.status)?.label || tournament.status;
     const members = tournament.tournament_members || [];
@@ -103,8 +102,13 @@ function TournamentRow({ tournament, statusColors, statuses, competitionMembers,
     const hasMap = tournament.latitude && tournament.longitude;
 
     return (
-        <div className="px-6 py-4">
-            <TournamentStepper status={tournament.status} interactive={true} tournamentId={tournament.id} />
+        <div className="bg-slate-900 rounded-lg shadow-sm border border-slate-800 border-t-2 border-t-rose-700 px-6 py-4">
+            <TournamentStepper status={tournament.status} interactive={true} tournamentId={tournament.id} onTransitionStart={onStepperTransition} />
+            {flashMessage && (
+                <div className="mb-3 rounded-md bg-emerald-900/30 border ring-1 ring-emerald-700/30 p-3">
+                    <p className="text-sm text-emerald-400">{flashMessage}</p>
+                </div>
+            )}
             <div className="flex gap-6">
                 {/* Left: details */}
                 <div className="min-w-0 flex-1">
@@ -199,12 +203,6 @@ function TournamentRow({ tournament, statusColors, statuses, competitionMembers,
 function TournamentMembersPanel({ tournament, members, competitionMembers, availableCoaches }) {
     const populateForm = useForm({});
     const inviteAllForm = useForm({});
-    const closeForm = useForm({});
-    const revertForm = useForm({});
-    const openRegForm = useForm({});
-    const closeRegForm = useForm({});
-    const startForm = useForm({});
-    const archiveForm = useForm({});
     const addMemberForm = useForm({ member_id: '' });
     const addCoachForm = useForm({ member_id: '' });
     const [processing, setProcessing] = useState({});
@@ -231,28 +229,7 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
         }
     };
 
-    const handleCloseInvitations = () => {
-        if (confirm('Uitnodigingsfase afsluiten? De status wordt "Uitnodigingen verstuurd".')) {
-            closeForm.post(`/admin/tournaments/${tournament.id}/close-invitations`);
-        }
-    };
 
-    const handleRevertStatus = () => {
-        if (confirm('Status terugzetten naar de vorige stap?')) {
-            revertForm.post(`/admin/tournaments/${tournament.id}/revert-status`);
-        }
-    };
-
-    const handleOpenRegistrations = () => {
-        if (tournament.invitation_deadline && new Date(tournament.invitation_deadline) >= new Date().setHours(0, 0, 0, 0)) {
-            if (!confirm('De uitnodigingsdeadline is nog niet verlopen. Toch inschrijvingen starten?')) {
-                return;
-            }
-        }
-        if (confirm('Inschrijvingen starten?')) {
-            router.post(`/admin/tournaments/${tournament.id}/open-registrations`, { confirmed: '1' });
-        }
-    };
 
     const handleRegister = (memberId) => {
         setProcessing(prev => ({ ...prev, [memberId]: true }));
@@ -272,31 +249,7 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
         }
     };
 
-    const handleCloseRegistrations = (confirmed = false) => {
-        const accepted = members.filter(m => m.invitation_status === 'accepted');
-        const allRegistered = accepted.every(m => m.registration_status === 'registered');
 
-        if (!allRegistered && !confirmed) {
-            if (confirm('Niet alle deelnemers zijn ingeschreven. Toch inschrijvingen afsluiten?')) {
-                handleCloseRegistrations(true);
-            }
-            return;
-        }
-
-        router.post(`/admin/tournaments/${tournament.id}/close-registrations`, { confirmed: confirmed ? '1' : '0' });
-    };
-
-    const handleStartTournament = () => {
-        if (confirm('Toernooi starten? Er kunnen hierna geen wijzigingen meer worden gemaakt.')) {
-            startForm.post(`/admin/tournaments/${tournament.id}/start`);
-        }
-    };
-
-    const handleArchiveTournament = () => {
-        if (confirm('Toernooi archiveren? Het toernooi verdwijnt uit deze lijst en wordt read-only.')) {
-            archiveForm.post(`/admin/tournaments/${tournament.id}/archive`);
-        }
-    };
 
     const handleAddMember = (e) => {
         e.preventDefault();
@@ -380,60 +333,7 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
                         Alle uitnodigen ({pendingCount})
                     </button>
                 )}
-                {members.length > 0 && tournament.status === 'preparation' && (
-                    <button
-                        onClick={handleCloseInvitations}
-                        disabled={closeForm.processing}
-                        className="rounded-md bg-orange-500 px-2.5 py-1 text-xs font-medium text-white hover:bg-orange-600 disabled:opacity-50"
-                    >
-                        Uitnodigingen afsluiten
-                    </button>
-                )}
-                {tournament.status === 'invitations_sent' && (
-                    <button
-                        onClick={handleOpenRegistrations}
-                        disabled={openRegForm.processing}
-                        className="rounded-md bg-yellow-500 px-2.5 py-1 text-xs font-medium text-white hover:bg-yellow-600 disabled:opacity-50"
-                    >
-                        Inschrijvingen starten
-                    </button>
-                )}
-                {tournament.status === 'registrations_open' && (
-                    <button
-                        onClick={() => handleCloseRegistrations()}
-                        disabled={closeRegForm.processing}
-                        className="rounded-md bg-orange-500 px-2.5 py-1 text-xs font-medium text-white hover:bg-orange-600 disabled:opacity-50"
-                    >
-                        Inschrijvingen afsluiten
-                    </button>
-                )}
-                {tournament.status === 'registrations_closed' && (
-                    <button
-                        onClick={handleStartTournament}
-                        disabled={startForm.processing}
-                        className="rounded-md bg-red-600 px-2.5 py-1 text-xs font-medium text-white hover:bg-red-700 disabled:opacity-50"
-                    >
-                        Toernooi starten
-                    </button>
-                )}
-                {tournament.status === 'finished' && (
-                    <button
-                        onClick={handleArchiveTournament}
-                        disabled={archiveForm.processing}
-                        className="rounded-md bg-purple-600 px-2.5 py-1 text-xs font-medium text-white hover:bg-purple-700 disabled:opacity-50"
-                    >
-                        Archiveren
-                    </button>
-                )}
-                {!['preparation', 'started', 'finished'].includes(tournament.status) && (
-                    <button
-                        onClick={handleRevertStatus}
-                        disabled={revertForm.processing}
-                        className="rounded-md bg-slate-400 px-2.5 py-1 text-xs font-medium text-white hover:bg-slate-700/500 disabled:opacity-50"
-                    >
-                        ← Vorige status
-                    </button>
-                )}
+
 
                 {/* Add individual member */}
                 {tournament.status === 'preparation' && (
