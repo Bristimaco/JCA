@@ -90,12 +90,12 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
         <AppLayout>
             <Head title={`Trainer - ${t.name}`} />
 
-            <div className="mb-2 flex items-center gap-4">
+            <div className="mb-2 flex items-center gap-2 sm:gap-4">
                 <Link href="/" className="text-sm text-slate-500 hover:text-slate-300">
                     &larr; Dashboard
                 </Link>
-                <h1 className="text-2xl font-bold text-white">{t.name}</h1>
-                <span className="inline-flex items-center rounded-full bg-rose-900/30 px-2.5 py-0.5 text-xs font-medium text-rose-400">
+                <h1 className="text-lg sm:text-2xl font-bold text-white truncate">{t.name}</h1>
+                <span className="hidden sm:inline-flex items-center rounded-full bg-rose-900/30 px-2.5 py-0.5 text-xs font-medium text-rose-400">
                     Trainer modus
                 </span>
             </div>
@@ -108,10 +108,91 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                 </div>
             )}
 
-            <div className="grid gap-6 lg:grid-cols-3">
-                {/* Left column: Info + map */}
-                <div className="lg:col-span-1 space-y-4">
-                    <div className="bg-slate-900 rounded-lg shadow-sm border border-slate-800 border-t-2 border-t-rose-700 p-5">
+            {/* Phone-only: collapsible info header */}
+            <details className="sm:hidden mb-3 bg-slate-900 rounded-lg border border-slate-800 border-t-2 border-t-rose-700">
+                <summary className="flex items-center justify-between px-4 py-3 cursor-pointer">
+                    <div className="flex-1 min-w-0">
+                        <p className="text-xs text-slate-400 truncate">
+                            {formatDate(t.tournament_date)} &middot; {[t.address_city, t.country_code].filter(Boolean).join(', ') || 'Geen locatie'}
+                        </p>
+                    </div>
+                    <span className="ml-3 inline-flex items-center rounded-full bg-rose-900/30 px-2.5 py-0.5 text-xs font-semibold text-rose-300 whitespace-nowrap">
+                        {filledCount} / {totalParticipants}
+                    </span>
+                </summary>
+                <div className="px-4 pb-4 space-y-3 border-t border-slate-800">
+                    <dl className="space-y-2 text-sm pt-3">
+                        <div className="flex justify-between">
+                            <dt className="text-slate-500">Datum</dt>
+                            <dd className="font-medium text-white text-right">{formatDate(t.tournament_date)}</dd>
+                        </div>
+                        <div className="flex justify-between">
+                            <dt className="text-slate-500">Locatie</dt>
+                            <dd className="font-medium text-white text-right">{[t.address_street, t.address_postal_code, t.address_city].filter(Boolean).join(', ') || 'Geen adres'}</dd>
+                        </div>
+                        <div className="flex justify-between">
+                            <dt className="text-slate-500">Land</dt>
+                            <dd className="font-medium text-white">{t.country_code}</dd>
+                        </div>
+                        <div className="flex justify-between">
+                            <dt className="text-slate-500">Resultaten</dt>
+                            <dd className="font-medium text-white">{filledCount} / {totalParticipants}</dd>
+                        </div>
+                    </dl>
+                    {t.coaches.length > 0 && (
+                        <div>
+                            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Trainers</p>
+                            <p className="text-sm text-white">{t.coaches.map(c => c.name).join(', ')}</p>
+                        </div>
+                    )}
+                    {t.attachments.length > 0 && (
+                        <div>
+                            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Bijlagen</p>
+                            <div className="flex flex-wrap gap-2">
+                                {t.attachments.map(att => (
+                                    <a key={att.id} href={att.url} target="_blank" rel="noopener noreferrer" className="text-xs text-rose-400 hover:underline">
+                                        📎 {att.original_name}
+                                    </a>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </details>
+
+            {/* Phone-only: save + close buttons at top */}
+            <div className="sm:hidden mb-3 space-y-2">
+                {!isFinished && (
+                    <button
+                        onClick={handleSave}
+                        disabled={form.processing}
+                        className="w-full rounded-lg bg-rose-600 px-4 py-3 text-sm font-semibold text-white hover:bg-rose-700 disabled:opacity-50 transition-colors"
+                    >
+                        {form.processing ? 'Opslaan...' : `Resultaten opslaan (${filledCount}/${totalParticipants})`}
+                    </button>
+                )}
+                {t.status === 'started' && (
+                    <>
+                        <button
+                            onClick={handleClose}
+                            disabled={!canClose || closeForm.processing}
+                            className="w-full rounded-lg bg-purple-600 px-4 py-3 text-sm font-semibold text-white hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                            {closeForm.processing ? 'Afsluiten...' : 'Toernooi afsluiten'}
+                        </button>
+                        {!allFilled && (
+                            <p className="text-xs text-rose-600 text-center">
+                                Vul eerst alle resultaten in om af te sluiten.
+                            </p>
+                        )}
+                    </>
+                )}
+            </div>
+
+            <div className="grid gap-3 sm:gap-6 lg:grid-cols-3">
+                {/* Left column: Info + map (hidden on phone — replaced by collapsible header above) */}
+                <div className="hidden sm:block lg:col-span-1 space-y-4">
+                    <div className="bg-slate-900 rounded-lg shadow-sm border border-slate-800 border-t-2 border-t-rose-700 p-3 sm:p-5">
                         <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">Details</h2>
                         <dl className="space-y-3 text-sm">
                             <div>
@@ -210,8 +291,8 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                 {/* Right column: Participants with result inputs */}
                 <div className="lg:col-span-2">
                     <div className="bg-slate-900 rounded-lg shadow-sm border border-slate-800 border-t-2 border-t-rose-700">
-                        <div className="px-5 py-4 border-b border-slate-800">
-                            <h2 className="text-lg font-semibold text-white">
+                        <div className="px-3 sm:px-5 py-3 sm:py-4 border-b border-slate-800">
+                            <h2 className="text-base sm:text-lg font-semibold text-white">
                                 Deelnemers & Resultaten
                                 <span className="ml-2 inline-flex items-center rounded-full bg-slate-800 px-2.5 py-0.5 text-xs font-medium text-slate-400">
                                     {totalParticipants}
@@ -226,7 +307,7 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                         ) : (
                             <div className="divide-y divide-slate-700">
                                 {participantGroups.map(ageGroup => (
-                                    <div key={ageGroup.name} className="px-5 py-4">
+                                    <div key={ageGroup.name} className="px-3 sm:px-5 py-3 sm:py-4">
                                         <h3 className="text-sm font-semibold text-slate-200 mb-3">
                                             <span className="inline-flex items-center rounded-full bg-rose-900/30 px-2.5 py-0.5 text-xs font-medium text-rose-300">
                                                 {ageGroup.name}
@@ -245,15 +326,15 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                                                     </h4>
                                                     <div className="space-y-2">
                                                         {weightGroup.members.map(member => (
-                                                            <div key={member.id} className="flex items-center gap-3 bg-slate-800 rounded-md p-2 border border-slate-800">
-                                                                <div className="flex-1 min-w-0">
+                                                            <div key={member.id} className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 bg-slate-800 rounded-md p-2.5 sm:p-2 border border-slate-800">
+                                                                <div className="sm:flex-1 min-w-0">
                                                                     <p className="text-sm font-medium text-white truncate">{member.name}</p>
                                                                 </div>
                                                                 <select
                                                                     value={results[member.id]?.result || ''}
                                                                     onChange={(e) => updateResult(member.id, 'result', e.target.value)}
                                                                     disabled={isFinished}
-                                                                    className={`rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1 px-2 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500 ${isFinished ? 'bg-slate-800 cursor-not-allowed' : ''}`}
+                                                                    className={`w-full sm:w-auto rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-2.5 sm:py-1 px-2 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500 ${isFinished ? 'bg-slate-800 cursor-not-allowed' : ''}`}
                                                                 >
                                                                     {resultOptions.map(opt => (
                                                                         <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -266,7 +347,7 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                                                                     disabled={isFinished}
                                                                     rows={1}
                                                                     onInput={(e) => { e.target.style.height = 'auto'; e.target.style.height = e.target.scrollHeight + 'px'; }}
-                                                                    className={`min-w-32 flex-1 rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1 px-2 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500 resize-none overflow-hidden ${isFinished ? 'bg-slate-800 cursor-not-allowed' : ''}`}
+                                                                    className={`w-full sm:w-auto sm:min-w-32 sm:flex-1 rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-2.5 sm:py-1 px-2 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500 resize-none overflow-hidden ${isFinished ? 'bg-slate-800 cursor-not-allowed' : ''}`}
                                                                 />
                                                             </div>
                                                         ))}
