@@ -37,8 +37,30 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
     };
 
     const [results, setResults] = useState(buildInitialResults);
+    const [activeFilters, setActiveFilters] = useState(() => participantGroups.map(g => g.name));
     const form = useForm({ results: [] });
     const closeForm = useForm({});
+
+    const allCategoryNames = participantGroups.map(g => g.name);
+    const allFiltersActive = activeFilters.length === allCategoryNames.length;
+
+    const toggleFilter = (name) => {
+        setActiveFilters(prev =>
+            prev.includes(name) ? prev.filter(n => n !== name) : [...prev, name]
+        );
+    };
+
+    const toggleAll = () => {
+        setActiveFilters(allFiltersActive ? [] : [...allCategoryNames]);
+    };
+
+    const filteredGroups = participantGroups.filter(g => activeFilters.includes(g.name));
+    const filteredParticipantCount = filteredGroups.reduce(
+        (sum, g) => sum + g.weights.reduce((ws, w) => ws + w.members.length, 0), 0
+    );
+
+    const membersInGroup = (group) =>
+        group.weights.reduce((sum, w) => sum + w.members.length, 0);
 
     const updateResult = (memberId, field, value) => {
         setResults(prev => ({
@@ -295,9 +317,39 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                             <h2 className="text-base sm:text-lg font-semibold text-white">
                                 Deelnemers & Resultaten
                                 <span className="ml-2 inline-flex items-center rounded-full bg-slate-800 px-2.5 py-0.5 text-xs font-medium text-slate-400">
-                                    {totalParticipants}
+                                    {!allFiltersActive ? `${filteredParticipantCount} / ` : ''}{totalParticipants}
                                 </span>
                             </h2>
+                            {allCategoryNames.length > 1 && (
+                                <div className="mt-2 flex flex-wrap gap-1.5">
+                                    <button
+                                        onClick={toggleAll}
+                                        className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${allFiltersActive
+                                                ? 'bg-rose-600 text-white'
+                                                : 'bg-slate-800 text-slate-400 border border-slate-700 hover:border-slate-500'
+                                            }`}
+                                    >
+                                        Alles
+                                    </button>
+                                    {allCategoryNames.map(name => {
+                                        const group = participantGroups.find(g => g.name === name);
+                                        const count = group ? membersInGroup(group) : 0;
+                                        const isActive = activeFilters.includes(name);
+                                        return (
+                                            <button
+                                                key={name}
+                                                onClick={() => toggleFilter(name)}
+                                                className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${isActive
+                                                        ? 'bg-rose-600 text-white'
+                                                        : 'bg-slate-800 text-slate-400 border border-slate-700 hover:border-slate-500'
+                                                    }`}
+                                            >
+                                                {name} ({count})
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            )}
                         </div>
 
                         {participantGroups.length === 0 ? (
@@ -306,7 +358,7 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                             </div>
                         ) : (
                             <div className="divide-y divide-slate-700">
-                                {participantGroups.map(ageGroup => (
+                                {filteredGroups.map(ageGroup => (
                                     <div key={ageGroup.name} className="px-3 sm:px-5 py-3 sm:py-4">
                                         <h3 className="text-sm font-semibold text-slate-200 mb-3">
                                             <span className="inline-flex items-center rounded-full bg-rose-900/30 px-2.5 py-0.5 text-xs font-medium text-rose-300">
