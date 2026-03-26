@@ -382,7 +382,7 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
                 const renderMember = (member) => (
                     <tr key={member.id} className="border-t border-slate-700">
                         <td className="px-3 py-2 text-sm text-white whitespace-nowrap">{member.name}</td>
-                        <td className="px-3 py-2 text-xs text-slate-400 whitespace-nowrap">{member.date_of_birth}</td>
+                        <td className="px-3 py-2 text-xs text-slate-400 whitespace-nowrap">{member.date_of_birth ? new Date(member.date_of_birth).toLocaleDateString('nl-BE') : '-'}</td>
                         <td className="px-3 py-2 text-xs text-slate-400 whitespace-nowrap">{member.license_number ? `#${member.license_number}` : '-'}</td>
                         <td className="px-3 py-2 whitespace-nowrap">
                             {member.age_category ? (
