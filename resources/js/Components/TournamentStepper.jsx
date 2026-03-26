@@ -116,6 +116,18 @@ export default function TournamentStepper({ status, compact = false, interactive
         return 'future';
     };
 
+    // Whether this step's transition belongs to the user's role
+    const isUserStep = (index) => {
+        if (!userRole) return true; // no role info = show all normally
+        const stepValue = STEPS[index]?.value;
+        if (index === 0) return true; // preparation is always "yours"
+        const adminSteps = ['registrations_open', 'registrations_closed', 'archived'];
+        const coachSteps = ['invitations_sent', 'started', 'finished'];
+        if (userRole === 'admin') return !coachSteps.includes(stepValue);
+        if (userRole === 'coach') return !adminSteps.includes(stepValue);
+        return true;
+    };
+
     const isClickable = (index) => {
         if (!interactive || loading) return false;
         // Next step (forward)
@@ -168,7 +180,8 @@ export default function TournamentStepper({ status, compact = false, interactive
                 {STEPS.map((step, i) => {
                     const state = getStepState(i);
                     const clickable = isClickable(i);
-                    const isTrainerOnly = interactive && i === currentIndex + 1 && STEPS[currentIndex]?.value === 'started';
+                    const userStep = isUserStep(i);
+                    const fadedFuture = state === 'future' && !userStep;
 
                     return (
                         <div key={step.value} className="flex items-center flex-1 last:flex-none">
@@ -178,15 +191,16 @@ export default function TournamentStepper({ status, compact = false, interactive
                                     type="button"
                                     onClick={() => clickable && handleStepClick(i)}
                                     disabled={!clickable}
-                                    title={isTrainerOnly ? 'Enkel via trainer' : step.label}
+                                    title={fadedFuture ? 'Niet jouw stap' : step.label}
                                     className={`relative flex items-center justify-center rounded-full text-xs font-bold transition-all
                                         ${state === 'completed'
                                             ? `w-7 h-7 bg-rose-600 text-white ${clickable ? 'cursor-pointer hover:bg-rose-500 hover:ring-2 hover:ring-rose-400/50' : ''}`
                                             : state === 'current'
                                                 ? 'w-8 h-8 bg-rose-600 text-white ring-2 ring-rose-400/40 shadow-lg shadow-rose-900/30'
-                                                : `w-7 h-7 border-2 border-slate-600 bg-transparent text-slate-500
-                                                    ${clickable ? 'cursor-pointer hover:border-rose-500/50 hover:text-rose-400 hover:bg-rose-900/20' : ''}
-                                                    ${isTrainerOnly ? 'cursor-not-allowed' : ''}`
+                                                : fadedFuture
+                                                    ? 'w-7 h-7 border-2 border-slate-700 bg-transparent text-slate-700 opacity-35'
+                                                    : `w-7 h-7 border-2 border-slate-600 bg-transparent text-slate-500
+                                                        ${clickable ? 'cursor-pointer hover:border-rose-500/50 hover:text-rose-400 hover:bg-rose-900/20' : ''}`
                                         }
                                         ${loading ? 'opacity-60' : ''}
                                     `}
@@ -204,7 +218,8 @@ export default function TournamentStepper({ status, compact = false, interactive
                                 </button>
                                 <span className={`absolute top-full mt-1.5 whitespace-nowrap text-[10px] font-medium hidden md:block
                                     ${state === 'current' ? 'text-white font-semibold' :
-                                        state === 'completed' ? 'text-rose-400' : 'text-slate-500'}
+                                        state === 'completed' ? 'text-rose-400' :
+                                            fadedFuture ? 'text-slate-600 opacity-35' : 'text-slate-500'}
                                 `}>
                                     {step.label}
                                 </span>
@@ -212,7 +227,8 @@ export default function TournamentStepper({ status, compact = false, interactive
 
                             {/* Connecting line */}
                             {i < STEPS.length - 1 && (
-                                <div className={`flex-1 h-0.5 mx-1 rounded-full transition-colors ${i < currentIndex ? 'bg-rose-600/60' : 'bg-slate-700'
+                                <div className={`flex-1 h-0.5 mx-1 rounded-full transition-colors ${i < currentIndex ? 'bg-rose-600/60' :
+                                        !isUserStep(i + 1) ? 'bg-slate-800' : 'bg-slate-700'
                                     }`} />
                             )}
                         </div>

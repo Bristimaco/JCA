@@ -125,7 +125,7 @@ function TournamentRow({ tournament, statusColors, statuses, competitionMembers,
                         </div>
                         <div className="flex items-center gap-3">
                             <span className="text-sm text-rose-400 hover:text-rose-300 cursor-pointer" onClick={onToggleExpand}>
-                                Leden ({members.length}) {isExpanded ? '▲' : '▼'}
+                                Deelnemers ({members.length}) {isExpanded ? '▲' : '▼'}
                             </span>
                             <button onClick={onEdit} className="text-sm text-rose-400 hover:text-rose-300">
                                 Bewerken
@@ -327,7 +327,7 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
                         title={!hasAgeCategories ? 'Voeg eerst leeftijdscategorieën toe' : ''}
                         className="rounded-md bg-rose-600 px-2.5 py-1 text-xs font-medium text-white hover:bg-rose-700 disabled:opacity-50"
                     >
-                        Leden toevoegen
+                        Deelnemers ophalen
                     </button>
                 )}
                 {pendingCount > 0 && (
@@ -367,7 +367,7 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
 
             {members.length === 0 ? (
                 <div className="px-4 py-6 text-center text-xs text-slate-400">
-                    Nog geen leden. Klik op "Leden toevoegen" om competitieleden toe te voegen.
+                    Nog geen deelnemers. Klik op "Deelnemers ophalen" om competitieleden toe te voegen.
                 </div>
             ) : (() => {
                 const showSplit = tournament.status !== 'preparation';
