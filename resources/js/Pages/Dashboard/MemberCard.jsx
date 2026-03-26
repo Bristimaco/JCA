@@ -1,4 +1,7 @@
-export default function MemberCard({ member, ageCategories }) {
+import { useForm } from '@inertiajs/react';
+
+export default function MemberCard({ member, ageCategories, showPaidButton = false }) {
+    const paidForm = useForm({});
     const genderLabel = member.gender === 'male' ? 'Man' : 'Vrouw';
     const statusLabels = { active: 'Actief', inactive: 'Inactief', suspended: 'Geschorst', pending: 'In afwachting' };
     const statusColors = { active: 'bg-emerald-500', inactive: 'bg-slate-400', suspended: 'bg-red-500', pending: 'bg-amber-500' };
@@ -60,6 +63,20 @@ export default function MemberCard({ member, ageCategories }) {
                                     <span className="text-slate-500 w-20 inline-block">Gewicht:</span>
                                     {member.weight_category_name || '-'}
                                 </p>
+                                {member.membership_renewal_date && (
+                                    <p>
+                                        <span className="text-slate-500 w-20 inline-block">Vernieuwing:</span>
+                                        <span className={(() => {
+                                            const d = new Date(member.membership_renewal_date);
+                                            const days = Math.ceil((d - new Date()) / (1000 * 60 * 60 * 24));
+                                            if (days < 0) return 'text-red-400 font-semibold';
+                                            if (days <= 30) return 'text-amber-400';
+                                            return '';
+                                        })()}>
+                                            {new Date(member.membership_renewal_date).toLocaleDateString('nl-BE')}
+                                        </span>
+                                    </p>
+                                )}
                             </div>
                         </div>
 
@@ -105,6 +122,19 @@ export default function MemberCard({ member, ageCategories }) {
                             <span className="inline-flex items-center rounded-full bg-rose-900/40 px-2.5 py-0.5 text-xs font-semibold text-rose-400">
                                 Competitie
                             </span>
+                        )}
+                        {showPaidButton && (
+                            <button
+                                onClick={() => {
+                                    if (confirm(`Lidgeld voor "${member.first_name} ${member.last_name}" markeren als betaald?`)) {
+                                        paidForm.post(`/admin/members/${member.id}/mark-paid`);
+                                    }
+                                }}
+                                disabled={paidForm.processing}
+                                className="inline-flex items-center rounded-full bg-emerald-900/40 px-2.5 py-0.5 text-xs font-semibold text-emerald-400 hover:bg-emerald-800/60 disabled:opacity-50 cursor-pointer"
+                            >
+                                Betaald
+                            </button>
                         )}
                     </div>
                 </div>

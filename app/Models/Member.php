@@ -29,6 +29,8 @@ class Member extends Model
             'membership_status' => MembershipStatus::class,
             'membership_start_date' => 'date',
             'membership_end_date' => 'date',
+            'membership_renewal_date' => 'date',
+            'membership_fee_reminded_at' => 'datetime',
             'photo_consent' => 'boolean',
             'is_competition' => 'boolean',
             'is_trainer' => 'boolean',
@@ -76,7 +78,7 @@ class Member extends Model
 
     public function fullName(): string
     {
-        return $this->first_name.' '.$this->last_name;
+        return $this->first_name . ' ' . $this->last_name;
     }
 
     public function isActive(): bool
@@ -102,5 +104,26 @@ class Member extends Model
     public function calculateAgeCategory(string $countryCode = 'BE', ?Carbon $referenceDate = null): ?AgeCategory
     {
         return AgeCategory::forBirthDate($this->date_of_birth, $countryCode, $referenceDate);
+    }
+
+    /**
+     * Resolve the best email address for this member.
+     * Minors: use primary guardian's user email, or guardian email.
+     * Adults: use member's own email, or linked user email.
+     */
+    public function resolveEmail(?Carbon $referenceDate = null): ?string
+    {
+        if ($this->isMinor($referenceDate)) {
+            $guardian = $this->primaryGuardian();
+            if ($guardian?->user?->email) {
+                return $guardian->user->email;
+            }
+        }
+
+        if ($this->email) {
+            return $this->email;
+        }
+
+        return $this->users()->first()?->email;
     }
 }

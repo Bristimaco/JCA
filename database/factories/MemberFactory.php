@@ -29,6 +29,7 @@ class MemberFactory extends Factory
             'weight_category_id' => null,
             'is_competition' => fake()->boolean(30),
             'is_trainer' => false,
+            'membership_renewal_date' => fake()->dateTimeBetween('+1 month', '+1 year'),
         ];
     }
 
@@ -44,6 +45,6 @@ class MemberFactory extends Factory
 
     public function withLicense(): static
     {
-        return $this->state(['license_number' => 'JCA-'.fake()->unique()->numerify('######')]);
+        return $this->state(['license_number' => 'JCA-' . fake()->unique()->numerify('######')]);
     }
 }

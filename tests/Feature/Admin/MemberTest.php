@@ -36,6 +36,7 @@ class MemberTest extends TestCase
             'address_postal_code' => '9000',
             'membership_status' => 'active',
             'is_competition' => false,
+            'membership_renewal_date' => '2027-03-26',
         ], $overrides);
     }
 
@@ -215,7 +216,7 @@ class MemberTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertInertia(
-            fn ($page) => $page
+            fn($page) => $page
                 ->component('Admin/Members')
                 ->has('members', 3)
                 ->has('ageCategories')

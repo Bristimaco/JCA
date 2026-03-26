@@ -497,6 +497,7 @@
                     <a href="#admin-dashboard" class="nav-link">Beheerderspaneel</a>
                     <a href="#admin-gebruikers" class="nav-link">Gebruikersbeheer</a>
                     <a href="#admin-leden" class="nav-link">Ledenbeheer</a>
+                    <a href="#admin-lidgeld" class="nav-link">Lidgeld &amp; Vernieuwing</a>
                     <a href="#admin-categorieen" class="nav-link">Categorie&#235;n</a>
                     <a href="#admin-club" class="nav-link">Clubinstellingen</a>
                 </div>
@@ -1285,6 +1286,9 @@
                 <li><strong>Gewichtscategorie</strong> &#8212; wordt gefilterd op basis van leeftijd</li>
                 <li><strong>Competitielid</strong> &#8212; vink aan als het lid aan toernooien mag deelnemen. Alleen
                     competitieleden kunnen worden toegevoegd aan toernooien.</li>
+                <li><strong>Vernieuwingsdatum</strong> (verplicht) &#8212; de datum waarop het lidgeld vernieuwd moet
+                    worden. Het systeem stuurt automatisch een herinnering per e-mail &#233;&#233;n maand voor deze
+                    datum.</li>
                 <li><strong>Foto</strong> &#8212; upload of maak een foto</li>
             </ul>
 
@@ -1310,6 +1314,49 @@
                 <li><strong>&#8220;Exporteren&#8221;</strong> &#8212; download alle leden als Excel-bestand</li>
                 <li><strong>&#8220;Importeren&#8221;</strong> &#8212; upload een Excel-bestand om leden in bulk aan te
                     maken of bij te werken</li>
+            </ul>
+
+            <h3 id="admin-lidgeld">Lidgeld &amp; Vernieuwing</h3>
+            <p><span class="role-badge role-admin">Beheerder</span></p>
+            <p>
+                Elk lid heeft een <strong>vernieuwingsdatum</strong> voor het lidgeld. Dit veld is verplicht bij het
+                aanmaken en bewerken van een lid.
+            </p>
+
+            <h4>Vernieuwingsdatum</h4>
+            <p>
+                De vernieuwingsdatum wordt weergegeven in de ledenlijst en op de ledenkaart. Wanneer de datum binnen
+                30 dagen valt, wordt deze oranje gemarkeerd. Wanneer de datum verlopen is, wordt deze rood
+                weergegeven.
+            </p>
+
+            <h4>Lidgeld betaald</h4>
+            <p>
+                Wanneer een lid het lidgeld heeft betaald, klik je op de knop <strong>&#8220;Betaald&#8221;</strong> in
+                de ledenlijst of op de ledenkaart. Dit doet het volgende:
+            </p>
+            <ul>
+                <li>De <strong>vernieuwingsdatum</strong> wordt automatisch met
+                    <strong>1 jaar</strong> vooruit gezet.
+                </li>
+                <li>De herinnering wordt gereset, zodat het systeem opnieuw een herinnering stuurt
+                    &#233;&#233;n maand voor de nieuwe vernieuwingsdatum.</li>
+            </ul>
+
+            <h4>Automatische herinnering</h4>
+            <p>
+                Het systeem stuurt automatisch een herinneringsmail naar het lid (of de ouder/voogd bij minderjarigen)
+                wanneer de vernieuwingsdatum binnen <strong>30 dagen</strong> valt. Per lid wordt slechts
+                &#233;&#233;n herinnering per jaar verstuurd.
+            </p>
+            <p>
+                De e-mail wordt gestuurd naar hetzelfde adres als bij toernooiuitnodigingen:
+            </p>
+            <ul>
+                <li><strong>Minderjarige leden</strong>: e-mail van de primaire voogd (of het gekoppelde
+                    gebruikersaccount van de voogd)</li>
+                <li><strong>Volwassen leden</strong>: het e-mailadres van het lid, of het gekoppelde
+                    gebruikersaccount</li>
             </ul>
 
             <h3 id="admin-categorieen">Leeftijds- en Gewichtscategorie&#235;n</h3>
@@ -1621,6 +1668,13 @@
             <p>
                 Na het afsluiten van het toernooi (door de trainer) wordt automatisch een rapport per e-mail verstuurd
                 met een samenvatting van de resultaten.
+            </p>
+
+            <h4>6. Herinnering lidgeld</h4>
+            <p>
+                E&#233;n maand voor de vernieuwingsdatum van het lidgeld ontvangt het lid (of de ouder/voogd bij
+                minderjarigen) automatisch een herinneringsmail. De mail bevat de vernieuwingsdatum en een verzoek
+                om het lidgeld tijdig te betalen. Er wordt slechts &#233;&#233;n herinnering per jaar verstuurd.
             </p>
 
             <h2 id="installeren">App installeren op je telefoon</h2>

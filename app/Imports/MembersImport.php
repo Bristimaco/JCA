@@ -13,7 +13,7 @@ class MembersImport implements ToModel, WithHeadingRow, WithValidation
     {
         // Update if id exists, else create
         $member = isset($row['id']) ? Member::find($row['id']) : null;
-        if (! $member) {
+        if (!$member) {
             $member = new Member;
         }
         $member->fill([
@@ -30,6 +30,7 @@ class MembersImport implements ToModel, WithHeadingRow, WithValidation
             'membership_status' => $row['membership_status'] ?? null,
             'membership_start_date' => $row['membership_start_date'] ?? null,
             'membership_end_date' => $row['membership_end_date'] ?? null,
+            'membership_renewal_date' => $row['membership_renewal_date'] ?? null,
             'is_competition' => $row['is_competition'] ?? null,
             'is_trainer' => $row['is_trainer'] ?? null,
             'nationality' => $row['nationality'] ?? null,

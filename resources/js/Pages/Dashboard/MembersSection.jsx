@@ -66,6 +66,7 @@ export default function MembersSection({ members, ageCategories, weightCategorie
                         <MemberCard
                             member={viewingMember}
                             ageCategories={ageCategories}
+                            showPaidButton={true}
                         />
                         {viewingMember.is_competition && viewingMember.tournament_results && viewingMember.tournament_results.length > 0 && (
                             <div>
@@ -197,6 +198,7 @@ export default function MembersSection({ members, ageCategories, weightCategorie
 
 function MemberRow({ member, ageCategoryName, weightCategoryName, onView, onEdit }) {
     const deleteForm = useForm({});
+    const paidForm = useForm({});
     const statusLabels = { active: 'Actief', inactive: 'Inactief', suspended: 'Geschorst', pending: 'In afwachting' };
     const statusColors = { active: 'bg-emerald-900/40 text-emerald-400', inactive: 'bg-slate-800 text-slate-400', suspended: 'bg-red-900/40 text-red-400', pending: 'bg-yellow-900/40 text-yellow-700' };
 
@@ -205,6 +207,18 @@ function MemberRow({ member, ageCategoryName, weightCategoryName, onView, onEdit
             deleteForm.delete(`/admin/members/${member.id}`);
         }
     };
+
+    const handleMarkPaid = () => {
+        if (confirm(`Lidgeld voor "${member.first_name} ${member.last_name}" markeren als betaald?`)) {
+            paidForm.post(`/admin/members/${member.id}/mark-paid`);
+        }
+    };
+
+    const renewalDate = member.membership_renewal_date ? new Date(member.membership_renewal_date) : null;
+    const now = new Date();
+    const daysUntilRenewal = renewalDate ? Math.ceil((renewalDate - now) / (1000 * 60 * 60 * 24)) : null;
+    const renewalSoon = daysUntilRenewal !== null && daysUntilRenewal <= 30;
+    const renewalOverdue = daysUntilRenewal !== null && daysUntilRenewal < 0;
 
     return (
         <div className={`px-6 py-4 flex items-center justify-between gap-4 ${member.membership_status !== 'active' ? 'opacity-60' : ''}`}>
@@ -229,12 +243,27 @@ function MemberRow({ member, ageCategoryName, weightCategoryName, onView, onEdit
                             <span className="ml-1 text-rose-400">· Competitie</span>
                         )}
                     </p>
+                    {renewalDate && (
+                        <p className={`text-xs mt-0.5 ${renewalOverdue ? 'text-red-400 font-semibold' : renewalSoon ? 'text-amber-400' : 'text-slate-500'}`}>
+                            Vernieuwing: {renewalDate.toLocaleDateString('nl-BE')}
+                            {renewalOverdue && ' (verlopen)'}
+                            {renewalSoon && !renewalOverdue && ` (${daysUntilRenewal} dagen)`}
+                        </p>
+                    )}
                 </div>
             </div>
             <div className="flex items-center gap-3">
                 <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${statusColors[member.membership_status] || ''}`}>
                     {statusLabels[member.membership_status] || member.membership_status}
                 </span>
+                <button
+                    onClick={handleMarkPaid}
+                    disabled={paidForm.processing}
+                    className="text-sm text-emerald-400 hover:text-emerald-300 disabled:opacity-50"
+                    title="Lidgeld betaald — vernieuwingsdatum +1 jaar"
+                >
+                    Betaald
+                </button>
                 <button onClick={onView} className="text-sm text-slate-400 hover:text-slate-200">
                     Kaart
                 </button>
@@ -271,6 +300,7 @@ function MemberForm({ member, onSuccess, onCancel, ageCategories, weightCategori
         membership_status: member?.membership_status || 'active',
         is_competition: member?.is_competition || false,
         is_trainer: member?.is_trainer || false,
+        membership_renewal_date: member?.membership_renewal_date ? member.membership_renewal_date.split('T')[0] : '',
         photo: null,
     });
 
@@ -411,6 +441,12 @@ function MemberForm({ member, onSuccess, onCancel, ageCategories, weightCategori
                         <option value="suspended">Geschorst</option>
                         <option value="pending">In afwachting</option>
                     </select>
+                </div>
+                <div>
+                    <label className="block text-xs font-medium text-slate-400 mb-1">Vernieuwingsdatum *</label>
+                    <input type="date" value={form.data.membership_renewal_date} onChange={(e) => form.setData('membership_renewal_date', e.target.value)}
+                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500" />
+                    {form.errors.membership_renewal_date && <p className="text-xs text-red-400 mt-1">{form.errors.membership_renewal_date}</p>}
                 </div>
                 <div className="flex items-end pb-1">
                     <label className="flex items-center gap-2 text-sm text-slate-300">
