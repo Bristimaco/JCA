@@ -183,6 +183,7 @@ function AdminTile({ pendingCount, pendingUsers, adminCounters }) {
     const counters = [
         { label: 'Nieuwe aanvragen', value: pendingCount, icon: '👤', bg: 'bg-rose-900/30', text: 'text-rose-400', ring: 'ring-rose-700/30' },
         { label: 'Inactieve leden', value: adminCounters?.inactiveMemberCount ?? 0, icon: '⏸', bg: 'bg-slate-700/50', text: 'text-slate-300', ring: 'ring-slate-600/30' },
+        { label: 'Vernieuwing nodig', value: adminCounters?.renewalDueCount ?? 0, icon: '💳', bg: 'bg-amber-900/30', text: 'text-amber-400', ring: 'ring-amber-700/30' },
         { label: 'Komende toernooien', value: adminCounters?.upcomingTournamentCount ?? 0, icon: '📅', bg: 'bg-blue-900/30', text: 'text-blue-400', ring: 'ring-blue-700/30' },
         { label: 'Actieve toernooien', value: adminCounters?.activeTournamentCount ?? 0, icon: '🏆', bg: 'bg-emerald-900/30', text: 'text-emerald-400', ring: 'ring-emerald-700/30' },
     ];

@@ -41,6 +41,7 @@ class DashboardController extends Controller
 
             $props['adminCounters'] = [
                 'inactiveMemberCount' => Member::where('membership_status', MembershipStatus::Inactive)->count(),
+                'renewalDueCount' => Member::where('membership_renewal_date', '<=', now()->addDays(30))->count(),
                 'upcomingTournamentCount' => Tournament::whereIn('status', [
                     TournamentStatus::Preparation,
                     TournamentStatus::InvitationsSent,

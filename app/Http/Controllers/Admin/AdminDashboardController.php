@@ -10,6 +10,7 @@ use App\Models\Member;
 use App\Models\User;
 use App\Models\WeightCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -26,19 +27,19 @@ class AdminDashboardController extends Controller
             ->with('members:id')
             ->orderBy('name')
             ->get(['id', 'name', 'email', 'role', 'is_active', 'results_interest'])
-            ->map(fn (User $u) => [
+            ->map(fn(User $u) => [
                 ...$u->toArray(),
                 'member_ids' => $u->members->pluck('id')->values()->all(),
             ]);
 
         $allMembers = Member::orderBy('last_name')->orderBy('first_name')
             ->get(['id', 'first_name', 'last_name'])
-            ->map(fn (Member $m) => [
+            ->map(fn(Member $m) => [
                 'id' => $m->id,
                 'name' => $m->fullName(),
             ]);
 
-        $roles = collect(UserRole::cases())->map(fn (UserRole $role) => [
+        $roles = collect(UserRole::cases())->map(fn(UserRole $role) => [
             'value' => $role->value,
             'label' => $role->label(),
         ])->values()->all();
@@ -46,6 +47,18 @@ class AdminDashboardController extends Controller
         $ageCategories = AgeCategory::ordered()->get();
 
         $weightCategories = WeightCategory::ordered()->get();
+
+        $renewalDueCount = Member::where('membership_renewal_date', '<=', Carbon::today()->addDays(30))->count();
+
+        $renewalDueMembers = Member::where('membership_renewal_date', '<=', Carbon::today()->addDays(30))
+            ->orderBy('membership_renewal_date')
+            ->get(['id', 'first_name', 'last_name', 'email', 'membership_renewal_date'])
+            ->map(fn(Member $m) => [
+                'id' => $m->id,
+                'name' => $m->fullName(),
+                'email' => $m->email,
+                'membership_renewal_date' => $m->membership_renewal_date->toDateString(),
+            ]);
 
         return Inertia::render('Admin/Dashboard', [
             'pendingUsers' => $pendingUsers,
@@ -55,6 +68,8 @@ class AdminDashboardController extends Controller
             'weightCategories' => $weightCategories,
             'allMembers' => $allMembers,
             'clubSettings' => ClubSettings::current(),
+            'renewalDueCount' => $renewalDueCount,
+            'renewalDueMembers' => $renewalDueMembers,
         ]);
     }
 }
