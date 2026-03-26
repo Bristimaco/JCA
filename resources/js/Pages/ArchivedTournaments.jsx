@@ -12,14 +12,20 @@ export default function ArchivedTournaments({ tournaments }) {
     };
 
     const resultBadge = (result) => {
-        const colors =
-            result === '1e plaats' ? 'bg-yellow-900/40 text-yellow-400' :
-                result === '2e plaats' ? 'bg-slate-200 text-slate-200' :
-                    result === '3e plaats' ? 'bg-amber-900/40 text-amber-300' :
-                        'bg-slate-100 text-slate-400';
+        const map = {
+            '1e plaats': { icon: '🥇', colors: 'bg-yellow-900/40 text-yellow-400' },
+            '2e plaats': { icon: '🥈', colors: 'bg-slate-600 text-slate-200' },
+            '3e plaats': { icon: '🥉', colors: 'bg-amber-900/40 text-amber-300' },
+            '5e plaats': { icon: '5', colors: 'bg-sky-900/40 text-sky-400' },
+            '7e plaats': { icon: '7', colors: 'bg-indigo-900/40 text-indigo-400' },
+            'Deelgenomen': { icon: '✓', colors: 'bg-emerald-900/40 text-emerald-400' },
+            'Niet opgekomen': { icon: '✗', colors: 'bg-red-900/40 text-red-400' },
+            'Gediskwalificeerd': { icon: '⊘', colors: 'bg-red-900/40 text-red-400' },
+        };
+        const entry = map[result] || { icon: '·', colors: 'bg-slate-700 text-slate-400' };
         return (
-            <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ${colors}`}>
-                {result}
+            <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold ${entry.colors}`}>
+                <span>{entry.icon}</span> {result}
             </span>
         );
     };
@@ -94,25 +100,28 @@ export default function ArchivedTournaments({ tournaments }) {
                             </div>
 
                             {expandedId === t.id && (
-                                <div className="border-t border-slate-800 px-5 py-4 bg-slate-800/30">
+                                <div className="border-t border-slate-800 bg-slate-800/30">
                                     {t.results.length === 0 ? (
-                                        <p className="text-sm text-slate-500">Geen resultaten beschikbaar.</p>
+                                        <p className="px-5 py-4 text-sm text-slate-500">Geen resultaten beschikbaar.</p>
                                     ) : (
-                                        <div className="space-y-2">
-                                            {t.results.map((r, idx) => (
-                                                <div key={idx} className="flex items-center justify-between text-sm">
-                                                    <span className="text-slate-300">{r.member_name}</span>
-                                                    <div className="flex items-center gap-2">
-                                                        {resultBadge(r.result)}
-                                                        {r.notes && (
-                                                            <span className="text-xs text-slate-400 max-w-[200px] truncate" title={r.notes}>
-                                                                {r.notes}
-                                                            </span>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
+                                        <table className="w-full text-sm">
+                                            <thead>
+                                                <tr className="border-b border-slate-700/50">
+                                                    <th className="px-5 py-2 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-500">Naam</th>
+                                                    <th className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-500">Resultaat</th>
+                                                    <th className="px-5 py-2 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-500">Opmerking</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {t.results.map((r, idx) => (
+                                                    <tr key={idx} className={idx % 2 === 0 ? 'bg-slate-800/20' : ''}>
+                                                        <td className="px-5 py-2.5 text-slate-300 font-medium">{r.member_name}</td>
+                                                        <td className="px-3 py-2.5">{resultBadge(r.result)}</td>
+                                                        <td className="px-5 py-2.5 text-xs text-slate-400 italic">{r.notes || '—'}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
                                     )}
                                 </div>
                             )}

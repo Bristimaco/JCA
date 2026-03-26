@@ -171,7 +171,7 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                                                                 <span>{member.name}</span>
                                                                 {member.result && (
                                                                     <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ${member.result === '1e plaats' ? 'bg-yellow-900/40 text-yellow-400' :
-                                                                        member.result === '2e plaats' ? 'bg-slate-200 text-slate-200' :
+                                                                        member.result === '2e plaats' ? 'bg-slate-600 text-slate-200' :
                                                                             member.result === '3e plaats' ? 'bg-amber-900/40 text-amber-300' :
                                                                                 'bg-slate-800 text-slate-400'
                                                                         }`}>
