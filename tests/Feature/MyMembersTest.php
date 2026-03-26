@@ -6,7 +6,6 @@ use App\Enums\UserRole;
 use App\Models\Member;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 
 class MyMembersTest extends TestCase
@@ -41,7 +40,7 @@ class MyMembersTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertInertia(
-            fn ($page) => $page
+            fn($page) => $page
                 ->component('MyMembers')
                 ->has('members', 2)
                 ->has('ageCategories')
@@ -151,7 +150,7 @@ class MyMembersTest extends TestCase
         $user->members()->attach($member);
 
         $response = $this->actingAs($user)->patch("/mijn-leden/{$member->id}", [
-            'photo' => UploadedFile::fake()->image('photo.jpg', 200, 200),
+            'photo' => 'data:image/jpeg;base64,/9j/4AAQSkZJRg==',
         ]);
 
         $response->assertRedirect();
@@ -176,7 +175,7 @@ class MyMembersTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertInertia(
-            fn ($page) => $page
+            fn($page) => $page
                 ->component('Dashboard')
                 ->where('myMemberCount', 2)
         );

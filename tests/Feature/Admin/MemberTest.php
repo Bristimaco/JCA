@@ -8,7 +8,6 @@ use App\Models\Member;
 use App\Models\User;
 use App\Models\WeightCategory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 
 class MemberTest extends TestCase
@@ -56,7 +55,7 @@ class MemberTest extends TestCase
     public function test_admin_can_create_member_with_photo(): void
     {
         $response = $this->actingAs($this->admin())->post('/admin/members', $this->validData([
-            'photo' => UploadedFile::fake()->image('photo.jpg', 200, 200),
+            'photo' => 'data:image/jpeg;base64,/9j/4AAQSkZJRg==',
         ]));
 
         $response->assertRedirect();
@@ -155,7 +154,7 @@ class MemberTest extends TestCase
         $member = Member::factory()->create(['photo_data' => base64_encode('old'), 'photo_mime' => 'image/jpeg']);
 
         $response = $this->actingAs($this->admin())->patch("/admin/members/{$member->id}", $this->validData([
-            'photo' => UploadedFile::fake()->image('new.jpg', 200, 200),
+            'photo' => 'data:image/png;base64,iVBORw0KGgoAAAANS==',
         ]));
 
         $response->assertRedirect();
@@ -216,7 +215,7 @@ class MemberTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertInertia(
-            fn ($page) => $page
+            fn($page) => $page
                 ->component('Admin/Members')
                 ->has('members', 3)
                 ->has('ageCategories')

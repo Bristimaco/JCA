@@ -163,11 +163,8 @@ function MyMemberForm({ member, ageCategories, weightCategories, onSuccess, onCa
         });
         if (formData.weight_category_id === '') formData.weight_category_id = null;
 
-        form.transform(() => ({ ...formData, _method: 'PATCH' }));
-        form.post(`/mijn-leden/${member.id}`, {
-            onSuccess,
-            forceFormData: true,
-        });
+        form.transform(() => formData);
+        form.patch(`/mijn-leden/${member.id}`, { onSuccess });
     };
 
     return (
@@ -215,7 +212,7 @@ function MyMemberForm({ member, ageCategories, weightCategories, onSuccess, onCa
                     {form.errors.weight_category_id && <p className="text-xs text-red-400 mt-1">{form.errors.weight_category_id}</p>}
                 </div>
                 <div>
-                    <PhotoCapture onCapture={(file) => form.setData('photo', file)} error={form.errors.photo} />
+                    <PhotoCapture onCapture={(dataUrl) => form.setData('photo', dataUrl)} currentPhotoUrl={member?.photo_url} error={form.errors.photo} />
                 </div>
             </div>
             <div className="flex gap-2">

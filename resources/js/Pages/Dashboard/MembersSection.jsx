@@ -79,9 +79,9 @@ export default function MembersSection({ members, ageCategories, weightCategorie
                                                     <p className="text-xs text-slate-400">{new Date(r.tournament_date).toLocaleDateString('nl-BE', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
                                                 </div>
                                                 <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium flex-shrink-0 ${r.result.includes('1e') ? 'bg-yellow-900/40 text-yellow-400' :
-                                                        r.result.includes('2e') ? 'bg-slate-200 text-slate-300' :
-                                                            r.result.includes('3e') ? 'bg-amber-900/40 text-amber-300' :
-                                                                'bg-slate-100 text-slate-400'
+                                                    r.result.includes('2e') ? 'bg-slate-200 text-slate-300' :
+                                                        r.result.includes('3e') ? 'bg-amber-900/40 text-amber-300' :
+                                                            'bg-slate-100 text-slate-400'
                                                     }`}>
                                                     {r.result}
                                                 </span>
@@ -302,17 +302,12 @@ function MemberForm({ member, onSuccess, onCancel, ageCategories, weightCategori
         if (formData.belt_rank === '') formData.belt_rank = null;
 
         if (isEditing) {
-            // Use POST with _method for file uploads
-            form.transform(() => ({ ...formData, _method: 'PATCH' }));
-            form.post(`/admin/members/${member.id}`, {
-                onSuccess,
-                forceFormData: true,
-            });
+            form.transform(() => formData);
+            form.patch(`/admin/members/${member.id}`, { onSuccess });
         } else {
             form.transform(() => formData);
             form.post('/admin/members', {
                 onSuccess: () => { form.reset(); onSuccess(); },
-                forceFormData: true,
             });
         }
     };
@@ -432,7 +427,7 @@ function MemberForm({ member, onSuccess, onCancel, ageCategories, weightCategori
                     </label>
                 </div>
                 <div>
-                    <PhotoCapture onCapture={(file) => form.setData('photo', file)} error={form.errors.photo} />
+                    <PhotoCapture onCapture={(dataUrl) => form.setData('photo', dataUrl)} currentPhotoUrl={member?.photo_url} error={form.errors.photo} />
                 </div>
             </div>
             <div className="flex gap-2">

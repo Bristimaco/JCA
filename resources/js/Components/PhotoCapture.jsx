@@ -6,13 +6,45 @@ function hasCameraApi() {
         && typeof navigator.mediaDevices.getUserMedia === 'function';
 }
 
-export default function PhotoCapture({ onCapture, error }) {
+function fileToBase64DataUrl(file, maxSize = 1200) {
+    return new Promise((resolve) => {
+        const img = new Image();
+        const url = URL.createObjectURL(file);
+        img.onload = () => {
+            URL.revokeObjectURL(url);
+            let { width, height } = img;
+            if (width > maxSize || height > maxSize) {
+                if (width > height) {
+                    height = Math.round(height * maxSize / width);
+                    width = maxSize;
+                } else {
+                    width = Math.round(width * maxSize / height);
+                    height = maxSize;
+                }
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+            resolve(canvas.toDataURL('image/jpeg', 0.85));
+        };
+        img.onerror = () => {
+            URL.revokeObjectURL(url);
+            resolve(null);
+        };
+        img.src = url;
+    });
+}
+
+export default function PhotoCapture({ onCapture, currentPhotoUrl, error }) {
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
     const [cameraActive, setCameraActive] = useState(false);
     const [stream, setStream] = useState(null);
     const [preview, setPreview] = useState(null);
     const [cameraError, setCameraError] = useState(null);
+
+    const displaySrc = preview || currentPhotoUrl;
 
     useEffect(() => {
         if (videoRef.current && stream) {
@@ -59,21 +91,20 @@ export default function PhotoCapture({ onCapture, error }) {
         canvas.height = video.videoHeight;
         canvas.getContext('2d').drawImage(video, 0, 0);
 
-        canvas.toBlob((blob) => {
-            if (blob) {
-                const file = new File([blob], 'camera-foto.jpg', { type: 'image/jpeg' });
-                setPreview(URL.createObjectURL(blob));
-                onCapture(file);
-                stopCamera();
-            }
-        }, 'image/jpeg', 0.85);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+        setPreview(dataUrl);
+        onCapture(dataUrl);
+        stopCamera();
     }, [onCapture, stopCamera]);
 
-    const handleFileChange = (e) => {
+    const handleFileChange = async (e) => {
         const file = e.target.files[0];
         if (file) {
-            setPreview(URL.createObjectURL(file));
-            onCapture(file);
+            const dataUrl = await fileToBase64DataUrl(file);
+            if (dataUrl) {
+                setPreview(dataUrl);
+                onCapture(dataUrl);
+            }
         }
     };
 
@@ -86,11 +117,11 @@ export default function PhotoCapture({ onCapture, error }) {
         <div>
             <label className="block text-xs font-medium text-slate-400 mb-1">Foto</label>
 
-            {preview && (
+            {displaySrc && (
                 <div className="mb-2 relative inline-block">
-                    <img src={preview} alt="Preview" className="w-32 h-32 object-cover rounded-lg border border-slate-700" />
+                    <img src={displaySrc} alt="Preview" className="w-32 h-32 object-cover rounded-lg border border-slate-700" />
                     <button type="button" onClick={clearPhoto}
-                        className="absolute -top-1.5 -right-1.5 bg-red-900/300 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs leading-none hover:bg-red-600">
+                        className="absolute -top-1.5 -right-1.5 bg-red-900/80 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs leading-none hover:bg-red-600">
                         &times;
                     </button>
                 </div>
@@ -113,7 +144,7 @@ export default function PhotoCapture({ onCapture, error }) {
                 </div>
             ) : (
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                    <input type="file" accept="image/*" capture="environment" onChange={handleFileChange}
+                    <input type="file" accept="image/*" onChange={handleFileChange}
                         className="w-full text-sm text-slate-500 file:mr-2 file:rounded-md file:border-0 file:bg-slate-100 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-slate-300 hover:file:bg-slate-200" />
                     {hasCameraApi() && (
                         <button type="button" onClick={startCamera}
