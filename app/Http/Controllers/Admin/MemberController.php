@@ -32,7 +32,7 @@ class MemberController extends Controller
             'belt_rank' => ['nullable', 'string', Rule::in(array_column(BeltRank::cases(), 'value'))],
         ]);
 
-        if (!empty($validated['photo']) && str_starts_with($validated['photo'], 'data:image/')) {
+        if (! empty($validated['photo']) && str_starts_with($validated['photo'], 'data:image/')) {
             [$meta, $base64] = explode(',', $validated['photo'], 2);
             preg_match('#data:(image/[a-z+]+);#', $meta, $m);
             $validated['photo_mime'] = $m[1] ?? 'image/jpeg';
@@ -66,7 +66,7 @@ class MemberController extends Controller
             'address_street' => ['nullable', 'string', 'max:255'],
             'address_city' => ['nullable', 'string', 'max:255'],
             'address_postal_code' => ['nullable', 'string', 'max:10'],
-            'license_number' => ['nullable', 'string', 'max:255', 'unique:members,license_number,' . $member->id],
+            'license_number' => ['nullable', 'string', 'max:255', 'unique:members,license_number,'.$member->id],
             'weight_category_id' => ['nullable', 'integer', 'exists:weight_categories,id'],
             'membership_status' => ['required', 'string', 'in:active,inactive,suspended,pending'],
             'is_competition' => ['boolean'],
@@ -75,7 +75,7 @@ class MemberController extends Controller
             'belt_rank' => ['nullable', 'string', Rule::in(array_column(BeltRank::cases(), 'value'))],
         ]);
 
-        if (!empty($validated['photo']) && str_starts_with($validated['photo'], 'data:image/')) {
+        if (! empty($validated['photo']) && str_starts_with($validated['photo'], 'data:image/')) {
             [$meta, $base64] = explode(',', $validated['photo'], 2);
             preg_match('#data:(image/[a-z+]+);#', $meta, $m);
             $validated['photo_mime'] = $m[1] ?? 'image/jpeg';

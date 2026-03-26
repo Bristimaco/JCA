@@ -1,5 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import AppLayout from '../Layouts/AppLayout';
+import TournamentStepper from '../Components/TournamentStepper';
 
 export default function TournamentDetail({ tournament, participantGroups, totalParticipants }) {
     const t = tournament;
@@ -24,17 +25,16 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
         <AppLayout>
             <Head title={t.name} />
 
-            <div className="mb-6 flex items-center gap-4">
+            <div className="mb-2 flex items-center gap-4">
                 <Link href="/" className="text-sm font-medium text-slate-400 hover:text-slate-400">
                     &larr; Dashboard
                 </Link>
                 <h1 className="text-2xl font-bold text-white tracking-tight">{t.name}</h1>
-                <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${statusColors[t.status] || ''}`}>
-                    {t.status_label}
-                </span>
             </div>
 
-            <div className="grid gap-6 lg:grid-cols-3">
+            <TournamentStepper status={t.status} />
+
+            <div className="grid gap-6 lg:grid-cols-3 mt-4">
                 {/* Left column: Info + map */}
                 <div className="lg:col-span-1 space-y-4">
                     {/* Tournament info card */}

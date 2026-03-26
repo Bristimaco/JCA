@@ -1,6 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import AppLayout from '../Layouts/AppLayout';
 import { useState } from 'react';
+import TournamentStepper from '../Components/TournamentStepper';
 
 export default function ArchivedTournaments({ tournaments }) {
     const [expandedId, setExpandedId] = useState(null);
@@ -51,9 +52,7 @@ export default function ArchivedTournaments({ tournaments }) {
                                     <div className="min-w-0 flex-1">
                                         <div className="flex items-center gap-3 mb-1">
                                             <h2 className="text-lg font-semibold text-white">{t.name}</h2>
-                                            <span className="inline-flex items-center rounded-full bg-purple-900/40 px-2 py-0.5 text-xs font-semibold text-purple-400">
-                                                Gearchiveerd
-                                            </span>
+                                            <TournamentStepper status={t.status || 'archived'} compact />
                                         </div>
                                         <p className="text-sm text-slate-500">{formatDate(t.tournament_date)}</p>
                                         <p className="text-sm text-slate-500">

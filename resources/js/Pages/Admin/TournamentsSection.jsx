@@ -1,5 +1,6 @@
 import { useForm, usePage, router } from '@inertiajs/react';
 import { useState } from 'react';
+import TournamentStepper from '../../Components/TournamentStepper';
 
 export default function TournamentsSection({ tournaments, ageCategories, competitionMembers, statuses, availableCoaches }) {
     const { flash } = usePage().props;
@@ -103,6 +104,7 @@ function TournamentRow({ tournament, statusColors, statuses, competitionMembers,
 
     return (
         <div className="px-6 py-4">
+            <TournamentStepper status={tournament.status} interactive={true} tournamentId={tournament.id} />
             <div className="flex gap-6">
                 {/* Left: details */}
                 <div className="min-w-0 flex-1">
@@ -115,12 +117,9 @@ function TournamentRow({ tournament, statusColors, statuses, competitionMembers,
                             </p>
                         </div>
                         <div className="flex items-center gap-3">
-                            <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${statusColors[tournament.status] || ''}`}>
-                                {statusLabel}
-                            </span>
-                            <button onClick={onToggleExpand} className="text-sm text-slate-400 hover:text-slate-200">
+                            <span className="text-sm text-rose-400 hover:text-rose-300 cursor-pointer" onClick={onToggleExpand}>
                                 Leden ({members.length}) {isExpanded ? '▲' : '▼'}
-                            </button>
+                            </span>
                             <button onClick={onEdit} className="text-sm text-rose-400 hover:text-rose-300">
                                 Bewerken
                             </button>
@@ -258,6 +257,7 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
     const handleRegister = (memberId) => {
         setProcessing(prev => ({ ...prev, [memberId]: true }));
         router.post(`/admin/tournaments/${tournament.id}/register/${memberId}`, {}, {
+            preserveScroll: true,
             onFinish: () => setProcessing(prev => ({ ...prev, [memberId]: false })),
         });
     };
@@ -266,6 +266,7 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
         if (confirm(`${memberName} uitschrijven?`)) {
             setProcessing(prev => ({ ...prev, [memberId]: true }));
             router.post(`/admin/tournaments/${tournament.id}/unregister/${memberId}`, {}, {
+                preserveScroll: true,
                 onFinish: () => setProcessing(prev => ({ ...prev, [memberId]: false })),
             });
         }
@@ -308,13 +309,16 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
     const handleInvite = (memberId) => {
         setProcessing(prev => ({ ...prev, [memberId]: true }));
         router.post(`/admin/tournaments/${tournament.id}/invite/${memberId}`, {}, {
+            preserveScroll: true,
             onFinish: () => setProcessing(prev => ({ ...prev, [memberId]: false })),
         });
     };
 
     const handleRemove = (memberId, memberName) => {
         if (confirm(`${memberName} verwijderen van het toernooi?`)) {
-            router.delete(`/admin/tournaments/${tournament.id}/members/${memberId}`);
+            router.delete(`/admin/tournaments/${tournament.id}/members/${memberId}`, {
+                preserveScroll: true,
+            });
         }
     };
 
@@ -332,13 +336,16 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
 
     const handleRemoveCoach = (coachId, coachName) => {
         if (confirm(`${coachName} verwijderen als trainer?`)) {
-            router.delete(`/admin/tournaments/${tournament.id}/coaches/${coachId}`);
+            router.delete(`/admin/tournaments/${tournament.id}/coaches/${coachId}`, {
+                preserveScroll: true,
+            });
         }
     };
 
     const handleAdminAccept = (memberId) => {
         setProcessing(prev => ({ ...prev, [memberId]: true }));
         router.post(`/admin/tournaments/${tournament.id}/accept/${memberId}`, {}, {
+            preserveScroll: true,
             onFinish: () => setProcessing(prev => ({ ...prev, [memberId]: false })),
         });
     };
@@ -346,6 +353,7 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
     const handleAdminDecline = (memberId) => {
         setProcessing(prev => ({ ...prev, [memberId]: true }));
         router.post(`/admin/tournaments/${tournament.id}/decline/${memberId}`, {}, {
+            preserveScroll: true,
             onFinish: () => setProcessing(prev => ({ ...prev, [memberId]: false })),
         });
     };

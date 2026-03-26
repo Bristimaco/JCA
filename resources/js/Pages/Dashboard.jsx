@@ -1,6 +1,7 @@
 import { Head, Link, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import AppLayout from '../Layouts/AppLayout';
+import TournamentStepper from '../Components/TournamentStepper';
 
 const moduleIcons = {
     'Mijn Leden': (
@@ -267,10 +268,7 @@ function ActiveTournaments({ tournaments }) {
                         )}
                         <div className="p-4">
                             <div className="flex items-center gap-2">
-                                <span className="inline-flex items-center gap-1 rounded-full bg-red-100 text-red-700 px-2.5 py-0.5 text-xs font-semibold">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
-                                    Live
-                                </span>
+                                <TournamentStepper status={t.status || 'started'} compact />
                                 <p className="font-semibold text-white">{t.name}</p>
                             </div>
                             <p className="text-sm text-slate-400 mt-1">{formatDate(t.tournament_date)}</p>
@@ -328,6 +326,9 @@ function MyTournaments({ tournaments }) {
                                         />
                                     )}
                                     <div className="p-4">
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <TournamentStepper status={t.status} compact />
+                                        </div>
                                         <p className="font-semibold text-white">{t.name}</p>
                                         <p className="text-sm text-slate-400 mt-1">{formatDate(t.tournament_date)}</p>
                                         <p className="text-xs text-slate-500 mt-1">
@@ -412,9 +413,7 @@ function CoachTournaments({ tournaments }) {
                     >
                         <div className="p-4">
                             <div className="flex items-center gap-2 mb-1">
-                                <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ${statusColors[t.status] || 'bg-slate-700 text-slate-300'}`}>
-                                    {t.status_label}
-                                </span>
+                                <TournamentStepper status={t.status} compact />
                                 <span className="inline-flex items-center rounded-full bg-rose-900/40 px-2 py-0.5 text-xs font-semibold text-rose-400">
                                     Trainer
                                 </span>

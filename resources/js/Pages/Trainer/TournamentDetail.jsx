@@ -1,6 +1,7 @@
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import AppLayout from '../../Layouts/AppLayout';
+import TournamentStepper from '../../Components/TournamentStepper';
 
 const resultOptions = [
     { value: '', label: '— Kies resultaat —' },
@@ -89,18 +90,17 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
         <AppLayout>
             <Head title={`Trainer - ${t.name}`} />
 
-            <div className="mb-6 flex items-center gap-4">
+            <div className="mb-2 flex items-center gap-4">
                 <Link href="/" className="text-sm text-slate-500 hover:text-slate-300">
                     &larr; Dashboard
                 </Link>
                 <h1 className="text-2xl font-bold text-white">{t.name}</h1>
-                <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${statusColors[t.status] || ''}`}>
-                    {t.status_label}
-                </span>
                 <span className="inline-flex items-center rounded-full bg-rose-900/30 px-2.5 py-0.5 text-xs font-medium text-rose-400">
                     Trainer modus
                 </span>
             </div>
+
+            <TournamentStepper status={t.status} />
 
             {flash.status && (
                 <div className="mb-4 rounded-md bg-emerald-900/30 border ring-1 ring-emerald-700/30 p-3">
