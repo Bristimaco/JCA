@@ -26,7 +26,7 @@ class InvoiceController extends Controller
             return back()->with('status', 'Deze factuur heeft al een betaallink.');
         }
 
-        $memberNames = $invoice->lines->map(fn($l) => $l->member?->fullName() ?? 'Onbekend')->join(', ');
+        $memberNames = $invoice->lines->map(fn ($l) => $l->member?->fullName() ?? 'Onbekend')->join(', ');
         $description = "Lidgeld {$invoice->year} — {$memberNames}";
 
         $mollieService->createPaymentLink($invoice, $description);

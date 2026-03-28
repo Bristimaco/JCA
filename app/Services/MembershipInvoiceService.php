@@ -20,7 +20,6 @@ class MembershipInvoiceService
     public function generateInvoicesForDueMembers(): int
     {
         $dueMembers = Member::where('membership_renewal_date', '<=', Carbon::today()->addDays(30))
-            ->whereNull('membership_fee_reminded_at')
             ->whereHas('trainingGroups')
             ->with(['trainingGroups', 'users.members.trainingGroups', 'guardians.user.members.trainingGroups'])
             ->get();
