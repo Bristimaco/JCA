@@ -493,8 +493,8 @@ function ActiveTrainingSessions({ sessions }) {
                             <button
                                 onClick={() => handleToggle(s.id)}
                                 className={`mt-3 w-full rounded-lg px-4 py-2.5 text-sm font-semibold transition-all ${s.attending
-                                        ? 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-md'
-                                        : 'bg-slate-800 text-slate-300 hover:bg-slate-700 ring-1 ring-slate-700'
+                                    ? 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-md'
+                                    : 'bg-slate-800 text-slate-300 hover:bg-slate-700 ring-1 ring-slate-700'
                                     }`}
                             >
                                 {s.attending ? '✓ Aanwezig' : 'Aanwezig melden'}

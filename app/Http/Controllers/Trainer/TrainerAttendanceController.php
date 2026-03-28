@@ -15,12 +15,12 @@ class TrainerAttendanceController extends Controller
     public function history(Request $request): Response
     {
         $sessions = TrainingSession::whereNotNull('closed_at')
-            ->whereHas('trainingSchedule', fn ($q) => $q->where('trainer_id', $request->user()->id))
+            ->whereHas('trainingSchedule', fn($q) => $q->where('trainer_id', $request->user()->id))
             ->with(['trainingSchedule.trainingGroup', 'trainingSchedule.trainer:id,name', 'attendances.member'])
             ->orderByDesc('date')
             ->orderByDesc('closed_at')
             ->get()
-            ->map(fn (TrainingSession $s) => [
+            ->map(fn(TrainingSession $s) => [
                 'id' => $s->id,
                 'date' => $s->date->toDateString(),
                 'group_name' => $s->trainingSchedule->trainingGroup->name,
@@ -31,7 +31,7 @@ class TrainerAttendanceController extends Controller
                 'remarks' => $s->remarks,
                 'opened_at' => $s->opened_at?->format('H:i'),
                 'closed_at' => $s->closed_at?->format('H:i'),
-                'attendees' => $s->attendances->map(fn ($a) => [
+                'attendees' => $s->attendances->map(fn($a) => [
                     'name' => $a->member->fullName(),
                     'confirmed_at' => $a->confirmed_at->format('H:i'),
                 ])->values()->all(),
@@ -57,7 +57,7 @@ class TrainerAttendanceController extends Controller
 
         $todayDay = ucfirst(now()->locale('nl')->isoFormat('dddd'));
         if ($schedule->day !== $todayDay) {
-            return back()->withErrors(['session' => 'Je kan enkel trainingen starten op de juiste dag ('.$schedule->day.').']);
+            return back()->withErrors(['session' => 'Je kan enkel trainingen starten op de juiste dag (' . $schedule->day . ').']);
         }
 
         $today = now()->toDateString();
@@ -89,7 +89,7 @@ class TrainerAttendanceController extends Controller
             abort(403, 'Je bent niet de trainer van dit trainingsmoment.');
         }
 
-        if (! $session->isOpen()) {
+        if (!$session->isOpen()) {
             return back()->withErrors(['session' => 'Dit trainingsmoment is niet open.']);
         }
 
