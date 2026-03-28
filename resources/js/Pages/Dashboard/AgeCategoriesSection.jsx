@@ -31,15 +31,8 @@ export default function AgeCategoriesSection({ ageCategories }) {
     const filtered = ageCategories.filter((c) => c.country_code === selectedCountry);
 
     return (
-        <div className="bg-slate-900 rounded-lg shadow-sm border border-slate-800 border-t-2 border-t-rose-700">
-            <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-white">
-                    Leeftijdscategorieën
-                    <span className="ml-2 inline-flex items-center rounded-full bg-slate-800 px-2.5 py-0.5 text-xs font-medium text-slate-400">
-                        {filtered.length}
-                    </span>
-                </h2>
-                <div className="flex items-center gap-3">
+        <>
+            <div className="px-6 py-3 flex items-center justify-end gap-3 flex-wrap border-b border-slate-700">
                     <div className="flex items-center gap-2">
                         <label className="text-sm text-slate-500">Land:</label>
                         <select
@@ -107,7 +100,6 @@ export default function AgeCategoriesSection({ ageCategories }) {
                     >
                         {recalcForm.processing ? 'Bezig...' : 'Herbereken'}
                     </button>
-                </div>
             </div>
 
             {flash.status && (
@@ -134,7 +126,7 @@ export default function AgeCategoriesSection({ ageCategories }) {
                     ))}
                 </div>
             )}
-        </div>
+        </>
     );
 }
 

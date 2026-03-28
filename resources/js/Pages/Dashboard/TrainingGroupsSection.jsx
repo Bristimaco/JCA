@@ -7,14 +7,8 @@ export default function TrainingGroupsSection({ trainingGroups, trainers, allMem
     const [managingMembersId, setManagingMembersId] = useState(null);
 
     return (
-        <div className="bg-slate-900 rounded-lg shadow-sm border border-slate-800 border-t-2 border-t-rose-700">
-            <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-white">
-                    Trainingsgroepen
-                    <span className="ml-2 inline-flex items-center rounded-full bg-slate-800 px-2.5 py-0.5 text-xs font-medium text-slate-400">
-                        {trainingGroups.length}
-                    </span>
-                </h2>
+        <>
+            <div className="px-6 py-3 flex items-center justify-end border-b border-slate-700">
                 <button
                     onClick={() => { setShowAddForm(!showAddForm); setEditingId(null); }}
                     className="rounded-md bg-rose-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-rose-700"
@@ -63,7 +57,7 @@ export default function TrainingGroupsSection({ trainingGroups, trainers, allMem
                     ))}
                 </div>
             )}
-        </div>
+        </>
     );
 }
 

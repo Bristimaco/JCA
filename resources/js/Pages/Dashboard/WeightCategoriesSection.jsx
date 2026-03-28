@@ -32,15 +32,8 @@ export default function WeightCategoriesSection({ ageCategories, weightCategorie
         weightCategories.filter((w) => w.age_category_id === ageCategoryId);
 
     return (
-        <div className="bg-slate-900 rounded-lg shadow-sm border border-slate-800 border-t-2 border-t-rose-700">
-            <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-white">
-                    Gewichtscategorieën
-                    <span className="ml-2 inline-flex items-center rounded-full bg-slate-800 px-2.5 py-0.5 text-xs font-medium text-slate-400">
-                        {weightCategories.length}
-                    </span>
-                </h2>
-                <div className="flex items-center gap-2">
+        <>
+            <div className="px-6 py-3 flex items-center justify-end gap-2 flex-wrap border-b border-slate-700">
                     <label className="text-sm text-slate-500">Land:</label>
                     <select
                         value={selectedCountry}
@@ -74,7 +67,6 @@ export default function WeightCategoriesSection({ ageCategories, weightCategorie
                     >
                         {importing ? 'Importeren...' : 'Import'}
                     </button>
-                </div>
             </div>
 
             {flash.status && (
@@ -104,7 +96,7 @@ export default function WeightCategoriesSection({ ageCategories, weightCategorie
                     })}
                 </div>
             )}
-        </div>
+        </>
     );
 }
 

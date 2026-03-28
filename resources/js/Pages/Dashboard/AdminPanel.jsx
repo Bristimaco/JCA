@@ -1,6 +1,7 @@
 import { useForm, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import { Link } from '@inertiajs/react';
+import CollapsibleSection from '../../Components/CollapsibleSection';
 import AgeCategoriesSection from './AgeCategoriesSection';
 import InvoicesSection from './InvoicesSection';
 import TrainingGroupsSection from './TrainingGroupsSection';
@@ -11,11 +12,11 @@ export default function AdminPanel({ pendingUsers, users, roles, ageCategories, 
     const [renewalListOpen, setRenewalListOpen] = useState(urlParams.get('renewal') === 'open');
 
     return (
-        <div>
-            <h1 className="text-2xl font-bold text-white mb-6">Beheerder Dashboard</h1>
+        <div className="space-y-4">
+            <h1 className="text-2xl font-bold text-white">Beheerder Dashboard</h1>
 
             {renewalDueCount > 0 && (
-                <div className="mb-6 rounded-xl bg-amber-900/30 ring-1 ring-amber-700/30 overflow-hidden">
+                <div className="rounded-xl bg-amber-900/30 ring-1 ring-amber-700/30 overflow-hidden">
                     <button
                         onClick={() => setRenewalListOpen(!renewalListOpen)}
                         className="w-full p-4 flex items-center gap-3 text-left hover:bg-amber-900/20 transition-colors"
@@ -59,32 +60,33 @@ export default function AdminPanel({ pendingUsers, users, roles, ageCategories, 
                 </div>
             )}
 
-            <ClubSettingsSection clubSettings={clubSettings} />
+            <CollapsibleSection title="Club Instellingen">
+                <ClubSettingsSection clubSettings={clubSettings} />
+            </CollapsibleSection>
 
-            <div className="mt-8">
+            <CollapsibleSection title="Nieuwe aanvragen" count={pendingUsers.length} defaultOpen={pendingUsers.length > 0} badge="bg-rose-900/30 text-rose-300">
                 <PendingUsersSection pendingUsers={pendingUsers} roles={roles} />
-            </div>
+            </CollapsibleSection>
 
-            <div className="mt-8">
+            <CollapsibleSection title="Gebruikers" count={users.length}>
                 <UsersSection users={users} roles={roles} allMembers={allMembers} />
-            </div>
+            </CollapsibleSection>
 
-            <div className="mt-8">
+            <CollapsibleSection title="Leeftijdscategorieën" count={ageCategories.length}>
                 <AgeCategoriesSection ageCategories={ageCategories} />
-            </div>
+            </CollapsibleSection>
 
-            <div className="mt-8">
+            <CollapsibleSection title="Gewichtscategorieën" count={weightCategories.length}>
                 <WeightCategoriesSection ageCategories={ageCategories} weightCategories={weightCategories} />
-            </div>
+            </CollapsibleSection>
 
-            <div className="mt-8">
+            <CollapsibleSection title="Trainingsgroepen" count={trainingGroups.length}>
                 <TrainingGroupsSection trainingGroups={trainingGroups} trainers={trainers} allMembers={allMembers} />
-            </div>
+            </CollapsibleSection>
 
-            <div className="mt-8">
-                <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-lg font-semibold text-white">Trainingshistoriek</h2>
-                    <div className="flex items-center gap-4">
+            <CollapsibleSection title="Trainingshistoriek">
+                <div className="px-6 py-4">
+                    <div className="flex items-center gap-4 mb-2">
                         <Link href="/admin/attendance-report" className="text-sm font-medium text-emerald-400 hover:text-emerald-300">
                             Aanwezigheidsrapport
                         </Link>
@@ -92,13 +94,13 @@ export default function AdminPanel({ pendingUsers, users, roles, ageCategories, 
                             Alle sessies bekijken →
                         </Link>
                     </div>
+                    <p className="text-sm text-slate-400">Bekijk de volledige historiek van alle afgesloten trainingen, inclusief deelnemers en opmerkingen.</p>
                 </div>
-                <p className="text-sm text-slate-400">Bekijk de volledige historiek van alle afgesloten trainingen, inclusief deelnemers en opmerkingen.</p>
-            </div>
+            </CollapsibleSection>
 
-            <div className="mt-8">
+            <CollapsibleSection title="Facturen" count={invoices?.length || 0}>
                 <InvoicesSection invoices={invoices} />
-            </div>
+            </CollapsibleSection>
         </div>
     );
 }
@@ -135,12 +137,8 @@ function ClubSettingsSection({ clubSettings }) {
     };
 
     return (
-        <div className="bg-slate-900 rounded-lg shadow-sm border border-slate-800 border-t-2 border-t-rose-700">
-            <div className="px-6 py-4 border-b border-slate-800">
-                <h2 className="text-lg font-semibold text-white">Club Instellingen</h2>
-            </div>
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label className="block text-sm font-medium text-slate-300 mb-1">Clubnaam *</label>
                         <input
@@ -234,7 +232,6 @@ function ClubSettingsSection({ clubSettings }) {
                     </button>
                 </div>
             </form>
-        </div>
     );
 }
 
@@ -242,18 +239,7 @@ function PendingUsersSection({ pendingUsers, roles }) {
     const { flash } = usePage().props;
 
     return (
-        <div className="bg-slate-900 rounded-lg shadow-sm border border-slate-800 border-t-2 border-t-rose-700">
-            <div className="px-6 py-4 border-b border-slate-800">
-                <h2 className="text-lg font-semibold text-white">
-                    Nieuwe aanvragen
-                    {pendingUsers.length > 0 && (
-                        <span className="ml-2 inline-flex items-center rounded-full bg-rose-900/30 px-2.5 py-0.5 text-xs font-medium text-rose-300">
-                            {pendingUsers.length}
-                        </span>
-                    )}
-                </h2>
-            </div>
-
+        <>
             {flash.status && (
                 <div className="mx-6 mt-4 rounded-md bg-emerald-900/30 border ring-1 ring-emerald-700/30 p-3">
                     <p className="text-sm text-emerald-400">{flash.status}</p>
@@ -271,7 +257,7 @@ function PendingUsersSection({ pendingUsers, roles }) {
                     ))}
                 </div>
             )}
-        </div>
+        </>
     );
 }
 
@@ -323,16 +309,7 @@ function UsersSection({ users, roles, allMembers }) {
     const { flash } = usePage().props;
 
     return (
-        <div className="bg-slate-900 rounded-lg shadow-sm border border-slate-800 border-t-2 border-t-rose-700">
-            <div className="px-6 py-4 border-b border-slate-800">
-                <h2 className="text-lg font-semibold text-white">
-                    Gebruikers
-                    <span className="ml-2 inline-flex items-center rounded-full bg-slate-800 px-2.5 py-0.5 text-xs font-medium text-slate-400">
-                        {users.length}
-                    </span>
-                </h2>
-            </div>
-
+        <>
             {users.length === 0 ? (
                 <div className="px-6 py-8 text-center text-slate-500">
                     Geen gebruikers gevonden.
@@ -344,7 +321,7 @@ function UsersSection({ users, roles, allMembers }) {
                     ))}
                 </div>
             )}
-        </div>
+        </>
     );
 }
 
