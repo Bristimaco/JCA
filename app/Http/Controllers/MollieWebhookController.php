@@ -15,20 +15,20 @@ class MollieWebhookController extends Controller
     {
         $paymentId = $request->input('id');
 
-        if (! $paymentId) {
+        if (!$paymentId) {
             return response('', 200);
         }
 
         $invoice = MembershipInvoice::where('mollie_payment_id', $paymentId)->first();
 
-        if (! $invoice) {
+        if (!$invoice) {
             return response('', 200);
         }
 
         $newStatus = $mollieService->getPaymentStatus($paymentId);
         $invoice->update(['status' => $newStatus]);
 
-        if ($newStatus === InvoiceStatus::Paid->value && ! $invoice->paid_at) {
+        if ($newStatus === InvoiceStatus::Paid->value && !$invoice->paid_at) {
             $invoice->update(['paid_at' => now()]);
 
             // Extend renewal date for all members on the invoice
