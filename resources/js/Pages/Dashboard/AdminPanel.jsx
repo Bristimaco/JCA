@@ -1,5 +1,6 @@
 import { useForm, usePage } from '@inertiajs/react';
 import { useState } from 'react';
+import { Link } from '@inertiajs/react';
 import AgeCategoriesSection from './AgeCategoriesSection';
 import InvoicesSection from './InvoicesSection';
 import TrainingGroupsSection from './TrainingGroupsSection';
@@ -78,6 +79,16 @@ export default function AdminPanel({ pendingUsers, users, roles, ageCategories, 
 
             <div className="mt-8">
                 <TrainingGroupsSection trainingGroups={trainingGroups} trainers={trainers} allMembers={allMembers} />
+            </div>
+
+            <div className="mt-8">
+                <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-lg font-semibold text-white">Trainingshistoriek</h2>
+                    <Link href="/admin/sessions" className="text-sm font-medium text-rose-400 hover:text-rose-300">
+                        Alle sessies bekijken →
+                    </Link>
+                </div>
+                <p className="text-sm text-slate-400">Bekijk de volledige historiek van alle afgesloten trainingen, inclusief deelnemers en opmerkingen.</p>
             </div>
 
             <div className="mt-8">

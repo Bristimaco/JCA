@@ -16,7 +16,7 @@ class TrainerAttendanceController extends Controller
     {
         $sessions = TrainingSession::whereNotNull('closed_at')
             ->whereHas('trainingSchedule', fn ($q) => $q->where('trainer_id', $request->user()->id))
-            ->with(['trainingSchedule.trainingGroup', 'attendances.member'])
+            ->with(['trainingSchedule.trainingGroup', 'trainingSchedule.trainer:id,name', 'attendances.member'])
             ->orderByDesc('date')
             ->orderByDesc('closed_at')
             ->get()
@@ -27,6 +27,7 @@ class TrainerAttendanceController extends Controller
                 'day' => $s->trainingSchedule->day,
                 'start_time' => $s->trainingSchedule->start_time,
                 'end_time' => $s->trainingSchedule->end_time,
+                'trainer_name' => $s->trainingSchedule->trainer?->name,
                 'remarks' => $s->remarks,
                 'opened_at' => $s->opened_at?->format('H:i'),
                 'closed_at' => $s->closed_at?->format('H:i'),

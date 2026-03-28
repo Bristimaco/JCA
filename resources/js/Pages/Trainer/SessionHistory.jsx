@@ -34,6 +34,7 @@ export default function SessionHistory({ sessions }) {
                                                 <p className="font-semibold text-white">{s.group_name}</p>
                                                 <p className="text-sm text-slate-400">
                                                     {s.day} {new Date(s.date).toLocaleDateString('nl-BE')} &middot; {s.start_time}{s.end_time ? `–${s.end_time}` : ''}
+                                                    {s.trainer_name && <span className="ml-1 text-slate-500">({s.trainer_name})</span>}
                                                 </p>
                                             </div>
                                         </div>
