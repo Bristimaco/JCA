@@ -33,73 +33,73 @@ export default function AgeCategoriesSection({ ageCategories }) {
     return (
         <>
             <div className="px-6 py-3 flex items-center justify-end gap-3 flex-wrap border-b border-slate-700">
-                    <div className="flex items-center gap-2">
-                        <label className="text-sm text-slate-500">Land:</label>
-                        <select
-                            value={selectedCountry}
-                            onChange={(e) => setSelectedCountry(e.target.value)}
-                            className="rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1 px-2 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
-                        >
-                            {countries.map((c) => (
-                                <option key={c} value={c}>{c}</option>
-                            ))}
-                        </select>
-                        <input
-                            type="text"
-                            placeholder="Nieuw land (bv. FR)"
-                            maxLength={2}
-                            className="w-24 rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1 px-2 uppercase focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
-                            onBlur={(e) => {
-                                const val = e.target.value.toUpperCase().trim();
-                                if (val.length === 2) {
-                                    setSelectedCountry(val);
-                                    e.target.value = '';
-                                }
-                            }}
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter') {
-                                    e.preventDefault();
-                                    e.target.blur();
-                                }
-                            }}
-                        />
-                    </div>
-                    <button
-                        onClick={() => setShowAddForm(!showAddForm)}
-                        className="rounded-md bg-rose-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-rose-700"
+                <div className="flex items-center gap-2">
+                    <label className="text-sm text-slate-500">Land:</label>
+                    <select
+                        value={selectedCountry}
+                        onChange={(e) => setSelectedCountry(e.target.value)}
+                        className="rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1 px-2 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
                     >
-                        {showAddForm ? 'Annuleren' : 'Toevoegen'}
-                    </button>
-                    <a
-                        href="/admin/age-categories/export"
-                        className="rounded-md border border-slate-600 bg-slate-800 px-3 py-1.5 text-sm font-medium text-slate-300 hover:bg-slate-700/50"
-                    >
-                        Export
-                    </a>
+                        {countries.map((c) => (
+                            <option key={c} value={c}>{c}</option>
+                        ))}
+                    </select>
                     <input
-                        type="file"
-                        ref={importFileRef}
-                        accept=".xlsx,.xls,.csv"
-                        onChange={handleImportFile}
-                        className="hidden"
-                    />
-                    <button
-                        onClick={() => importFileRef.current?.click()}
-                        disabled={importing}
-                        className="rounded-md border border-slate-600 bg-slate-800 px-3 py-1.5 text-sm font-medium text-slate-300 hover:bg-slate-700/50 disabled:opacity-50"
-                    >
-                        {importing ? 'Importeren...' : 'Import'}
-                    </button>
-                    <button
-                        onClick={() => {
-                            recalcForm.setData('country_code', selectedCountry);
-                            recalcForm.post('/admin/age-categories/recalculate', { preserveScroll: true });
+                        type="text"
+                        placeholder="Nieuw land (bv. FR)"
+                        maxLength={2}
+                        className="w-24 rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1 px-2 uppercase focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
+                        onBlur={(e) => {
+                            const val = e.target.value.toUpperCase().trim();
+                            if (val.length === 2) {
+                                setSelectedCountry(val);
+                                e.target.value = '';
+                            }
                         }}
-                        disabled={recalcForm.processing}
-                        className="rounded-md bg-green-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-50"
-                    >
-                        {recalcForm.processing ? 'Bezig...' : 'Herbereken'}
-                    </button>
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                e.preventDefault();
+                                e.target.blur();
+                            }
+                        }}
+                    />
+                </div>
+                <button
+                    onClick={() => setShowAddForm(!showAddForm)}
+                    className="rounded-md bg-rose-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-rose-700"
+                >
+                    {showAddForm ? 'Annuleren' : 'Toevoegen'}
+                </button>
+                <a
+                    href="/admin/age-categories/export"
+                    className="rounded-md border border-slate-600 bg-slate-800 px-3 py-1.5 text-sm font-medium text-slate-300 hover:bg-slate-700/50"
+                >
+                    Export
+                </a>
+                <input
+                    type="file"
+                    ref={importFileRef}
+                    accept=".xlsx,.xls,.csv"
+                    onChange={handleImportFile}
+                    className="hidden"
+                />
+                <button
+                    onClick={() => importFileRef.current?.click()}
+                    disabled={importing}
+                    className="rounded-md border border-slate-600 bg-slate-800 px-3 py-1.5 text-sm font-medium text-slate-300 hover:bg-slate-700/50 disabled:opacity-50"
+                >
+                    {importing ? 'Importeren...' : 'Import'}
+                </button>
+                <button
+                    onClick={() => {
+                        recalcForm.setData('country_code', selectedCountry);
+                        recalcForm.post('/admin/age-categories/recalculate', { preserveScroll: true });
+                    }}
+                    disabled={recalcForm.processing}
+                    className="rounded-md bg-green-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-50"
+                >
+                    {recalcForm.processing ? 'Bezig...' : 'Herbereken'}
+                </button>
             </div>
 
             {flash.status && (

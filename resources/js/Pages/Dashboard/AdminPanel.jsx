@@ -139,99 +139,99 @@ function ClubSettingsSection({ clubSettings }) {
     return (
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-1">Clubnaam *</label>
-                        <input
-                            type="text"
-                            value={form.data.name}
-                            onChange={(e) => form.setData('name', e.target.value)}
-                            className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-rose-500 focus:ring-rose-500 text-sm"
-                        />
-                        {form.errors.name && <p className="text-sm text-red-400 mt-1">{form.errors.name}</p>}
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-1">Postcode</label>
-                        <input
-                            type="text"
-                            value={form.data.address_postal_code}
-                            onChange={(e) => form.setData('address_postal_code', e.target.value)}
-                            className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-rose-500 focus:ring-rose-500 text-sm"
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-1">Straat + nummer</label>
-                        <input
-                            type="text"
-                            value={form.data.address_street}
-                            onChange={(e) => form.setData('address_street', e.target.value)}
-                            className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-rose-500 focus:ring-rose-500 text-sm"
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-1">Gemeente</label>
-                        <input
-                            type="text"
-                            value={form.data.address_city}
-                            onChange={(e) => form.setData('address_city', e.target.value)}
-                            className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-rose-500 focus:ring-rose-500 text-sm"
-                        />
-                    </div>
-                </div>
-
                 <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-1">Logo</label>
-                    <div className="flex items-center gap-4">
-                        {logoPreview && (
-                            <img src={logoPreview} alt="Logo" className="h-16 w-16 object-contain rounded border border-slate-700" />
-                        )}
-                        <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleLogoChange}
-                            className="text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-rose-900/30 file:text-rose-300 hover:file:bg-rose-900/30"
-                        />
-                    </div>
-                    {form.errors.logo && <p className="text-sm text-red-400 mt-1">{form.errors.logo}</p>}
-                </div>
-
-                <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-1">Aanwezigheid PIN-code</label>
+                    <label className="block text-sm font-medium text-slate-300 mb-1">Clubnaam *</label>
                     <input
                         type="text"
-                        inputMode="numeric"
-                        value={form.data.attendance_pin}
-                        onChange={(e) => form.setData('attendance_pin', e.target.value)}
-                        placeholder="4-8 cijfers"
-                        className="w-full max-w-xs rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-rose-500 focus:ring-rose-500 text-sm"
+                        value={form.data.name}
+                        onChange={(e) => form.setData('name', e.target.value)}
+                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-rose-500 focus:ring-rose-500 text-sm"
                     />
-                    <p className="text-xs text-slate-500 mt-1">PIN voor het kiosk aanwezigheidsscherm (/attendance)</p>
-                    {form.errors.attendance_pin && <p className="text-sm text-red-400 mt-1">{form.errors.attendance_pin}</p>}
+                    {form.errors.name && <p className="text-sm text-red-400 mt-1">{form.errors.name}</p>}
                 </div>
-
                 <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-1">Minimum aanwezigheid (%)</label>
+                    <label className="block text-sm font-medium text-slate-300 mb-1">Postcode</label>
                     <input
-                        type="number"
-                        min="0"
-                        max="100"
-                        value={form.data.attendance_threshold}
-                        onChange={(e) => form.setData('attendance_threshold', parseInt(e.target.value) || 0)}
-                        className="w-full max-w-xs rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-rose-500 focus:ring-rose-500 text-sm"
+                        type="text"
+                        value={form.data.address_postal_code}
+                        onChange={(e) => form.setData('address_postal_code', e.target.value)}
+                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-rose-500 focus:ring-rose-500 text-sm"
                     />
-                    <p className="text-xs text-slate-500 mt-1">Leden onder dit percentage worden rood gemarkeerd in het aanwezigheidsrapport</p>
-                    {form.errors.attendance_threshold && <p className="text-sm text-red-400 mt-1">{form.errors.attendance_threshold}</p>}
                 </div>
+                <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-1">Straat + nummer</label>
+                    <input
+                        type="text"
+                        value={form.data.address_street}
+                        onChange={(e) => form.setData('address_street', e.target.value)}
+                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-rose-500 focus:ring-rose-500 text-sm"
+                    />
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-1">Gemeente</label>
+                    <input
+                        type="text"
+                        value={form.data.address_city}
+                        onChange={(e) => form.setData('address_city', e.target.value)}
+                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-rose-500 focus:ring-rose-500 text-sm"
+                    />
+                </div>
+            </div>
 
-                <div className="flex justify-end">
-                    <button
-                        type="submit"
-                        disabled={form.processing}
-                        className="rounded-md bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-700 disabled:opacity-50"
-                    >
-                        Opslaan
-                    </button>
+            <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1">Logo</label>
+                <div className="flex items-center gap-4">
+                    {logoPreview && (
+                        <img src={logoPreview} alt="Logo" className="h-16 w-16 object-contain rounded border border-slate-700" />
+                    )}
+                    <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleLogoChange}
+                        className="text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-rose-900/30 file:text-rose-300 hover:file:bg-rose-900/30"
+                    />
                 </div>
-            </form>
+                {form.errors.logo && <p className="text-sm text-red-400 mt-1">{form.errors.logo}</p>}
+            </div>
+
+            <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1">Aanwezigheid PIN-code</label>
+                <input
+                    type="text"
+                    inputMode="numeric"
+                    value={form.data.attendance_pin}
+                    onChange={(e) => form.setData('attendance_pin', e.target.value)}
+                    placeholder="4-8 cijfers"
+                    className="w-full max-w-xs rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-rose-500 focus:ring-rose-500 text-sm"
+                />
+                <p className="text-xs text-slate-500 mt-1">PIN voor het kiosk aanwezigheidsscherm (/attendance)</p>
+                {form.errors.attendance_pin && <p className="text-sm text-red-400 mt-1">{form.errors.attendance_pin}</p>}
+            </div>
+
+            <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1">Minimum aanwezigheid (%)</label>
+                <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={form.data.attendance_threshold}
+                    onChange={(e) => form.setData('attendance_threshold', parseInt(e.target.value) || 0)}
+                    className="w-full max-w-xs rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-rose-500 focus:ring-rose-500 text-sm"
+                />
+                <p className="text-xs text-slate-500 mt-1">Leden onder dit percentage worden rood gemarkeerd in het aanwezigheidsrapport</p>
+                {form.errors.attendance_threshold && <p className="text-sm text-red-400 mt-1">{form.errors.attendance_threshold}</p>}
+            </div>
+
+            <div className="flex justify-end">
+                <button
+                    type="submit"
+                    disabled={form.processing}
+                    className="rounded-md bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-700 disabled:opacity-50"
+                >
+                    Opslaan
+                </button>
+            </div>
+        </form>
     );
 }
 

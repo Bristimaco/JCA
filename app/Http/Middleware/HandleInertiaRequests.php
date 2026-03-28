@@ -50,12 +50,12 @@ class HandleInertiaRequests extends Middleware
                     'notification_preference' => $request->user()->notification_preference?->value ?? 'both',
                 ] : null,
             ],
-            'unreadNotificationCount' => fn () => $request->user()?->unreadNotifications()->count() ?? 0,
+            'unreadNotificationCount' => fn() => $request->user()?->unreadNotifications()->count() ?? 0,
             'flash' => [
                 'status' => $request->session()->get('status'),
             ],
             'vapidPublicKey' => config('services.vapid.public_key'),
-            'club' => fn () => [
+            'club' => fn() => [
                 'name' => ClubSettings::current()->name,
                 'has_logo' => (bool) ClubSettings::current()->logo_data,
             ],

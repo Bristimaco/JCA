@@ -34,39 +34,39 @@ export default function WeightCategoriesSection({ ageCategories, weightCategorie
     return (
         <>
             <div className="px-6 py-3 flex items-center justify-end gap-2 flex-wrap border-b border-slate-700">
-                    <label className="text-sm text-slate-500">Land:</label>
-                    <select
-                        value={selectedCountry}
-                        onChange={(e) => {
-                            setSelectedCountry(e.target.value);
-                            setExpandedAgeCategory(null);
-                        }}
-                        className="rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1 px-2 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
-                    >
-                        {countries.map((c) => (
-                            <option key={c} value={c}>{c}</option>
-                        ))}
-                    </select>
-                    <a
-                        href="/admin/weight-categories/export"
-                        className="rounded-md border border-slate-600 bg-slate-800 px-3 py-1.5 text-sm font-medium text-slate-300 hover:bg-slate-700/50"
-                    >
-                        Export
-                    </a>
-                    <input
-                        type="file"
-                        ref={importFileRef}
-                        accept=".xlsx,.xls,.csv"
-                        onChange={handleImportFile}
-                        className="hidden"
-                    />
-                    <button
-                        onClick={() => importFileRef.current?.click()}
-                        disabled={importing}
-                        className="rounded-md border border-slate-600 bg-slate-800 px-3 py-1.5 text-sm font-medium text-slate-300 hover:bg-slate-700/50 disabled:opacity-50"
-                    >
-                        {importing ? 'Importeren...' : 'Import'}
-                    </button>
+                <label className="text-sm text-slate-500">Land:</label>
+                <select
+                    value={selectedCountry}
+                    onChange={(e) => {
+                        setSelectedCountry(e.target.value);
+                        setExpandedAgeCategory(null);
+                    }}
+                    className="rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1 px-2 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
+                >
+                    {countries.map((c) => (
+                        <option key={c} value={c}>{c}</option>
+                    ))}
+                </select>
+                <a
+                    href="/admin/weight-categories/export"
+                    className="rounded-md border border-slate-600 bg-slate-800 px-3 py-1.5 text-sm font-medium text-slate-300 hover:bg-slate-700/50"
+                >
+                    Export
+                </a>
+                <input
+                    type="file"
+                    ref={importFileRef}
+                    accept=".xlsx,.xls,.csv"
+                    onChange={handleImportFile}
+                    className="hidden"
+                />
+                <button
+                    onClick={() => importFileRef.current?.click()}
+                    disabled={importing}
+                    className="rounded-md border border-slate-600 bg-slate-800 px-3 py-1.5 text-sm font-medium text-slate-300 hover:bg-slate-700/50 disabled:opacity-50"
+                >
+                    {importing ? 'Importeren...' : 'Import'}
+                </button>
             </div>
 
             {flash.status && (
