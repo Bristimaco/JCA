@@ -16,7 +16,8 @@ class TournamentReportNotification extends Notification
     public function __construct(
         public Tournament $tournament,
         public Collection $resultGroups,
-    ) {}
+    ) {
+    }
 
     public function via(object $notifiable): array
     {
@@ -38,7 +39,7 @@ class TournamentReportNotification extends Notification
         $club = ClubSettings::current();
 
         return (new MailMessage)
-            ->subject('Toernooiverslag: '.$this->tournament->name)
+            ->subject('Toernooiverslag: ' . $this->tournament->name)
             ->view('emails.tournament-report', [
                 'tournament' => $this->tournament,
                 'resultGroups' => $this->resultGroups,
@@ -48,13 +49,31 @@ class TournamentReportNotification extends Notification
 
     public function toDatabase(object $notifiable): array
     {
-        $totalResults = $this->resultGroups->sum(fn ($g) => count($g['results']));
+        $totalResults = $this->resultGroups->sum(fn($g) => count($g['results']));
+        $t = $this->tournament;
+        $address = collect([$t->address_street, $t->address_postal_code . ' ' . $t->address_city])->filter()->implode(', ');
+
+        $results = $this->resultGroups->map(fn($g) => [
+            'category' => $g['age_category'] . ' — ' . $g['weight_category'],
+            'participants' => collect($g['results'])->map(fn($r) => [
+                'name' => $r['member_name'],
+                'result' => $r['result'] ?? '-',
+                'notes' => $r['notes'] ?? null,
+            ])->all(),
+        ])->all();
 
         return [
             'icon' => '🏆',
             'title' => 'Toernooiverslag',
-            'message' => $this->tournament->name.' — '.$totalResults.' resultaten',
-            'tournament_id' => $this->tournament->id,
+            'message' => $t->name . ' — ' . $totalResults . ' resultaten',
+            'tournament_id' => $t->id,
+            'detail' => [
+                'tournament_name' => $t->name,
+                'date' => $t->tournament_date->format('d/m/Y'),
+                'address' => $address ?: null,
+                'results' => $results,
+                'body' => 'Hieronder de resultaten van ' . $t->name . '.',
+            ],
         ];
     }
 }

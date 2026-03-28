@@ -16,7 +16,8 @@ class TrainerTournamentNotification extends Notification
     public function __construct(
         public Tournament $tournament,
         public Collection $participants,
-    ) {}
+    ) {
+    }
 
     public function via(object $notifiable): array
     {
@@ -38,7 +39,7 @@ class TrainerTournamentNotification extends Notification
         $club = ClubSettings::current();
 
         return (new MailMessage)
-            ->subject('Trainer info: '.$this->tournament->name)
+            ->subject('Trainer info: ' . $this->tournament->name)
             ->view('emails.tournament-trainer-notification', [
                 'tournament' => $this->tournament,
                 'participants' => $this->participants,
@@ -48,11 +49,31 @@ class TrainerTournamentNotification extends Notification
 
     public function toDatabase(object $notifiable): array
     {
+        $t = $this->tournament;
+        $address = collect([$t->address_street, $t->address_postal_code . ' ' . $t->address_city])->filter()->implode(', ');
+
+        $participantList = $this->participants->map(fn($p) => [
+            'name' => $p['name'],
+            'date_of_birth' => $p['date_of_birth'],
+            'age_category' => $p['age_category'] ?? '-',
+            'weight_category' => $p['weight_category'] ?? '-',
+            'status' => $p['invitation_status'] ?? '-',
+        ])->all();
+
         return [
             'icon' => '📋',
             'title' => 'Trainer info',
-            'message' => $this->tournament->name.' — '.$this->participants->count().' deelnemers',
-            'tournament_id' => $this->tournament->id,
+            'message' => $t->name . ' — ' . $this->participants->count() . ' deelnemers',
+            'tournament_id' => $t->id,
+            'detail' => [
+                'tournament_name' => $t->name,
+                'date' => $t->tournament_date->format('d/m/Y'),
+                'address' => $address ?: null,
+                'invitation_deadline' => $t->invitation_deadline?->format('d/m/Y'),
+                'registration_deadline' => $t->registration_deadline?->format('d/m/Y'),
+                'participants' => $participantList,
+                'body' => 'De uitnodigingsfase voor ' . $t->name . ' is afgesloten. Hieronder de deelnemerslijst.',
+            ],
         ];
     }
 }

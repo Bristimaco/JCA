@@ -17,7 +17,8 @@ class TournamentInvitationNotification extends Notification
         public Tournament $tournament,
         public Member $member,
         public string $token,
-    ) {}
+    ) {
+    }
 
     public function via(object $notifiable): array
     {
@@ -40,7 +41,7 @@ class TournamentInvitationNotification extends Notification
         $club = ClubSettings::current();
 
         return (new MailMessage)
-            ->subject('Uitnodiging: '.$this->tournament->name)
+            ->subject('Uitnodiging: ' . $this->tournament->name)
             ->view('emails.tournament-invitation', [
                 'tournament' => $this->tournament,
                 'member' => $this->member,
@@ -52,14 +53,25 @@ class TournamentInvitationNotification extends Notification
 
     public function toDatabase(object $notifiable): array
     {
+        $t = $this->tournament;
+        $address = collect([$t->address_street, $t->address_postal_code . ' ' . $t->address_city])->filter()->implode(', ');
+
         return [
             'icon' => '📩',
             'title' => 'Toernooi uitnodiging',
-            'message' => 'Uitnodiging voor '.$this->member->fullName().' — '.$this->tournament->name.' ('.$this->tournament->tournament_date->format('d/m/Y').')',
-            'tournament_id' => $this->tournament->id,
+            'message' => 'Uitnodiging voor ' . $this->member->fullName() . ' — ' . $t->name . ' (' . $t->tournament_date->format('d/m/Y') . ')',
+            'tournament_id' => $t->id,
             'member_id' => $this->member->id,
             'accept_url' => url("/tournaments/rsvp/{$this->token}/accept"),
             'decline_url' => url("/tournaments/rsvp/{$this->token}/decline"),
+            'detail' => [
+                'member_name' => $this->member->fullName(),
+                'tournament_name' => $t->name,
+                'date' => $t->tournament_date->format('d/m/Y'),
+                'rsvp_deadline' => $t->invitation_deadline?->format('d/m/Y'),
+                'address' => $address ?: null,
+                'body' => $this->member->fullName() . ' is uitgenodigd voor ' . $t->name . '. Reageer vóór de deadline om deelname te bevestigen of af te wijzen.',
+            ],
         ];
     }
 }

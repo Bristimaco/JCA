@@ -14,7 +14,8 @@ class MembershipRenewalNotification extends Notification
 
     public function __construct(
         public Member $member,
-    ) {}
+    ) {
+    }
 
     public function via(object $notifiable): array
     {
@@ -46,11 +47,19 @@ class MembershipRenewalNotification extends Notification
 
     public function toDatabase(object $notifiable): array
     {
+        $club = ClubSettings::current();
+
         return [
             'icon' => '💳',
             'title' => 'Lidmaatschap vernieuwing',
-            'message' => $this->member->fullName().' — vernieuwingsdatum: '.$this->member->membership_renewal_date->format('d/m/Y'),
+            'message' => $this->member->fullName() . ' — vernieuwingsdatum: ' . $this->member->membership_renewal_date->format('d/m/Y'),
             'member_id' => $this->member->id,
+            'detail' => [
+                'member_name' => $this->member->fullName(),
+                'renewal_date' => $this->member->membership_renewal_date->format('d/m/Y'),
+                'club_name' => $club->name,
+                'body' => 'Dit is een herinnering dat het lidmaatschap van ' . $this->member->fullName() . ' bij ' . $club->name . ' binnenkort vernieuwd moet worden. Gelieve het lidgeld tijdig te betalen.',
+            ],
         ];
     }
 }
