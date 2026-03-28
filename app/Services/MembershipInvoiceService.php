@@ -15,7 +15,8 @@ class MembershipInvoiceService
 {
     public function __construct(
         protected MolliePaymentService $mollie,
-    ) {}
+    ) {
+    }
 
     public function generateInvoicesForDueMembers(): int
     {
@@ -29,17 +30,17 @@ class MembershipInvoiceService
         }
 
         // Group due members by payer
-        $membersByPayer = $dueMembers->groupBy(fn (Member $member) => $this->resolvePayerForMember($member)?->id);
+        $membersByPayer = $dueMembers->groupBy(fn(Member $member) => $this->resolvePayerForMember($member)?->id);
 
         $invoiceCount = 0;
 
         foreach ($membersByPayer as $payerId => $members) {
-            if (! $payerId) {
+            if (!$payerId) {
                 continue;
             }
 
             $payer = User::find($payerId);
-            if (! $payer) {
+            if (!$payer) {
                 continue;
             }
 
@@ -91,13 +92,13 @@ class MembershipInvoiceService
         // For each due member, find their most expensive training group
         foreach ($members as $member) {
             $mostExpensiveGroup = $this->getMostExpensiveGroup($member);
-            if (! $mostExpensiveGroup) {
+            if (!$mostExpensiveGroup) {
                 continue;
             }
 
             // Count how many of this payer's members are in the same group (for discount calculation)
             $sameGroupMembers = collect($allPayerMemberIds)
-                ->filter(fn ($mid) => $mostExpensiveGroup->members->pluck('id')->contains($mid))
+                ->filter(fn($mid) => $mostExpensiveGroup->members->pluck('id')->contains($mid))
                 ->values();
 
             $memberPosition = $sameGroupMembers->search($member->id);
@@ -137,7 +138,7 @@ class MembershipInvoiceService
         }
 
         // Create Mollie payment link
-        $memberNames = $members->map(fn ($m) => $m->fullName())->join(', ');
+        $memberNames = $members->map(fn($m) => $m->fullName())->join(', ');
         $description = "Lidgeld {$year} — {$memberNames}";
         $this->mollie->createPaymentLink($invoice, $description);
 
