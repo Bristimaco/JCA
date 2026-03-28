@@ -54,6 +54,12 @@ services:
       - key: MOLLIE_KEY
         type: SECRET
         value: "${MOLLIE_KEY}"
+      - key: VAPID_PUBLIC_KEY
+        type: SECRET
+        value: "${VAPID_PUBLIC_KEY}"
+      - key: VAPID_PRIVATE_KEY
+        type: SECRET
+        value: "${VAPID_PRIVATE_KEY}"
 
 databases:
   - name: db
@@ -94,3 +100,9 @@ workers:
       - key: MOLLIE_KEY
         type: SECRET
         value: "${MOLLIE_KEY}"
+      - key: VAPID_PUBLIC_KEY
+        type: SECRET
+        value: "${VAPID_PUBLIC_KEY}"
+      - key: VAPID_PRIVATE_KEY
+        type: SECRET
+        value: "${VAPID_PRIVATE_KEY}"
