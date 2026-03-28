@@ -12,9 +12,9 @@ class TrainingGroupMemberController extends Controller
     public function update(Request $request, TrainingGroup $trainingGroup): RedirectResponse
     {
         $user = $request->user();
-        if ($user->isCoach() && ! $user->isAdmin()) {
+        if ($user->isCoach() && !$user->isAdmin()) {
             $hasSchedule = $trainingGroup->schedules()->where('trainer_id', $user->id)->exists();
-            if (! $hasSchedule) {
+            if (!$hasSchedule) {
                 abort(403);
             }
         }
