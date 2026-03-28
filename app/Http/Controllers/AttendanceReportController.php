@@ -21,8 +21,8 @@ class AttendanceReportController extends Controller
         $groupQuery = TrainingGroup::with(['members:id,first_name,last_name', 'schedules'])
             ->orderBy('name');
 
-        if (!$isAdmin) {
-            $groupQuery->whereHas('schedules', fn($q) => $q->where('trainer_id', $request->user()->id));
+        if (! $isAdmin) {
+            $groupQuery->whereHas('schedules', fn ($q) => $q->where('trainer_id', $request->user()->id));
         }
 
         $groups = $groupQuery->get();
@@ -47,7 +47,7 @@ class AttendanceReportController extends Controller
                 return null;
             }
 
-            $sessionDates = $sessions->map(fn(TrainingSession $s) => [
+            $sessionDates = $sessions->map(fn (TrainingSession $s) => [
                 'id' => $s->id,
                 'date' => $s->date->toDateString(),
             ])->values()->all();
@@ -56,7 +56,7 @@ class AttendanceReportController extends Controller
 
             $members = $group->members->map(function ($member) use ($sessions, $totalSessions) {
                 $attendedSessionIds = $sessions
-                    ->filter(fn(TrainingSession $s) => $s->attendances->contains('member_id', $member->id))
+                    ->filter(fn (TrainingSession $s) => $s->attendances->contains('member_id', $member->id))
                     ->pluck('id')
                     ->all();
 

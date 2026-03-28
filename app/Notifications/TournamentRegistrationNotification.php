@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Channels\WebPushChannel;
 use App\Models\ClubSettings;
 use App\Models\Member;
 use App\Models\Tournament;
@@ -26,6 +27,7 @@ class TournamentRegistrationNotification extends Notification
         $channels = [];
         if ($pref->wantsApp()) {
             $channels[] = 'database';
+            $channels[] = WebPushChannel::class;
         }
         if ($pref->wantsEmail()) {
             $channels[] = 'mail';
@@ -94,6 +96,17 @@ class TournamentRegistrationNotification extends Notification
                 'weight_category' => $this->registered ? $weightCategory : null,
                 'body' => $this->member->fullName().' is '.($this->registered ? 'succesvol ingeschreven voor' : 'uitgeschreven van').' '.$t->name.'.',
             ],
+        ];
+    }
+
+    public function toWebPush(object $notifiable): array
+    {
+        $action = $this->registered ? 'ingeschreven voor' : 'uitgeschreven van';
+
+        return [
+            'title' => $this->registered ? 'Ingeschreven' : 'Uitgeschreven',
+            'body' => $this->member->fullName().' is '.$action.' '.$this->tournament->name,
+            'url' => '/',
         ];
     }
 }

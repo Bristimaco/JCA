@@ -1,6 +1,7 @@
 import { Link, usePage, useForm, router } from '@inertiajs/react';
 import { useState, useRef, useEffect } from 'react';
 import NotificationDropdown from '../Components/NotificationDropdown';
+import usePushSubscription from '../hooks/usePushSubscription';
 
 export default function AppLayout({ children }) {
     const { auth, club } = usePage().props;
@@ -8,6 +9,8 @@ export default function AppLayout({ children }) {
     const [userMenuOpen, setUserMenuOpen] = useState(false);
     const [notifPref, setNotifPref] = useState(auth.user?.notification_preference || 'both');
     const menuRef = useRef(null);
+
+    usePushSubscription();
 
     const handleLogout = (e) => {
         e.preventDefault();

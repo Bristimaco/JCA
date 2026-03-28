@@ -54,6 +54,7 @@ class HandleInertiaRequests extends Middleware
             'flash' => [
                 'status' => $request->session()->get('status'),
             ],
+            'vapidPublicKey' => config('services.vapid.public_key'),
             'club' => fn () => [
                 'name' => ClubSettings::current()->name,
                 'has_logo' => (bool) ClubSettings::current()->logo_data,

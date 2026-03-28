@@ -33,6 +33,7 @@ use App\Http\Controllers\MemberPhotoController;
 use App\Http\Controllers\MollieWebhookController;
 use App\Http\Controllers\MyMembersController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PushSubscriptionController;
 use App\Http\Controllers\TournamentAttachmentController;
 use App\Http\Controllers\TournamentDetailController;
 use App\Http\Controllers\TournamentRsvpController;
@@ -96,6 +97,10 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
     Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
     Route::patch('/notifications/preference', [NotificationController::class, 'updatePreference'])->name('notifications.preference');
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+
+    // Push subscriptions
+    Route::post('/push-subscriptions', [PushSubscriptionController::class, 'store'])->name('push-subscriptions.store');
+    Route::delete('/push-subscriptions', [PushSubscriptionController::class, 'destroy'])->name('push-subscriptions.destroy');
 
     // My members (for ouder/lid roles)
     Route::get('/mijn-leden', [MyMembersController::class, 'index'])->name('my-members.index');

@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Channels\WebPushChannel;
 use App\Models\ClubSettings;
 use App\Models\Member;
 use App\Models\Tournament;
@@ -26,6 +27,7 @@ class TournamentInvitationNotification extends Notification
         $channels = [];
         if ($pref->wantsApp()) {
             $channels[] = 'database';
+            $channels[] = WebPushChannel::class;
         }
         if ($pref->wantsEmail()) {
             $channels[] = 'mail';
@@ -71,6 +73,15 @@ class TournamentInvitationNotification extends Notification
                 'address' => $address ?: null,
                 'body' => $this->member->fullName().' is uitgenodigd voor '.$t->name.'. Reageer vóór de deadline om deelname te bevestigen of af te wijzen.',
             ],
+        ];
+    }
+
+    public function toWebPush(object $notifiable): array
+    {
+        return [
+            'title' => 'Toernooi uitnodiging',
+            'body' => $this->member->fullName().' — '.$this->tournament->name.' ('.$this->tournament->tournament_date->format('d/m/Y').')',
+            'url' => '/',
         ];
     }
 }

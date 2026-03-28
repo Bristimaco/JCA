@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Channels\WebPushChannel;
 use App\Models\ClubSettings;
 use App\Models\Tournament;
 use Illuminate\Bus\Queueable;
@@ -25,6 +26,7 @@ class TrainerTournamentNotification extends Notification
         $channels = [];
         if ($pref->wantsApp()) {
             $channels[] = 'database';
+            $channels[] = WebPushChannel::class;
         }
         if ($pref->wantsEmail()) {
             $channels[] = 'mail';
@@ -73,6 +75,15 @@ class TrainerTournamentNotification extends Notification
                 'participants' => $participantList,
                 'body' => 'De uitnodigingsfase voor '.$t->name.' is afgesloten. Hieronder de deelnemerslijst.',
             ],
+        ];
+    }
+
+    public function toWebPush(object $notifiable): array
+    {
+        return [
+            'title' => 'Trainer info',
+            'body' => $this->tournament->name.' — '.$this->participants->count().' deelnemers',
+            'url' => '/',
         ];
     }
 }

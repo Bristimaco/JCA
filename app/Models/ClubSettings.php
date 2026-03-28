@@ -24,10 +24,10 @@ class ClubSettings extends Model
 
     public function logoDataUri(): ?string
     {
-        if (!$this->hasLogo()) {
+        if (! $this->hasLogo()) {
             return null;
         }
 
-        return 'data:' . $this->logo_mime_type . ';base64,' . $this->logo_data;
+        return 'data:'.$this->logo_mime_type.';base64,'.$this->logo_data;
     }
 }

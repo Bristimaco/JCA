@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Channels\WebPushChannel;
 use App\Models\ClubSettings;
 use App\Models\MembershipInvoice;
 use Illuminate\Bus\Queueable;
@@ -23,6 +24,7 @@ class MembershipPaymentNotification extends Notification
         $channels = [];
         if ($pref->wantsApp()) {
             $channels[] = 'database';
+            $channels[] = WebPushChannel::class;
         }
         if ($pref->wantsEmail()) {
             $channels[] = 'mail';
@@ -88,6 +90,15 @@ class MembershipPaymentNotification extends Notification
                 'lines' => $lineDetails,
                 'body' => "Factuur voor het lidgeld {$this->invoice->year} bij {$club->name}. Gelieve te betalen vóór ".($this->invoice->due_date?->format('d/m/Y') ?? '-').'.',
             ],
+        ];
+    }
+
+    public function toWebPush(object $notifiable): array
+    {
+        return [
+            'title' => "Lidgeld {$this->invoice->year}",
+            'body' => 'Totaal: €'.number_format($this->invoice->total_amount, 2, ',', '.'),
+            'url' => '/',
         ];
     }
 }

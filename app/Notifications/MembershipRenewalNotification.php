@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Channels\WebPushChannel;
 use App\Models\ClubSettings;
 use App\Models\Member;
 use Illuminate\Bus\Queueable;
@@ -23,6 +24,7 @@ class MembershipRenewalNotification extends Notification
         $channels = [];
         if ($pref->wantsApp()) {
             $channels[] = 'database';
+            $channels[] = WebPushChannel::class;
         }
         if ($pref->wantsEmail()) {
             $channels[] = 'mail';
@@ -59,6 +61,15 @@ class MembershipRenewalNotification extends Notification
                 'club_name' => $club->name,
                 'body' => 'Dit is een herinnering dat het lidmaatschap van '.$this->member->fullName().' bij '.$club->name.' binnenkort vernieuwd moet worden. Gelieve het lidgeld tijdig te betalen.',
             ],
+        ];
+    }
+
+    public function toWebPush(object $notifiable): array
+    {
+        return [
+            'title' => 'Lidmaatschap vernieuwing',
+            'body' => $this->member->fullName().' — vernieuwingsdatum: '.$this->member->membership_renewal_date->format('d/m/Y'),
+            'url' => '/',
         ];
     }
 }

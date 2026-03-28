@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Channels\WebPushChannel;
 use App\Models\ClubSettings;
 use App\Models\MembershipInvoice;
 use Illuminate\Bus\Queueable;
@@ -23,6 +24,7 @@ class PaymentConfirmationNotification extends Notification
         $channels = [];
         if ($pref->wantsApp()) {
             $channels[] = 'database';
+            $channels[] = WebPushChannel::class;
         }
         if ($pref->wantsEmail()) {
             $channels[] = 'mail';
@@ -61,8 +63,17 @@ class PaymentConfirmationNotification extends Notification
                 'total_amount' => number_format($this->invoice->total_amount, 2, ',', '.'),
                 'paid_at' => $this->invoice->paid_at?->format('d/m/Y H:i'),
                 'member_names' => $memberNames,
-                'body' => 'Uw betaling van €'.number_format($this->invoice->total_amount, 2, ',', '.')." voor het lidgeld {$this->invoice->year} bij {$club->name} is ontvangen. De vernieuwingsdatum van de leden is automatisch verlengd.",
+                'body' => 'Uw betaling van €'.number_format($this->invoice->total_amount, 2, ',', '.').' voor het lidgeld '.$this->invoice->year.' bij '.$club->name.' is ontvangen. De vernieuwingsdatum van de leden is automatisch verlengd.',
             ],
+        ];
+    }
+
+    public function toWebPush(object $notifiable): array
+    {
+        return [
+            'title' => 'Betaling ontvangen',
+            'body' => "Lidgeld {$this->invoice->year} — €".number_format($this->invoice->total_amount, 2, ',', '.').' betaald',
+            'url' => '/',
         ];
     }
 }

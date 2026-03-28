@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Channels\WebPushChannel;
 use App\Models\ClubSettings;
 use App\Models\Tournament;
 use Illuminate\Bus\Queueable;
@@ -25,6 +26,7 @@ class TournamentReportNotification extends Notification
         $channels = [];
         if ($pref->wantsApp()) {
             $channels[] = 'database';
+            $channels[] = WebPushChannel::class;
         }
         if ($pref->wantsEmail()) {
             $channels[] = 'mail';
@@ -73,6 +75,17 @@ class TournamentReportNotification extends Notification
                 'results' => $results,
                 'body' => 'Hieronder de resultaten van '.$t->name.'.',
             ],
+        ];
+    }
+
+    public function toWebPush(object $notifiable): array
+    {
+        $totalResults = $this->resultGroups->sum(fn ($g) => count($g['results']));
+
+        return [
+            'title' => 'Toernooiverslag',
+            'body' => $this->tournament->name.' — '.$totalResults.' resultaten',
+            'url' => '/',
         ];
     }
 }
