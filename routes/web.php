@@ -20,11 +20,13 @@ use App\Http\Controllers\Admin\UpdateUserController;
 use App\Http\Controllers\Admin\UserMembersController;
 use App\Http\Controllers\Admin\WeightCategoryController;
 use App\Http\Controllers\ArchivedTournamentsController;
+use App\Http\Controllers\AttendanceKioskController;
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ClubLogoController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MemberAttendanceController;
 use App\Http\Controllers\MemberPhotoController;
 use App\Http\Controllers\MollieWebhookController;
 use App\Http\Controllers\MyMembersController;
@@ -32,6 +34,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\TournamentAttachmentController;
 use App\Http\Controllers\TournamentDetailController;
 use App\Http\Controllers\TournamentRsvpController;
+use App\Http\Controllers\Trainer\TrainerAttendanceController;
 use App\Http\Controllers\Trainer\TrainerTournamentController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -44,6 +47,14 @@ Route::get('/club-logo', ClubLogoController::class)->name('club.logo');
 
 // Mollie webhook (no auth, CSRF excluded in bootstrap/app.php)
 Route::post('/webhooks/mollie', MollieWebhookController::class)->name('webhooks.mollie');
+
+// Attendance kiosk (PIN-protected, no auth)
+Route::get('/attendance', [AttendanceKioskController::class, 'pin'])->name('attendance.pin');
+Route::post('/attendance/verify', [AttendanceKioskController::class, 'verifyPin'])->name('attendance.verify');
+Route::get('/attendance/today', [AttendanceKioskController::class, 'today'])->name('attendance.today');
+Route::get('/attendance/session/{session}', [AttendanceKioskController::class, 'session'])->name('attendance.session');
+Route::post('/attendance/session/{session}/toggle/{member}', [AttendanceKioskController::class, 'toggle'])->name('attendance.toggle');
+Route::post('/attendance/logout', [AttendanceKioskController::class, 'logout'])->name('attendance.logout');
 
 // Guest routes (unauthenticated only)
 Route::middleware('guest')->group(function () {
@@ -108,7 +119,14 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
 
         // Training group member assignment (trainer)
         Route::put('/training-groups/{trainingGroup}/members', [TrainingGroupMemberController::class, 'update'])->name('trainer.training-groups.members');
+
+        // Trainer attendance management
+        Route::post('/sessions/open', [TrainerAttendanceController::class, 'open'])->name('trainer.sessions.open');
+        Route::patch('/sessions/{session}/close', [TrainerAttendanceController::class, 'close'])->name('trainer.sessions.close');
     });
+
+    // Personal attendance toggle
+    Route::post('/attendance/session/{session}/toggle', [MemberAttendanceController::class, 'toggle'])->name('member.attendance.toggle');
 
     // Admin routes
     Route::middleware('admin')->prefix('admin')->group(function () {

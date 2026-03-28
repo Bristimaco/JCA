@@ -1,4 +1,4 @@
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import AppLayout from '../Layouts/AppLayout';
 import TournamentStepper from '../Components/TournamentStepper';
@@ -32,7 +32,7 @@ const modules = [
     { name: 'Archief', href: '/archief', roles: ['parent', 'member', 'admin', 'coach'] },
 ];
 
-export default function Dashboard({ pendingCount, pendingUsers, adminCounters, memberStats, myMemberCount, myTournaments, activeTournaments, coachTournaments, coachTrainingGroups, upcomingTournaments, recentArchived }) {
+export default function Dashboard({ pendingCount, pendingUsers, adminCounters, memberStats, myMemberCount, myTournaments, activeTournaments, coachTournaments, coachTrainingGroups, upcomingTournaments, recentArchived, activeTrainingSessions }) {
     const { auth } = usePage().props;
     const role = auth.user.role;
 
@@ -167,6 +167,10 @@ export default function Dashboard({ pendingCount, pendingUsers, adminCounters, m
 
             {coachTrainingGroups && coachTrainingGroups.length > 0 && (
                 <CoachTrainingGroups groups={coachTrainingGroups} />
+            )}
+
+            {activeTrainingSessions && activeTrainingSessions.length > 0 && (
+                <ActiveTrainingSessions sessions={activeTrainingSessions} />
             )}
 
             {myTournaments && myTournaments.length > 0 && (
@@ -465,8 +469,65 @@ function CoachTournaments({ tournaments }) {
     );
 }
 
+function ActiveTrainingSessions({ sessions }) {
+    const handleToggle = (sessionId) => {
+        router.post(`/attendance/session/${sessionId}/toggle`, {}, { preserveScroll: true });
+    };
+
+    return (
+        <div className="mt-10">
+            <div className="flex items-center gap-2 mb-4">
+                <div className="relative flex h-3 w-3">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                </div>
+                <h2 className="text-lg font-semibold text-white">Actieve Trainingen</h2>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {sessions.map(s => (
+                    <div key={s.id} className="bg-slate-900 rounded-xl shadow-sm ring-1 ring-slate-800 border-t-2 border-t-emerald-600/60 overflow-hidden">
+                        <div className="p-4">
+                            <p className="font-semibold text-white">{s.group_name}</p>
+                            <p className="text-sm text-slate-400 mt-1">{s.day} {s.start_time}{s.end_time ? `–${s.end_time}` : ''}</p>
+                            {s.trainer_name && <p className="text-xs text-slate-500 mt-1">Trainer: {s.trainer_name}</p>}
+                            <button
+                                onClick={() => handleToggle(s.id)}
+                                className={`mt-3 w-full rounded-lg px-4 py-2.5 text-sm font-semibold transition-all ${
+                                    s.attending
+                                        ? 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-md'
+                                        : 'bg-slate-800 text-slate-300 hover:bg-slate-700 ring-1 ring-slate-700'
+                                }`}
+                            >
+                                {s.attending ? '✓ Aanwezig' : 'Aanwezig melden'}
+                            </button>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
+
 function CoachTrainingGroups({ groups }) {
+    const { auth } = usePage().props;
     const [expandedId, setExpandedId] = useState(null);
+    const [closingSession, setClosingSession] = useState(null);
+    const [remarks, setRemarks] = useState('');
+
+    const handleOpenSession = (scheduleId) => {
+        router.post('/trainer/sessions/open', { training_schedule_id: scheduleId }, { preserveScroll: true });
+    };
+
+    const handleCloseSession = () => {
+        if (!closingSession) return;
+        router.patch(`/trainer/sessions/${closingSession}/close`, { remarks: remarks || null }, {
+            preserveScroll: true,
+            onSuccess: () => {
+                setClosingSession(null);
+                setRemarks('');
+            },
+        });
+    };
 
     return (
         <div className="mt-10">
@@ -486,19 +547,47 @@ function CoachTrainingGroups({ groups }) {
                                     €{Number(g.membership_fee).toFixed(2)}
                                 </span>
                             </div>
-                            <div className="flex flex-wrap gap-x-3 text-xs text-slate-400 mt-1">
-                                {g.schedules?.length > 0 && (
-                                    <span>
-                                        {g.schedules.map((s, i) => (
-                                            <span key={i}>
-                                                {i > 0 && ', '}
-                                                {s.day} {s.start_time}{s.end_time ? `–${s.end_time}` : ''}{s.trainer_name ? ` (${s.trainer_name})` : ''}
-                                            </span>
-                                        ))}
-                                    </span>
-                                )}
-                                {g.location && <span>{g.location}</span>}
-                            </div>
+
+                            {g.schedules?.map((s, i) => (
+                                <div key={i} className="mt-2 p-2 rounded-lg bg-slate-800/50 ring-1 ring-slate-700/50">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-xs text-slate-400">
+                                            {s.day} {s.start_time}{s.end_time ? `–${s.end_time}` : ''}{s.trainer_name ? ` (${s.trainer_name})` : ''}
+                                        </span>
+                                        {s.trainer_id === auth.user.id && (
+                                            <>
+                                                {s.session?.is_open ? (
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-900/40 px-2 py-0.5 text-[10px] font-semibold text-emerald-400">
+                                                            <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span></span>
+                                                            {s.session.attendance_count} aanwezig
+                                                        </span>
+                                                        <button
+                                                            onClick={() => { setClosingSession(s.session.id); setRemarks(''); }}
+                                                            className="rounded-md bg-red-900/30 px-2 py-1 text-[10px] font-semibold text-red-400 hover:bg-red-900/50 ring-1 ring-red-700/30"
+                                                        >
+                                                            Sluiten
+                                                        </button>
+                                                    </div>
+                                                ) : s.session?.closed_at ? (
+                                                    <span className="inline-flex items-center rounded-full bg-slate-700 px-2 py-0.5 text-[10px] font-medium text-slate-400">
+                                                        Afgesloten ({s.session.attendance_count})
+                                                    </span>
+                                                ) : (
+                                                    <button
+                                                        onClick={() => handleOpenSession(s.id)}
+                                                        className="rounded-md bg-emerald-900/30 px-2 py-1 text-[10px] font-semibold text-emerald-400 hover:bg-emerald-900/50 ring-1 ring-emerald-700/30"
+                                                    >
+                                                        Start training
+                                                    </button>
+                                                )}
+                                            </>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+
+                            {g.location && <p className="text-xs text-slate-500 mt-2">{g.location}</p>}
                             {g.description && <p className="text-xs text-slate-500 mt-1">{g.description}</p>}
                             <button
                                 onClick={() => setExpandedId(expandedId === g.id ? null : g.id)}
@@ -523,6 +612,38 @@ function CoachTrainingGroups({ groups }) {
                     </div>
                 ))}
             </div>
+
+            {closingSession && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+                    <div className="bg-slate-900 rounded-xl shadow-xl ring-1 ring-slate-700 w-full max-w-md p-6">
+                        <h3 className="text-lg font-semibold text-white mb-4">Training afsluiten</h3>
+                        <div className="mb-4">
+                            <label className="block text-sm font-medium text-slate-300 mb-1">Opmerking (optioneel)</label>
+                            <textarea
+                                value={remarks}
+                                onChange={(e) => setRemarks(e.target.value)}
+                                rows={3}
+                                className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-rose-500 focus:ring-rose-500 text-sm"
+                                placeholder="Eventuele opmerkingen over de training..."
+                            />
+                        </div>
+                        <div className="flex justify-end gap-3">
+                            <button
+                                onClick={() => setClosingSession(null)}
+                                className="rounded-md bg-slate-700 px-4 py-2 text-sm font-medium text-slate-300 hover:bg-slate-600"
+                            >
+                                Annuleren
+                            </button>
+                            <button
+                                onClick={handleCloseSession}
+                                className="rounded-md bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-700"
+                            >
+                                Afsluiten
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

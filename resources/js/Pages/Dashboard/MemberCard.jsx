@@ -137,6 +137,21 @@ export default function MemberCard({ member, ageCategories, showPaidButton = fal
                             </button>
                         )}
                     </div>
+
+                    {/* Attendance History */}
+                    {member.attendance_history && member.attendance_history.length > 0 && (
+                        <div className="mt-4 pt-3 border-t border-slate-800">
+                            <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-2">Laatste trainingen</p>
+                            <div className="space-y-1 max-h-32 overflow-y-auto">
+                                {member.attendance_history.map((a, i) => (
+                                    <div key={i} className="flex items-center justify-between text-xs">
+                                        <span className="text-slate-400">{a.group_name}</span>
+                                        <span className="text-slate-500">{new Date(a.date).toLocaleDateString('nl-BE')}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

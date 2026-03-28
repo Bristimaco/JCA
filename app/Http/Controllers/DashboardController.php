@@ -12,6 +12,7 @@ use App\Models\Member;
 use App\Models\Tournament;
 use App\Models\TournamentResult;
 use App\Models\TrainingGroup;
+use App\Models\TrainingSession;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -142,29 +143,73 @@ class DashboardController extends Controller
                 ->with(['members:id,first_name,last_name', 'schedules.trainer:id,name'])
                 ->orderBy('name')
                 ->get()
-                ->map(fn (TrainingGroup $g) => [
-                    'id' => $g->id,
-                    'name' => $g->name,
-                    'description' => $g->description,
-                    'membership_fee' => $g->membership_fee,
-                    'schedules' => $g->schedules->map(fn ($s) => [
-                        'day' => $s->day,
-                        'start_time' => $s->start_time,
-                        'end_time' => $s->end_time,
-                        'trainer_name' => $s->trainer?->name,
-                    ])->values()->all(),
-                    'location' => $g->location,
-                    'member_ids' => $g->members->pluck('id')->values()->all(),
-                    'members' => $g->members->map(fn ($m) => [
-                        'id' => $m->id,
-                        'name' => $m->fullName(),
-                    ])->values()->all(),
-                    'member_count' => $g->members->count(),
-                ]);
+                ->map(function (TrainingGroup $g) use ($request) {
+                    $scheduleIds = $g->schedules->where('trainer_id', $request->user()->id)->pluck('id');
+                    $todaySessions = TrainingSession::whereIn('training_schedule_id', $scheduleIds)
+                        ->where('date', now()->toDateString())
+                        ->with('attendances')
+                        ->get();
+
+                    return [
+                        'id' => $g->id,
+                        'name' => $g->name,
+                        'description' => $g->description,
+                        'membership_fee' => $g->membership_fee,
+                        'schedules' => $g->schedules->map(function ($s) use ($todaySessions) {
+                            $session = $todaySessions->firstWhere('training_schedule_id', $s->id);
+
+                            return [
+                                'id' => $s->id,
+                                'day' => $s->day,
+                                'start_time' => $s->start_time,
+                                'end_time' => $s->end_time,
+                                'trainer_name' => $s->trainer?->name,
+                                'trainer_id' => $s->trainer_id,
+                                'session' => $session ? [
+                                    'id' => $session->id,
+                                    'is_open' => $session->isOpen(),
+                                    'attendance_count' => $session->attendances->count(),
+                                    'closed_at' => $session->closed_at?->toDateTimeString(),
+                                ] : null,
+                            ];
+                        })->values()->all(),
+                        'location' => $g->location,
+                        'member_ids' => $g->members->pluck('id')->values()->all(),
+                        'members' => $g->members->map(fn ($m) => [
+                            'id' => $m->id,
+                            'name' => $m->fullName(),
+                        ])->values()->all(),
+                        'member_count' => $g->members->count(),
+                    ];
+                });
         }
 
         // Load tournaments for the user's linked members
         $memberIds = $request->user()->members()->pluck('members.id');
+
+        // Active training sessions for the user's members
+        if ($memberIds->isNotEmpty()) {
+            $props['activeTrainingSessions'] = TrainingSession::whereNull('closed_at')
+                ->whereNotNull('opened_at')
+                ->where('date', now()->toDateString())
+                ->whereHas('trainingSchedule.trainingGroup.members', fn ($q) => $q->whereIn('members.id', $memberIds))
+                ->with(['trainingSchedule.trainingGroup', 'trainingSchedule.trainer:id,name', 'attendances'])
+                ->get()
+                ->map(function (TrainingSession $s) use ($memberIds) {
+                    $attending = $s->attendances->whereIn('member_id', $memberIds)->isNotEmpty();
+
+                    return [
+                        'id' => $s->id,
+                        'group_name' => $s->trainingSchedule->trainingGroup->name,
+                        'day' => $s->trainingSchedule->day,
+                        'start_time' => $s->trainingSchedule->start_time,
+                        'end_time' => $s->trainingSchedule->end_time,
+                        'trainer_name' => $s->trainingSchedule->trainer?->name,
+                        'attending' => $attending,
+                    ];
+                });
+        }
+
         if ($memberIds->isNotEmpty()) {
             $props['myTournaments'] = Tournament::whereHas('members', fn ($q) => $q->whereIn('members.id', $memberIds))
                 ->with(['members', 'attachments'])

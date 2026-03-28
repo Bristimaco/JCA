@@ -93,6 +93,7 @@ function ClubSettingsSection({ clubSettings }) {
         address_street: clubSettings.address_street || '',
         address_city: clubSettings.address_city || '',
         address_postal_code: clubSettings.address_postal_code || '',
+        attendance_pin: clubSettings.attendance_pin || '',
         logo: null,
     });
 
@@ -176,6 +177,20 @@ function ClubSettingsSection({ clubSettings }) {
                         />
                     </div>
                     {form.errors.logo && <p className="text-sm text-red-400 mt-1">{form.errors.logo}</p>}
+                </div>
+
+                <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-1">Aanwezigheid PIN-code</label>
+                    <input
+                        type="text"
+                        inputMode="numeric"
+                        value={form.data.attendance_pin}
+                        onChange={(e) => form.setData('attendance_pin', e.target.value)}
+                        placeholder="4-8 cijfers"
+                        className="w-full max-w-xs rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-rose-500 focus:ring-rose-500 text-sm"
+                    />
+                    <p className="text-xs text-slate-500 mt-1">PIN voor het kiosk aanwezigheidsscherm (/attendance)</p>
+                    {form.errors.attendance_pin && <p className="text-sm text-red-400 mt-1">{form.errors.attendance_pin}</p>}
                 </div>
 
                 <div className="flex justify-end">

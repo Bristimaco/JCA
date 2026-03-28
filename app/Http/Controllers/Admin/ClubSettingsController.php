@@ -18,6 +18,7 @@ class ClubSettingsController extends Controller
             'address_postal_code' => ['nullable', 'string', 'max:10'],
             'logo' => ['nullable', 'image', 'max:2048'],
             'remove_logo' => ['boolean'],
+            'attendance_pin' => ['nullable', 'string', 'min:4', 'max:8'],
         ]);
 
         $settings = ClubSettings::first();
@@ -27,6 +28,7 @@ class ClubSettingsController extends Controller
             'address_street' => $validated['address_street'] ?? null,
             'address_city' => $validated['address_city'] ?? null,
             'address_postal_code' => $validated['address_postal_code'] ?? null,
+            'attendance_pin' => $validated['attendance_pin'] ?? null,
         ];
 
         if ($request->hasFile('logo')) {

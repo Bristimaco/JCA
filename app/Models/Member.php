@@ -116,6 +116,11 @@ class Member extends Model
         return $this->belongsToMany(TrainingGroup::class)->withTimestamps();
     }
 
+    public function attendances(): HasMany
+    {
+        return $this->hasMany(TrainingAttendance::class);
+    }
+
     public function resolveEmail(?Carbon $referenceDate = null): ?string
     {
         if ($this->isMinor($referenceDate)) {
