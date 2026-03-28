@@ -85,13 +85,14 @@ function TrainingGroupForm({ group, trainers, onCancel }) {
             ...form.data,
             schedules: form.data.schedules.filter(s => s.day && s.start_time),
         };
+        form.transform(() => data);
         if (isEditing) {
-            form.transform(() => data).patch(`/admin/training-groups/${group.id}`, {
+            form.patch(`/admin/training-groups/${group.id}`, {
                 preserveScroll: true,
                 onSuccess: () => onCancel(),
             });
         } else {
-            form.transform(() => data).post('/admin/training-groups', {
+            form.post('/admin/training-groups', {
                 preserveScroll: true,
                 onSuccess: () => {
                     form.reset();
