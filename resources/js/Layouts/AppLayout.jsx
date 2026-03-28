@@ -10,7 +10,7 @@ export default function AppLayout({ children }) {
     const [notifPref, setNotifPref] = useState(auth.user?.notification_preference || 'both');
     const menuRef = useRef(null);
 
-    usePushSubscription();
+    const { pushState, subscribe } = usePushSubscription();
 
     const handleLogout = (e) => {
         e.preventDefault();
@@ -106,6 +106,24 @@ export default function AppLayout({ children }) {
                                                 <option value="app">Alleen in-app</option>
                                             </select>
                                         </div>
+                                        {pushState === 'prompt' && (
+                                            <div className="px-3 py-2 border-b border-slate-800">
+                                                <button
+                                                    onClick={subscribe}
+                                                    className="w-full rounded-md bg-rose-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-rose-700 flex items-center justify-center gap-1.5"
+                                                >
+                                                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                                                    </svg>
+                                                    Push notificaties activeren
+                                                </button>
+                                            </div>
+                                        )}
+                                        {pushState === 'denied' && (
+                                            <div className="px-3 py-2 border-b border-slate-800">
+                                                <p className="text-xs text-slate-500">Push notificaties geblokkeerd. Schakel ze in via je browser/apparaat instellingen.</p>
+                                            </div>
+                                        )}
                                         <button
                                             onClick={handleLogout}
                                             disabled={logoutForm.processing}
