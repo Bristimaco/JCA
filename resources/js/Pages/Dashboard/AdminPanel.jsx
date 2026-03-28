@@ -4,7 +4,8 @@ import AgeCategoriesSection from './AgeCategoriesSection';
 import WeightCategoriesSection from './WeightCategoriesSection';
 
 export default function AdminPanel({ pendingUsers, users, roles, ageCategories, weightCategories, allMembers, clubSettings, renewalDueCount, renewalDueMembers }) {
-    const [renewalListOpen, setRenewalListOpen] = useState(false);
+    const urlParams = new URLSearchParams(window.location.search);
+    const [renewalListOpen, setRenewalListOpen] = useState(urlParams.get('renewal') === 'open');
 
     return (
         <div>

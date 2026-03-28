@@ -183,7 +183,7 @@ function AdminTile({ pendingCount, pendingUsers, adminCounters }) {
     const counters = [
         { label: 'Nieuwe aanvragen', value: pendingCount, icon: '👤', bg: 'bg-rose-900/30', text: 'text-rose-400', ring: 'ring-rose-700/30' },
         { label: 'Inactieve leden', value: adminCounters?.inactiveMemberCount ?? 0, icon: '⏸', bg: 'bg-slate-700/50', text: 'text-slate-300', ring: 'ring-slate-600/30' },
-        { label: 'Vernieuwing nodig', value: adminCounters?.renewalDueCount ?? 0, icon: '💳', bg: 'bg-amber-900/30', text: 'text-amber-400', ring: 'ring-amber-700/30' },
+        { label: 'Vernieuwing nodig', value: adminCounters?.renewalDueCount ?? 0, icon: '💳', bg: 'bg-amber-900/30', text: 'text-amber-400', ring: 'ring-amber-700/30', href: '/admin/members?filter=renewal' },
         { label: 'Komende toernooien', value: adminCounters?.upcomingTournamentCount ?? 0, icon: '📅', bg: 'bg-blue-900/30', text: 'text-blue-400', ring: 'ring-blue-700/30' },
         { label: 'Actieve toernooien', value: adminCounters?.activeTournamentCount ?? 0, icon: '🏆', bg: 'bg-emerald-900/30', text: 'text-emerald-400', ring: 'ring-emerald-700/30' },
     ];
@@ -211,12 +211,28 @@ function AdminTile({ pendingCount, pendingUsers, adminCounters }) {
             </div>
 
             <div className="grid grid-cols-2 gap-2 mb-4">
-                {counters.map((c) => (
-                    <div key={c.label} className={`flex items-center justify-between rounded-lg ${c.bg} ring-1 ${c.ring} px-3 py-2.5`}>
-                        <span className="text-xs font-medium text-slate-400">{c.label}</span>
-                        <span className={`text-lg font-bold ${c.text}`}>{c.value}</span>
-                    </div>
-                ))}
+                {counters.map((c) => {
+                    const inner = (
+                        <>
+                            <span className="text-xs font-medium text-slate-400">{c.label}</span>
+                            <span className={`text-lg font-bold ${c.text}`}>{c.value}</span>
+                        </>
+                    );
+                    return c.href ? (
+                        <Link
+                            key={c.label}
+                            href={c.href}
+                            onClick={(e) => e.stopPropagation()}
+                            className={`flex items-center justify-between rounded-lg ${c.bg} ring-1 ${c.ring} px-3 py-2.5 hover:brightness-125 transition-all`}
+                        >
+                            {inner}
+                        </Link>
+                    ) : (
+                        <div key={c.label} className={`flex items-center justify-between rounded-lg ${c.bg} ring-1 ${c.ring} px-3 py-2.5`}>
+                            {inner}
+                        </div>
+                    );
+                })}
             </div>
 
             {pendingUsers && pendingUsers.length > 0 && (

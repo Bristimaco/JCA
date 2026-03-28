@@ -24,6 +24,7 @@ use App\Http\Controllers\ClubLogoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MemberPhotoController;
 use App\Http\Controllers\MyMembersController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\TournamentAttachmentController;
 use App\Http\Controllers\TournamentDetailController;
 use App\Http\Controllers\TournamentRsvpController;
@@ -69,6 +70,12 @@ Route::middleware('auth')->group(function () {
 // Protected routes (authenticated + verified + approved)
 Route::middleware(['auth', 'verified', 'approved'])->group(function () {
     Route::get('/', DashboardController::class)->name('dashboard');
+
+    // Notifications
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
+    Route::patch('/notifications/preference', [NotificationController::class, 'updatePreference'])->name('notifications.preference');
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
 
     // My members (for ouder/lid roles)
     Route::get('/mijn-leden', [MyMembersController::class, 'index'])->name('my-members.index');

@@ -1,10 +1,12 @@
-import { Link, usePage, useForm } from '@inertiajs/react';
+import { Link, usePage, useForm, router } from '@inertiajs/react';
 import { useState, useRef, useEffect } from 'react';
+import NotificationDropdown from '../Components/NotificationDropdown';
 
 export default function AppLayout({ children }) {
     const { auth, club } = usePage().props;
     const logoutForm = useForm();
     const [userMenuOpen, setUserMenuOpen] = useState(false);
+    const [notifPref, setNotifPref] = useState(auth.user?.notification_preference || 'both');
     const menuRef = useRef(null);
 
     const handleLogout = (e) => {
@@ -57,6 +59,8 @@ export default function AppLayout({ children }) {
                                 </svg>
                             </a>
 
+                            <NotificationDropdown />
+
                             <div className="relative" ref={menuRef}>
                                 <button
                                     onClick={() => setUserMenuOpen(!userMenuOpen)}
@@ -83,6 +87,21 @@ export default function AppLayout({ children }) {
                                             {auth.user.role_label && (
                                                 <p className="text-xs text-slate-400">{auth.user.role_label}</p>
                                             )}
+                                        </div>
+                                        <div className="px-3 py-2 border-b border-slate-800">
+                                            <p className="text-xs text-slate-500 mb-1.5">Meldingen via</p>
+                                            <select
+                                                value={notifPref}
+                                                onChange={(e) => {
+                                                    setNotifPref(e.target.value);
+                                                    router.patch('/notifications/preference', { notification_preference: e.target.value }, { preserveScroll: true });
+                                                }}
+                                                className="w-full rounded-md border border-slate-600 bg-slate-800 text-white text-xs py-1 px-2 focus:outline-none focus:ring-1 focus:ring-rose-500"
+                                            >
+                                                <option value="both">Email & In-app</option>
+                                                <option value="email">Alleen email</option>
+                                                <option value="app">Alleen in-app</option>
+                                            </select>
                                         </div>
                                         <button
                                             onClick={handleLogout}

@@ -16,8 +16,7 @@ class MembershipRenewalReminder extends Mailable
 
     public function __construct(
         public Member $member,
-    ) {
-    }
+    ) {}
 
     public function envelope(): Envelope
     {

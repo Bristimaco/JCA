@@ -6,10 +6,13 @@ use App\Enums\InvitationStatus;
 use App\Enums\TournamentStatus;
 use App\Http\Controllers\Controller;
 use App\Mail\TournamentInvitation;
-use App\Mail\TournamentRegistrationNotification;
-use App\Mail\TournamentTrainerNotification;
+use App\Mail\TournamentRegistrationNotification as TournamentRegistrationMail;
+use App\Mail\TournamentTrainerNotification as TournamentTrainerMail;
 use App\Models\Member;
 use App\Models\Tournament;
+use App\Notifications\TournamentInvitationNotification;
+use App\Notifications\TournamentRegistrationNotification;
+use App\Notifications\TrainerTournamentNotification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -24,7 +27,7 @@ class TournamentMembersController extends Controller
      */
     public function populate(Tournament $tournament): RedirectResponse
     {
-        if (request()->user()->isAdmin() && !request()->user()->isCoach()) {
+        if (request()->user()->isAdmin() && ! request()->user()->isCoach()) {
             abort(403, 'Alleen trainers mogen de deelnemerslijst beheren.');
         }
 
@@ -57,7 +60,7 @@ class TournamentMembersController extends Controller
             return back()->with('status', 'Geen nieuwe leden gevonden die aan de criteria voldoen.');
         }
 
-        $rows = $toAttach->mapWithKeys(fn(Member $m) => [
+        $rows = $toAttach->mapWithKeys(fn (Member $m) => [
             $m->id => [
                 'invitation_status' => InvitationStatus::Pending->value,
                 'invitation_token' => Str::random(64),
@@ -66,7 +69,7 @@ class TournamentMembersController extends Controller
 
         $tournament->members()->attach($rows);
 
-        return back()->with('status', $toAttach->count() . ' leden toegevoegd aan het toernooi.');
+        return back()->with('status', $toAttach->count().' leden toegevoegd aan het toernooi.');
     }
 
     /**
@@ -75,7 +78,7 @@ class TournamentMembersController extends Controller
      */
     public function addMember(Request $request, Tournament $tournament): RedirectResponse
     {
-        if (request()->user()->isAdmin() && !request()->user()->isCoach()) {
+        if (request()->user()->isAdmin() && ! request()->user()->isCoach()) {
             abort(403, 'Alleen trainers mogen de deelnemerslijst beheren.');
         }
 
@@ -93,7 +96,7 @@ class TournamentMembersController extends Controller
 
         $member = Member::findOrFail($validated['member_id']);
 
-        if (!$member->is_competition) {
+        if (! $member->is_competition) {
             return back()->with('status', 'Dit lid is geen competitielid.');
         }
 
@@ -102,7 +105,7 @@ class TournamentMembersController extends Controller
             $tournament->tournament_date,
         );
 
-        if (!$category || !$tournament->ageCategories->contains($category->id)) {
+        if (! $category || ! $tournament->ageCategories->contains($category->id)) {
             return back()->with('status', 'Dit lid valt niet in een leeftijdscategorie van dit toernooi.');
         }
 
@@ -111,7 +114,7 @@ class TournamentMembersController extends Controller
             'invitation_token' => Str::random(64),
         ]);
 
-        return back()->with('status', $member->fullName() . ' is toegevoegd.');
+        return back()->with('status', $member->fullName().' is toegevoegd.');
     }
 
     /**
@@ -120,7 +123,7 @@ class TournamentMembersController extends Controller
      */
     public function removeMember(Tournament $tournament, Member $member): RedirectResponse
     {
-        if (request()->user()->isAdmin() && !request()->user()->isCoach()) {
+        if (request()->user()->isAdmin() && ! request()->user()->isCoach()) {
             abort(403, 'Alleen trainers mogen de deelnemerslijst beheren.');
         }
 
@@ -130,7 +133,7 @@ class TournamentMembersController extends Controller
 
         $tournament->members()->detach($member->id);
 
-        return back()->with('status', $member->fullName() . ' is verwijderd van het toernooi.');
+        return back()->with('status', $member->fullName().' is verwijderd van het toernooi.');
     }
 
     /**
@@ -140,13 +143,13 @@ class TournamentMembersController extends Controller
     {
         $pivot = $tournament->members()->where('members.id', $member->id)->first()?->pivot;
 
-        if (!$pivot) {
+        if (! $pivot) {
             return back()->with('status', 'Dit lid staat niet op de lijst.');
         }
 
         $this->sendInvitation($tournament, $member, $pivot);
 
-        return back()->with('status', 'Uitnodiging verstuurd naar ' . $member->fullName() . '.');
+        return back()->with('status', 'Uitnodiging verstuurd naar '.$member->fullName().'.');
     }
 
     /**
@@ -168,7 +171,7 @@ class TournamentMembersController extends Controller
             $count++;
         }
 
-        return back()->with('status', $count . ' uitnodigingen verstuurd.');
+        return back()->with('status', $count.' uitnodigingen verstuurd.');
     }
 
     /**
@@ -212,7 +215,7 @@ class TournamentMembersController extends Controller
     {
         $pivot = $tournament->members()->where('members.id', $member->id)->first()?->pivot;
 
-        if (!$pivot) {
+        if (! $pivot) {
             return back()->with('status', 'Dit lid staat niet op de lijst.');
         }
 
@@ -220,12 +223,15 @@ class TournamentMembersController extends Controller
             ->where('id', $pivot->id)
             ->update(['registration_status' => 'registered']);
 
-        $email = $this->resolveEmail($member, $tournament);
-        if ($email) {
-            Mail::to($email)->send(new TournamentRegistrationNotification($tournament, $member, true));
+        $notified = $this->notifyMemberUsers($member, new TournamentRegistrationNotification($tournament, $member, true));
+        if (! $notified) {
+            $email = $this->resolveEmail($member, $tournament);
+            if ($email) {
+                Mail::to($email)->send(new TournamentRegistrationMail($tournament, $member, true));
+            }
         }
 
-        return back()->with('status', $member->fullName() . ' is ingeschreven.');
+        return back()->with('status', $member->fullName().' is ingeschreven.');
     }
 
     /**
@@ -235,7 +241,7 @@ class TournamentMembersController extends Controller
     {
         $pivot = $tournament->members()->where('members.id', $member->id)->first()?->pivot;
 
-        if (!$pivot || $pivot->registration_status !== 'registered') {
+        if (! $pivot || $pivot->registration_status !== 'registered') {
             return back()->with('status', 'Dit lid is niet ingeschreven.');
         }
 
@@ -243,12 +249,15 @@ class TournamentMembersController extends Controller
             ->where('id', $pivot->id)
             ->update(['registration_status' => 'unregistered']);
 
-        $email = $this->resolveEmail($member, $tournament);
-        if ($email) {
-            Mail::to($email)->send(new TournamentRegistrationNotification($tournament, $member, false));
+        $notified = $this->notifyMemberUsers($member, new TournamentRegistrationNotification($tournament, $member, false));
+        if (! $notified) {
+            $email = $this->resolveEmail($member, $tournament);
+            if ($email) {
+                Mail::to($email)->send(new TournamentRegistrationMail($tournament, $member, false));
+            }
         }
 
-        return back()->with('status', $member->fullName() . ' is uitgeschreven.');
+        return back()->with('status', $member->fullName().' is uitgeschreven.');
     }
 
     /**
@@ -260,9 +269,9 @@ class TournamentMembersController extends Controller
             ->wherePivot('invitation_status', InvitationStatus::Accepted->value)
             ->get();
 
-        $allRegistered = $accepted->every(fn(Member $m) => $m->pivot->registration_status === 'registered');
+        $allRegistered = $accepted->every(fn (Member $m) => $m->pivot->registration_status === 'registered');
 
-        if (!$allRegistered && !$request->boolean('confirmed')) {
+        if (! $allRegistered && ! $request->boolean('confirmed')) {
             return back()->with('status', 'NOT_ALL_REGISTERED');
         }
 
@@ -277,7 +286,7 @@ class TournamentMembersController extends Controller
      */
     public function startTournament(Tournament $tournament): RedirectResponse
     {
-        if (request()->user()->isAdmin() && !request()->user()->isCoach()) {
+        if (request()->user()->isAdmin() && ! request()->user()->isCoach()) {
             abort(403, 'Alleen trainers mogen een toernooi starten.');
         }
 
@@ -302,7 +311,7 @@ class TournamentMembersController extends Controller
 
         $previous = $tournament->status->previous();
 
-        if (!$previous) {
+        if (! $previous) {
             return back()->with('status', 'Dit toernooi staat al op de eerste status.');
         }
 
@@ -316,13 +325,13 @@ class TournamentMembersController extends Controller
             TournamentStatus::Archived,
         ];
 
-        if (in_array($tournament->status, $adminOnlyReverts, true) && !$isAdmin) {
+        if (in_array($tournament->status, $adminOnlyReverts, true) && ! $isAdmin) {
             return back()->with('status', 'Alleen een beheerder mag deze status terugzetten.');
         }
 
         $tournament->update(['status' => $previous]);
 
-        return back()->with('status', 'Status teruggezet naar: ' . $previous->label() . '.');
+        return back()->with('status', 'Status teruggezet naar: '.$previous->label().'.');
     }
 
     private function notifyCoaches(Tournament $tournament): void
@@ -333,7 +342,7 @@ class TournamentMembersController extends Controller
             return;
         }
 
-        $participants = $tournament->members()->with('weightCategory')->get()->map(fn(Member $m) => [
+        $participants = $tournament->members()->with('weightCategory')->get()->map(fn (Member $m) => [
             'name' => $m->fullName(),
             'date_of_birth' => $m->date_of_birth->format('d/m/Y'),
             'age_category' => $m->calculateAgeCategory($tournament->country_code, $tournament->tournament_date)?->name,
@@ -341,24 +350,34 @@ class TournamentMembersController extends Controller
             'invitation_status' => InvitationStatus::tryFrom($m->pivot->invitation_status)?->label() ?? $m->pivot->invitation_status,
         ]);
 
-        foreach ($coaches as $coach) {
-            $email = $coach->email ?? $coach->users->first()?->email;
+        $notification = new TrainerTournamentNotification($tournament, $participants);
 
-            if ($email) {
-                Mail::to($email)->send(new TournamentTrainerNotification($tournament, $participants));
+        foreach ($coaches as $coach) {
+            $user = $coach->users->first();
+
+            if ($user) {
+                $user->notify($notification);
+            } else {
+                $email = $coach->email;
+                if ($email) {
+                    Mail::to($email)->send(new TournamentTrainerMail($tournament, $participants));
+                }
             }
         }
     }
 
     private function sendInvitation(Tournament $tournament, Member $member, $pivot): void
     {
-        $email = $this->resolveEmail($member, $tournament);
+        $notification = new TournamentInvitationNotification($tournament, $member, $pivot->invitation_token);
+        $notified = $this->notifyMemberUsers($member, $notification);
 
-        if (!$email) {
-            return;
+        if (! $notified) {
+            // Email-only fallback for members with no linked users
+            $email = $this->resolveEmail($member, $tournament);
+            if ($email) {
+                Mail::to($email)->send(new TournamentInvitation($tournament, $member, $pivot->invitation_token));
+            }
         }
-
-        Mail::to($email)->send(new TournamentInvitation($tournament, $member, $pivot->invitation_token));
 
         DB::table('member_tournament')
             ->where('id', $pivot->id)
@@ -377,6 +396,33 @@ class TournamentMembersController extends Controller
         return $member->resolveEmail($tournament->tournament_date);
     }
 
+    /**
+     * Notify all users linked to a member. Returns true if at least one user was notified.
+     */
+    private function notifyMemberUsers(Member $member, $notification): bool
+    {
+        $member->loadMissing('users', 'guardians.user');
+
+        $users = $member->users;
+
+        if ($users->isEmpty()) {
+            $users = $member->guardians
+                ->filter(fn ($g) => $g->user_id !== null)
+                ->map(fn ($g) => $g->user)
+                ->filter();
+        }
+
+        if ($users->isEmpty()) {
+            return false;
+        }
+
+        foreach ($users as $user) {
+            $user->notify($notification);
+        }
+
+        return true;
+    }
+
     public function addCoach(Request $request, Tournament $tournament): RedirectResponse
     {
         $validated = $request->validate([
@@ -390,14 +436,14 @@ class TournamentMembersController extends Controller
         $member = Member::findOrFail($validated['member_id']);
         $tournament->coaches()->attach($member->id);
 
-        return back()->with('status', $member->fullName() . ' is toegevoegd als trainer.');
+        return back()->with('status', $member->fullName().' is toegevoegd als trainer.');
     }
 
     public function removeCoach(Tournament $tournament, Member $member): RedirectResponse
     {
         $tournament->coaches()->detach($member->id);
 
-        return back()->with('status', $member->fullName() . ' is verwijderd als trainer.');
+        return back()->with('status', $member->fullName().' is verwijderd als trainer.');
     }
 
     /**
@@ -407,7 +453,7 @@ class TournamentMembersController extends Controller
     {
         $pivot = $tournament->members()->where('members.id', $member->id)->first()?->pivot;
 
-        if (!$pivot) {
+        if (! $pivot) {
             return back()->with('status', 'Dit lid staat niet op de lijst.');
         }
 
@@ -418,7 +464,7 @@ class TournamentMembersController extends Controller
                 'responded_at' => now(),
             ]);
 
-        return back()->with('status', $member->fullName() . ' is geaccepteerd.');
+        return back()->with('status', $member->fullName().' is geaccepteerd.');
     }
 
     /**
@@ -428,7 +474,7 @@ class TournamentMembersController extends Controller
     {
         $pivot = $tournament->members()->where('members.id', $member->id)->first()?->pivot;
 
-        if (!$pivot) {
+        if (! $pivot) {
             return back()->with('status', 'Dit lid staat niet op de lijst.');
         }
 
@@ -439,6 +485,6 @@ class TournamentMembersController extends Controller
                 'responded_at' => now(),
             ]);
 
-        return back()->with('status', $member->fullName() . ' is afgeslagen.');
+        return back()->with('status', $member->fullName().' is afgeslagen.');
     }
 }

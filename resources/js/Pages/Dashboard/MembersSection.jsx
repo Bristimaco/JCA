@@ -6,6 +6,9 @@ import PhotoCapture from '../../Components/PhotoCapture';
 export default function MembersSection({ members, ageCategories, weightCategories, beltRanks }) {
     const { flash } = usePage().props;
     const [showAddForm, setShowAddForm] = useState(false);
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialFilter = urlParams.get('filter') === 'renewal' ? 'renewal' : 'all';
+    const [activeFilter, setActiveFilter] = useState(initialFilter);
     const [search, setSearch] = useState('');
     const [viewingMember, setViewingMember] = useState(null);
     const [editingMember, setEditingMember] = useState(null);
@@ -14,6 +17,13 @@ export default function MembersSection({ members, ageCategories, weightCategorie
     const [sendingReminders, setSendingReminders] = useState(false);
 
     const filtered = members.filter((m) => {
+        if (activeFilter === 'renewal') {
+            if (!m.membership_renewal_date) return false;
+            const renewalDate = new Date(m.membership_renewal_date);
+            const cutoff = new Date();
+            cutoff.setDate(cutoff.getDate() + 30);
+            if (renewalDate > cutoff) return false;
+        }
         const q = search.toLowerCase();
         return (
             m.first_name.toLowerCase().includes(q) ||
@@ -112,6 +122,15 @@ export default function MembersSection({ members, ageCategories, weightCategorie
                     </span>
                 </h2>
                 <div className="flex items-center gap-3">
+                    {activeFilter === 'renewal' && (
+                        <button
+                            onClick={() => setActiveFilter('all')}
+                            className="inline-flex items-center gap-1.5 rounded-full bg-amber-900/40 ring-1 ring-amber-700/40 px-3 py-1 text-xs font-medium text-amber-400 hover:bg-amber-900/60 transition-colors"
+                        >
+                            💳 Vernieuwing nodig
+                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                        </button>
+                    )}
                     <input
                         type="text"
                         placeholder="Zoeken..."

@@ -5,13 +5,12 @@ namespace App\Http\Controllers\Trainer;
 use App\Enums\InvitationStatus;
 use App\Enums\TournamentStatus;
 use App\Http\Controllers\Controller;
-use App\Mail\TournamentReport;
 use App\Models\Member;
 use App\Models\Tournament;
 use App\Models\TournamentResult;
 use App\Models\User;
+use App\Notifications\TournamentReportNotification;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -216,8 +215,10 @@ class TrainerTournamentController extends Controller
             ->whereNotNull('role')
             ->get();
 
+        $notification = new TournamentReportNotification($tournament, $resultGroups);
+
         foreach ($interestedUsers as $user) {
-            Mail::to($user->email)->send(new TournamentReport($tournament, $resultGroups));
+            $user->notify($notification);
         }
 
         $mailCount = $interestedUsers->count();

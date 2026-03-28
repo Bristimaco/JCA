@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\NotificationPreference;
 use App\Enums\UserRole;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -13,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password', 'role', 'phone', 'is_active', 'results_interest'])]
+#[Fillable(['name', 'email', 'password', 'role', 'phone', 'is_active', 'results_interest', 'notification_preference'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -33,6 +34,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'role' => UserRole::class,
             'is_active' => 'boolean',
             'results_interest' => 'boolean',
+            'notification_preference' => NotificationPreference::class,
         ];
     }
 

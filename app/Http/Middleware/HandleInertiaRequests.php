@@ -47,8 +47,10 @@ class HandleInertiaRequests extends Middleware
                     'role_label' => $request->user()->role?->label(),
                     'is_approved' => $request->user()->isApproved(),
                     'email_verified' => $request->user()->hasVerifiedEmail(),
+                    'notification_preference' => $request->user()->notification_preference?->value ?? 'both',
                 ] : null,
             ],
+            'unreadNotificationCount' => fn () => $request->user()?->unreadNotifications()->count() ?? 0,
             'flash' => [
                 'status' => $request->session()->get('status'),
             ],
