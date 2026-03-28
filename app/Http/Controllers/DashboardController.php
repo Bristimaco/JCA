@@ -139,7 +139,7 @@ class DashboardController extends Controller
                 ]);
 
             $props['coachTrainingGroups'] = TrainingGroup::where('trainer_id', $request->user()->id)
-                ->with('members:id,first_name,last_name')
+                ->with(['members:id,first_name,last_name', 'schedules'])
                 ->orderBy('name')
                 ->get()
                 ->map(fn(TrainingGroup $g) => [
@@ -147,8 +147,11 @@ class DashboardController extends Controller
                     'name' => $g->name,
                     'description' => $g->description,
                     'membership_fee' => $g->membership_fee,
-                    'training_day' => $g->training_day,
-                    'training_time' => $g->training_time,
+                    'schedules' => $g->schedules->map(fn($s) => [
+                        'day' => $s->day,
+                        'start_time' => $s->start_time,
+                        'end_time' => $s->end_time,
+                    ])->values()->all(),
                     'location' => $g->location,
                     'member_ids' => $g->members->pluck('id')->values()->all(),
                     'members' => $g->members->map(fn($m) => [

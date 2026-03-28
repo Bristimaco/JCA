@@ -62,7 +62,7 @@ class AdminDashboardController extends Controller
                 'membership_renewal_date' => $m->membership_renewal_date->toDateString(),
             ]);
 
-        $trainingGroups = TrainingGroup::with(['trainer:id,name', 'members:id,first_name,last_name'])
+        $trainingGroups = TrainingGroup::with(['trainer:id,name', 'members:id,first_name,last_name', 'schedules'])
             ->orderBy('name')
             ->get()
             ->map(fn(TrainingGroup $g) => [
@@ -71,8 +71,11 @@ class AdminDashboardController extends Controller
                 'description' => $g->description,
                 'membership_fee' => $g->membership_fee,
                 'membership_fee_discount' => $g->membership_fee_discount,
-                'training_day' => $g->training_day,
-                'training_time' => $g->training_time,
+                'schedules' => $g->schedules->map(fn($s) => [
+                    'day' => $s->day,
+                    'start_time' => $s->start_time,
+                    'end_time' => $s->end_time,
+                ])->values()->all(),
                 'location' => $g->location,
                 'trainer_id' => $g->trainer_id,
                 'trainer_name' => $g->trainer?->name,

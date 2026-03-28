@@ -16,15 +16,21 @@ class TrainingGroupController extends Controller
             'description' => ['nullable', 'string'],
             'membership_fee' => ['required', 'numeric', 'min:0'],
             'membership_fee_discount' => ['nullable', 'numeric', 'min:0'],
-            'training_day' => ['nullable', 'string', 'max:255'],
-            'training_time' => ['nullable', 'string', 'max:255'],
             'location' => ['nullable', 'string', 'max:255'],
             'trainer_id' => ['nullable', 'exists:users,id'],
+            'schedules' => ['nullable', 'array'],
+            'schedules.*.day' => ['required', 'string', 'max:255'],
+            'schedules.*.start_time' => ['required', 'string', 'max:255'],
+            'schedules.*.end_time' => ['nullable', 'string', 'max:255'],
         ]);
 
         $validated['membership_fee_discount'] = $validated['membership_fee_discount'] ?? 0;
 
-        TrainingGroup::create($validated);
+        $schedules = $validated['schedules'] ?? [];
+        unset($validated['schedules']);
+
+        $group = TrainingGroup::create($validated);
+        $group->schedules()->createMany($schedules);
 
         return back();
     }
@@ -36,15 +42,22 @@ class TrainingGroupController extends Controller
             'description' => ['nullable', 'string'],
             'membership_fee' => ['required', 'numeric', 'min:0'],
             'membership_fee_discount' => ['nullable', 'numeric', 'min:0'],
-            'training_day' => ['nullable', 'string', 'max:255'],
-            'training_time' => ['nullable', 'string', 'max:255'],
             'location' => ['nullable', 'string', 'max:255'],
             'trainer_id' => ['nullable', 'exists:users,id'],
+            'schedules' => ['nullable', 'array'],
+            'schedules.*.day' => ['required', 'string', 'max:255'],
+            'schedules.*.start_time' => ['required', 'string', 'max:255'],
+            'schedules.*.end_time' => ['nullable', 'string', 'max:255'],
         ]);
 
         $validated['membership_fee_discount'] = $validated['membership_fee_discount'] ?? 0;
 
+        $schedules = $validated['schedules'] ?? [];
+        unset($validated['schedules']);
+
         $trainingGroup->update($validated);
+        $trainingGroup->schedules()->delete();
+        $trainingGroup->schedules()->createMany($schedules);
 
         return back();
     }

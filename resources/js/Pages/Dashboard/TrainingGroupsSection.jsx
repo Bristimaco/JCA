@@ -74,21 +74,24 @@ function TrainingGroupForm({ group, trainers, onCancel }) {
         description: group?.description || '',
         membership_fee: group?.membership_fee || '',
         membership_fee_discount: group?.membership_fee_discount || '0',
-        training_day: group?.training_day || '',
-        training_time: group?.training_time || '',
+        schedules: group?.schedules?.length ? group.schedules.map(s => ({ day: s.day, start_time: s.start_time, end_time: s.end_time || '' })) : [{ day: '', start_time: '', end_time: '' }],
         location: group?.location || '',
         trainer_id: group?.trainer_id || '',
     });
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        const data = {
+            ...form.data,
+            schedules: form.data.schedules.filter(s => s.day && s.start_time),
+        };
         if (isEditing) {
-            form.patch(`/admin/training-groups/${group.id}`, {
+            form.transform(() => data).patch(`/admin/training-groups/${group.id}`, {
                 preserveScroll: true,
                 onSuccess: () => onCancel(),
             });
         } else {
-            form.post('/admin/training-groups', {
+            form.transform(() => data).post('/admin/training-groups', {
                 preserveScroll: true,
                 onSuccess: () => {
                     form.reset();
@@ -99,6 +102,19 @@ function TrainingGroupForm({ group, trainers, onCancel }) {
     };
 
     const days = ['Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag', 'Zaterdag', 'Zondag'];
+
+    const addSchedule = () => {
+        form.setData('schedules', [...form.data.schedules, { day: '', start_time: '', end_time: '' }]);
+    };
+
+    const removeSchedule = (index) => {
+        form.setData('schedules', form.data.schedules.filter((_, i) => i !== index));
+    };
+
+    const updateSchedule = (index, field, value) => {
+        const updated = form.data.schedules.map((s, i) => i === index ? { ...s, [field]: value } : s);
+        form.setData('schedules', updated);
+    };
 
     return (
         <form onSubmit={handleSubmit} className="p-6 bg-slate-800/50 border-b border-slate-700">
@@ -141,29 +157,6 @@ function TrainingGroupForm({ group, trainers, onCancel }) {
                     {form.errors.membership_fee_discount && <p className="text-xs text-red-400 mt-1">{form.errors.membership_fee_discount}</p>}
                 </div>
                 <div>
-                    <label className="block text-xs font-medium text-slate-400 mb-1">Trainingsdag</label>
-                    <select
-                        value={form.data.training_day}
-                        onChange={(e) => form.setData('training_day', e.target.value)}
-                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
-                    >
-                        <option value="">Kies dag...</option>
-                        {days.map((d) => (
-                            <option key={d} value={d}>{d}</option>
-                        ))}
-                    </select>
-                </div>
-                <div>
-                    <label className="block text-xs font-medium text-slate-400 mb-1">Trainingsuur</label>
-                    <input
-                        type="text"
-                        value={form.data.training_time}
-                        onChange={(e) => form.setData('training_time', e.target.value)}
-                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
-                        placeholder="bijv. 18:00 - 19:30"
-                    />
-                </div>
-                <div>
                     <label className="block text-xs font-medium text-slate-400 mb-1">Locatie</label>
                     <input
                         type="text"
@@ -197,6 +190,60 @@ function TrainingGroupForm({ group, trainers, onCancel }) {
                     />
                 </div>
             </div>
+
+            {/* Trainingsmomenten */}
+            <div className="mt-4">
+                <div className="flex items-center justify-between mb-2">
+                    <label className="block text-xs font-medium text-slate-400">Trainingsmomenten</label>
+                    <button
+                        type="button"
+                        onClick={addSchedule}
+                        className="text-xs font-medium text-rose-400 hover:text-rose-300"
+                    >
+                        + Moment toevoegen
+                    </button>
+                </div>
+                <div className="space-y-2">
+                    {form.data.schedules.map((schedule, index) => (
+                        <div key={index} className="flex items-center gap-2">
+                            <select
+                                value={schedule.day}
+                                onChange={(e) => updateSchedule(index, 'day', e.target.value)}
+                                className="rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
+                            >
+                                <option value="">Dag...</option>
+                                {days.map((d) => (
+                                    <option key={d} value={d}>{d}</option>
+                                ))}
+                            </select>
+                            <input
+                                type="text"
+                                value={schedule.start_time}
+                                onChange={(e) => updateSchedule(index, 'start_time', e.target.value)}
+                                className="w-24 rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
+                                placeholder="Van"
+                            />
+                            <input
+                                type="text"
+                                value={schedule.end_time}
+                                onChange={(e) => updateSchedule(index, 'end_time', e.target.value)}
+                                className="w-24 rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
+                                placeholder="Tot"
+                            />
+                            {form.data.schedules.length > 1 && (
+                                <button
+                                    type="button"
+                                    onClick={() => removeSchedule(index)}
+                                    className="text-red-400 hover:text-red-300 text-sm px-1"
+                                >
+                                    &times;
+                                </button>
+                            )}
+                        </div>
+                    ))}
+                </div>
+            </div>
+
             <div className="flex gap-2 mt-4">
                 <button
                     type="submit"
@@ -242,8 +289,15 @@ function TrainingGroupRow({ group, onEdit, onManageMembers, isManagingMembers })
                         )}
                     </div>
                     <div className="flex flex-wrap gap-x-4 gap-y-0.5 mt-1 text-xs text-slate-400">
-                        {group.training_day && (
-                            <span>{group.training_day}{group.training_time ? ` ${group.training_time}` : ''}</span>
+                        {group.schedules?.length > 0 && (
+                            <span>
+                                {group.schedules.map((s, i) => (
+                                    <span key={i}>
+                                        {i > 0 && ', '}
+                                        {s.day} {s.start_time}{s.end_time ? `–${s.end_time}` : ''}
+                                    </span>
+                                ))}
+                            </span>
                         )}
                         {group.location && <span>{group.location}</span>}
                         {group.trainer_name && <span>Trainer: {group.trainer_name}</span>}

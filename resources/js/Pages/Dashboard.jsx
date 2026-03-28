@@ -487,7 +487,16 @@ function CoachTrainingGroups({ groups }) {
                                 </span>
                             </div>
                             <div className="flex flex-wrap gap-x-3 text-xs text-slate-400 mt-1">
-                                {g.training_day && <span>{g.training_day}{g.training_time ? ` ${g.training_time}` : ''}</span>}
+                                {g.schedules?.length > 0 && (
+                                    <span>
+                                        {g.schedules.map((s, i) => (
+                                            <span key={i}>
+                                                {i > 0 && ', '}
+                                                {s.day} {s.start_time}{s.end_time ? `–${s.end_time}` : ''}
+                                            </span>
+                                        ))}
+                                    </span>
+                                )}
                                 {g.location && <span>{g.location}</span>}
                             </div>
                             {g.description && <p className="text-xs text-slate-500 mt-1">{g.description}</p>}
