@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AgeCategoryController;
 use App\Http\Controllers\Admin\ApproveUserController;
 use App\Http\Controllers\Admin\CategoryExcelController;
 use App\Http\Controllers\Admin\ClubSettingsController;
+use App\Http\Controllers\Admin\InvoiceController;
 use App\Http\Controllers\Admin\MemberController;
 use App\Http\Controllers\Admin\MemberExcelController;
 use App\Http\Controllers\Admin\MemberIndexController;
@@ -141,6 +142,10 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::patch('/members/{member}', [MemberController::class, 'update'])->name('admin.members.update');
         Route::post('/members/{member}/mark-paid', [MemberController::class, 'markAsPaid'])->name('admin.members.mark-paid');
         Route::post('/members/send-renewal-reminders', [MemberController::class, 'sendRenewalReminders'])->name('admin.members.send-renewal-reminders');
+
+        // Invoices
+        Route::post('/invoices/generate', [InvoiceController::class, 'generate'])->name('admin.invoices.generate');
+        Route::post('/invoices/{invoice}/retry-payment', [InvoiceController::class, 'retryPayment'])->name('admin.invoices.retry-payment');
         Route::delete('/members/{member}', [MemberController::class, 'destroy'])->name('admin.members.destroy');
 
         // Excel import/export leden

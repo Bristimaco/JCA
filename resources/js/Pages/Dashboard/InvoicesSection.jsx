@@ -15,11 +15,24 @@ const statusLabels = {
 };
 
 export default function InvoicesSection({ invoices }) {
+    const generateForm = useForm({});
+
+    const handleGenerate = () => {
+        generateForm.post('/admin/invoices/generate', { preserveScroll: true });
+    };
+
     if (!invoices || invoices.length === 0) {
         return (
             <div className="bg-slate-900 rounded-lg shadow-sm border border-slate-800 border-t-2 border-t-rose-700">
-                <div className="px-6 py-4 border-b border-slate-800">
+                <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
                     <h2 className="text-lg font-semibold text-white">Facturen</h2>
+                    <button
+                        onClick={handleGenerate}
+                        disabled={generateForm.processing}
+                        className="rounded-md bg-rose-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-rose-700 disabled:opacity-50"
+                    >
+                        {generateForm.processing ? 'Bezig...' : 'Facturen genereren'}
+                    </button>
                 </div>
                 <div className="px-6 py-8 text-center text-slate-500">
                     Geen facturen gevonden.
@@ -39,12 +52,21 @@ export default function InvoicesSection({ invoices }) {
     return (
         <div className="bg-slate-900 rounded-lg shadow-sm border border-slate-800 border-t-2 border-t-rose-700">
             <div className="px-6 py-4 border-b border-slate-800">
-                <h2 className="text-lg font-semibold text-white">
-                    Facturen
-                    <span className="ml-2 inline-flex items-center rounded-full bg-slate-800 px-2.5 py-0.5 text-xs font-medium text-slate-400">
-                        {summary.total}
-                    </span>
-                </h2>
+                <div className="flex items-center justify-between">
+                    <h2 className="text-lg font-semibold text-white">
+                        Facturen
+                        <span className="ml-2 inline-flex items-center rounded-full bg-slate-800 px-2.5 py-0.5 text-xs font-medium text-slate-400">
+                            {summary.total}
+                        </span>
+                    </h2>
+                    <button
+                        onClick={handleGenerate}
+                        disabled={generateForm.processing}
+                        className="rounded-md bg-rose-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-rose-700 disabled:opacity-50"
+                    >
+                        {generateForm.processing ? 'Bezig...' : 'Facturen genereren'}
+                    </button>
+                </div>
                 <div className="flex gap-4 mt-2">
                     <span className="text-xs text-amber-400">{summary.pending} openstaand</span>
                     <span className="text-xs text-emerald-400">{summary.paid} betaald</span>
@@ -64,6 +86,7 @@ export default function InvoicesSection({ invoices }) {
                             <th className="px-6 py-3 text-xs font-medium text-slate-400">Status</th>
                             <th className="px-6 py-3 text-xs font-medium text-slate-400">Vervaldatum</th>
                             <th className="px-6 py-3 text-xs font-medium text-slate-400">Betaald</th>
+                            <th className="px-6 py-3 text-xs font-medium text-slate-400">Acties</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-800">
@@ -78,6 +101,12 @@ export default function InvoicesSection({ invoices }) {
 }
 
 function InvoiceRow({ invoice }) {
+    const retryForm = useForm({});
+
+    const handleRetry = () => {
+        retryForm.post(`/admin/invoices/${invoice.id}/retry-payment`, { preserveScroll: true });
+    };
+
     return (
         <tr className="hover:bg-slate-800/30">
             <td className="px-6 py-3">
@@ -106,6 +135,20 @@ function InvoiceRow({ invoice }) {
             </td>
             <td className="px-6 py-3 text-xs text-slate-400">
                 {invoice.paid_at ? new Date(invoice.paid_at).toLocaleDateString('nl-BE') : '-'}
+            </td>
+            <td className="px-6 py-3">
+                {invoice.status === 'pending' && !invoice.has_payment_url && (
+                    <button
+                        onClick={handleRetry}
+                        disabled={retryForm.processing}
+                        className="text-xs font-medium text-rose-400 hover:text-rose-300 disabled:opacity-50"
+                    >
+                        {retryForm.processing ? 'Bezig...' : 'Betaallink aanmaken'}
+                    </button>
+                )}
+                {invoice.has_payment_url && (
+                    <span className="text-xs text-emerald-500">✓ Link actief</span>
+                )}
             </td>
         </tr>
     );

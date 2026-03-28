@@ -51,6 +51,9 @@ services:
         value: database
       - key: QUEUE_CONNECTION
         value: database
+      - key: MOLLIE_KEY
+        type: SECRET
+        value: "${MOLLIE_KEY}"
 
 databases:
   - name: db
@@ -58,18 +61,18 @@ databases:
     production: false
     version: "17"
 
-jobs:
+workers:
   - name: jca-scheduler
     github:
       repo: Bristimaco/JCA
       branch: main
       deploy_on_push: true
     build_command: composer install --no-dev --optimize-autoloader
-    run_command: php artisan schedule:run
+    run_command: |
+      while true; do php artisan schedule:run --verbose --no-interaction >> /dev/null 2>&1; sleep 60; done
     environment_slug: php
     instance_count: 1
     instance_size_slug: apps-s-1vcpu-0.5gb
-    kind: PRE_DEPLOY
     envs:
       - key: APP_KEY
         type: SECRET
@@ -88,3 +91,6 @@ jobs:
         value: "${db.USERNAME}"
       - key: DB_PASSWORD
         value: "${db.PASSWORD}"
+      - key: MOLLIE_KEY
+        type: SECRET
+        value: "${MOLLIE_KEY}"
