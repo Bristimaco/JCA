@@ -530,12 +530,17 @@ function CoachTrainingGroups({ groups }) {
 
     return (
         <div className="mt-10">
-            <h2 className="text-lg font-semibold text-white mb-4">
-                Mijn Trainingsgroepen
-                <span className="ml-2 inline-flex items-center rounded-full bg-rose-900/40 px-2.5 py-0.5 text-xs font-medium text-rose-400">
-                    {groups.length}
-                </span>
-            </h2>
+            <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold text-white">
+                    Mijn Trainingsgroepen
+                    <span className="ml-2 inline-flex items-center rounded-full bg-rose-900/40 px-2.5 py-0.5 text-xs font-medium text-rose-400">
+                        {groups.length}
+                    </span>
+                </h2>
+                <Link href="/trainer/sessions" className="text-sm font-medium text-rose-400 hover:text-rose-300">
+                    Historiek →
+                </Link>
+            </div>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {groups.map(g => (
                     <div key={g.id} className="bg-slate-900 rounded-xl shadow-sm ring-1 ring-slate-800 border-t-2 border-t-rose-700/40 overflow-hidden">
@@ -572,14 +577,14 @@ function CoachTrainingGroups({ groups }) {
                                                     <span className="inline-flex items-center rounded-full bg-slate-700 px-2 py-0.5 text-[10px] font-medium text-slate-400">
                                                         Afgesloten ({s.session.attendance_count})
                                                     </span>
-                                                ) : (
+                                                ) : s.is_today ? (
                                                     <button
                                                         onClick={() => handleOpenSession(s.id)}
                                                         className="rounded-md bg-emerald-900/30 px-2 py-1 text-[10px] font-semibold text-emerald-400 hover:bg-emerald-900/50 ring-1 ring-emerald-700/30"
                                                     >
                                                         Start training
                                                     </button>
-                                                )}
+                                                ) : null}
                                             </>
                                         )}
                                     </div>

@@ -1,7 +1,9 @@
 import { useForm } from '@inertiajs/react';
+import { useState } from 'react';
 
 export default function MemberCard({ member, ageCategories, showPaidButton = false }) {
     const paidForm = useForm({});
+    const [showAttendance, setShowAttendance] = useState(false);
     const genderLabel = member.gender === 'male' ? 'Man' : 'Vrouw';
     const statusLabels = { active: 'Actief', inactive: 'Inactief', suspended: 'Geschorst', pending: 'In afwachting' };
     const statusColors = { active: 'bg-emerald-500', inactive: 'bg-slate-400', suspended: 'bg-red-500', pending: 'bg-amber-500' };
@@ -139,17 +141,28 @@ export default function MemberCard({ member, ageCategories, showPaidButton = fal
                     </div>
 
                     {/* Attendance History */}
-                    {member.attendance_history && member.attendance_history.length > 0 && (
+                    {member.attendance_count > 0 && (
                         <div className="mt-4 pt-3 border-t border-slate-800">
-                            <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-2">Laatste trainingen</p>
-                            <div className="space-y-1 max-h-32 overflow-y-auto">
-                                {member.attendance_history.map((a, i) => (
-                                    <div key={i} className="flex items-center justify-between text-xs">
-                                        <span className="text-slate-400">{a.group_name}</span>
-                                        <span className="text-slate-500">{new Date(a.date).toLocaleDateString('nl-BE')}</span>
-                                    </div>
-                                ))}
-                            </div>
+                            <button
+                                onClick={() => setShowAttendance(!showAttendance)}
+                                className="flex items-center gap-2 text-sm font-medium text-rose-400 hover:text-rose-300 transition-colors"
+                            >
+                                <span className="inline-flex items-center justify-center rounded-full bg-rose-900/40 px-2.5 py-0.5 text-xs font-semibold text-rose-400">
+                                    {member.attendance_count}
+                                </span>
+                                {member.attendance_count === 1 ? 'training' : 'trainingen'}
+                                <span className="text-xs text-slate-500">{showAttendance ? '▲' : '▼'}</span>
+                            </button>
+                            {showAttendance && member.attendance_history && (
+                                <div className="mt-2 space-y-1 max-h-48 overflow-y-auto">
+                                    {member.attendance_history.map((a, i) => (
+                                        <div key={i} className="flex items-center justify-between text-xs">
+                                            <span className="text-slate-400">{a.group_name}</span>
+                                            <span className="text-slate-500">{new Date(a.date).toLocaleDateString('nl-BE')}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>

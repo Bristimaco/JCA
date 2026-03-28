@@ -121,6 +121,7 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::put('/training-groups/{trainingGroup}/members', [TrainingGroupMemberController::class, 'update'])->name('trainer.training-groups.members');
 
         // Trainer attendance management
+        Route::get('/sessions', [TrainerAttendanceController::class, 'history'])->name('trainer.sessions.history');
         Route::post('/sessions/open', [TrainerAttendanceController::class, 'open'])->name('trainer.sessions.open');
         Route::patch('/sessions/{session}/close', [TrainerAttendanceController::class, 'close'])->name('trainer.sessions.close');
     });
