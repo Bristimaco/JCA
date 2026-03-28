@@ -17,11 +17,11 @@ class TrainingGroupController extends Controller
             'membership_fee' => ['required', 'numeric', 'min:0'],
             'membership_fee_discount' => ['nullable', 'numeric', 'min:0'],
             'location' => ['nullable', 'string', 'max:255'],
-            'trainer_id' => ['nullable', 'exists:users,id'],
             'schedules' => ['nullable', 'array'],
             'schedules.*.day' => ['required', 'string', 'max:255'],
             'schedules.*.start_time' => ['required', 'string', 'max:255'],
             'schedules.*.end_time' => ['nullable', 'string', 'max:255'],
+            'schedules.*.trainer_id' => ['nullable', 'exists:users,id'],
         ]);
 
         $validated['membership_fee_discount'] = $validated['membership_fee_discount'] ?? 0;
@@ -43,11 +43,11 @@ class TrainingGroupController extends Controller
             'membership_fee' => ['required', 'numeric', 'min:0'],
             'membership_fee_discount' => ['nullable', 'numeric', 'min:0'],
             'location' => ['nullable', 'string', 'max:255'],
-            'trainer_id' => ['nullable', 'exists:users,id'],
             'schedules' => ['nullable', 'array'],
             'schedules.*.day' => ['required', 'string', 'max:255'],
             'schedules.*.start_time' => ['required', 'string', 'max:255'],
             'schedules.*.end_time' => ['nullable', 'string', 'max:255'],
+            'schedules.*.trainer_id' => ['nullable', 'exists:users,id'],
         ]);
 
         $validated['membership_fee_discount'] = $validated['membership_fee_discount'] ?? 0;

@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -17,11 +16,6 @@ class TrainingGroup extends Model
             'membership_fee' => 'decimal:2',
             'membership_fee_discount' => 'decimal:2',
         ];
-    }
-
-    public function trainer(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'trainer_id');
     }
 
     public function members(): BelongsToMany

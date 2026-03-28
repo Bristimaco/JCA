@@ -74,9 +74,8 @@ function TrainingGroupForm({ group, trainers, onCancel }) {
         description: group?.description || '',
         membership_fee: group?.membership_fee || '',
         membership_fee_discount: group?.membership_fee_discount || '0',
-        schedules: group?.schedules?.length ? group.schedules.map(s => ({ day: s.day, start_time: s.start_time, end_time: s.end_time || '' })) : [{ day: '', start_time: '', end_time: '' }],
+        schedules: group?.schedules?.length ? group.schedules.map(s => ({ day: s.day, start_time: s.start_time, end_time: s.end_time || '', trainer_id: s.trainer_id || '' })) : [{ day: '', start_time: '', end_time: '', trainer_id: '' }],
         location: group?.location || '',
-        trainer_id: group?.trainer_id || '',
     });
 
     const handleSubmit = (e) => {
@@ -105,7 +104,7 @@ function TrainingGroupForm({ group, trainers, onCancel }) {
     const days = ['Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag', 'Zaterdag', 'Zondag'];
 
     const addSchedule = () => {
-        form.setData('schedules', [...form.data.schedules, { day: '', start_time: '', end_time: '' }]);
+        form.setData('schedules', [...form.data.schedules, { day: '', start_time: '', end_time: '', trainer_id: '' }]);
     };
 
     const removeSchedule = (index) => {
@@ -167,19 +166,6 @@ function TrainingGroupForm({ group, trainers, onCancel }) {
                         placeholder="bijv. Sporthal De Brug"
                     />
                 </div>
-                <div>
-                    <label className="block text-xs font-medium text-slate-400 mb-1">Trainer</label>
-                    <select
-                        value={form.data.trainer_id}
-                        onChange={(e) => form.setData('trainer_id', e.target.value || '')}
-                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
-                    >
-                        <option value="">Geen trainer</option>
-                        {trainers.map((t) => (
-                            <option key={t.id} value={t.id}>{t.name}</option>
-                        ))}
-                    </select>
-                </div>
                 <div className="sm:col-span-2">
                     <label className="block text-xs font-medium text-slate-400 mb-1">Beschrijving</label>
                     <textarea
@@ -206,7 +192,7 @@ function TrainingGroupForm({ group, trainers, onCancel }) {
                 </div>
                 <div className="space-y-2">
                     {form.data.schedules.map((schedule, index) => (
-                        <div key={index} className="flex items-center gap-2">
+                        <div key={index} className="flex items-center gap-2 flex-wrap">
                             <select
                                 value={schedule.day}
                                 onChange={(e) => updateSchedule(index, 'day', e.target.value)}
@@ -231,6 +217,16 @@ function TrainingGroupForm({ group, trainers, onCancel }) {
                                 className="w-24 rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
                                 placeholder="Tot"
                             />
+                            <select
+                                value={schedule.trainer_id}
+                                onChange={(e) => updateSchedule(index, 'trainer_id', e.target.value || '')}
+                                className="rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
+                            >
+                                <option value="">Trainer...</option>
+                                {trainers.map((t) => (
+                                    <option key={t.id} value={t.id}>{t.name}</option>
+                                ))}
+                            </select>
                             {form.data.schedules.length > 1 && (
                                 <button
                                     type="button"
@@ -295,13 +291,12 @@ function TrainingGroupRow({ group, onEdit, onManageMembers, isManagingMembers })
                                 {group.schedules.map((s, i) => (
                                     <span key={i}>
                                         {i > 0 && ', '}
-                                        {s.day} {s.start_time}{s.end_time ? `–${s.end_time}` : ''}
+                                        {s.day} {s.start_time}{s.end_time ? `–${s.end_time}` : ''}{s.trainer_name ? ` (${s.trainer_name})` : ''}
                                     </span>
                                 ))}
                             </span>
                         )}
                         {group.location && <span>{group.location}</span>}
-                        {group.trainer_name && <span>Trainer: {group.trainer_name}</span>}
                         <span>{group.member_count} {group.member_count === 1 ? 'lid' : 'leden'}</span>
                     </div>
                     {group.description && (

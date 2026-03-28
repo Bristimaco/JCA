@@ -492,7 +492,7 @@ function CoachTrainingGroups({ groups }) {
                                         {g.schedules.map((s, i) => (
                                             <span key={i}>
                                                 {i > 0 && ', '}
-                                                {s.day} {s.start_time}{s.end_time ? `–${s.end_time}` : ''}
+                                                {s.day} {s.start_time}{s.end_time ? `–${s.end_time}` : ''}{s.trainer_name ? ` (${s.trainer_name})` : ''}
                                             </span>
                                         ))}
                                     </span>

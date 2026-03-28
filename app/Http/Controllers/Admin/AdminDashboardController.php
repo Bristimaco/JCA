@@ -62,7 +62,7 @@ class AdminDashboardController extends Controller
                 'membership_renewal_date' => $m->membership_renewal_date->toDateString(),
             ]);
 
-        $trainingGroups = TrainingGroup::with(['trainer:id,name', 'members:id,first_name,last_name', 'schedules'])
+        $trainingGroups = TrainingGroup::with(['members:id,first_name,last_name', 'schedules.trainer:id,name'])
             ->orderBy('name')
             ->get()
             ->map(fn (TrainingGroup $g) => [
@@ -75,22 +75,21 @@ class AdminDashboardController extends Controller
                     'day' => $s->day,
                     'start_time' => $s->start_time,
                     'end_time' => $s->end_time,
+                    'trainer_id' => $s->trainer_id,
+                    'trainer_name' => $s->trainer?->name,
                 ])->values()->all(),
                 'location' => $g->location,
-                'trainer_id' => $g->trainer_id,
-                'trainer_name' => $g->trainer?->name,
                 'member_ids' => $g->members->pluck('id')->values()->all(),
                 'member_count' => $g->members->count(),
             ]);
 
-        $trainers = User::whereNotNull('role')
+        $trainers = User::where('role', UserRole::Coach)
             ->where('is_active', true)
             ->orderBy('name')
-            ->get(['id', 'name', 'role'])
+            ->get(['id', 'name'])
             ->map(fn (User $u) => [
                 'id' => $u->id,
                 'name' => $u->name,
-                'role' => $u->role->value,
             ]);
 
         $invoices = MembershipInvoice::with(['user:id,name,email', 'lines.member:id,first_name,last_name'])

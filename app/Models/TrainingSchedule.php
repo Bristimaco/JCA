@@ -13,4 +13,9 @@ class TrainingSchedule extends Model
     {
         return $this->belongsTo(TrainingGroup::class);
     }
+
+    public function trainer(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'trainer_id');
+    }
 }

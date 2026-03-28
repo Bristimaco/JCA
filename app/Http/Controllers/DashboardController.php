@@ -138,8 +138,8 @@ class DashboardController extends Controller
                     'participant_count' => $t->members()->count(),
                 ]);
 
-            $props['coachTrainingGroups'] = TrainingGroup::where('trainer_id', $request->user()->id)
-                ->with(['members:id,first_name,last_name', 'schedules'])
+            $props['coachTrainingGroups'] = TrainingGroup::whereHas('schedules', fn ($q) => $q->where('trainer_id', $request->user()->id))
+                ->with(['members:id,first_name,last_name', 'schedules.trainer:id,name'])
                 ->orderBy('name')
                 ->get()
                 ->map(fn (TrainingGroup $g) => [
@@ -151,6 +151,7 @@ class DashboardController extends Controller
                         'day' => $s->day,
                         'start_time' => $s->start_time,
                         'end_time' => $s->end_time,
+                        'trainer_name' => $s->trainer?->name,
                     ])->values()->all(),
                     'location' => $g->location,
                     'member_ids' => $g->members->pluck('id')->values()->all(),
