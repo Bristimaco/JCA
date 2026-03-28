@@ -18,12 +18,12 @@ class MyMembersController extends Controller
         $members = $request->user()->members()->with(['weightCategory', 'tournamentResults.tournament'])->orderBy('first_name')->get()
             ->map(function (Member $m) {
                 $attendanceHistory = TrainingAttendance::where('member_id', $m->id)
-                    ->whereHas('trainingSession', fn ($q) => $q->whereNotNull('closed_at'))
+                    ->whereHas('trainingSession', fn($q) => $q->whereNotNull('closed_at'))
                     ->with(['trainingSession.trainingSchedule.trainingGroup'])
                     ->latest('confirmed_at')
                     ->take(20)
                     ->get()
-                    ->map(fn ($a) => [
+                    ->map(fn($a) => [
                         'date' => $a->trainingSession->date->toDateString(),
                         'group_name' => $a->trainingSession->trainingSchedule->trainingGroup->name,
                         'day' => $a->trainingSession->trainingSchedule->day,
@@ -35,7 +35,7 @@ class MyMembersController extends Controller
                     'weight_category_name' => $m->weightCategory?->name,
                     'current_belt' => $m->currentBelt()?->value,
                     'current_belt_label' => $m->currentBelt()?->label(),
-                    'tournament_results' => $m->is_competition ? $m->tournamentResults->sortByDesc(fn ($r) => $r->tournament->tournament_date)->map(fn ($r) => [
+                    'tournament_results' => $m->is_competition ? $m->tournamentResults->sortByDesc(fn($r) => $r->tournament->tournament_date)->map(fn($r) => [
                         'id' => $r->id,
                         'tournament_name' => $r->tournament->name,
                         'tournament_date' => $r->tournament->tournament_date->toDateString(),
@@ -58,7 +58,7 @@ class MyMembersController extends Controller
 
     public function update(Request $request, Member $member): RedirectResponse
     {
-        if (! $member->users()->where('users.id', $request->user()->id)->exists()) {
+        if (!$member->users()->where('users.id', $request->user()->id)->exists()) {
             abort(403);
         }
 
@@ -72,7 +72,7 @@ class MyMembersController extends Controller
             'photo' => ['nullable', 'string'],
         ]);
 
-        if (! empty($validated['photo']) && str_starts_with($validated['photo'], 'data:image/')) {
+        if (!empty($validated['photo']) && str_starts_with($validated['photo'], 'data:image/')) {
             [$meta, $base64] = explode(',', $validated['photo'], 2);
             preg_match('#data:(image/[a-z+]+);#', $meta, $m);
             $validated['photo_mime'] = $m[1] ?? 'image/jpeg';
