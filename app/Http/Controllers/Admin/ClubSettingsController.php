@@ -19,6 +19,7 @@ class ClubSettingsController extends Controller
             'logo' => ['nullable', 'image', 'max:2048'],
             'remove_logo' => ['boolean'],
             'attendance_pin' => ['nullable', 'string', 'min:4', 'max:8'],
+            'attendance_threshold' => ['nullable', 'integer', 'min:0', 'max:100'],
         ]);
 
         $settings = ClubSettings::first();
@@ -29,6 +30,7 @@ class ClubSettingsController extends Controller
             'address_city' => $validated['address_city'] ?? null,
             'address_postal_code' => $validated['address_postal_code'] ?? null,
             'attendance_pin' => $validated['attendance_pin'] ?? null,
+            'attendance_threshold' => $validated['attendance_threshold'] ?? 70,
         ];
 
         if ($request->hasFile('logo')) {

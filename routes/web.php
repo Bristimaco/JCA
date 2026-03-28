@@ -22,6 +22,7 @@ use App\Http\Controllers\Admin\UserMembersController;
 use App\Http\Controllers\Admin\WeightCategoryController;
 use App\Http\Controllers\ArchivedTournamentsController;
 use App\Http\Controllers\AttendanceKioskController;
+use App\Http\Controllers\AttendanceReportController;
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -123,6 +124,7 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
 
         // Trainer attendance management
         Route::get('/sessions', [TrainerAttendanceController::class, 'history'])->name('trainer.sessions.history');
+        Route::get('/attendance-report', AttendanceReportController::class)->name('trainer.attendance-report');
         Route::post('/sessions/open', [TrainerAttendanceController::class, 'open'])->name('trainer.sessions.open');
         Route::patch('/sessions/{session}/close', [TrainerAttendanceController::class, 'close'])->name('trainer.sessions.close');
     });
@@ -134,6 +136,7 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
     Route::middleware('admin')->prefix('admin')->group(function () {
         Route::get('/', AdminDashboardController::class)->name('admin.dashboard');
         Route::get('/sessions', AdminSessionHistoryController::class)->name('admin.sessions.history');
+        Route::get('/attendance-report', AttendanceReportController::class)->name('admin.attendance-report');
         Route::patch('/club-settings', [ClubSettingsController::class, 'update'])->name('admin.club-settings.update');
         Route::patch('/users/{user}/approve', ApproveUserController::class)->name('admin.users.approve');
         Route::patch('/users/{user}/toggle-active', ToggleUserActiveController::class)->name('admin.users.toggle-active');

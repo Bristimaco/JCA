@@ -84,9 +84,14 @@ export default function AdminPanel({ pendingUsers, users, roles, ageCategories, 
             <div className="mt-8">
                 <div className="flex items-center justify-between mb-4">
                     <h2 className="text-lg font-semibold text-white">Trainingshistoriek</h2>
-                    <Link href="/admin/sessions" className="text-sm font-medium text-rose-400 hover:text-rose-300">
-                        Alle sessies bekijken →
-                    </Link>
+                    <div className="flex items-center gap-4">
+                        <Link href="/admin/attendance-report" className="text-sm font-medium text-emerald-400 hover:text-emerald-300">
+                            Aanwezigheidsrapport
+                        </Link>
+                        <Link href="/admin/sessions" className="text-sm font-medium text-rose-400 hover:text-rose-300">
+                            Alle sessies bekijken →
+                        </Link>
+                    </div>
                 </div>
                 <p className="text-sm text-slate-400">Bekijk de volledige historiek van alle afgesloten trainingen, inclusief deelnemers en opmerkingen.</p>
             </div>
@@ -105,6 +110,7 @@ function ClubSettingsSection({ clubSettings }) {
         address_city: clubSettings.address_city || '',
         address_postal_code: clubSettings.address_postal_code || '',
         attendance_pin: clubSettings.attendance_pin || '',
+        attendance_threshold: clubSettings.attendance_threshold ?? 70,
         logo: null,
     });
 
@@ -202,6 +208,20 @@ function ClubSettingsSection({ clubSettings }) {
                     />
                     <p className="text-xs text-slate-500 mt-1">PIN voor het kiosk aanwezigheidsscherm (/attendance)</p>
                     {form.errors.attendance_pin && <p className="text-sm text-red-400 mt-1">{form.errors.attendance_pin}</p>}
+                </div>
+
+                <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-1">Minimum aanwezigheid (%)</label>
+                    <input
+                        type="number"
+                        min="0"
+                        max="100"
+                        value={form.data.attendance_threshold}
+                        onChange={(e) => form.setData('attendance_threshold', parseInt(e.target.value) || 0)}
+                        className="w-full max-w-xs rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-rose-500 focus:ring-rose-500 text-sm"
+                    />
+                    <p className="text-xs text-slate-500 mt-1">Leden onder dit percentage worden rood gemarkeerd in het aanwezigheidsrapport</p>
+                    {form.errors.attendance_threshold && <p className="text-sm text-red-400 mt-1">{form.errors.attendance_threshold}</p>}
                 </div>
 
                 <div className="flex justify-end">

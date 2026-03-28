@@ -11,9 +11,14 @@ export default function SessionHistory({ sessions }) {
             <div className="max-w-4xl mx-auto">
                 <div className="flex items-center justify-between mb-6">
                     <h1 className="text-2xl font-bold text-white">Trainingshistoriek</h1>
-                    <Link href="/" className="text-sm font-medium text-rose-400 hover:text-rose-300">
-                        ← Dashboard
-                    </Link>
+                    <div className="flex items-center gap-4">
+                        <Link href="/trainer/attendance-report" className="text-sm font-medium text-emerald-400 hover:text-emerald-300">
+                            Aanwezigheidsrapport
+                        </Link>
+                        <Link href="/" className="text-sm font-medium text-rose-400 hover:text-rose-300">
+                            ← Dashboard
+                        </Link>
+                    </div>
                 </div>
 
                 {sessions.length === 0 ? (

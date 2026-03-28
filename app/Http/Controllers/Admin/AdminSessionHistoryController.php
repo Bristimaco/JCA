@@ -19,8 +19,8 @@ class AdminSessionHistoryController extends Controller
             ->map(function (TrainingSession $s) {
                 $attendeeIds = $s->attendances->pluck('member_id')->all();
                 $absentees = $s->trainingSchedule->trainingGroup->members
-                    ->filter(fn($m) => !in_array($m->id, $attendeeIds))
-                    ->map(fn($m) => ['name' => $m->fullName()])
+                    ->filter(fn ($m) => ! in_array($m->id, $attendeeIds))
+                    ->map(fn ($m) => ['name' => $m->fullName()])
                     ->values()->all();
 
                 return [
@@ -34,7 +34,7 @@ class AdminSessionHistoryController extends Controller
                     'remarks' => $s->remarks,
                     'opened_at' => $s->opened_at?->format('H:i'),
                     'closed_at' => $s->closed_at?->format('H:i'),
-                    'attendees' => $s->attendances->map(fn($a) => [
+                    'attendees' => $s->attendances->map(fn ($a) => [
                         'name' => $a->member->fullName(),
                         'confirmed_at' => $a->confirmed_at->format('H:i'),
                     ])->values()->all(),

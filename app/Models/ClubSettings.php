@@ -8,6 +8,10 @@ class ClubSettings extends Model
 {
     protected $guarded = ['id'];
 
+    protected $casts = [
+        'attendance_threshold' => 'integer',
+    ];
+
     public static function current(): self
     {
         return self::first() ?? new self(['name' => 'JCA']);
@@ -20,10 +24,10 @@ class ClubSettings extends Model
 
     public function logoDataUri(): ?string
     {
-        if (! $this->hasLogo()) {
+        if (!$this->hasLogo()) {
             return null;
         }
 
-        return 'data:'.$this->logo_mime_type.';base64,'.$this->logo_data;
+        return 'data:' . $this->logo_mime_type . ';base64,' . $this->logo_data;
     }
 }
