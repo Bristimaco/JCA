@@ -32,7 +32,7 @@ const modules = [
     { name: 'Archief', href: '/archief', roles: ['parent', 'member', 'admin', 'coach'] },
 ];
 
-export default function Dashboard({ pendingCount, pendingUsers, adminCounters, memberStats, myMemberCount, myTournaments, activeTournaments, coachTournaments, upcomingTournaments, recentArchived }) {
+export default function Dashboard({ pendingCount, pendingUsers, adminCounters, memberStats, myMemberCount, myTournaments, activeTournaments, coachTournaments, coachTrainingGroups, upcomingTournaments, recentArchived }) {
     const { auth } = usePage().props;
     const role = auth.user.role;
 
@@ -163,6 +163,10 @@ export default function Dashboard({ pendingCount, pendingUsers, adminCounters, m
 
             {coachTournaments && coachTournaments.length > 0 && (
                 <CoachTournaments tournaments={coachTournaments} />
+            )}
+
+            {coachTrainingGroups && coachTrainingGroups.length > 0 && (
+                <CoachTrainingGroups groups={coachTrainingGroups} />
             )}
 
             {myTournaments && myTournaments.length > 0 && (
@@ -455,6 +459,59 @@ function CoachTournaments({ tournaments }) {
                             <p className="mt-3 text-xs text-rose-400 font-semibold group-hover:text-rose-300">Resultaten invullen →</p>
                         </div>
                     </Link>
+                ))}
+            </div>
+        </div>
+    );
+}
+
+function CoachTrainingGroups({ groups }) {
+    const [expandedId, setExpandedId] = useState(null);
+
+    return (
+        <div className="mt-10">
+            <h2 className="text-lg font-semibold text-white mb-4">
+                Mijn Trainingsgroepen
+                <span className="ml-2 inline-flex items-center rounded-full bg-rose-900/40 px-2.5 py-0.5 text-xs font-medium text-rose-400">
+                    {groups.length}
+                </span>
+            </h2>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {groups.map(g => (
+                    <div key={g.id} className="bg-slate-900 rounded-xl shadow-sm ring-1 ring-slate-800 border-t-2 border-t-rose-700/40 overflow-hidden">
+                        <div className="p-4">
+                            <div className="flex items-center gap-2 mb-1">
+                                <p className="font-semibold text-white">{g.name}</p>
+                                <span className="inline-flex items-center rounded-full bg-emerald-900/30 px-2 py-0.5 text-xs font-medium text-emerald-400">
+                                    €{Number(g.membership_fee).toFixed(2)}
+                                </span>
+                            </div>
+                            <div className="flex flex-wrap gap-x-3 text-xs text-slate-400 mt-1">
+                                {g.training_day && <span>{g.training_day}{g.training_time ? ` ${g.training_time}` : ''}</span>}
+                                {g.location && <span>{g.location}</span>}
+                            </div>
+                            {g.description && <p className="text-xs text-slate-500 mt-1">{g.description}</p>}
+                            <button
+                                onClick={() => setExpandedId(expandedId === g.id ? null : g.id)}
+                                className="mt-2 text-xs font-medium text-rose-400 hover:text-rose-300"
+                            >
+                                {g.member_count} {g.member_count === 1 ? 'lid' : 'leden'} {expandedId === g.id ? '▲' : '▼'}
+                            </button>
+                            {expandedId === g.id && (
+                                <div className="mt-2 pt-2 border-t border-slate-800">
+                                    {g.members.length === 0 ? (
+                                        <p className="text-xs text-slate-500">Geen leden in deze groep.</p>
+                                    ) : (
+                                        <ul className="space-y-1">
+                                            {g.members.map(m => (
+                                                <li key={m.id} className="text-xs text-slate-300">{m.name}</li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    </div>
                 ))}
             </div>
         </div>

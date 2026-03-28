@@ -111,6 +111,11 @@ class Member extends Model
      * Minors: use primary guardian's user email, or guardian email.
      * Adults: use member's own email, or linked user email.
      */
+    public function trainingGroups(): BelongsToMany
+    {
+        return $this->belongsToMany(TrainingGroup::class)->withTimestamps();
+    }
+
     public function resolveEmail(?Carbon $referenceDate = null): ?string
     {
         if ($this->isMinor($referenceDate)) {

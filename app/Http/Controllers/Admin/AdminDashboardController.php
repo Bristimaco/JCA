@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use App\Models\AgeCategory;
 use App\Models\ClubSettings;
 use App\Models\Member;
+use App\Models\MembershipInvoice;
+use App\Models\TrainingGroup;
 use App\Models\User;
 use App\Models\WeightCategory;
 use Illuminate\Http\Request;
@@ -60,6 +62,49 @@ class AdminDashboardController extends Controller
                 'membership_renewal_date' => $m->membership_renewal_date->toDateString(),
             ]);
 
+        $trainingGroups = TrainingGroup::with(['trainer:id,name', 'members:id,first_name,last_name'])
+            ->orderBy('name')
+            ->get()
+            ->map(fn (TrainingGroup $g) => [
+                'id' => $g->id,
+                'name' => $g->name,
+                'description' => $g->description,
+                'membership_fee' => $g->membership_fee,
+                'membership_fee_discount' => $g->membership_fee_discount,
+                'training_day' => $g->training_day,
+                'training_time' => $g->training_time,
+                'location' => $g->location,
+                'trainer_id' => $g->trainer_id,
+                'trainer_name' => $g->trainer?->name,
+                'member_ids' => $g->members->pluck('id')->values()->all(),
+                'member_count' => $g->members->count(),
+            ]);
+
+        $trainers = User::whereNotNull('role')
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->get(['id', 'name', 'role'])
+            ->map(fn (User $u) => [
+                'id' => $u->id,
+                'name' => $u->name,
+                'role' => $u->role->value,
+            ]);
+
+        $invoices = MembershipInvoice::with(['user:id,name,email', 'lines.member:id,first_name,last_name'])
+            ->orderByDesc('created_at')
+            ->get()
+            ->map(fn (MembershipInvoice $inv) => [
+                'id' => $inv->id,
+                'user_name' => $inv->user?->name ?? '-',
+                'user_email' => $inv->user?->email ?? '-',
+                'total_amount' => $inv->total_amount,
+                'status' => $inv->status->value,
+                'due_date' => $inv->due_date?->toDateString(),
+                'paid_at' => $inv->paid_at?->toDateString(),
+                'year' => $inv->year,
+                'members' => $inv->lines->map(fn ($l) => $l->member?->fullName() ?? '-')->values()->all(),
+            ]);
+
         return Inertia::render('Admin/Dashboard', [
             'pendingUsers' => $pendingUsers,
             'users' => $users,
@@ -70,6 +115,9 @@ class AdminDashboardController extends Controller
             'clubSettings' => ClubSettings::current(),
             'renewalDueCount' => $renewalDueCount,
             'renewalDueMembers' => $renewalDueMembers,
+            'trainingGroups' => $trainingGroups,
+            'trainers' => $trainers,
+            'invoices' => $invoices,
         ]);
     }
 }

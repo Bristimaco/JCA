@@ -1,9 +1,11 @@
 import { useForm, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import AgeCategoriesSection from './AgeCategoriesSection';
+import InvoicesSection from './InvoicesSection';
+import TrainingGroupsSection from './TrainingGroupsSection';
 import WeightCategoriesSection from './WeightCategoriesSection';
 
-export default function AdminPanel({ pendingUsers, users, roles, ageCategories, weightCategories, allMembers, clubSettings, renewalDueCount, renewalDueMembers }) {
+export default function AdminPanel({ pendingUsers, users, roles, ageCategories, weightCategories, allMembers, clubSettings, renewalDueCount, renewalDueMembers, trainingGroups, trainers, invoices }) {
     const urlParams = new URLSearchParams(window.location.search);
     const [renewalListOpen, setRenewalListOpen] = useState(urlParams.get('renewal') === 'open');
 
@@ -72,6 +74,14 @@ export default function AdminPanel({ pendingUsers, users, roles, ageCategories, 
 
             <div className="mt-8">
                 <WeightCategoriesSection ageCategories={ageCategories} weightCategories={weightCategories} />
+            </div>
+
+            <div className="mt-8">
+                <TrainingGroupsSection trainingGroups={trainingGroups} trainers={trainers} allMembers={allMembers} />
+            </div>
+
+            <div className="mt-8">
+                <InvoicesSection invoices={invoices} />
             </div>
         </div>
     );

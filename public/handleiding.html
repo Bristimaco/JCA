@@ -500,6 +500,8 @@
                     <a href="#admin-lidgeld" class="nav-link">Lidgeld &amp; Vernieuwing</a>
                     <a href="#admin-categorieen" class="nav-link">Categorie&#235;n</a>
                     <a href="#admin-club" class="nav-link">Clubinstellingen</a>
+                    <a href="#admin-trainingsgroepen" class="nav-link">Trainingsgroepen</a>
+                    <a href="#admin-facturen" class="nav-link">Facturen &amp; Betalingen</a>
                 </div>
                 <div class="nav-group">
                     <div class="nav-group-title">Referentie</div>
@@ -1407,6 +1409,84 @@
                 <li><strong>Logo</strong> &#8212; upload het clublogo (wordt gebruikt in de applicatie en e-mails)</li>
             </ul>
 
+            <h3 id="admin-trainingsgroepen">Trainingsgroepen</h3>
+            <p><span class="role-badge role-admin">Beheerder</span> <span class="role-badge role-coach">Trainer</span></p>
+            <p>
+                In de sectie <strong>&#8220;Trainingsgroepen&#8221;</strong> op het beheerderspaneel beheer je de
+                trainingsgroepen van de club. Elke groep heeft een naam, lidgeld, korting voor extra leden,
+                trainingsdag en -uur, locatie en een toegewezen trainer.
+            </p>
+            <h4>Groep aanmaken</h4>
+            <p>
+                Klik op <strong>Toevoegen</strong> en vul de gegevens in:
+            </p>
+            <ul>
+                <li><strong>Naam</strong> (verplicht) &#8212; bijv. &#8220;Competitie&#8221;, &#8220;Recreatie&#8221;, &#8220;Mini Judo&#8221;</li>
+                <li><strong>Lidgeld (&#8364;)</strong> (verplicht) &#8212; het jaarlijkse lidgeld voor deze groep</li>
+                <li><strong>Korting extra lid (&#8364;)</strong> &#8212; korting als een ouder meerdere kinderen in dezelfde groep heeft</li>
+                <li><strong>Trainingsdag</strong> &#8212; dag van de week</li>
+                <li><strong>Trainingsuur</strong> &#8212; bijv. &#8220;18:00 - 19:30&#8221;</li>
+                <li><strong>Locatie</strong> &#8212; zaal of sporthal</li>
+                <li><strong>Trainer</strong> &#8212; koppel een trainer aan de groep</li>
+                <li><strong>Beschrijving</strong> &#8212; optionele omschrijving</li>
+            </ul>
+            <h4>Leden toewijzen</h4>
+            <p>
+                Klik op <strong>Leden</strong> bij een groep om leden toe te voegen of te verwijderen. Gebruik het
+                dropdown-menu om leden te selecteren en klik op <strong>Opslaan</strong>. Een lid kan in
+                <strong>meerdere groepen</strong> zitten.
+            </p>
+            <h4>Facturatie-logica</h4>
+            <p>
+                Bij het berekenen van het lidgeld geldt: als een lid in meerdere groepen zit, telt alleen de
+                <strong>duurste groep</strong>. Als een ouder meerdere kinderen in dezelfde groep heeft, krijgt het
+                tweede (en volgende) kind een <strong>korting</strong> gelijk aan het kortingsbedrag van die groep.
+            </p>
+            <div class="box box-tip">
+                <strong>Tip:</strong> Trainers zien hun toegewezen groepen op het hoofddashboard en kunnen daar de
+                ledenlijst bekijken.
+            </div>
+
+            <h3 id="admin-facturen">Facturen &amp; Betalingen (Mollie)</h3>
+            <p><span class="role-badge role-admin">Beheerder</span></p>
+            <p>
+                De applicatie kan automatisch facturen genereren en betalingen verwerken via
+                <strong>Mollie</strong>. Dit werkt als volgt:
+            </p>
+            <h4>Automatische facturatie</h4>
+            <p>
+                Dagelijks controleert het systeem welke leden een vernieuwingsdatum binnen 30 dagen hebben. Voor
+                elke ouder/gebruiker wordt automatisch een factuur aangemaakt met:
+            </p>
+            <ul>
+                <li>De leden die vernieuwd moeten worden</li>
+                <li>Per lid de duurste trainingsgroep (als het lid in meerdere groepen zit)</li>
+                <li>Korting als meerdere leden van dezelfde gebruiker in dezelfde groep zitten</li>
+                <li>Een <strong>Mollie betaallink</strong> waarmee direct betaald kan worden</li>
+            </ul>
+            <h4>Betaalproces</h4>
+            <p>
+                De gebruiker ontvangt een <strong>melding</strong> (en/of e-mail, afhankelijk van de voorkeur)
+                met het bedrag, een overzicht per lid en een <strong>&#8220;Nu betalen&#8221;</strong>-knop.
+                Na betaling via Mollie wordt de status automatisch bijgewerkt:
+            </p>
+            <ul>
+                <li>&#128310; <strong>In afwachting</strong> &#8212; Factuur aangemaakt, nog niet betaald</li>
+                <li>&#9989; <strong>Betaald</strong> &#8212; Betaling ontvangen, vernieuwingsdatum verlengd met 1 jaar</li>
+                <li>&#10060; <strong>Verlopen</strong> &#8212; Betaaltermijn verstreken</li>
+                <li>&#10060; <strong>Mislukt</strong> &#8212; Betaling mislukt of geannuleerd</li>
+            </ul>
+            <h4>Factuuroverzicht (admin)</h4>
+            <p>
+                Op het beheerderspaneel vind je de sectie <strong>&#8220;Facturen&#8221;</strong> met een overzicht
+                van alle facturen. Je ziet per factuur: de gebruiker, gekoppelde leden, bedrag, status, vervaldatum
+                en betaaldatum. Bovenaan staat een samenvatting met het aantal openstaande en betaalde facturen.
+            </p>
+            <div class="box box-info">
+                <strong>Let op:</strong> Facturen worden alleen aangemaakt voor leden die in een trainingsgroep zitten.
+                Zorg ervoor dat alle leden aan de juiste groep zijn toegewezen.
+            </div>
+
             <h2 id="rechten-tabel">Overzicht rechten per rol</h2>
             <p>
                 Onderstaande tabel geeft een volledig overzicht van alle acties en welke rollen deze mogen uitvoeren.
@@ -1708,6 +1788,8 @@
                 </li>
                 <li>&#127942; <strong>Toernooiverslag</strong> &#8212; Resultaten na afloop van een toernooi</li>
                 <li>&#128203; <strong>Trainer notificatie</strong> &#8212; Deelnemerslijst voor trainers</li>
+                <li>&#128182; <strong>Lidgeld factuur</strong> &#8212; Factuur met betaallink voor het lidgeld</li>
+                <li>&#9989; <strong>Betaling bevestigd</strong> &#8212; Bevestiging dat de betaling ontvangen is</li>
             </ul>
 
             <h4>Meldingsvoorkeur instellen</h4>

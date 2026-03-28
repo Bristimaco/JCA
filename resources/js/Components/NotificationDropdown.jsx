@@ -7,6 +7,8 @@ const ICONS = {
     TournamentRegistrationNotification: '✅',
     TournamentReportNotification: '🏆',
     TrainerTournamentNotification: '📋',
+    MembershipPaymentNotification: '💶',
+    PaymentConfirmationNotification: '✅',
 };
 
 function timeAgo(dateStr) {
@@ -95,6 +97,23 @@ function NotificationDetailView({ notification, onBack }) {
                             <InfoRow label="Inschrijving deadline" value={d.registration_deadline} />
                         </>
                     )}
+                    {type === 'MembershipPaymentNotification' && (
+                        <>
+                            <InfoRow label="Club" value={d.club_name} />
+                            <InfoRow label="Jaar" value={d.year} />
+                            <InfoRow label="Totaal" value={d.total_amount ? `€${d.total_amount}` : null} />
+                            <InfoRow label="Vervaldatum" value={d.due_date} />
+                            <InfoRow label="Status" value={d.status === 'paid' ? 'Betaald' : d.status === 'pending' ? 'In afwachting' : d.status === 'expired' ? 'Verlopen' : d.status} />
+                        </>
+                    )}
+                    {type === 'PaymentConfirmationNotification' && (
+                        <>
+                            <InfoRow label="Club" value={d.club_name} />
+                            <InfoRow label="Jaar" value={d.year} />
+                            <InfoRow label="Totaal" value={d.total_amount ? `€${d.total_amount}` : null} />
+                            <InfoRow label="Betaald op" value={d.paid_at} />
+                        </>
+                    )}
                 </div>
 
                 {type === 'TournamentInvitationNotification' && notification.data?.accept_url && (
@@ -153,6 +172,41 @@ function NotificationDetailView({ notification, onBack }) {
                             ))}
                         </div>
                     </div>
+                )}
+
+                {type === 'MembershipPaymentNotification' && d.lines && d.lines.length > 0 && (
+                    <div className="space-y-2">
+                        <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Overzicht</p>
+                        <div className="rounded-lg bg-slate-800/40 ring-1 ring-slate-700/40 divide-y divide-slate-700/40">
+                            {d.lines.map((line, li) => (
+                                <div key={li} className="flex items-center justify-between px-3 py-2">
+                                    <div>
+                                        <span className="text-xs font-medium text-slate-200">{line.member_name}</span>
+                                        <p className="text-[10px] text-slate-500">{line.group_name}</p>
+                                    </div>
+                                    <div className="text-right">
+                                        <span className="text-xs font-medium text-emerald-400">€{line.amount}</span>
+                                        {line.is_discounted && <p className="text-[10px] text-blue-400">korting</p>}
+                                    </div>
+                                </div>
+                            ))}
+                            <div className="flex items-center justify-between px-3 py-2 bg-slate-800/60">
+                                <span className="text-xs font-semibold text-slate-300">Totaal</span>
+                                <span className="text-xs font-bold text-emerald-400">€{d.total_amount}</span>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {type === 'MembershipPaymentNotification' && d.payment_url && (
+                    <a
+                        href={d.payment_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block text-center rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium py-2.5 transition-colors"
+                    >
+                        💶 Nu betalen
+                    </a>
                 )}
 
                 <p className="text-[10px] text-slate-600 text-center pt-2">{timeAgo(notification.created_at)}</p>

@@ -13,6 +13,8 @@ use App\Http\Controllers\Admin\ToggleUserActiveController;
 use App\Http\Controllers\Admin\TournamentController;
 use App\Http\Controllers\Admin\TournamentIndexController;
 use App\Http\Controllers\Admin\TournamentMembersController;
+use App\Http\Controllers\Admin\TrainingGroupController;
+use App\Http\Controllers\Admin\TrainingGroupMemberController;
 use App\Http\Controllers\Admin\UpdateUserController;
 use App\Http\Controllers\Admin\UserMembersController;
 use App\Http\Controllers\Admin\WeightCategoryController;
@@ -23,6 +25,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ClubLogoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MemberPhotoController;
+use App\Http\Controllers\MollieWebhookController;
 use App\Http\Controllers\MyMembersController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\TournamentAttachmentController;
@@ -37,6 +40,9 @@ Route::get('/tournaments/rsvp/{token}/{response}', TournamentRsvpController::cla
 
 // Public club logo (for favicon/emails)
 Route::get('/club-logo', ClubLogoController::class)->name('club.logo');
+
+// Mollie webhook (no auth, CSRF excluded in bootstrap/app.php)
+Route::post('/webhooks/mollie', MollieWebhookController::class)->name('webhooks.mollie');
 
 // Guest routes (unauthenticated only)
 Route::middleware('guest')->group(function () {
@@ -98,6 +104,9 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::get('/toernooien/{tournament}', [TrainerTournamentController::class, 'show'])->name('trainer.tournament.show');
         Route::post('/toernooien/{tournament}/resultaten', [TrainerTournamentController::class, 'storeResults'])->name('trainer.tournament.results');
         Route::post('/toernooien/{tournament}/afsluiten', [TrainerTournamentController::class, 'closeTournament'])->name('trainer.tournament.close');
+
+        // Training group member assignment (trainer)
+        Route::put('/training-groups/{trainingGroup}/members', [TrainingGroupMemberController::class, 'update'])->name('trainer.training-groups.members');
     });
 
     // Admin routes
@@ -119,6 +128,12 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::post('/weight-categories', [WeightCategoryController::class, 'store'])->name('admin.weight-categories.store');
         Route::patch('/weight-categories/{weightCategory}', [WeightCategoryController::class, 'update'])->name('admin.weight-categories.update');
         Route::delete('/weight-categories/{weightCategory}', [WeightCategoryController::class, 'destroy'])->name('admin.weight-categories.destroy');
+
+        // Training groups
+        Route::post('/training-groups', [TrainingGroupController::class, 'store'])->name('admin.training-groups.store');
+        Route::patch('/training-groups/{trainingGroup}', [TrainingGroupController::class, 'update'])->name('admin.training-groups.update');
+        Route::delete('/training-groups/{trainingGroup}', [TrainingGroupController::class, 'destroy'])->name('admin.training-groups.destroy');
+        Route::put('/training-groups/{trainingGroup}/members', [TrainingGroupMemberController::class, 'update'])->name('admin.training-groups.members');
 
         // Members
         Route::get('/members', MemberIndexController::class)->name('admin.members.index');
