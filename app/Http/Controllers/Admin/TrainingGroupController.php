@@ -29,6 +29,8 @@ class TrainingGroupController extends Controller
         $schedules = $validated['schedules'] ?? [];
         unset($validated['schedules']);
 
+        $schedules = array_map(fn ($s) => array_merge($s, ['trainer_id' => $s['trainer_id'] ?? null]), $schedules);
+
         $group = TrainingGroup::create($validated);
         $group->schedules()->createMany($schedules);
 
@@ -54,6 +56,8 @@ class TrainingGroupController extends Controller
 
         $schedules = $validated['schedules'] ?? [];
         unset($validated['schedules']);
+
+        $schedules = array_map(fn ($s) => array_merge($s, ['trainer_id' => $s['trainer_id'] ?? null]), $schedules);
 
         $trainingGroup->update($validated);
         $trainingGroup->schedules()->delete();

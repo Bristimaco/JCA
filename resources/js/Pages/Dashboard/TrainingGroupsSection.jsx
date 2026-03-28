@@ -82,7 +82,9 @@ function TrainingGroupForm({ group, trainers, onCancel }) {
         e.preventDefault();
         const data = {
             ...form.data,
-            schedules: form.data.schedules.filter(s => s.day && s.start_time),
+            schedules: form.data.schedules
+                .filter(s => s.day && s.start_time)
+                .map(s => ({ ...s, trainer_id: s.trainer_id || null })),
         };
         form.transform(() => data);
         if (isEditing) {
