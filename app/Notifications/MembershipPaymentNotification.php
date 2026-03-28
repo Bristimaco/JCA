@@ -84,7 +84,6 @@ class MembershipPaymentNotification extends Notification
                 'total_amount' => number_format($this->invoice->total_amount, 2, ',', '.'),
                 'due_date' => $this->invoice->due_date?->format('d/m/Y'),
                 'payment_url' => $this->invoice->mollie_payment_url,
-                'qr_url' => $this->invoice->mollie_qr_url,
                 'status' => $this->invoice->status->value,
                 'lines' => $lineDetails,
                 'body' => "Factuur voor het lidgeld {$this->invoice->year} bij {$club->name}. Gelieve te betalen vóór ".($this->invoice->due_date?->format('d/m/Y') ?? '-').'.',

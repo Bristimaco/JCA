@@ -142,6 +142,9 @@ class MembershipInvoiceService
         $description = "Lidgeld {$year} — {$memberNames}";
         $this->mollie->createPaymentLink($invoice, $description);
 
+        // Refresh invoice to get Mollie data (payment_url may be set now)
+        $invoice->refresh();
+
         // Mark members as reminded
         foreach ($members as $member) {
             $member->update(['membership_fee_reminded_at' => now()]);

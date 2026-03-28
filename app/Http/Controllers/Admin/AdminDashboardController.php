@@ -29,19 +29,19 @@ class AdminDashboardController extends Controller
             ->with('members:id')
             ->orderBy('name')
             ->get(['id', 'name', 'email', 'role', 'is_active', 'results_interest'])
-            ->map(fn(User $u) => [
+            ->map(fn (User $u) => [
                 ...$u->toArray(),
                 'member_ids' => $u->members->pluck('id')->values()->all(),
             ]);
 
         $allMembers = Member::orderBy('last_name')->orderBy('first_name')
             ->get(['id', 'first_name', 'last_name'])
-            ->map(fn(Member $m) => [
+            ->map(fn (Member $m) => [
                 'id' => $m->id,
                 'name' => $m->fullName(),
             ]);
 
-        $roles = collect(UserRole::cases())->map(fn(UserRole $role) => [
+        $roles = collect(UserRole::cases())->map(fn (UserRole $role) => [
             'value' => $role->value,
             'label' => $role->label(),
         ])->values()->all();
@@ -55,7 +55,7 @@ class AdminDashboardController extends Controller
         $renewalDueMembers = Member::where('membership_renewal_date', '<=', Carbon::today()->addDays(30))
             ->orderBy('membership_renewal_date')
             ->get(['id', 'first_name', 'last_name', 'email', 'membership_renewal_date'])
-            ->map(fn(Member $m) => [
+            ->map(fn (Member $m) => [
                 'id' => $m->id,
                 'name' => $m->fullName(),
                 'email' => $m->email,
@@ -65,13 +65,13 @@ class AdminDashboardController extends Controller
         $trainingGroups = TrainingGroup::with(['trainer:id,name', 'members:id,first_name,last_name', 'schedules'])
             ->orderBy('name')
             ->get()
-            ->map(fn(TrainingGroup $g) => [
+            ->map(fn (TrainingGroup $g) => [
                 'id' => $g->id,
                 'name' => $g->name,
                 'description' => $g->description,
                 'membership_fee' => $g->membership_fee,
                 'membership_fee_discount' => $g->membership_fee_discount,
-                'schedules' => $g->schedules->map(fn($s) => [
+                'schedules' => $g->schedules->map(fn ($s) => [
                     'day' => $s->day,
                     'start_time' => $s->start_time,
                     'end_time' => $s->end_time,
@@ -87,7 +87,7 @@ class AdminDashboardController extends Controller
             ->where('is_active', true)
             ->orderBy('name')
             ->get(['id', 'name', 'role'])
-            ->map(fn(User $u) => [
+            ->map(fn (User $u) => [
                 'id' => $u->id,
                 'name' => $u->name,
                 'role' => $u->role->value,
@@ -96,7 +96,7 @@ class AdminDashboardController extends Controller
         $invoices = MembershipInvoice::with(['user:id,name,email', 'lines.member:id,first_name,last_name'])
             ->orderByDesc('created_at')
             ->get()
-            ->map(fn(MembershipInvoice $inv) => [
+            ->map(fn (MembershipInvoice $inv) => [
                 'id' => $inv->id,
                 'user_name' => $inv->user?->name ?? '-',
                 'user_email' => $inv->user?->email ?? '-',
@@ -105,7 +105,7 @@ class AdminDashboardController extends Controller
                 'due_date' => $inv->due_date?->toDateString(),
                 'paid_at' => $inv->paid_at?->toDateString(),
                 'year' => $inv->year,
-                'members' => $inv->lines->map(fn($l) => $l->member?->fullName() ?? '-')->values()->all(),
+                'members' => $inv->lines->map(fn ($l) => $l->member?->fullName() ?? '-')->values()->all(),
             ]);
 
         return Inertia::render('Admin/Dashboard', [

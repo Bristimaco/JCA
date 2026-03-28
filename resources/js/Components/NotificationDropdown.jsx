@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { usePage, router } from '@inertiajs/react';
+import { QRCodeSVG } from 'qrcode.react';
 
 const ICONS = {
     MembershipRenewalNotification: '💳',
@@ -199,14 +200,22 @@ function NotificationDetailView({ notification, onBack }) {
                 )}
 
                 {type === 'MembershipPaymentNotification' && d.payment_url && (
-                    <a
-                        href={d.payment_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block text-center rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium py-2.5 transition-colors"
-                    >
-                        💶 Nu betalen
-                    </a>
+                    <div className="space-y-3">
+                        <div className="flex justify-center">
+                            <div className="bg-white p-3 rounded-lg">
+                                <QRCodeSVG value={d.payment_url} size={160} />
+                            </div>
+                        </div>
+                        <p className="text-[10px] text-slate-500 text-center">Scan de QR code om te betalen</p>
+                        <a
+                            href={d.payment_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="block text-center rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium py-2.5 transition-colors"
+                        >
+                            💶 Nu betalen
+                        </a>
+                    </div>
                 )}
 
                 <p className="text-[10px] text-slate-600 text-center pt-2">{timeAgo(notification.created_at)}</p>
