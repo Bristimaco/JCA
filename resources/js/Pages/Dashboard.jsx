@@ -561,17 +561,29 @@ function CoachTrainingGroups({ groups }) {
                                         {s.trainer_id === auth.user.id && (
                                             <>
                                                 {s.session?.is_open ? (
-                                                    <div className="flex items-center gap-2">
-                                                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-900/40 px-2 py-0.5 text-[10px] font-semibold text-emerald-400">
-                                                            <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span></span>
-                                                            {s.session.attendance_count} aanwezig
-                                                        </span>
-                                                        <button
-                                                            onClick={() => { setClosingSession(s.session.id); setRemarks(''); }}
-                                                            className="rounded-md bg-red-900/30 px-2 py-1 text-[10px] font-semibold text-red-400 hover:bg-red-900/50 ring-1 ring-red-700/30"
-                                                        >
-                                                            Sluiten
-                                                        </button>
+                                                    <div>
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-900/40 px-2 py-0.5 text-[10px] font-semibold text-emerald-400">
+                                                                <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span></span>
+                                                                {s.session.attendance_count} aanwezig
+                                                            </span>
+                                                            <button
+                                                                onClick={() => { setClosingSession(s.session.id); setRemarks(''); }}
+                                                                className="rounded-md bg-red-900/30 px-2 py-1 text-[10px] font-semibold text-red-400 hover:bg-red-900/50 ring-1 ring-red-700/30"
+                                                            >
+                                                                Sluiten
+                                                            </button>
+                                                        </div>
+                                                        {(() => {
+                                                            const absent = g.members.filter(m => !s.session.attendee_ids?.includes(m.id));
+                                                            return absent.length > 0 ? (
+                                                                <div className="mt-1.5">
+                                                                    <span className="text-[10px] text-red-400/70">
+                                                                        Afwezig: {absent.map(m => m.name).join(', ')}
+                                                                    </span>
+                                                                </div>
+                                                            ) : null;
+                                                        })()}
                                                     </div>
                                                 ) : s.session?.closed_at ? (
                                                     <span className="inline-flex items-center rounded-full bg-slate-700 px-2 py-0.5 text-[10px] font-medium text-slate-400">

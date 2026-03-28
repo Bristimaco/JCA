@@ -19,13 +19,13 @@ class MemberIndexController extends Controller
         $members = Member::with(['weightCategory', 'tournamentResults.tournament'])->orderBy('last_name')->orderBy('first_name')->get()
             ->map(function (Member $m) {
                 $attendanceQuery = TrainingAttendance::where('member_id', $m->id)
-                    ->whereHas('trainingSession', fn($q) => $q->whereNotNull('closed_at'));
+                    ->whereHas('trainingSession', fn ($q) => $q->whereNotNull('closed_at'));
                 $attendanceCount = $attendanceQuery->count();
                 $attendanceHistory = $attendanceQuery
                     ->with(['trainingSession.trainingSchedule.trainingGroup'])
                     ->latest('confirmed_at')
                     ->get()
-                    ->map(fn($a) => [
+                    ->map(fn ($a) => [
                         'date' => $a->trainingSession->date->toDateString(),
                         'group_name' => $a->trainingSession->trainingSchedule->trainingGroup->name,
                         'day' => $a->trainingSession->trainingSchedule->day,
@@ -38,7 +38,7 @@ class MemberIndexController extends Controller
                     'current_belt' => $m->currentBelt()?->value,
                     'current_belt_label' => $m->currentBelt()?->label(),
                     'membership_renewal_date' => $m->membership_renewal_date?->toDateString(),
-                    'tournament_results' => $m->is_competition ? $m->tournamentResults->sortByDesc(fn($r) => $r->tournament->tournament_date)->map(fn($r) => [
+                    'tournament_results' => $m->is_competition ? $m->tournamentResults->sortByDesc(fn ($r) => $r->tournament->tournament_date)->map(fn ($r) => [
                         'id' => $r->id,
                         'tournament_name' => $r->tournament->name,
                         'tournament_date' => $r->tournament->tournament_date->toDateString(),
@@ -53,7 +53,7 @@ class MemberIndexController extends Controller
         $ageCategories = AgeCategory::ordered()->get();
         $weightCategories = WeightCategory::ordered()->get();
 
-        $beltRanks = collect(BeltRank::cases())->map(fn(BeltRank $b) => [
+        $beltRanks = collect(BeltRank::cases())->map(fn (BeltRank $b) => [
             'value' => $b->value,
             'label' => $b->label(),
         ])->values()->all();

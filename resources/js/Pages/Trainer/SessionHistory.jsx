@@ -64,20 +64,33 @@ export default function SessionHistory({ sessions }) {
                                         )}
 
                                         <div className="mt-3">
-                                            <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-2">Deelnemers</p>
+                                            <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-2">Aanwezig ({s.attendees.length})</p>
                                             {s.attendees.length === 0 ? (
                                                 <p className="text-xs text-slate-500">Geen deelnemers geregistreerd.</p>
                                             ) : (
                                                 <div className="grid gap-1">
                                                     {s.attendees.map((a, i) => (
                                                         <div key={i} className="flex items-center justify-between text-sm">
-                                                            <span className="text-slate-300">{a.name}</span>
+                                                            <span className="text-emerald-400">{a.name}</span>
                                                             <span className="text-xs text-slate-500">{a.confirmed_at}</span>
                                                         </div>
                                                     ))}
                                                 </div>
                                             )}
                                         </div>
+
+                                        {s.absentees && s.absentees.length > 0 && (
+                                            <div className="mt-3">
+                                                <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-2">Afwezig ({s.absentees.length})</p>
+                                                <div className="grid gap-1">
+                                                    {s.absentees.map((a, i) => (
+                                                        <div key={i} className="text-sm">
+                                                            <span className="text-red-400/70">{a.name}</span>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 )}
                             </div>
