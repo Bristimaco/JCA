@@ -1,7 +1,20 @@
 import { Head, useForm } from '@inertiajs/react';
+import { useState, useEffect, useCallback } from 'react';
 
 export default function Pin() {
     const form = useForm({ pin: '' });
+    const [timeLeft, setTimeLeft] = useState(15);
+
+    const resetTimer = useCallback(() => setTimeLeft(15), []);
+
+    useEffect(() => {
+        if (timeLeft <= 0) {
+            window.location.href = '/login';
+            return;
+        }
+        const timer = setTimeout(() => setTimeLeft((t) => t - 1), 1000);
+        return () => clearTimeout(timer);
+    }, [timeLeft]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -31,7 +44,7 @@ export default function Pin() {
                             pattern="[0-9]*"
                             autoComplete="off"
                             value={form.data.pin}
-                            onChange={(e) => form.setData('pin', e.target.value)}
+                            onChange={(e) => { form.setData('pin', e.target.value); resetTimer(); }}
                             placeholder="PIN-code"
                             className="w-full rounded-xl border border-slate-700 bg-slate-800/50 text-white text-center text-3xl tracking-[0.5em] py-4 shadow-sm focus:border-rose-500 focus:ring-rose-500 placeholder:text-slate-600 placeholder:text-base placeholder:tracking-normal"
                             autoFocus
@@ -48,6 +61,13 @@ export default function Pin() {
                     >
                         Doorgaan
                     </button>
+
+                    <div className="text-center mt-4">
+                        <p className="text-sm text-slate-500">Nog <span className="font-mono font-semibold text-slate-400">{timeLeft}</span> seconden</p>
+                        <div className="mt-2 h-1 w-full rounded-full bg-slate-800 overflow-hidden">
+                            <div className="h-full rounded-full bg-rose-600 transition-all duration-1000 ease-linear" style={{ width: `${(timeLeft / 15) * 100}%` }} />
+                        </div>
+                    </div>
                 </form>
             </div>
         </div>

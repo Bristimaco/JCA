@@ -29,7 +29,7 @@ class AttendanceKioskController extends Controller
 
         $settings = ClubSettings::current();
 
-        if (! $settings->attendance_pin || ! hash_equals($settings->attendance_pin, $request->input('pin'))) {
+        if (!$settings->attendance_pin || !hash_equals($settings->attendance_pin, $request->input('pin'))) {
             return back()->withErrors(['pin' => 'Ongeldige PIN-code.']);
         }
 
@@ -40,7 +40,7 @@ class AttendanceKioskController extends Controller
 
     public function today(): Response|RedirectResponse
     {
-        if (! session('kiosk_authenticated')) {
+        if (!session('kiosk_authenticated')) {
             return redirect()->route('attendance.pin');
         }
 
@@ -53,7 +53,7 @@ class AttendanceKioskController extends Controller
             ->whereNull('closed_at')
             ->whereNotNull('opened_at')
             ->get()
-            ->map(fn (TrainingSession $s) => [
+            ->map(fn(TrainingSession $s) => [
                 'id' => $s->id,
                 'group_name' => $s->trainingSchedule->trainingGroup->name,
                 'day' => $s->trainingSchedule->day,
@@ -68,11 +68,11 @@ class AttendanceKioskController extends Controller
 
     public function session(TrainingSession $session): Response|RedirectResponse
     {
-        if (! session('kiosk_authenticated')) {
+        if (!session('kiosk_authenticated')) {
             return redirect()->route('attendance.pin');
         }
 
-        if (! $session->isOpen()) {
+        if (!$session->isOpen()) {
             return redirect()->route('attendance.today');
         }
 
@@ -82,7 +82,7 @@ class AttendanceKioskController extends Controller
             'attendances',
         ]);
 
-        $members = $session->trainingSchedule->trainingGroup->members->map(fn ($m) => [
+        $members = $session->trainingSchedule->trainingGroup->members->map(fn($m) => [
             'id' => $m->id,
             'name' => $m->fullName(),
             'attending' => $session->attendances->contains('member_id', $m->id),
@@ -103,11 +103,11 @@ class AttendanceKioskController extends Controller
 
     public function toggle(Request $request, TrainingSession $session, int $memberId): RedirectResponse
     {
-        if (! session('kiosk_authenticated')) {
+        if (!session('kiosk_authenticated')) {
             return redirect()->route('attendance.pin');
         }
 
-        if (! $session->isOpen()) {
+        if (!$session->isOpen()) {
             return back()->withErrors(['session' => 'Trainingsmoment is niet meer open.']);
         }
 
@@ -128,8 +128,14 @@ class AttendanceKioskController extends Controller
         return back();
     }
 
-    public function logout(): RedirectResponse
+    public function logout(Request $request): RedirectResponse
     {
+        $settings = ClubSettings::current();
+
+        if (!$settings->attendance_pin || !hash_equals($settings->attendance_pin, $request->input('pin', ''))) {
+            return back()->withErrors(['pin' => 'Ongeldige PIN-code.']);
+        }
+
         session()->forget('kiosk_authenticated');
 
         return redirect()->route('attendance.pin');
