@@ -6,7 +6,21 @@ use App\Enums\GuardianRelationship;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
+/**
+ * @property int $id
+ * @property int $member_id
+ * @property int|null $user_id
+ * @property string $first_name
+ * @property string $last_name
+ * @property string|null $email
+ * @property string|null $phone
+ * @property GuardianRelationship $relationship
+ * @property bool $is_primary
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ */
 class Guardian extends Model
 {
     use HasFactory;
@@ -33,6 +47,6 @@ class Guardian extends Model
 
     public function fullName(): string
     {
-        return $this->first_name.' '.$this->last_name;
+        return $this->first_name . ' ' . $this->last_name;
     }
 }

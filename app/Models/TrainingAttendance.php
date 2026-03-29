@@ -4,7 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
+/**
+ * @property int $id
+ * @property int $training_session_id
+ * @property int $member_id
+ * @property Carbon $confirmed_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ */
 class TrainingAttendance extends Model
 {
     protected $guarded = ['id'];

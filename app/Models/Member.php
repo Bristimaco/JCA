@@ -14,11 +14,39 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 
 /**
+ * @property int $id
+ * @property string $first_name
+ * @property string $last_name
  * @property Carbon $date_of_birth
+ * @property string $gender
+ * @property string|null $nationality
+ * @property string|null $national_member_id
+ * @property string|null $license_number
+ * @property string|null $email
+ * @property string|null $phone
+ * @property string|null $address_street
+ * @property string|null $address_city
+ * @property string|null $address_postal_code
+ * @property string $address_country
+ * @property string|null $photo_path
+ * @property string|null $photo_data
+ * @property string|null $medical_notes
+ * @property string|null $emergency_contact_name
+ * @property string|null $emergency_contact_phone
+ * @property MembershipStatus $membership_status
  * @property Carbon|null $membership_start_date
  * @property Carbon|null $membership_end_date
  * @property Carbon $membership_renewal_date
  * @property Carbon|null $membership_fee_reminded_at
+ * @property bool $photo_consent
+ * @property bool $is_competition
+ * @property bool $is_trainer
+ * @property int|null $weight_category_id
+ * @property int|null $age_category_id
+ * @property string|null $notes
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
  */
 class Member extends Model
 {

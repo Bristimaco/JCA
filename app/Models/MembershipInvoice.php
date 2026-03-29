@@ -9,9 +9,17 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
 /**
+ * @property int $id
+ * @property int $user_id
  * @property float $total_amount
+ * @property string|null $mollie_payment_id
+ * @property string|null $mollie_payment_url
+ * @property InvoiceStatus $status
  * @property Carbon|null $paid_at
  * @property Carbon|null $due_date
+ * @property int $year
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  */
 class MembershipInvoice extends Model
 {

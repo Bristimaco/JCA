@@ -5,7 +5,19 @@ namespace App\Models;
 use App\Enums\Gender;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
+/**
+ * @property int $id
+ * @property int $age_category_id
+ * @property string $name
+ * @property float $max_weight_kg
+ * @property Gender $gender
+ * @property int $display_order
+ * @property bool $is_active
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ */
 class WeightCategory extends Model
 {
     protected $guarded = ['id'];

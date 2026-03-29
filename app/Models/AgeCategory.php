@@ -6,6 +6,18 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property int $id
+ * @property string $name
+ * @property int $min_age
+ * @property int $max_age
+ * @property string $country_code
+ * @property string|null $cutoff_date
+ * @property int $display_order
+ * @property bool $is_active
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ */
 class AgeCategory extends Model
 {
     protected $guarded = ['id'];
@@ -83,6 +95,6 @@ class AgeCategory extends Model
             $age = (int) $birthDate->diffInYears($cutoff);
         }
 
-        return $categories->first(fn (self $cat) => $age >= $cat->min_age && $age <= $cat->max_age);
+        return $categories->first(fn(self $cat) => $age >= $cat->min_age && $age <= $cat->max_age);
     }
 }

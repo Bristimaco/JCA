@@ -9,9 +9,20 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
 /**
+ * @property int $id
+ * @property string $name
+ * @property string|null $address_street
+ * @property string|null $address_city
+ * @property string|null $address_postal_code
+ * @property string $country_code
+ * @property float|null $latitude
+ * @property float|null $longitude
  * @property Carbon $tournament_date
  * @property Carbon|null $invitation_deadline
  * @property Carbon|null $registration_deadline
+ * @property TournamentStatus $status
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  */
 class Tournament extends Model
 {
