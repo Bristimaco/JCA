@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\InvoiceStatus;
 use App\Models\MembershipInvoice;
+use App\Notifications\PaymentConfirmationNotification;
 use Illuminate\Support\Facades\Log;
 use Mollie\Laravel\Facades\Mollie;
 
@@ -41,15 +42,46 @@ class MolliePaymentService
         return $invoice;
     }
 
-    public function getPaymentStatus(string $paymentId): string
+    public function getPaymentStatus(string $paymentLinkId): string
     {
-        $payment = Mollie::api()->payments->get($paymentId);
+        $paymentLink = Mollie::api()->paymentLinks->get($paymentLinkId);
 
-        return match (true) {
-            $payment->isPaid() => InvoiceStatus::Paid->value,
-            $payment->isExpired() => InvoiceStatus::Expired->value,
-            $payment->isFailed(), $payment->isCanceled() => InvoiceStatus::Failed->value,
-            default => InvoiceStatus::Pending->value,
-        };
+        if ($paymentLink->isPaid()) {
+            return InvoiceStatus::Paid->value;
+        }
+
+        if ($paymentLink->expiresAt && now()->greaterThan($paymentLink->expiresAt)) {
+            return InvoiceStatus::Expired->value;
+        }
+
+        return InvoiceStatus::Pending->value;
+    }
+
+    public function syncInvoiceStatus(MembershipInvoice $invoice): ?string
+    {
+        if (!$invoice->mollie_payment_id) {
+            return null;
+        }
+
+        $newStatus = $this->getPaymentStatus($invoice->mollie_payment_id);
+        $invoice->update(['status' => $newStatus]);
+
+        if ($newStatus === InvoiceStatus::Paid->value && !$invoice->paid_at) {
+            $invoice->update(['paid_at' => now()]);
+
+            foreach ($invoice->lines as $line) {
+                if ($line->member) {
+                    $line->member->update([
+                        'membership_renewal_date' => $line->member->membership_renewal_date->addYear(),
+                        'membership_fee_reminded_at' => null,
+                    ]);
+                }
+            }
+
+            $invoice->load('lines.member', 'lines.trainingGroup');
+            $invoice->user->notify(new PaymentConfirmationNotification($invoice));
+        }
+
+        return $newStatus;
     }
 }

@@ -10,3 +10,4 @@ Artisan::command('inspire', function () {
 
 Schedule::command('membership:send-renewal-reminders')->daily();
 Schedule::command('membership:generate-invoices')->daily();
+Schedule::command('membership:check-pending-invoices')->hourly();

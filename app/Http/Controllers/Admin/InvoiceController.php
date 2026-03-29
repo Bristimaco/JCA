@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\InvoiceStatus;
 use App\Http\Controllers\Controller;
 use App\Models\MembershipInvoice;
 use App\Notifications\MembershipPaymentNotification;
@@ -26,7 +27,7 @@ class InvoiceController extends Controller
             return back()->with('status', 'Deze factuur heeft al een betaallink.');
         }
 
-        $memberNames = $invoice->lines->map(fn ($l) => $l->member?->fullName() ?? 'Onbekend')->join(', ');
+        $memberNames = $invoice->lines->map(fn($l) => $l->member?->fullName() ?? 'Onbekend')->join(', ');
         $description = "Lidgeld {$invoice->year} — {$memberNames}";
 
         $mollieService->createPaymentLink($invoice, $description);
@@ -40,5 +41,22 @@ class InvoiceController extends Controller
         }
 
         return back()->with('status', 'Betaallink aanmaken mislukt. Controleer de Mollie API key en logs.');
+    }
+
+    public function checkStatus(MembershipInvoice $invoice, MolliePaymentService $mollieService): RedirectResponse
+    {
+        if (!$invoice->mollie_payment_id) {
+            return back()->with('status', 'Deze factuur heeft geen Mollie betaallink.');
+        }
+
+        try {
+            $newStatus = $mollieService->syncInvoiceStatus($invoice);
+
+            $label = InvoiceStatus::from($newStatus)->label();
+
+            return back()->with('status', "Factuurstatus bijgewerkt: {$label}.");
+        } catch (\Throwable $e) {
+            return back()->with('status', 'Status ophalen mislukt. Controleer de Mollie API key en logs.');
+        }
     }
 }

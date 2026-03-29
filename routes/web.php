@@ -178,6 +178,7 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         // Invoices
         Route::post('/invoices/generate', [InvoiceController::class, 'generate'])->name('admin.invoices.generate');
         Route::post('/invoices/{invoice}/retry-payment', [InvoiceController::class, 'retryPayment'])->name('admin.invoices.retry-payment');
+        Route::post('/invoices/{invoice}/check-status', [InvoiceController::class, 'checkStatus'])->name('admin.invoices.check-status');
         Route::delete('/members/{member}', [MemberController::class, 'destroy'])->name('admin.members.destroy');
 
         // Excel import/export leden

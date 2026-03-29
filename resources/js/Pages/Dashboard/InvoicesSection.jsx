@@ -106,9 +106,14 @@ export default function InvoicesSection({ invoices }) {
 
 function InvoiceRow({ invoice }) {
     const retryForm = useForm({});
+    const checkStatusForm = useForm({});
 
     const handleRetry = () => {
         retryForm.post(`/admin/invoices/${invoice.id}/retry-payment`, { preserveScroll: true });
+    };
+
+    const handleCheckStatus = () => {
+        checkStatusForm.post(`/admin/invoices/${invoice.id}/check-status`, { preserveScroll: true });
     };
 
     return (
@@ -150,8 +155,17 @@ function InvoiceRow({ invoice }) {
                         {retryForm.processing ? 'Bezig...' : 'Betaallink aanmaken'}
                     </button>
                 )}
-                {invoice.has_payment_url && (
-                    <span className="text-xs text-emerald-500">✓ Link actief</span>
+                {invoice.status === 'pending' && invoice.has_payment_url && (
+                    <button
+                        onClick={handleCheckStatus}
+                        disabled={checkStatusForm.processing}
+                        className="text-xs font-medium text-sky-400 hover:text-sky-300 disabled:opacity-50"
+                    >
+                        {checkStatusForm.processing ? 'Bezig...' : 'Status controleren'}
+                    </button>
+                )}
+                {invoice.status === 'paid' && (
+                    <span className="text-xs text-emerald-500">✓ Betaald</span>
                 )}
             </td>
         </tr>
