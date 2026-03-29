@@ -10,12 +10,14 @@ use App\Models\User;
 use App\Notifications\MembershipPaymentNotification;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 class MembershipInvoiceService
 {
     public function __construct(
         protected MolliePaymentService $mollie,
-    ) {}
+    ) {
+    }
 
     public function generateInvoicesForDueMembers(): int
     {
@@ -25,21 +27,30 @@ class MembershipInvoiceService
             ->get();
 
         if ($dueMembers->isEmpty()) {
+            Log::info('Facturatie: geen leden met vernieuwingsdatum binnen 30 dagen gevonden.');
+
             return 0;
         }
 
+        Log::info('Facturatie: ' . $dueMembers->count() . ' lid/leden gevonden met vernieuwingsdatum binnen 30 dagen.');
+
         // Group due members by payer
-        $membersByPayer = $dueMembers->groupBy(fn (Member $member) => $this->resolvePayerForMember($member)?->id);
+        $membersByPayer = $dueMembers->groupBy(fn(Member $member) => $this->resolvePayerForMember($member)?->id);
 
         $invoiceCount = 0;
 
         foreach ($membersByPayer as $payerId => $members) {
-            if (! $payerId) {
+            if (!$payerId) {
+                $names = $members->map(fn($m) => $m->fullName())->join(', ');
+                Log::warning("Facturatie: geen betaler gevonden voor: {$names}. Overgeslagen.");
+
                 continue;
             }
 
             $payer = User::find($payerId);
-            if (! $payer) {
+            if (!$payer) {
+                Log::warning("Facturatie: betaler (user_id={$payerId}) niet gevonden. Overgeslagen.");
+
                 continue;
             }
 
@@ -51,6 +62,8 @@ class MembershipInvoiceService
                 ->exists();
 
             if ($existing) {
+                Log::info("Facturatie: betaler {$payer->name} heeft al een openstaande factuur voor {$year}. Overgeslagen.");
+
                 continue;
             }
 
@@ -91,13 +104,13 @@ class MembershipInvoiceService
         // For each due member, find their most expensive training group
         foreach ($members as $member) {
             $mostExpensiveGroup = $this->getMostExpensiveGroup($member);
-            if (! $mostExpensiveGroup) {
+            if (!$mostExpensiveGroup) {
                 continue;
             }
 
             // Count how many of this payer's members are in the same group (for discount calculation)
             $sameGroupMembers = collect($allPayerMemberIds)
-                ->filter(fn ($mid) => $mostExpensiveGroup->members->pluck('id')->contains($mid))
+                ->filter(fn($mid) => $mostExpensiveGroup->members->pluck('id')->contains($mid))
                 ->values();
 
             $memberPosition = $sameGroupMembers->search($member->id);
@@ -137,7 +150,7 @@ class MembershipInvoiceService
         }
 
         // Create Mollie payment link
-        $memberNames = $members->map(fn ($m) => $m->fullName())->join(', ');
+        $memberNames = $members->map(fn($m) => $m->fullName())->join(', ');
         $description = "Lidgeld {$year} — {$memberNames}";
         $this->mollie->createPaymentLink($invoice, $description);
 

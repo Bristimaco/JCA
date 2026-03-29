@@ -174,7 +174,7 @@ export default function MembersSection({ members, ageCategories, weightCategorie
                         disabled={sendingReminders}
                         className="rounded-md border border-slate-600 bg-slate-800 px-3 py-1.5 text-sm font-medium text-slate-300 hover:bg-slate-700/50 disabled:opacity-50"
                     >
-                        {sendingReminders ? 'Versturen...' : 'Herinneringen versturen'}
+                        {sendingReminders ? 'Bezig...' : 'Herinneringen & facturen versturen'}
                     </button>
                 </div>
             </div>

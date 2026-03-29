@@ -34,7 +34,7 @@ class MemberController extends Controller
             'membership_renewal_date' => ['required', 'date'],
         ]);
 
-        if (! empty($validated['photo']) && str_starts_with($validated['photo'], 'data:image/')) {
+        if (!empty($validated['photo']) && str_starts_with($validated['photo'], 'data:image/')) {
             [$meta, $base64] = explode(',', $validated['photo'], 2);
             preg_match('#data:(image/[a-z+]+);#', $meta, $m);
             $validated['photo_mime'] = $m[1] ?? 'image/jpeg';
@@ -68,7 +68,7 @@ class MemberController extends Controller
             'address_street' => ['nullable', 'string', 'max:255'],
             'address_city' => ['nullable', 'string', 'max:255'],
             'address_postal_code' => ['nullable', 'string', 'max:10'],
-            'license_number' => ['nullable', 'string', 'max:255', 'unique:members,license_number,'.$member->id],
+            'license_number' => ['nullable', 'string', 'max:255', 'unique:members,license_number,' . $member->id],
             'weight_category_id' => ['nullable', 'integer', 'exists:weight_categories,id'],
             'membership_status' => ['required', 'string', 'in:active,inactive,suspended,pending'],
             'is_competition' => ['boolean'],
@@ -78,7 +78,7 @@ class MemberController extends Controller
             'membership_renewal_date' => ['required', 'date'],
         ]);
 
-        if (! empty($validated['photo']) && str_starts_with($validated['photo'], 'data:image/')) {
+        if (!empty($validated['photo']) && str_starts_with($validated['photo'], 'data:image/')) {
             [$meta, $base64] = explode(',', $validated['photo'], 2);
             preg_match('#data:(image/[a-z+]+);#', $meta, $m);
             $validated['photo_mime'] = $m[1] ?? 'image/jpeg';
@@ -122,9 +122,13 @@ class MemberController extends Controller
     public function sendRenewalReminders(): RedirectResponse
     {
         Artisan::call('membership:send-renewal-reminders');
+        $reminderOutput = trim(Artisan::output());
 
-        $output = trim(Artisan::output());
+        Artisan::call('membership:generate-invoices');
+        $invoiceOutput = trim(Artisan::output());
 
-        return back()->with('status', $output ?: 'Herinnerings-e-mails verwerkt.');
+        $message = collect([$reminderOutput, $invoiceOutput])->filter()->join(' | ');
+
+        return back()->with('status', $message ?: 'Herinneringen en facturatie verwerkt.');
     }
 }
