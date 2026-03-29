@@ -467,12 +467,16 @@
                     <a href="#rollen" class="nav-link">Rollen &amp; Rechten</a>
                     <a href="#registratie" class="nav-link">Registratie &amp; Aanmelding</a>
                     <a href="#dashboard" class="nav-link">Dashboard</a>
+                    <a href="#dashboard-admin" class="nav-link">Dashboard Beheerder</a>
+                    <a href="#dashboard-trainer" class="nav-link">Dashboard Trainer</a>
+                    <a href="#dashboard-ouder" class="nav-link">Dashboard Ouder/Lid</a>
                 </div>
                 <div class="nav-group">
                     <div class="nav-group-title">Mijn Leden</div>
                     <a href="#mijn-leden" class="nav-link">Mijn leden bekijken</a>
                     <a href="#mijn-leden-bewerken" class="nav-link">Gegevens bewerken</a>
                     <a href="#ledenkaart" class="nav-link">Ledenkaart &amp; Resultaten</a>
+                    <a href="#gordelsysteem" class="nav-link">Gordelsysteem</a>
                 </div>
                 <div class="nav-group">
                     <div class="nav-group-title">Toernooien</div>
@@ -504,11 +508,17 @@
                     <a href="#admin-facturen" class="nav-link">Facturen &amp; Betalingen</a>
                 </div>
                 <div class="nav-group">
+                    <div class="nav-group-title">Trainingen</div>
+                    <a href="#aanwezigheid" class="nav-link">Trainingen &amp; Aanwezigheid</a>
+                    <a href="#aanwezigheid-registreren" class="nav-link">Aanwezigheid registreren</a>
+                    <a href="#sessiegeschiedenis" class="nav-link">Sessiegeschiedenis</a>
+                    <a href="#aanwezigheidsrapport" class="nav-link">Aanwezigheidsrapport</a>
+                </div>
+                <div class="nav-group">
                     <div class="nav-group-title">Referentie</div>
                     <a href="#rechten-tabel" class="nav-link">Overzicht rechten</a>
                     <a href="#emails" class="nav-link">E-mails van het systeem</a>
                     <a href="#meldingen" class="nav-link">Meldingen &amp; Notificaties</a>
-                    <a href="#aanwezigheid" class="nav-link">Aanwezigheidsregistratie</a>
                     <a href="#installeren" class="nav-link">App installeren op telefoon</a>
                     <a href="#faq" class="nav-link">Veelgestelde vragen</a>
                 </div>
@@ -612,11 +622,18 @@
             <h2 id="dashboard">Dashboard</h2>
             <p><span class="role-badge role-all">Alle rollen</span></p>
             <p>
-                Het dashboard is het startpunt van de applicatie. Je ziet hier tegels die fungeren als snelkoppelingen
-                naar de verschillende onderdelen. Welke tegels je ziet, hangt af van je rol:
+                Het dashboard is het startpunt van de applicatie en past zich automatisch aan op basis van je rol.
+                Na het inloggen kom je hier terecht en zie je de onderdelen die voor jou relevant zijn. Het dashboard
+                is opgebouwd uit <strong>moduletegels</strong> (snelkoppelingen naar de hoofdonderdelen) en
+                <strong>rolspecifieke secties</strong> die extra informatie en acties tonen.
             </p>
 
-            <h4>Tegels per rol</h4>
+            <h3>Moduletegels</h3>
+            <p>
+                Bovenaan het dashboard staan tegels die fungeren als snelkoppelingen. Elke tegel toont een icoon,
+                een titel en een telling (bijv. het aantal leden of toernooien). Welke tegels je ziet hangt af van
+                je rol:
+            </p>
             <table class="perm-table">
                 <thead>
                     <tr>
@@ -658,25 +675,95 @@
                     </tr>
                 </tbody>
             </table>
+            <p>
+                De tegel <strong>Toernooien</strong> toont de eerstvolgende toernooien (maximaal 3). Beheerders zien
+                alle toernooien; trainers zien alleen hun eigen toernooien. De tegel <strong>Archief</strong> toont de
+                3 meest recente afgelopen of gearchiveerde toernooien. Bij de tegel <strong>Leden</strong> zie je als
+                beheerder een compacte verdeling van geslacht en gordelgraden.
+            </p>
 
-            <h4>Extra informatie op het dashboard</h4>
+            <h3 id="dashboard-admin">Dashboard voor beheerders</h3>
+            <p><span class="role-badge role-admin">Beheerder</span></p>
+            <p>
+                Als beheerder zie je bovenaan het dashboard een <strong>beheerderstegel</strong> met snelle tellingen
+                die een overzicht geven van de status van de club:
+            </p>
             <ul>
-                <li><strong>Beheerders</strong> zien een overzicht van openstaande goedkeuringsverzoeken, het aantal
-                    inactieve leden, en het aantal lopende toernooien.</li>
-                <li>De tegel <strong>Toernooien</strong> toont de eerstvolgende toernooien (maximaal 3). Beheerders zien
-                    alle toernooien; trainers zien alleen hun eigen toernooien.</li>
-                <li>De tegel <strong>Archief</strong> toont de 3 meest recente afgelopen of gearchiveerde toernooien.
+                <li><strong>Nieuwe aanvragen</strong> &#8212; het aantal gebruikers dat wacht op goedkeuring</li>
+                <li><strong>Inactieve leden</strong> &#8212; leden met status &#8220;inactief&#8221;</li>
+                <li><strong>Vernieuwing nodig</strong> &#8212; leden waarvan de vernieuwingsdatum nadert of verlopen is
                 </li>
-                <li><strong>Lopende Toernooien</strong>: onderaan het dashboard verschijnt een sectie met alle
-                    toernooien die momenteel bezig (&#8220;Gestart&#8221;) zijn, inclusief een kaartweergave met locatie
-                    en een compacte stepper.</li>
+                <li><strong>Komende toernooien</strong> &#8212; toernooien in voorbereiding of met lopende
+                    inschrijvingen</li>
+                <li><strong>Actieve toernooien</strong> &#8212; toernooien die momenteel bezig zijn (status
+                    &#8220;Gestart&#8221;)</li>
             </ul>
+            <p>
+                Onder de tellingen worden de meest recente openstaande gebruikersaanvragen getoond met naam, e-mail en
+                registratiedatum, zodat je ze snel kunt behandelen.
+            </p>
 
-            <h4>Mijn Toernooien</h4>
+            <h3 id="dashboard-trainer">Dashboard voor trainers</h3>
+            <p><span class="role-badge role-coach">Trainer</span></p>
+            <p>
+                Als trainer zie je op het dashboard twee extra secties die je helpen bij het dagelijks beheer van
+                trainingen en toernooien:
+            </p>
+
+            <h4>Mijn Toernooien als Trainer</h4>
+            <p>
+                Hier verschijnen alle toernooien waaraan je als trainer gekoppeld bent, als compacte kaarten met naam,
+                datum, locatie en status. Klik op een kaart om naar de toernooidetails te gaan.
+            </p>
+
+            <h4>Mijn Trainingsgroepen</h4>
+            <p>
+                Deze sectie toont al je toegewezen trainingsgroepen met het bijbehorende lidgeld. Per groep zie je de
+                <strong>trainingsmomenten</strong> (dag en tijdstip) en de huidige status van elke sessie:
+            </p>
+            <ul>
+                <li><strong>&#8220;Start training&#8221;</strong> &#8212; verschijnt als het vandaag de juiste
+                    trainingsdag is en er nog geen sessie geopend is. Klik hierop om een trainingssessie te starten
+                    zodat leden zich aanwezig kunnen melden.</li>
+                <li><strong>Sessie actief</strong> &#8212; wanneer een sessie geopend is, zie je de lijst van aanwezige
+                    en afwezige leden. Je ziet een live-indicator (groen pulserend bolletje) die aangeeft dat de sessie
+                    actief is.</li>
+                <li><strong>&#8220;Sluiten&#8221;</strong> &#8212; sluit de actieve sessie af. Er verschijnt een venster
+                    waar je een optionele opmerking kunt toevoegen (bijv. bijzonderheden over de training).</li>
+            </ul>
+            <p>
+                Klik op de groepsnaam om de <strong>ledenlijst</strong> van die groep uit te klappen.
+            </p>
+            <div class="box box-tip">
+                <strong>Trainingsmoment herkennen</strong>
+                Elk trainingsmoment toont de dag, het tijdstip en de naam van de trainer. Momenten die vandaag
+                plaatsvinden worden visueel gemarkeerd zodat je direct ziet welke training je kunt starten.
+            </div>
+
+            <h3 id="dashboard-ouder">Dashboard voor ouders &amp; leden</h3>
             <p><span class="role-badge role-parent">Ouder</span> <span class="role-badge role-member">Lid</span></p>
             <p>
-                Ouders en leden zien op het dashboard de sectie <strong>&#8220;Mijn Toernooien&#8221;</strong>. Hier
-                worden alle toernooien getoond waarvoor je een uitnodiging hebt ontvangen, gegroepeerd per status:
+                Als ouder of lid zie je op het dashboard twee extra secties:
+            </p>
+
+            <h4>Actieve Trainingen</h4>
+            <p>
+                Wanneer er een trainingssessie geopend is voor de trainingsgroep van jouw lid(leden), verschijnt hier
+                een
+                melding met een <strong>groen pulserend bolletje</strong> (live-indicator). Klik op
+                <strong>&#8220;Aanwezig melden&#8221;</strong> om de aanwezigheid van je kind (of jezelf als lid) te
+                registreren. Als je al aanwezig gemeld bent, kun je dit ongedaan maken door opnieuw te klikken.
+            </p>
+            <div class="box box-info">
+                <strong>Wanneer verschijnt dit?</strong>
+                De sectie &#8220;Actieve Trainingen&#8221; is alleen zichtbaar als er op dat moment een open
+                trainingssessie is. Als alle sessies gesloten zijn, verdwijnt deze sectie automatisch.
+            </div>
+
+            <h4>Mijn Toernooien</h4>
+            <p>
+                Hier worden alle toernooien getoond waarvoor je (of je gekoppelde leden) een uitnodiging hebt ontvangen,
+                gegroepeerd per status:
             </p>
             <ul>
                 <li><strong>Geaccepteerd</strong> &#8212; toernooien die je hebt aanvaard</li>
@@ -691,7 +778,8 @@
             </p>
             <p>
                 Elke toernooikaart toont de naam, datum, locatie (met kaartje indien beschikbaar), een compacte stepper,
-                eventuele bijlagen, en een uitklapbare deelnemerslijst met resultaten.
+                eventuele bijlagen, en een uitklapbare deelnemerslijst met resultaten. Bij afgelopen toernooien zie je
+                de behaalde resultaten met medaille-badges (goud, zilver, brons).
             </p>
 
             <h2 id="mijn-leden">Mijn Leden</h2>
@@ -746,6 +834,7 @@
                 <li>Huidige gordel</li>
                 <li>Gewichtscategorie en leeftijdscategorie</li>
                 <li>Profielfoto</li>
+                <li>Trainingsgroep(en) waaraan het lid is toegewezen</li>
             </ul>
             <p>
                 Voor <strong>competitieleden</strong> verschijnt onderaan de kaart een sectie met
@@ -753,9 +842,142 @@
             </p>
             <ul>
                 <li>Naam en datum van het toernooi</li>
-                <li>Behaald resultaat met medaille-icoon (goud, zilver, brons)</li>
+                <li>Behaald resultaat met medaille-icoon (&#129351; goud voor 1e plaats, &#129352; zilver voor 2e
+                    plaats, &#129353; brons voor 3e plaats)</li>
                 <li>Eventuele opmerkingen van de trainer</li>
             </ul>
+            <p>
+                Daaronder wordt ook de <strong>aanwezigheidshistorie</strong> getoond: de laatste 20 trainingen
+                waar het lid aanwezig was, met vermelding van de trainingsgroep en datum.
+            </p>
+
+            <h2 id="gordelsysteem">Gordelsysteem</h2>
+            <p><span class="role-badge role-all">Alle rollen</span></p>
+            <p>
+                Het gordelsysteem volgt de traditionele judo-gordelgraden. Elke judoka begint met een witte gordel
+                en kan door training en examens opklimmen naar hogere graden. De applicatie houdt de huidige gordel
+                van elk lid bij en bewaart een <strong>gordelgeschiedenis</strong> met alle behaalde graden en de
+                datum waarop ze zijn toegekend.
+            </p>
+
+            <h3>Overzicht gordelgraden</h3>
+            <p>
+                Het systeem ondersteunt de volgende 16 gordelgraden, van laag naar hoog:
+            </p>
+            <table class="perm-table">
+                <thead>
+                    <tr>
+                        <th>Gordel</th>
+                        <th>Naam (NL)</th>
+                        <th>Niveau</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>&#9898;</td>
+                        <td>Wit</td>
+                        <td>Beginner (Kyu)</td>
+                    </tr>
+                    <tr>
+                        <td>&#128993;</td>
+                        <td>Geel</td>
+                        <td>Kyu</td>
+                    </tr>
+                    <tr>
+                        <td>&#128992;</td>
+                        <td>Oranje</td>
+                        <td>Kyu</td>
+                    </tr>
+                    <tr>
+                        <td>&#128994;</td>
+                        <td>Groen</td>
+                        <td>Kyu</td>
+                    </tr>
+                    <tr>
+                        <td>&#128309;</td>
+                        <td>Blauw</td>
+                        <td>Kyu</td>
+                    </tr>
+                    <tr>
+                        <td>&#128996;</td>
+                        <td>Bruin</td>
+                        <td>Kyu</td>
+                    </tr>
+                    <tr>
+                        <td>&#11035;</td>
+                        <td>Zwart 1e Dan</td>
+                        <td>Dan</td>
+                    </tr>
+                    <tr>
+                        <td>&#11035;</td>
+                        <td>Zwart 2e Dan</td>
+                        <td>Dan</td>
+                    </tr>
+                    <tr>
+                        <td>&#11035;</td>
+                        <td>Zwart 3e Dan</td>
+                        <td>Dan</td>
+                    </tr>
+                    <tr>
+                        <td>&#11035;</td>
+                        <td>Zwart 4e Dan</td>
+                        <td>Dan</td>
+                    </tr>
+                    <tr>
+                        <td>&#11035;</td>
+                        <td>Zwart 5e Dan</td>
+                        <td>Dan</td>
+                    </tr>
+                    <tr>
+                        <td>&#11035;</td>
+                        <td>Zwart 6e Dan</td>
+                        <td>Dan</td>
+                    </tr>
+                    <tr>
+                        <td>&#11035;</td>
+                        <td>Zwart 7e Dan</td>
+                        <td>Dan</td>
+                    </tr>
+                    <tr>
+                        <td>&#11035;</td>
+                        <td>Zwart 8e Dan</td>
+                        <td>Dan</td>
+                    </tr>
+                    <tr>
+                        <td>&#11035;</td>
+                        <td>Zwart 9e Dan</td>
+                        <td>Dan</td>
+                    </tr>
+                    <tr>
+                        <td>&#11035;</td>
+                        <td>Zwart 10e Dan</td>
+                        <td>Dan</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Gordel bijwerken</h3>
+            <p><span class="role-badge role-admin">Beheerder</span></p>
+            <p>
+                Alleen een beheerder kan de gordel van een lid wijzigen. Ga naar <strong>Ledenbeheer</strong> &#8594;
+                <strong>Bewerken</strong> bij het betreffende lid en selecteer de nieuwe gordel. Bij het opslaan wordt
+                de gordelwijziging automatisch opgeslagen in de <strong>gordelgeschiedenis</strong> met de datum waarop
+                de nieuwe gordel is toegekend.
+            </p>
+
+            <h3>Gordelgeschiedenis</h3>
+            <p>
+                De gordelgeschiedenis van een lid is zichtbaar op de ledenkaart. Hier zie je een chronologisch
+                overzicht van alle gordelgraden die het lid heeft behaald, met per graad de datum van toekenning.
+                Dit biedt een mooi beeld van de vooruitgang van de judoka door de jaren heen.
+            </p>
+
+            <div class="box box-info">
+                <strong>Gordelweergave</strong>
+                De huidige gordel wordt op verschillende plaatsen in de app getoond: op de ledenkaart, in de
+                ledenlijst van de beheerder, en op de moduletegel &#8220;Leden&#8221; op het dashboard (als
+                verdeling per gordelgraad).
+            </div>
 
             <h2 id="toernooi-overzicht">Toernooi-overzicht</h2>
             <p><span class="role-badge role-admin">Beheerder</span> <span class="role-badge role-coach">Trainer</span>
@@ -1506,6 +1728,182 @@
                 Zorg ervoor dat alle leden aan de juiste groep zijn toegewezen.
             </div>
 
+            <!-- Trainingen & Aanwezigheid -->
+            <h2 id="aanwezigheid">Trainingen &amp; Aanwezigheid</h2>
+            <p>
+                Het trainingssysteem maakt het mogelijk om trainingsgroepen te beheren, trainingssessies te openen en
+                te sluiten, en de aanwezigheid van leden bij te houden. Dit systeem werkt samen met de trainingsgroepen
+                die in het beheerderspaneel worden aangemaakt (zie <a
+                    href="#admin-trainingsgroepen">Trainingsgroepen</a>).
+            </p>
+
+            <h3>Hoe werkt het trainingssysteem?</h3>
+            <p>
+                Het trainingssysteem is opgebouwd uit drie niveaus:
+            </p>
+            <ol>
+                <li><strong>Trainingsgroepen</strong> &#8212; de vaste groepen van de club (bijv.
+                    &#8220;Competitie&#8221;, &#8220;Recreatie&#8221;, &#8220;Mini Judo&#8221;). Elke groep heeft een
+                    naam, lidgeld, leden en &#233;&#233;n of meerdere trainingsmomenten.</li>
+                <li><strong>Trainingsmomenten (schema&#8217;s)</strong> &#8212; de terugkerende trainingstijden per
+                    groep (bijv. maandag 18:00&#8211;19:30, woensdag 18:00&#8211;19:30). Elk moment heeft een dag,
+                    start- en eindtijd, een locatie en een toegewezen trainer.</li>
+                <li><strong>Trainingssessies</strong> &#8212; de daadwerkelijke trainingen die plaatsvinden. Een trainer
+                    opent een sessie op de dag van de training, leden melden zich aan, en de trainer sluit de sessie
+                    weer af.</li>
+            </ol>
+
+            <h3>Training openen &amp; sluiten</h3>
+            <p><span class="role-badge role-coach">Trainer</span></p>
+            <p>
+                Op het dashboard ziet de trainer bij <strong>Mijn Trainingsgroepen</strong> de
+                <strong>&#8220;Start training&#8221;</strong>-knop bij elk trainingsmoment waarvoor hij/zij als trainer
+                is ingedeeld. De knop verschijnt alleen op de juiste trainingsdag (bijv. als het maandag is, verschijnt
+                de knop alleen bij de maandagtraining).
+            </p>
+            <p>
+                Wanneer je op &#8220;Start training&#8221; klikt, wordt er een <strong>trainingssessie</strong>
+                geopend. Vanaf dat moment kunnen leden hun aanwezigheid registreren via het kiosk-scherm, het
+                trainerdashboard of hun persoonlijk dashboard.
+            </p>
+            <p>
+                Wanneer de training voorbij is, klik je op <strong>&#8220;Sluiten&#8221;</strong>. Er verschijnt een
+                venster waar je een optionele <strong>opmerking</strong> kunt toevoegen (bijv. &#8220;Focus op
+                grondwerk&#8221; of &#8220;3 leden eerder weg&#8221;). Na het afsluiten wordt de aanwezigheidslijst
+                definitief opgeslagen en is de sessie niet meer aanpasbaar.
+            </p>
+
+            <div class="box box-warning">
+                <strong>E&#233;n sessie tegelijk</strong>
+                Per trainingsmoment kan er maar &#233;&#233;n sessie tegelijk open zijn. Als er al een sessie actief is
+                voor een bepaald moment, verschijnt er geen &#8220;Start training&#8221;-knop meer.
+            </div>
+
+            <h3 id="aanwezigheid-registreren">Aanwezigheid registreren</h3>
+            <p>
+                Er zijn drie manieren om aanwezigheid te registreren:
+            </p>
+
+            <h4>1. Via het kiosk-scherm (tablet in de dojo)</h4>
+            <p>
+                Het kiosk-scherm is een speciaal scherm dat bedoeld is voor een tablet bij de ingang van de dojo.
+                Hiermee kunnen leden zich aanmelden zonder in te loggen:
+            </p>
+            <ol>
+                <li>Open het kiosk-scherm (<code>/attendance</code>) op de tablet.</li>
+                <li>Voer de <strong>PIN-code</strong> in (ingesteld door de beheerder in Club Instellingen) en klik op
+                    <strong>Doorgaan</strong>.</li>
+                <li>Het scherm toont alle <strong>actieve (geopende) trainingen</strong> van vandaag.</li>
+                <li>Klik op een training om de ledenlijst te zien.</li>
+                <li>Tik op de naam van een lid om de aanwezigheid te registreren (groen = aanwezig). Tik opnieuw om te
+                    annuleren.</li>
+            </ol>
+
+            <h4>2. Via het trainerdashboard</h4>
+            <p><span class="role-badge role-coach">Trainer</span></p>
+            <p>
+                Wanneer een sessie actief is, ziet de trainer op het dashboard de lijst van alle leden in de
+                trainingsgroep. Leden die zich hebben aangemeld verschijnen als &#8220;aanwezig&#8221;; leden die
+                er nog niet zijn verschijnen als &#8220;afwezig&#8221;. De trainer kan de aanwezigheid ook handmatig
+                bijhouden als leden zich niet zelf aanmelden.
+            </p>
+
+            <h4>3. Via het persoonlijk dashboard</h4>
+            <p><span class="role-badge role-parent">Ouder</span> <span class="role-badge role-member">Lid</span></p>
+            <p>
+                Leden en ouders zien op hun Dashboard de sectie <strong>&#8220;Actieve Trainingen&#8221;</strong>
+                wanneer er een open trainingssessie is voor hun trainingsgroep. Klik op
+                <strong>&#8220;Aanwezig melden&#8221;</strong> om de aanwezigheid te bevestigen. Klik opnieuw om te
+                annuleren.
+            </p>
+
+            <div class="box box-info">
+                <strong>PIN-code instellen</strong>
+                De PIN-code voor het kiosk-scherm wordt ingesteld door de beheerder via
+                <strong>Beheerderspaneel</strong> &#8594; <strong>Club Instellingen</strong>. Vul een PIN-code in
+                (4 tot 8 cijfers) en klik op <strong>Opslaan</strong>.
+            </div>
+
+            <h3 id="sessiegeschiedenis">Sessiegeschiedenis</h3>
+            <p><span class="role-badge role-coach">Trainer</span></p>
+            <p>
+                De pagina <strong>&#8220;Trainingshistorie&#8221;</strong> toont een overzicht van alle afgesloten
+                trainingssessies. Deze pagina is bereikbaar via het dashboard (link &#8220;Trainingshistorie&#8221;).
+            </p>
+            <p>
+                Elke sessie wordt weergegeven als een kompakte kaart met:
+            </p>
+            <ul>
+                <li><strong>Trainingsgroep</strong> &#8212; de naam van de groep</li>
+                <li><strong>Datum</strong> &#8212; de dag waarop de training plaatsvond, inclusief dag van de week</li>
+                <li><strong>Tijdstip</strong> &#8212; start- en eindtijd van het trainingsmoment</li>
+                <li><strong>Trainer</strong> &#8212; de trainer die de sessie heeft geleid</li>
+                <li><strong>Aanwezigheidsbadge</strong> &#8212; het aantal aanwezige leden</li>
+            </ul>
+            <p>
+                Klik op een sessie om de details uit te klappen. Je ziet dan:
+            </p>
+            <ul>
+                <li><strong>Geopend om / Gesloten om</strong> &#8212; wanneer de sessie is gestart en be&#235;indigd
+                </li>
+                <li><strong>Opmerkingen</strong> &#8212; eventuele notities die bij het sluiten zijn toegevoegd</li>
+                <li><strong>Aanwezigen</strong> &#8212; lijst van alle leden die aanwezig waren, met het tijdstip van
+                    aanmelding</li>
+                <li><strong>Afwezigen</strong> &#8212; lijst van leden die niet aanwezig waren (rood gemarkeerd)</li>
+            </ul>
+
+            <h3 id="aanwezigheidsrapport">Aanwezigheidsrapport</h3>
+            <p><span class="role-badge role-coach">Trainer</span></p>
+            <p>
+                Het <strong>aanwezigheidsrapport</strong> biedt een gedetailleerd overzicht van de trainingsfrequentie
+                van alle leden per trainingsgroep. Deze pagina is bereikbaar via de link
+                &#8220;Aanwezigheidsrapport&#8221; op de sessiegeschiedenis-pagina.
+            </p>
+
+            <h4>Periode selecteren</h4>
+            <p>
+                Bovenaan het rapport kun je een periode kiezen via een dropdown:
+            </p>
+            <ul>
+                <li><strong>3 maanden</strong> &#8212; de laatste 3 maanden</li>
+                <li><strong>6 maanden</strong> &#8212; de laatste 6 maanden</li>
+                <li><strong>1 jaar</strong> &#8212; het afgelopen jaar</li>
+                <li><strong>Alles</strong> &#8212; alle beschikbare data</li>
+            </ul>
+
+            <h4>Rapporttabel per groep</h4>
+            <p>
+                Voor elke trainingsgroep wordt een tabel getoond met:
+            </p>
+            <ul>
+                <li><strong>Linkse kolom (vast)</strong> &#8212; de namen van alle leden in de groep</li>
+                <li><strong>Datumkolommen</strong> &#8212; elke kolom is een trainingssessie (datum in dd/mm formaat).
+                    Per cel zie je een &#10003; (aanwezig, groen) of &#10007; (afwezig, rood).</li>
+                <li><strong>Rechtse kolom (vast)</strong> &#8212; het <strong>aanwezigheidspercentage</strong> van elk
+                    lid over de geselecteerde periode</li>
+            </ul>
+
+            <h4>Drempelwaarde</h4>
+            <p>
+                Het rapport toont een <strong>drempelwaarde</strong> (standaard 80%). Leden waarvan het
+                aanwezigheidspercentage onder deze drempel valt, worden <strong>rood gemarkeerd</strong>. Leden
+                boven de drempel worden <strong>groen gemarkeerd</strong>. Zo zie je in &#233;&#233;n oogopslag
+                welke leden voldoende aanwezig zijn en welke leden extra aandacht nodig hebben.
+            </p>
+
+            <div class="box box-tip">
+                <strong>Horizontaal scrollen</strong>
+                De rapporttabel kan breed zijn als er veel sessies zijn. De namen- en percentagekolom blijven
+                altijd zichtbaar (&#8220;sticky&#8221;) terwijl je horizontaal door de sessiedatums scrollt.
+            </div>
+
+            <h3>Aanwezigheidshistorie op ledenkaart</h3>
+            <p>
+                Op de <strong>Mijn Leden</strong>-pagina toont de ledenkaart de <strong>laatste 20
+                    trainingen</strong> waar het lid aanwezig was, met vermelding van de trainingsgroep en de datum.
+                Zo heb je altijd een overzicht van de trainingsfrequentie van elk lid.
+            </p>
+
             <h2 id="rechten-tabel">Overzicht rechten per rol</h2>
             <p>
                 Onderstaande tabel geeft een volledig overzicht van alle acties en welke rollen deze mogen uitvoeren.
@@ -1557,6 +1955,98 @@
                         <td class="check">&#10003;</td>
                         <td class="check">&#10003;</td>
                         <td class="check">&#10003;</td>
+                    </tr>
+                    <tr>
+                        <td>Meldingen ontvangen en bekijken</td>
+                        <td class="check">&#10003;</td>
+                        <td class="check">&#10003;</td>
+                        <td class="check">&#10003;</td>
+                        <td class="check">&#10003;</td>
+                    </tr>
+                    <tr>
+                        <td>Meldingsvoorkeur instellen</td>
+                        <td class="check">&#10003;</td>
+                        <td class="check">&#10003;</td>
+                        <td class="check">&#10003;</td>
+                        <td class="check">&#10003;</td>
+                    </tr>
+                    <tr>
+                        <td>Aanwezig melden bij training</td>
+                        <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
+                        <td class="check">&#10003;</td>
+                        <td class="check">&#10003;</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Trainingen &amp; Aanwezigheid</h3>
+            <table class="perm-table">
+                <thead>
+                    <tr>
+                        <th>Actie</th>
+                        <th>Beheerder</th>
+                        <th>Trainer</th>
+                        <th>Ouder</th>
+                        <th>Lid</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Trainingsgroepen aanmaken/bewerken</td>
+                        <td class="check">&#10003;</td>
+                        <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
+                    </tr>
+                    <tr>
+                        <td>Leden toewijzen aan groepen</td>
+                        <td class="check">&#10003;</td>
+                        <td class="check">&#10003; (eigen groepen)</td>
+                        <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
+                    </tr>
+                    <tr>
+                        <td>Trainingssessie openen/sluiten</td>
+                        <td class="cross">&#8212;</td>
+                        <td class="check">&#10003;</td>
+                        <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
+                    </tr>
+                    <tr>
+                        <td>Sessiegeschiedenis bekijken</td>
+                        <td class="check">&#10003;</td>
+                        <td class="check">&#10003;</td>
+                        <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
+                    </tr>
+                    <tr>
+                        <td>Aanwezigheidsrapport bekijken</td>
+                        <td class="check">&#10003;</td>
+                        <td class="check">&#10003;</td>
+                        <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
+                    </tr>
+                    <tr>
+                        <td>Kiosk-scherm PIN instellen</td>
+                        <td class="check">&#10003;</td>
+                        <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
+                    </tr>
+                    <tr>
+                        <td>Facturen genereren</td>
+                        <td class="check">&#10003;</td>
+                        <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
+                    </tr>
+                    <tr>
+                        <td>Factuuroverzicht bekijken</td>
+                        <td class="check">&#10003;</td>
+                        <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
                     </tr>
                 </tbody>
             </table>
@@ -1780,50 +2270,102 @@
             <h2 id="meldingen">Meldingen &amp; Notificaties</h2>
             <p><span class="role-badge role-all">Alle rollen</span></p>
             <p>
-                De applicatie beschikt over een in-app meldingensysteem. Je ziet een <strong>belletje</strong>
-                (&#128276;)
-                rechtsboven in de navigatiebalk. Als er ongelezen meldingen zijn, verschijnt er een <strong>rood
-                    tellerbolletje</strong> op het icoon.
+                De applicatie beschikt over een uitgebreid meldingensysteem dat je op de hoogte houdt van alle
+                belangrijke gebeurtenissen. Meldingen worden weergegeven via een <strong>belletje</strong>
+                (&#128276;) rechtsboven in de navigatiebalk. Als er ongelezen meldingen zijn, verschijnt er een
+                <strong>rood tellerbolletje</strong> met het aantal ongelezen meldingen op het icoon.
             </p>
 
-            <h4>Meldingen bekijken</h4>
+            <h3>Meldingen bekijken</h3>
             <p>
-                Klik op het belletje om de lijst met meldingen te openen. Elke melding toont een icoon, een
-                beschrijving en wanneer de melding verstuurd is. <strong>Ongelezen meldingen</strong> hebben een blauw
-                bolletje en een lichtere achtergrond. Klik op een ongelezen melding om deze als gelezen te markeren.
+                Klik op het belletje om de lijst met meldingen te openen. De meldingen verschijnen als een
+                dropdown-lijst. Elke melding toont:
             </p>
-            <p>
-                Gebruik de knop <em>Alles gelezen</em> bovenaan de lijst om alle meldingen in &#233;&#233;n keer als
-                gelezen te markeren.
-            </p>
-
-            <h4>Soorten meldingen</h4>
             <ul>
-                <li>&#128179; <strong>Lidmaatschap vernieuwing</strong> &#8212; Herinnering als je lidmaatschap
-                    binnenkort verloopt</li>
-                <li>&#128233; <strong>Toernooiuitnodiging</strong> &#8212; Uitnodiging om deel te nemen aan een toernooi
-                </li>
-                <li>&#9989; <strong>Toernooi inschrijving</strong> &#8212; Bevestiging van inschrijving of uitschrijving
-                </li>
-                <li>&#127942; <strong>Toernooiverslag</strong> &#8212; Resultaten na afloop van een toernooi</li>
-                <li>&#128203; <strong>Trainer notificatie</strong> &#8212; Deelnemerslijst voor trainers</li>
-                <li>&#128182; <strong>Lidgeld factuur</strong> &#8212; Factuur met betaallink voor het lidgeld</li>
-                <li>&#9989; <strong>Betaling bevestigd</strong> &#8212; Bevestiging dat de betaling ontvangen is</li>
+                <li>Een <strong>icoon</strong> dat het type melding aangeeft (bijv. &#128179; voor lidgeld, &#127942;
+                    voor toernooien)</li>
+                <li>Een <strong>beschrijving</strong> met de belangrijkste details</li>
+                <li>Het <strong>tijdstip</strong> waarop de melding is verstuurd (bijv. &#8220;zojuist&#8221;, &#8220;2u
+                    geleden&#8221;, &#8220;gisteren&#8221;)</li>
             </ul>
-
-            <h4>Meldingsvoorkeur instellen</h4>
             <p>
-                Je kunt kiezen hoe je meldingen ontvangt. Klik op je <strong>profielicoon</strong> rechtsboven en
-                gebruik het dropdownmenu <em>Meldingen via</em>:
+                <strong>Ongelezen meldingen</strong> hebben een blauw bolletje en een lichtere achtergrond. Klik op een
+                ongelezen melding om deze als gelezen te markeren. Gebruik de knop <em>Alles gelezen</em> bovenaan de
+                lijst om alle meldingen in &#233;&#233;n keer als gelezen te markeren.
+            </p>
+
+            <h3>Soorten meldingen</h3>
+            <p>
+                Het systeem kent zeven soorten meldingen. Elk type verschijnt zowel in de meldingslijst als (optioneel)
+                per e-mail, afhankelijk van je meldingsvoorkeur:
+            </p>
+
+            <h4>&#128179; Lidmaatschap vernieuwing</h4>
+            <p>
+                Je ontvangt deze melding wanneer het lidmaatschap van een lid binnenkort verloopt (30 dagen voor de
+                vernieuwingsdatum). De melding toont de naam van het lid, de vernieuwingsdatum en de clubnaam.
+            </p>
+
+            <h4>&#128233; Toernooiuitnodiging</h4>
+            <p>
+                Wanneer je (of je kind) wordt uitgenodigd voor een toernooi, ontvang je een melding met de naam van het
+                lid, het toernooi, de datum, locatie en de deadline om te reageren. In de melding staan twee knoppen:
+                <strong>&#8220;Deelnemen&#8221;</strong> en <strong>&#8220;Afwijzen&#8221;</strong>, waarmee je direct
+                vanuit de melding kunt reageren zonder apart naar een pagina te navigeren.
+            </p>
+
+            <h4>&#9989; Toernooi inschrijving</h4>
+            <p>
+                Na inschrijving of uitschrijving voor een toernooi ontvang je een bevestigingsmelding met de naam
+                van het lid, het toernooi, de datum, locatie en de leeftijds-/gewichtscategorie waarin het lid is
+                ingeschreven.
+            </p>
+
+            <h4>&#127942; Toernooiverslag</h4>
+            <p>
+                Na afloop van een toernooi ontvangen trainers en beheerders een rapport met de resultaten. De melding
+                toont het toernooi, de datum en een overzicht van alle resultaten gegroepeerd per leeftijdscategorie.
+            </p>
+
+            <h4>&#128203; Trainer notificatie</h4>
+            <p>
+                Trainers ontvangen een notificatie wanneer de uitnodigingen voor een toernooi zijn verstuurd. De melding
+                bevat een overzicht van alle deelnemers met hun naam, leeftijdscategorie, gewichtscategorie en
+                uitnodigingsstatus, zodat de trainer snel een beeld heeft van de verwachte deelnemers.
+            </p>
+
+            <h4>&#128182; Lidgeld factuur</h4>
+            <p>
+                Wanneer er een factuur is aangemaakt voor het lidgeld, ontvang je een melding met het totaalbedrag,
+                het boekjaar, de vervaldatum en een overzicht per lid met de bijbehorende trainingsgroep en het
+                bedrag. De melding bevat een <strong>QR-code</strong> die je kunt scannen om direct te betalen, en
+                een <strong>&#8220;Nu betalen&#8221;</strong>-knop die je rechtstreeks naar de Mollie betaalpagina
+                leidt.
+            </p>
+
+            <h4>&#9989; Betaling bevestigd</h4>
+            <p>
+                Nadat je betaling succesvol is verwerkt, ontvang je een bevestigingsmelding met de clubnaam, het
+                boekjaar, de betaaldatum en het totaalbedrag. De vernieuwingsdatum van het lid wordt automatisch
+                met 1 jaar verlengd.
+            </p>
+
+            <h3>Meldingsvoorkeur instellen</h3>
+            <p>
+                Je kunt kiezen hoe je meldingen ontvangt. Klik op je <strong>profielicoon</strong> rechtsboven in
+                de navigatiebalk en gebruik het dropdownmenu <em>Meldingen via</em>:
             </p>
             <ul>
-                <li><strong>Email &amp; In-app</strong> &#8212; Meldingen via e-mail &#233;n in de app (standaard)</li>
-                <li><strong>Alleen email</strong> &#8212; Alleen per e-mail, geen in-app meldingen</li>
-                <li><strong>Alleen in-app</strong> &#8212; Alleen in de app, geen e-mails meer</li>
+                <li><strong>Email &amp; In-app</strong> &#8212; Meldingen via e-mail &#233;n in de app (standaard). Je
+                    ontvangt beide zodat je niets mist.</li>
+                <li><strong>Alleen email</strong> &#8212; Alleen per e-mail, geen in-app meldingen. Handig als je de app
+                    niet dagelijks gebruikt.</li>
+                <li><strong>Alleen in-app</strong> &#8212; Alleen in de app, geen e-mails meer. Geschikt als je liever
+                    geen e-mails ontvangt maar wel op de hoogte wilt blijven via het belletje.</li>
             </ul>
             <div class="box box-tip">
-                <strong>Tip:</strong> Als je liever geen e-mails ontvangt maar wel op de hoogte wilt blijven,
-                kies dan <em>Alleen in-app</em>. Je ziet dan alle meldingen via het belletje.
+                <strong>Tip:</strong> De meldingsvoorkeur geldt voor alle soorten meldingen tegelijk. Het is niet
+                mogelijk om per meldingstype een andere voorkeur in te stellen.
             </div>
 
             <h2 id="installeren">App installeren op je telefoon</h2>
@@ -1911,7 +2453,8 @@
             <h4>Hoe accepteer ik een toernooiuitnodiging?</h4>
             <p>
                 Je ontvangt een e-mail met een <strong>&#8220;Accepteren&#8221;</strong>-knop. Klik daarop &#8212; je
-                hoeft niet in te loggen. De link is geldig tot de uitnodigingsdeadline.
+                hoeft niet in te loggen. De link is geldig tot de uitnodigingsdeadline. Je kunt ook reageren via de
+                <strong>in-app melding</strong> door op &#8220;Deelnemen&#8221; of &#8220;Afwijzen&#8221; te klikken.
             </p>
 
             <h4>Ik ben trainer maar zie geen toernooien op mijn pagina?</h4>
@@ -1953,79 +2496,47 @@
                     koppelen&#8221;</strong> bij de gewenste gebruiker. Zoek het lid op en koppel het.
             </p>
 
-            <!-- Aanwezigheidsregistratie -->
-            <h2 id="aanwezigheid">Aanwezigheidsregistratie</h2>
+            <h4>Hoe start ik een trainingssessie?</h4>
             <p>
-                De aanwezigheidsregistratie maakt het mogelijk om bij te houden welke leden aanwezig zijn bij
-                trainingen.
-                Er zijn drie manieren om aanwezigheid te registreren: via het <strong>kiosk-scherm</strong> (tablet in
-                de
-                dojo), via het <strong>trainer-dashboard</strong>, of via het <strong>persoonlijke dashboard</strong>
-                van
-                het lid.
+                Als trainer zie je op het dashboard bij <strong>Mijn Trainingsgroepen</strong> een
+                &#8220;Start training&#8221;-knop bij het trainingsmoment van vandaag. Klik hierop om de sessie te
+                openen. Leden kunnen zich vervolgens aanwezig melden via het kiosk-scherm, het trainerdashboard of
+                hun persoonlijk dashboard.
             </p>
 
-            <h3>PIN-code instellen (Beheerder)</h3>
+            <h4>De &#8220;Start training&#8221;-knop verschijnt niet &#8212; wat nu?</h4>
             <p>
-                Ga naar het <strong>Beheerderspaneel</strong> &#8594; <strong>Club Instellingen</strong>. Vul een
-                <strong>PIN-code</strong> in (4 tot 8 cijfers) en klik op <strong>Opslaan</strong>. Deze PIN wordt
-                gebruikt om het kiosk-scherm te ontgrendelen.
-            </p>
-            <div class="box box-info">
-                <strong>Tip</strong>
-                <p>Het kiosk-scherm is bereikbaar via <code>/attendance</code> in de browser. Ideaal voor een tablet bij
-                    de ingang van de dojo.</p>
-            </div>
-
-            <h3>Training openen (Trainer)</h3>
-            <p>
-                Op het dashboard ziet de trainer bij <strong>Mijn Trainingsgroepen</strong> nu een
-                <strong>&#8220;Start training&#8221;</strong> knop bij elk trainingsmoment waar hij/zij als trainer is
-                ingedeeld. Klik hierop om een trainingssessie te openen. Zodra een sessie open is, kunnen leden hun
-                aanwezigheid registreren.
+                De knop verschijnt alleen op de juiste trainingsdag. Als het maandag is, verschijnt de knop alleen
+                bij trainingsmomenten die op maandag staan. Controleer ook of je als trainer bent toegewezen aan het
+                betreffende trainingsmoment.
             </p>
 
-            <h3>Aanwezigheid registreren via kiosk</h3>
-            <ol>
-                <li>Open het kiosk-scherm (<code>/attendance</code>) op de tablet.</li>
-                <li>Voer de PIN-code in en klik op <strong>Doorgaan</strong>.</li>
-                <li>Het scherm toont alle actieve (geopende) trainingen van vandaag.</li>
-                <li>Klik op een training om de ledenlijst te zien.</li>
-                <li>Tik op de naam van een lid om de aanwezigheid te registreren (groen = aanwezig). Tik opnieuw om te
-                    annuleren.</li>
-            </ol>
-
-            <h3>Aanwezigheid registreren via persoonlijk dashboard</h3>
+            <h4>Hoe betaal ik het lidgeld?</h4>
             <p>
-                Leden die een account hebben zien op hun <strong>Dashboard</strong> een sectie
-                <strong>&#8220;Actieve Trainingen&#8221;</strong> wanneer er een open trainingssessie is voor hun
-                trainingsgroep. Klik op <strong>&#8220;Aanwezig melden&#8221;</strong> om je aanwezigheid te bevestigen.
-                Klik opnieuw om te annuleren.
+                Je ontvangt een melding (en/of e-mail) met een factuur. In de melding vind je een
+                <strong>&#8220;Nu betalen&#8221;</strong>-knop of een <strong>QR-code</strong> die je kunt scannen.
+                Beide leiden naar een beveiligde Mollie-betaalpagina waar je de betaling kunt afronden. Na succesvolle
+                betaling wordt je vernieuwingsdatum automatisch met 1 jaar verlengd.
             </p>
 
-            <h3>Training afsluiten (Trainer)</h3>
+            <h4>Kan ik mijn meldingsvoorkeur wijzigen?</h4>
             <p>
-                Wanneer de training voorbij is, klikt de trainer op <strong>&#8220;Sluiten&#8221;</strong> bij het
-                actieve
-                trainingsmoment. Er verschijnt een venster waar een optionele <strong>opmerking</strong> kan worden
-                ingevuld (bijv. bijzonderheden over de training). Na het afsluiten wordt de aanwezigheidslijst
-                opgeslagen
-                en is de sessie niet meer aanpasbaar.
+                Ja, klik op je profielicoon rechtsboven en wijzig de instelling bij &#8220;Meldingen via&#8221;.
+                Je kunt kiezen uit &#8220;Email &amp; In-app&#8221;, &#8220;Alleen email&#8221; of
+                &#8220;Alleen in-app&#8221;.
             </p>
 
-            <h3>Aanwezigheidshistorie</h3>
+            <h4>Wat is het aanwezigheidsrapport en waar vind ik het?</h4>
             <p>
-                Op de <strong>Mijn Leden</strong> pagina toont de ledenkaart nu de <strong>laatste 20
-                    trainingen</strong>
-                waar het lid aanwezig was, met vermelding van de trainingsgroep en de datum. Zo heb je altijd een
-                overzicht
-                van de trainingsfrequentie.
+                Het aanwezigheidsrapport toont een gedetailleerde matrix van de aanwezigheid per lid per sessie, met
+                percentages en een drempelwaarde. Je vindt het via het dashboard &#8594; Trainingshistorie &#8594;
+                Aanwezigheidsrapport. Dit is beschikbaar voor trainers en beheerders.
             </p>
 
             <div
                 style="margin-top: 80px; padding-top: 24px; border-top: 1px solid var(--slate-200); text-align: center;">
                 <p style="font-size: 12px; color: var(--slate-400);">
-                    JCA Handleiding &#8212; Laatst bijgewerkt: 28 maart 2026
+                    JCA Handleiding &#8212; Laatst bijgewerkt: 29 maart 2026
                 </p>
             </div>
 
