@@ -15,24 +15,24 @@ class TrainerTrainingGroupController extends Controller
     {
         $userId = $request->user()->id;
 
-        $groups = TrainingGroup::whereHas('schedules', fn($q) => $q->where('trainer_id', $userId))
+        $groups = TrainingGroup::whereHas('schedules', fn ($q) => $q->where('trainer_id', $userId))
             ->with(['members:id,first_name,last_name', 'schedules.trainer:id,name'])
             ->orderBy('name')
             ->get()
-            ->map(fn(TrainingGroup $g) => [
+            ->map(fn (TrainingGroup $g) => [
                 'id' => $g->id,
                 'name' => $g->name,
                 'description' => $g->description,
                 'membership_fee' => $g->membership_fee,
                 'location' => $g->location,
-                'schedules' => $g->schedules->map(fn($s) => [
+                'schedules' => $g->schedules->map(fn ($s) => [
                     'day' => $s->day,
                     'start_time' => $s->start_time,
                     'end_time' => $s->end_time,
                     'trainer_name' => $s->trainer?->name,
                 ])->values()->all(),
                 'member_ids' => $g->members->pluck('id')->values()->all(),
-                'members' => $g->members->map(fn($m) => [
+                'members' => $g->members->map(fn ($m) => [
                     'id' => $m->id,
                     'name' => $m->fullName(),
                 ])->sortBy('name')->values()->all(),
@@ -40,7 +40,7 @@ class TrainerTrainingGroupController extends Controller
             ]);
 
         $allMembers = Member::orderBy('last_name')->orderBy('first_name')->get()
-            ->map(fn(Member $m) => [
+            ->map(fn (Member $m) => [
                 'id' => $m->id,
                 'name' => $m->fullName(),
             ]);

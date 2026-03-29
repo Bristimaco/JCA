@@ -8,6 +8,7 @@ use App\Enums\InvitationStatus;
 use App\Enums\InvoiceStatus;
 use App\Enums\MembershipStatus;
 use App\Enums\TournamentStatus;
+use App\Enums\VoucherStatus;
 use App\Models\BeltHistory;
 use App\Models\Member;
 use App\Models\MembershipInvoice;
@@ -16,6 +17,7 @@ use App\Models\TournamentResult;
 use App\Models\TrainingGroup;
 use App\Models\TrainingSession;
 use App\Models\User;
+use App\Models\Voucher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -54,6 +56,7 @@ class DashboardController extends Controller
                 ])->count(),
                 'activeTournamentCount' => Tournament::where('status', TournamentStatus::Started)->count(),
                 'pendingInvoiceCount' => MembershipInvoice::where('status', InvoiceStatus::Pending)->count(),
+                'activeVoucherCount' => Voucher::where('status', VoucherStatus::Active)->where('expires_at', '>=', now())->count(),
             ];
 
             $props['memberStats'] = $this->memberStats();

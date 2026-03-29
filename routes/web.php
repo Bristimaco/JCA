@@ -40,6 +40,7 @@ use App\Http\Controllers\TournamentRsvpController;
 use App\Http\Controllers\Trainer\TrainerAttendanceController;
 use App\Http\Controllers\Trainer\TrainerTournamentController;
 use App\Http\Controllers\Trainer\TrainerTrainingGroupController;
+use App\Http\Controllers\VoucherController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -140,6 +141,13 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
     // Personal attendance toggle
     Route::post('/attendance/session/{session}/toggle', [MemberAttendanceController::class, 'toggle'])->name('member.attendance.toggle');
 
+    // Voucher activation (admin + coach)
+    Route::middleware('coach')->group(function () {
+        Route::get('/vouchers/activate', [VoucherController::class, 'activate'])->name('vouchers.activate');
+        Route::post('/vouchers/lookup', [VoucherController::class, 'lookup'])->name('vouchers.lookup');
+        Route::post('/vouchers/redeem', [VoucherController::class, 'redeem'])->name('vouchers.redeem');
+    });
+
     // Admin routes
     Route::middleware('admin')->prefix('admin')->group(function () {
         Route::get('/', AdminDashboardController::class)->name('admin.dashboard');
@@ -179,6 +187,10 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::post('/invoices/{invoice}/retry-payment', [InvoiceController::class, 'retryPayment'])->name('admin.invoices.retry-payment');
         Route::post('/invoices/{invoice}/check-status', [InvoiceController::class, 'checkStatus'])->name('admin.invoices.check-status');
         Route::post('/invoices/{invoice}/send-reminder', [InvoiceController::class, 'sendReminder'])->name('admin.invoices.send-reminder');
+
+        // Vouchers
+        Route::get('/vouchers', [VoucherController::class, 'index'])->name('admin.vouchers.index');
+
         Route::delete('/members/{member}', [MemberController::class, 'destroy'])->name('admin.members.destroy');
 
         // Excel import/export leden

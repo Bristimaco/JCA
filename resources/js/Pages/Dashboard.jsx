@@ -200,6 +200,7 @@ function AdminTile({ pendingCount, pendingUsers, adminCounters }) {
         { label: 'Openstaande facturen', value: adminCounters?.pendingInvoiceCount ?? 0, icon: '💶', bg: 'bg-rose-900/30', text: 'text-rose-400', ring: 'ring-rose-700/30', href: '/admin?section=facturen' },
         { label: 'Komende toernooien', value: adminCounters?.upcomingTournamentCount ?? 0, icon: '📅', bg: 'bg-blue-900/30', text: 'text-blue-400', ring: 'ring-blue-700/30' },
         { label: 'Actieve toernooien', value: adminCounters?.activeTournamentCount ?? 0, icon: '🏆', bg: 'bg-emerald-900/30', text: 'text-emerald-400', ring: 'ring-emerald-700/30' },
+        { label: 'Actieve vouchers', value: adminCounters?.activeVoucherCount ?? 0, icon: '🎟️', bg: 'bg-purple-900/30', text: 'text-purple-400', ring: 'ring-purple-700/30', href: '/admin?section=vouchers' },
     ];
 
     return (

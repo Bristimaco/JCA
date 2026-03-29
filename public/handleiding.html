@@ -506,6 +506,7 @@
                     <a href="#admin-club" class="nav-link">Clubinstellingen</a>
                     <a href="#admin-trainingsgroepen" class="nav-link">Trainingsgroepen</a>
                     <a href="#admin-facturen" class="nav-link">Facturen &amp; Betalingen</a>
+                    <a href="#admin-vouchers" class="nav-link">Vouchers</a>
                 </div>
                 <div class="nav-group">
                     <div class="nav-group-title">Trainingen</div>
@@ -700,6 +701,8 @@
                     inschrijvingen</li>
                 <li><strong>Actieve toernooien</strong> &#8212; toernooien die momenteel bezig zijn (status
                     &#8220;Gestart&#8221;)</li>
+                <li><strong>Actieve vouchers</strong> &#8212; het aantal actieve, niet-verlopen vouchers. Klik om naar
+                    de vouchersectie in het beheerderspaneel te navigeren.</li>
             </ul>
             <p>
                 Onder de tellingen worden de meest recente openstaande gebruikersaanvragen getoond met naam, e-mail en
@@ -1764,6 +1767,73 @@
             <div class="box box-info">
                 <strong>Let op:</strong> Facturen worden alleen aangemaakt voor leden die in een trainingsgroep zitten.
                 Zorg ervoor dat alle leden aan de juiste groep zijn toegewezen.
+            </div>
+
+            <!-- Vouchers -->
+            <h3 id="admin-vouchers">Vouchers</h3>
+            <p>
+                Wanneer een lid zijn lidmaatschap vernieuwt en betaalt, ontvangt de gebruiker automatisch een
+                <strong>voucher</strong> per lid. Deze voucher kan worden ingewisseld voor een t-shirt of hoodie
+                van de club.
+            </p>
+
+            <h4>Hoe worden vouchers aangemaakt?</h4>
+            <p>
+                Vouchers worden automatisch gegenereerd zodra een betaling via Mollie succesvol is verwerkt.
+                Per lid op de factuur wordt &#233;&#233;n voucher aangemaakt met een unieke code
+                (bijv. <code>VCH-A3X9K2</code>). De voucher is geldig tot de volgende vernieuwingsdatum van het lid.
+                De gebruiker ontvangt een melding (en e-mail) met de vouchercode(s).
+            </p>
+
+            <h4>Vouchers bekijken (beheerder)</h4>
+            <p><span class="role-badge role-admin">Beheerder</span></p>
+            <p>
+                In het beheerderspaneel vind je de sectie <strong>&#8220;Vouchers&#8221;</strong> met een overzicht
+                van alle vouchers. Je kunt filteren op status:
+            </p>
+            <ul>
+                <li><strong>Alle</strong> &#8212; alle vouchers</li>
+                <li><strong>Actief</strong> &#8212; vouchers die nog ingewisseld kunnen worden</li>
+                <li><strong>Verbruikt</strong> &#8212; vouchers die al zijn geactiveerd</li>
+                <li><strong>Verlopen</strong> &#8212; vouchers waarvan de geldigheid is verlopen</li>
+            </ul>
+            <p>
+                Per voucher zie je: de unieke code, het gekoppelde lid, de status, de geldigheidsdatum
+                en (indien verbruikt) wanneer en door wie de voucher is geactiveerd.
+            </p>
+
+            <h4>Voucher activeren</h4>
+            <p><span class="role-badge role-admin">Beheerder</span> <span class="role-badge role-coach">Trainer</span>
+            </p>
+            <p>
+                Er zijn twee manieren om een voucher te activeren:
+            </p>
+            <ol>
+                <li><strong>Via het beheerderspaneel</strong> &#8212; klik op de knop
+                    <strong>&#8220;Activeer&#8221;</strong>
+                    naast een actieve voucher in de vouchertabel.</li>
+                <li><strong>Via de activatiepagina</strong> &#8212; ga naar <em>/vouchers/activate</em> (bereikbaar
+                    via de link bovenaan de vouchersectie). Hier kun je:
+                    <ul>
+                        <li>De vouchercode handmatig invoeren</li>
+                        <li>Een QR-code scannen met de camera van je telefoon of tablet</li>
+                    </ul>
+                    Na het opzoeken van de voucher zie je de lidgegevens (naam, foto), status en geldigheidsdatum.
+                    Klik op <strong>&#8220;Voucher activeren&#8221;</strong> om de voucher in te wisselen.
+                </li>
+            </ol>
+
+            <h4>Vouchers voor ouders/leden</h4>
+            <p><span class="role-badge role-parent">Ouder</span></p>
+            <p>
+                Op de pagina <strong>Mijn Leden</strong> zie je bij elk lid met een actieve voucher een
+                <strong>groene badge</strong> met de vouchercode. Klik op <strong>&#8220;Kaart&#8221;</strong>
+                om de volledige lidkaart te bekijken &#8212; daar staat de voucher weergegeven met een
+                <strong>QR-code</strong> die gescand kan worden bij activatie.
+            </p>
+            <div class="box box-info">
+                <strong>Tip:</strong> Vouchers verlopen automatisch wanneer de geldigheidsdatum is bereikt.
+                Het systeem controleert dit dagelijks en markeert verlopen vouchers automatisch.
             </div>
 
             <!-- Trainingen & Aanwezigheid -->

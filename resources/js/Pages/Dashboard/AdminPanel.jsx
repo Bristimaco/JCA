@@ -5,9 +5,10 @@ import CollapsibleSection from '../../Components/CollapsibleSection';
 import AgeCategoriesSection from './AgeCategoriesSection';
 import InvoicesSection from './InvoicesSection';
 import TrainingGroupsSection from './TrainingGroupsSection';
+import VouchersSection from './VouchersSection';
 import WeightCategoriesSection from './WeightCategoriesSection';
 
-export default function AdminPanel({ pendingUsers, users, roles, ageCategories, weightCategories, allMembers, clubSettings, renewalDueCount, renewalDueMembers, trainingGroups, trainers, invoices }) {
+export default function AdminPanel({ pendingUsers, users, roles, ageCategories, weightCategories, allMembers, clubSettings, renewalDueCount, renewalDueMembers, trainingGroups, trainers, invoices, vouchers }) {
     const urlParams = new URLSearchParams(window.location.search);
     const [renewalListOpen, setRenewalListOpen] = useState(urlParams.get('renewal') === 'open');
     const openSection = urlParams.get('section');
@@ -101,6 +102,10 @@ export default function AdminPanel({ pendingUsers, users, roles, ageCategories, 
 
             <CollapsibleSection title="Facturen" count={invoices?.length || 0} defaultOpen={openSection === 'facturen'}>
                 <InvoicesSection invoices={invoices} />
+            </CollapsibleSection>
+
+            <CollapsibleSection title="Vouchers" count={vouchers?.length || 0} defaultOpen={openSection === 'vouchers'}>
+                <VouchersSection vouchers={vouchers || []} />
             </CollapsibleSection>
         </div>
     );

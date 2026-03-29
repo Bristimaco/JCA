@@ -1,5 +1,6 @@
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { useState } from 'react';
+import { QRCodeSVG } from 'qrcode.react';
 import AppLayout from '../Layouts/AppLayout';
 import MemberCard from './Dashboard/MemberCard';
 import PhotoCapture from '../Components/PhotoCapture';
@@ -23,33 +24,50 @@ export default function MyMembers({ members, ageCategories, weightCategories }) 
                     <div className="p-6">
                         <div className="grid gap-6 lg:grid-cols-2">
                             <MemberCard member={viewingMember} ageCategories={ageCategories} />
-                            {viewingMember.is_competition && viewingMember.tournament_results && viewingMember.tournament_results.length > 0 && (
-                                <div>
-                                    <h3 className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-3">Uitslagen</h3>
-                                    <div className="space-y-2.5 max-h-[500px] overflow-y-auto">
-                                        {viewingMember.tournament_results.map((r) => (
-                                            <div key={r.id} className="rounded-lg ring-1 ring-slate-700 bg-slate-700/50 p-3">
-                                                <div className="flex items-start justify-between gap-2">
-                                                    <div className="min-w-0 flex-1">
-                                                        <p className="text-sm font-medium text-slate-200 truncate">{r.tournament_name}</p>
-                                                        <p className="text-xs text-slate-500">{new Date(r.tournament_date).toLocaleDateString('nl-BE', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
-                                                    </div>
-                                                    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold flex-shrink-0 ${r.result.includes('1e') ? 'bg-yellow-900/40 text-yellow-400' :
-                                                        r.result.includes('2e') ? 'bg-slate-600 text-slate-200' :
-                                                            r.result.includes('3e') ? 'bg-rose-900/30 text-rose-400' :
-                                                                'bg-slate-700 text-slate-300'
-                                                        }`}>
-                                                        {r.result}
-                                                    </span>
-                                                </div>
-                                                {r.notes && (
-                                                    <p className="text-xs text-slate-500 mt-1.5 break-words italic">{r.notes}</p>
-                                                )}
+                            <div className="space-y-6">
+                                {viewingMember.voucher && (
+                                    <div>
+                                        <h3 className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-3">Voucher</h3>
+                                        <div className="rounded-lg ring-1 ring-emerald-700/30 bg-emerald-900/20 p-4 flex items-center gap-4">
+                                            <div className="bg-white rounded-lg p-2 flex-shrink-0">
+                                                <QRCodeSVG value={viewingMember.voucher.code} size={80} />
                                             </div>
-                                        ))}
+                                            <div>
+                                                <p className="text-lg font-bold text-white font-mono">{viewingMember.voucher.code}</p>
+                                                <p className="text-sm text-emerald-400">{viewingMember.voucher.status_label}</p>
+                                                <p className="text-xs text-slate-500 mt-1">Geldig tot {viewingMember.voucher.expires_at}</p>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            )}
+                                )}
+                                {viewingMember.is_competition && viewingMember.tournament_results && viewingMember.tournament_results.length > 0 && (
+                                    <div>
+                                        <h3 className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-3">Uitslagen</h3>
+                                        <div className="space-y-2.5 max-h-[500px] overflow-y-auto">
+                                            {viewingMember.tournament_results.map((r) => (
+                                                <div key={r.id} className="rounded-lg ring-1 ring-slate-700 bg-slate-700/50 p-3">
+                                                    <div className="flex items-start justify-between gap-2">
+                                                        <div className="min-w-0 flex-1">
+                                                            <p className="text-sm font-medium text-slate-200 truncate">{r.tournament_name}</p>
+                                                            <p className="text-xs text-slate-500">{new Date(r.tournament_date).toLocaleDateString('nl-BE', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                                                        </div>
+                                                        <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold flex-shrink-0 ${r.result.includes('1e') ? 'bg-yellow-900/40 text-yellow-400' :
+                                                            r.result.includes('2e') ? 'bg-slate-600 text-slate-200' :
+                                                                r.result.includes('3e') ? 'bg-rose-900/30 text-rose-400' :
+                                                                    'bg-slate-700 text-slate-300'
+                                                            }`}>
+                                                            {r.result}
+                                                        </span>
+                                                    </div>
+                                                    {r.notes && (
+                                                        <p className="text-xs text-slate-500 mt-1.5 break-words italic">{r.notes}</p>
+                                                    )}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -109,6 +127,11 @@ export default function MyMembers({ members, ageCategories, weightCategories }) 
                                         <p className="text-xs text-slate-500">
                                             {member.current_belt_label || '-'} · {member.weight_category_name || '-'}
                                         </p>
+                                        {member.voucher && (
+                                            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-900/30 px-2 py-0.5 text-[10px] font-semibold text-emerald-400 ring-1 ring-emerald-700/30 mt-0.5">
+                                                🎟️ {member.voucher.code}
+                                            </span>
+                                        )}
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-2">

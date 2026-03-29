@@ -14,13 +14,13 @@ class MollieWebhookController extends Controller
     {
         $paymentId = $request->input('id');
 
-        if (!$paymentId) {
+        if (! $paymentId) {
             return response('', 200);
         }
 
         $invoice = MembershipInvoice::where('mollie_payment_id', $paymentId)->first();
 
-        if (!$invoice) {
+        if (! $invoice) {
             return response('', 200);
         }
 

@@ -32,7 +32,7 @@ class MembershipInvoiceTest extends TestCase
         // Mock Mollie so no real API calls are made
         $this->mock(MolliePaymentService::class, function ($mock) {
             $mock->shouldReceive('createPaymentLink')->once()->andReturnUsing(
-                fn(MembershipInvoice $inv) => $inv
+                fn (MembershipInvoice $inv) => $inv
             );
         });
 

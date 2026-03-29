@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\BeltRank;
 use App\Enums\Gender;
 use App\Enums\MembershipStatus;
+use App\Enums\VoucherStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -134,6 +135,20 @@ class Member extends Model
     public function tournamentResults(): HasMany
     {
         return $this->hasMany(TournamentResult::class)->orderByDesc('created_at');
+    }
+
+    public function vouchers(): HasMany
+    {
+        return $this->hasMany(Voucher::class);
+    }
+
+    public function activeVoucher(): ?Voucher
+    {
+        return $this->vouchers()
+            ->where('status', VoucherStatus::Active)
+            ->where('expires_at', '>=', Carbon::today())
+            ->latest()
+            ->first();
     }
 
     public function calculateAgeCategory(string $countryCode = 'BE', ?Carbon $referenceDate = null): ?AgeCategory

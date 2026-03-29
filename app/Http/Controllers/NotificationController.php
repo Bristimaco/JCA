@@ -15,7 +15,7 @@ class NotificationController extends Controller
             ->latest()
             ->take(50)
             ->get()
-            ->map(fn($n) => [
+            ->map(fn ($n) => [
                 'id' => $n->id,
                 'type' => class_basename($n->type),
                 'data' => $n->data,

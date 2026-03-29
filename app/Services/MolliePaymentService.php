@@ -3,8 +3,11 @@
 namespace App\Services;
 
 use App\Enums\InvoiceStatus;
+use App\Enums\VoucherStatus;
 use App\Models\MembershipInvoice;
+use App\Models\Voucher;
 use App\Notifications\PaymentConfirmationNotification;
+use App\Notifications\VoucherNotification;
 use Illuminate\Support\Facades\Log;
 use Mollie\Laravel\Facades\Mollie;
 
@@ -80,6 +83,24 @@ class MolliePaymentService
 
             $invoice->load('lines.member', 'lines.trainingGroup');
             $invoice->user->notify(new PaymentConfirmationNotification($invoice));
+
+            // Create vouchers for each member on the invoice
+            $vouchers = [];
+            foreach ($invoice->lines as $line) {
+                if ($line->member) {
+                    $vouchers[] = Voucher::create([
+                        'member_id' => $line->member->id,
+                        'invoice_id' => $invoice->id,
+                        'code' => Voucher::generateCode(),
+                        'status' => VoucherStatus::Active,
+                        'expires_at' => $line->member->membership_renewal_date,
+                    ]);
+                }
+            }
+
+            if (count($vouchers) > 0) {
+                $invoice->user->notify(new VoucherNotification($vouchers));
+            }
         }
 
         return $newStatus;
