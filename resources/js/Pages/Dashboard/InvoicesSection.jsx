@@ -1,4 +1,5 @@
-import { useForm, usePage } from '@inertiajs/react';
+import { useForm, usePage, router } from '@inertiajs/react';
+import { useState } from 'react';
 
 const statusColors = {
     pending: 'bg-amber-900/30 text-amber-400',
@@ -108,6 +109,7 @@ function InvoiceRow({ invoice }) {
     const retryForm = useForm({});
     const checkStatusForm = useForm({});
     const reminderForm = useForm({});
+    const [deleting, setDeleting] = useState(false);
 
     const handleRetry = () => {
         retryForm.post(`/admin/invoices/${invoice.id}/retry-payment`, { preserveScroll: true });
@@ -119,6 +121,15 @@ function InvoiceRow({ invoice }) {
 
     const handleSendReminder = () => {
         reminderForm.post(`/admin/invoices/${invoice.id}/send-reminder`, { preserveScroll: true });
+    };
+
+    const handleDelete = () => {
+        if (!window.confirm('Weet je zeker dat je deze factuur wilt verwijderen? De Mollie betaallink wordt ook verwijderd.')) return;
+        setDeleting(true);
+        router.delete(`/admin/invoices/${invoice.id}`, {
+            preserveScroll: true,
+            onFinish: () => setDeleting(false),
+        });
     };
 
     return (
@@ -180,6 +191,15 @@ function InvoiceRow({ invoice }) {
                 )}
                 {invoice.status === 'paid' && (
                     <span className="text-xs text-emerald-500">✓ Betaald</span>
+                )}
+                {invoice.status !== 'paid' && (
+                    <button
+                        onClick={handleDelete}
+                        disabled={deleting}
+                        className="text-xs font-medium text-red-500 hover:text-red-400 disabled:opacity-50 mt-1"
+                    >
+                        {deleting ? 'Bezig...' : 'Verwijderen'}
+                    </button>
                 )}
             </td>
         </tr>

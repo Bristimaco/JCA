@@ -50,7 +50,7 @@ class Voucher extends Model
 
     public function isActive(): bool
     {
-        return $this->status === VoucherStatus::Active && !$this->isExpired();
+        return $this->status === VoucherStatus::Active && ! $this->isExpired();
     }
 
     public function isExpired(): bool
@@ -70,7 +70,7 @@ class Voucher extends Model
     public static function generateCode(): string
     {
         do {
-            $code = 'VCH-' . strtoupper(Str::random(6));
+            $code = 'VCH-'.strtoupper(Str::random(6));
         } while (static::where('code', $code)->exists());
 
         return $code;

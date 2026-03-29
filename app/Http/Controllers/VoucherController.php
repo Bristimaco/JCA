@@ -24,7 +24,7 @@ class VoucherController extends Controller
             ->where('code', strtoupper($request->code))
             ->first();
 
-        if (!$voucher) {
+        if (! $voucher) {
             return response()->json(['error' => 'Voucher niet gevonden.'], 404);
         }
 
@@ -47,7 +47,7 @@ class VoucherController extends Controller
 
         $voucher = Voucher::where('code', strtoupper($request->code))->first();
 
-        if (!$voucher) {
+        if (! $voucher) {
             return response()->json(['error' => 'Voucher niet gevonden.'], 404);
         }
 
@@ -59,14 +59,14 @@ class VoucherController extends Controller
             return response()->json(['error' => 'Deze voucher is verlopen.'], 422);
         }
 
-        if (!$voucher->isActive()) {
+        if (! $voucher->isActive()) {
             return response()->json(['error' => 'Deze voucher is niet actief.'], 422);
         }
 
         $voucher->redeem($request->user());
 
         return response()->json([
-            'message' => 'Voucher succesvol geactiveerd voor ' . $voucher->member->fullName() . '.',
+            'message' => 'Voucher succesvol geactiveerd voor '.$voucher->member->fullName().'.',
         ]);
     }
 
@@ -75,7 +75,7 @@ class VoucherController extends Controller
         $vouchers = Voucher::with(['member:id,first_name,last_name', 'redeemedByUser:id,name'])
             ->orderByDesc('created_at')
             ->get()
-            ->map(fn(Voucher $v) => [
+            ->map(fn (Voucher $v) => [
                 'id' => $v->id,
                 'code' => $v->code,
                 'status' => $v->status->value,

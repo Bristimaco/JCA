@@ -1764,6 +1764,20 @@
                 de betaallink en de QR-code. Dit is handig als de gebruiker de oorspronkelijke melding over het hoofd
                 heeft gezien.
             </p>
+
+            <h4>Factuur verwijderen</h4>
+            <p>
+                Bij facturen die <strong>nog niet betaald</strong> zijn (status &#8220;In afwachting&#8221;,
+                &#8220;Verlopen&#8221; of &#8220;Mislukt&#8221;) verschijnt een rode knop
+                <strong>&#8220;Verwijderen&#8221;</strong>. Na bevestiging wordt de factuur permanent verwijderd,
+                inclusief alle factuurrregels. Als er een Mollie betaallink aan de factuur gekoppeld is, wordt
+                deze ook automatisch bij Mollie verwijderd zodat de betaallink niet meer bruikbaar is.
+            </p>
+            <div class="box box-warning">
+                <strong>Let op:</strong> Het verwijderen van een factuur kan niet ongedaan worden gemaakt.
+                Betaalde facturen kunnen niet worden verwijderd.
+            </div>
+
             <div class="box box-info">
                 <strong>Let op:</strong> Facturen worden alleen aangemaakt voor leden die in een trainingsgroep zitten.
                 Zorg ervoor dat alle leden aan de juiste groep zijn toegewezen.
@@ -1811,7 +1825,8 @@
             <ol>
                 <li><strong>Via het beheerderspaneel</strong> &#8212; klik op de knop
                     <strong>&#8220;Activeer&#8221;</strong>
-                    naast een actieve voucher in de vouchertabel.</li>
+                    naast een actieve voucher in de vouchertabel.
+                </li>
                 <li><strong>Via de activatiepagina</strong> &#8212; ga naar <em>/vouchers/activate</em> (bereikbaar
                     via de link bovenaan de vouchersectie). Hier kun je:
                     <ul>

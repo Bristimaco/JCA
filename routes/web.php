@@ -187,6 +187,7 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::post('/invoices/{invoice}/retry-payment', [InvoiceController::class, 'retryPayment'])->name('admin.invoices.retry-payment');
         Route::post('/invoices/{invoice}/check-status', [InvoiceController::class, 'checkStatus'])->name('admin.invoices.check-status');
         Route::post('/invoices/{invoice}/send-reminder', [InvoiceController::class, 'sendReminder'])->name('admin.invoices.send-reminder');
+        Route::delete('/invoices/{invoice}', [InvoiceController::class, 'destroy'])->name('admin.invoices.destroy');
 
         // Vouchers
         Route::get('/vouchers', [VoucherController::class, 'index'])->name('admin.vouchers.index');

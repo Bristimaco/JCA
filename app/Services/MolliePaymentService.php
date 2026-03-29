@@ -45,6 +45,20 @@ class MolliePaymentService
         return $invoice;
     }
 
+    public function deletePaymentLink(string $paymentLinkId): void
+    {
+        try {
+            Mollie::api()->paymentLinks->delete($paymentLinkId);
+
+            Log::info('Mollie betaallink verwijderd', ['mollie_id' => $paymentLinkId]);
+        } catch (\Throwable $e) {
+            Log::warning('Mollie betaallink verwijderen mislukt', [
+                'mollie_id' => $paymentLinkId,
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
     public function getPaymentStatus(string $paymentLinkId): string
     {
         $paymentLink = Mollie::api()->paymentLinks->get($paymentLinkId);

@@ -27,7 +27,7 @@ class InvoiceController extends Controller
             return back()->with('status', 'Deze factuur heeft al een betaallink.');
         }
 
-        $memberNames = $invoice->lines->map(fn ($l) => $l->member?->fullName() ?? 'Onbekend')->join(', ');
+        $memberNames = $invoice->lines->map(fn($l) => $l->member?->fullName() ?? 'Onbekend')->join(', ');
         $description = "Lidgeld {$invoice->year} — {$memberNames}";
 
         $mollieService->createPaymentLink($invoice, $description);
@@ -45,7 +45,7 @@ class InvoiceController extends Controller
 
     public function checkStatus(MembershipInvoice $invoice, MolliePaymentService $mollieService): RedirectResponse
     {
-        if (! $invoice->mollie_payment_id) {
+        if (!$invoice->mollie_payment_id) {
             return back()->with('status', 'Deze factuur heeft geen Mollie betaallink.');
         }
 
@@ -62,11 +62,11 @@ class InvoiceController extends Controller
 
     public function sendReminder(MembershipInvoice $invoice): RedirectResponse
     {
-        if (! $invoice->isPending()) {
+        if (!$invoice->isPending()) {
             return back()->with('status', 'Alleen openstaande facturen kunnen een herinnering krijgen.');
         }
 
-        if (! $invoice->mollie_payment_url) {
+        if (!$invoice->mollie_payment_url) {
             return back()->with('status', 'Deze factuur heeft nog geen betaallink.');
         }
 
@@ -74,5 +74,20 @@ class InvoiceController extends Controller
         $invoice->user->notify(new MembershipPaymentNotification($invoice));
 
         return back()->with('status', "Betalingsherinnering verstuurd naar {$invoice->user->name}.");
+    }
+
+    public function destroy(MembershipInvoice $invoice, MolliePaymentService $mollieService): RedirectResponse
+    {
+        if ($invoice->isPaid()) {
+            return back()->with('status', 'Betaalde facturen kunnen niet worden verwijderd.');
+        }
+
+        if ($invoice->mollie_payment_id) {
+            $mollieService->deletePaymentLink($invoice->mollie_payment_id);
+        }
+
+        $invoice->delete();
+
+        return back()->with('status', 'Factuur succesvol verwijderd.');
     }
 }
