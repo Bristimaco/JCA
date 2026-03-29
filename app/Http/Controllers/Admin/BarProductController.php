@@ -47,4 +47,14 @@ class BarProductController extends Controller
 
         return back()->with('status', "Product '{$name}' verwijderd.");
     }
+
+    public function clearRefill(BarProduct $barProduct): RedirectResponse
+    {
+        $barProduct->update([
+            'needs_refill' => false,
+            'needs_refill_at' => null,
+        ]);
+
+        return back()->with('status', "Product '{$barProduct->name}' is aangevuld.");
+    }
 }

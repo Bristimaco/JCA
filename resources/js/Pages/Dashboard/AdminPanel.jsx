@@ -5,11 +5,12 @@ import CollapsibleSection from '../../Components/CollapsibleSection';
 import AgeCategoriesSection from './AgeCategoriesSection';
 import BarProductsSection from './BarProductsSection';
 import InvoicesSection from './InvoicesSection';
+import RefillProductsSection from './RefillProductsSection';
 import TrainingGroupsSection from './TrainingGroupsSection';
 import VouchersSection from './VouchersSection';
 import WeightCategoriesSection from './WeightCategoriesSection';
 
-export default function AdminPanel({ pendingUsers, users, roles, ageCategories, weightCategories, allMembers, clubSettings, renewalDueCount, renewalDueMembers, trainingGroups, trainers, invoices, vouchers, barProducts }) {
+export default function AdminPanel({ pendingUsers, users, roles, ageCategories, weightCategories, allMembers, clubSettings, renewalDueCount, renewalDueMembers, trainingGroups, trainers, invoices, vouchers, barProducts, refillProducts }) {
     const urlParams = new URLSearchParams(window.location.search);
     const [renewalListOpen, setRenewalListOpen] = useState(urlParams.get('renewal') === 'open');
     const openSection = urlParams.get('section');
@@ -107,6 +108,10 @@ export default function AdminPanel({ pendingUsers, users, roles, ageCategories, 
 
             <CollapsibleSection title="Vouchers" count={vouchers?.length || 0} defaultOpen={openSection === 'vouchers'}>
                 <VouchersSection vouchers={vouchers || []} />
+            </CollapsibleSection>
+
+            <CollapsibleSection title="Aan te vullen" count={refillProducts?.length || 0} defaultOpen={(refillProducts?.length || 0) > 0 || openSection === 'aan-te-vullen'} badge="bg-amber-900/30 text-amber-300">
+                <RefillProductsSection products={refillProducts || []} />
             </CollapsibleSection>
 
             <CollapsibleSection title="Bar Producten" count={barProducts?.length || 0} defaultOpen={openSection === 'bar-producten'}>

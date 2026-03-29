@@ -2,8 +2,9 @@ import { Head, Link } from '@inertiajs/react';
 import { useState, useRef, useEffect } from 'react';
 import AppLayout from '../Layouts/AppLayout';
 
-export default function POS({ products }) {
+export default function POS({ products: initialProducts }) {
     const [quantities, setQuantities] = useState({});
+    const [products, setProducts] = useState(initialProducts);
     const [showVoucher, setShowVoucher] = useState(false);
 
     // Voucher state
@@ -37,6 +38,19 @@ export default function POS({ products }) {
     const itemCount = Object.values(quantities).reduce((sum, q) => sum + q, 0);
 
     const reset = () => setQuantities({});
+
+    const toggleRefill = async (productId) => {
+        try {
+            const res = await fetch(`/pos/products/${productId}/toggle-refill`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken(), Accept: 'application/json' },
+            });
+            if (res.ok) {
+                const data = await res.json();
+                setProducts((prev) => prev.map((p) => p.id === productId ? { ...p, needs_refill: data.needs_refill } : p));
+            }
+        } catch { /* network error */ }
+    };
 
     // Voucher functions
     const resetVoucherPanel = () => {
@@ -308,11 +322,24 @@ export default function POS({ products }) {
                                     return (
                                         <div
                                             key={product.id}
-                                            className={`relative rounded-xl ring-1 p-4 flex flex-col items-center select-none transition-all ${qty > 0
-                                                ? 'bg-rose-900/20 ring-rose-700/40 shadow-md'
-                                                : 'bg-slate-900 ring-slate-800 hover:ring-slate-700'
+                                            className={`relative rounded-xl ring-1 p-4 flex flex-col items-center select-none transition-all ${product.needs_refill
+                                                ? 'bg-amber-900/20 ring-amber-500/60 shadow-md shadow-amber-900/20'
+                                                : qty > 0
+                                                    ? 'bg-rose-900/20 ring-rose-700/40 shadow-md'
+                                                    : 'bg-slate-900 ring-slate-800 hover:ring-slate-700'
                                                 }`}
                                         >
+                                            {/* Refill toggle button */}
+                                            <button
+                                                onClick={() => toggleRefill(product.id)}
+                                                className={`absolute top-1.5 left-1.5 w-7 h-7 rounded-full flex items-center justify-center text-sm transition-all ${product.needs_refill
+                                                    ? 'bg-amber-600 text-white shadow-lg'
+                                                    : 'bg-slate-700/60 text-slate-500 hover:bg-slate-600 hover:text-slate-300'
+                                                    }`}
+                                                title={product.needs_refill ? 'Gemarkeerd als bijna op' : 'Markeer als bijna op'}
+                                            >
+                                                ⚠️
+                                            </button>
                                             {qty > 0 && (
                                                 <div className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-rose-600 flex items-center justify-center text-white text-xs font-bold shadow-lg">
                                                     {qty}

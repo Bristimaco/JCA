@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
@@ -11,6 +12,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property float $price
  * @property bool $is_active
  * @property int $display_order
+ * @property bool $needs_refill
+ * @property Carbon|null $needs_refill_at
  */
 class BarProduct extends Model
 {
@@ -19,6 +22,8 @@ class BarProduct extends Model
         'price',
         'is_active',
         'display_order',
+        'needs_refill',
+        'needs_refill_at',
     ];
 
     protected function casts(): array
@@ -27,6 +32,8 @@ class BarProduct extends Model
             'price' => 'decimal:2',
             'is_active' => 'boolean',
             'display_order' => 'integer',
+            'needs_refill' => 'boolean',
+            'needs_refill_at' => 'datetime',
         ];
     }
 
@@ -38,5 +45,10 @@ class BarProduct extends Model
     public function scopeActive(Builder $query): Builder
     {
         return $query->where('is_active', true);
+    }
+
+    public function scopeNeedsRefill(Builder $query): Builder
+    {
+        return $query->where('needs_refill', true);
     }
 }

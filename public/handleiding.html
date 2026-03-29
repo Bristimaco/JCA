@@ -510,6 +510,7 @@
                     <a href="#admin-facturen" class="nav-link">Facturen &amp; Betalingen</a>
                     <a href="#admin-vouchers" class="nav-link">Vouchers</a>
                     <a href="#admin-bar-producten" class="nav-link">Bar Producten</a>
+                    <a href="#admin-aan-te-vullen" class="nav-link">Aan te vullen</a>
                 </div>
                 <div class="nav-group">
                     <div class="nav-group-title">Bar &amp; Kassa</div>
@@ -1980,6 +1981,30 @@
                 te tonen op het kassa-scherm. Lagere nummers verschijnen eerst.
             </div>
 
+            <!-- Aan te vullen producten -->
+            <h3 id="admin-aan-te-vullen">Aan te vullen producten</h3>
+            <p><span class="role-badge role-admin">Beheerder</span></p>
+            <p>
+                Wanneer een barmedewerker een product markeert als &ldquo;bijna op&rdquo; (via het kassa-scherm),
+                verschijnt dit product in het beheerderspaneel in de sectie <strong>&ldquo;Aan te
+                    vullen&rdquo;</strong>.
+                De beheerder ontvangt ook automatisch een <strong>notificatie</strong> (via de app en/of e-mail,
+                afhankelijk van de meldingsvoorkeur).
+            </p>
+            <ul>
+                <li>De sectie toont de <strong>productnaam</strong>, <strong>prijs</strong> en het
+                    <strong>tijdstip</strong>
+                    waarop het product als bijna op werd gemarkeerd</li>
+                <li>Klik op de groene <strong>&ldquo;&#10003; Aangevuld&rdquo;</strong>-knop om aan te geven dat het
+                    product is aangevuld &mdash; het product verdwijnt dan uit de lijst</li>
+                <li>De sectie opent automatisch als er producten aan te vullen zijn</li>
+            </ul>
+            <div class="box box-info">
+                <strong>Tip:</strong> De barmedewerker ziet op het kassa-scherm een oranje rand rond producten
+                die al gemarkeerd zijn. Zodra de beheerder het product als aangevuld markeert, verdwijnt de markering
+                ook op het kassa-scherm.
+            </div>
+
             <!-- POS Kassa -->
             <h2 id="pos-kassa">POS Kassa</h2>
             <p><span class="role-badge role-coach">Barmedewerker</span> <span
@@ -2029,6 +2054,21 @@
                 <li>Klik op <strong>&#8220;✓ Voucher activeren&#8221;</strong> om een actieve voucher te verbruiken</li>
                 <li>Klik op <strong>&#8220;← Terug naar producten&#8221;</strong> om terug te keren naar het
                     kassa-scherm</li>
+            </ul>
+
+            <h3>Product als &ldquo;bijna op&rdquo; markeren</h3>
+            <p>
+                Elke producttegel heeft linksboven een klein <strong>⚠️-icoon</strong>. Klik hierop om het product
+                te markeren als <strong>bijna op</strong> (aanvulling nodig).
+            </p>
+            <ul>
+                <li>Het product krijgt een <strong>oranje/amber rand</strong> zodat het visueel opvalt</li>
+                <li>Alle beheerders ontvangen automatisch een <strong>notificatie</strong> dat het product aangevuld
+                    moet worden</li>
+                <li>Klik nogmaals op het icoon om de markering <strong>ongedaan te maken</strong> (er wordt dan
+                    geen nieuwe notificatie verzonden)</li>
+                <li>De beheerder kan het product ook via het beheerderspaneel als aangevuld markeren
+                    (zie <a href="#admin-aan-te-vullen">Aan te vullen producten</a>)</li>
             </ul>
 
             <h3>Barmedewerker rol</h3>
@@ -2317,6 +2357,14 @@
                         <td class="check">&#10003;</td>
                     </tr>
                     <tr>
+                        <td>Product als &ldquo;bijna op&rdquo; markeren</td>
+                        <td class="check">&#10003;</td>
+                        <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
+                        <td class="check">&#10003;</td>
+                    </tr>
+                    <tr>
                         <td>Vouchers opzoeken en activeren</td>
                         <td class="check">&#10003;</td>
                         <td class="check">&#10003;</td>
@@ -2494,6 +2542,14 @@
                     </tr>
                     <tr>
                         <td>Bar producten beheren</td>
+                        <td class="check">&#10003;</td>
+                        <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
+                    </tr>
+                    <tr>
+                        <td>Aan te vullen producten bekijken/afvinken</td>
                         <td class="check">&#10003;</td>
                         <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
