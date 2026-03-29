@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Enums\BeltRank;
 use App\Enums\Gender;
 use App\Enums\InvitationStatus;
+use App\Enums\InvoiceStatus;
 use App\Enums\MembershipStatus;
 use App\Enums\TournamentStatus;
 use App\Models\BeltHistory;
 use App\Models\Member;
+use App\Models\MembershipInvoice;
 use App\Models\Tournament;
 use App\Models\TournamentResult;
 use App\Models\TrainingGroup;
@@ -35,7 +37,7 @@ class DashboardController extends Controller
                 ->latest()
                 ->take(5)
                 ->get(['name', 'email', 'created_at'])
-                ->map(fn (User $u) => [
+                ->map(fn(User $u) => [
                     'name' => $u->name,
                     'email' => $u->email,
                     'created_at' => $u->created_at->toDateString(),
@@ -51,6 +53,7 @@ class DashboardController extends Controller
                     TournamentStatus::RegistrationsClosed,
                 ])->count(),
                 'activeTournamentCount' => Tournament::where('status', TournamentStatus::Started)->count(),
+                'pendingInvoiceCount' => MembershipInvoice::where('status', InvoiceStatus::Pending)->count(),
             ];
 
             $props['memberStats'] = $this->memberStats();
@@ -66,16 +69,16 @@ class DashboardController extends Controller
             ])
                 ->where('tournament_date', '>=', now()->toDateString());
 
-            if ($request->user()->isCoach() && ! $request->user()->isAdmin()) {
+            if ($request->user()->isCoach() && !$request->user()->isAdmin()) {
                 $coachMemberIds = $request->user()->members()->pluck('members.id');
-                $upcomingQuery->whereHas('coaches', fn ($q) => $q->whereIn('members.id', $coachMemberIds));
+                $upcomingQuery->whereHas('coaches', fn($q) => $q->whereIn('members.id', $coachMemberIds));
             }
 
             $props['upcomingTournaments'] = $upcomingQuery
                 ->orderBy('tournament_date')
                 ->take(3)
                 ->get()
-                ->map(fn (Tournament $t) => [
+                ->map(fn(Tournament $t) => [
                     'id' => $t->id,
                     'name' => $t->name,
                     'tournament_date' => $t->tournament_date->toDateString(),
@@ -95,7 +98,7 @@ class DashboardController extends Controller
             ->orderByDesc('tournament_date')
             ->take(3)
             ->get()
-            ->map(fn (Tournament $t) => [
+            ->map(fn(Tournament $t) => [
                 'id' => $t->id,
                 'name' => $t->name,
                 'tournament_date' => $t->tournament_date->toDateString(),
@@ -107,7 +110,7 @@ class DashboardController extends Controller
         $props['activeTournaments'] = Tournament::where('status', TournamentStatus::Started)
             ->orderByDesc('tournament_date')
             ->get()
-            ->map(fn (Tournament $t) => [
+            ->map(fn(Tournament $t) => [
                 'id' => $t->id,
                 'name' => $t->name,
                 'tournament_date' => $t->tournament_date->toDateString(),
@@ -123,11 +126,11 @@ class DashboardController extends Controller
         // Coach: load tournaments where the user's members are coaches
         if ($request->user()->isCoach()) {
             $coachMemberIds = $request->user()->members()->pluck('members.id');
-            $props['coachTournaments'] = Tournament::whereHas('coaches', fn ($q) => $q->whereIn('members.id', $coachMemberIds))
+            $props['coachTournaments'] = Tournament::whereHas('coaches', fn($q) => $q->whereIn('members.id', $coachMemberIds))
                 ->whereIn('status', [TournamentStatus::Started, TournamentStatus::Finished])
                 ->orderByDesc('tournament_date')
                 ->get()
-                ->map(fn (Tournament $t) => [
+                ->map(fn(Tournament $t) => [
                     'id' => $t->id,
                     'name' => $t->name,
                     'tournament_date' => $t->tournament_date->toDateString(),
@@ -139,7 +142,7 @@ class DashboardController extends Controller
                     'participant_count' => $t->members()->count(),
                 ]);
 
-            $props['coachTrainingGroups'] = TrainingGroup::whereHas('schedules', fn ($q) => $q->where('trainer_id', $request->user()->id))
+            $props['coachTrainingGroups'] = TrainingGroup::whereHas('schedules', fn($q) => $q->where('trainer_id', $request->user()->id))
                 ->with(['members:id,first_name,last_name', 'schedules.trainer:id,name'])
                 ->orderBy('name')
                 ->get()
@@ -179,7 +182,7 @@ class DashboardController extends Controller
                         })->values()->all(),
                         'location' => $g->location,
                         'member_ids' => $g->members->pluck('id')->values()->all(),
-                        'members' => $g->members->map(fn ($m) => [
+                        'members' => $g->members->map(fn($m) => [
                             'id' => $m->id,
                             'name' => $m->fullName(),
                         ])->values()->all(),
@@ -196,7 +199,7 @@ class DashboardController extends Controller
             $props['activeTrainingSessions'] = TrainingSession::whereNull('closed_at')
                 ->whereNotNull('opened_at')
                 ->where('date', now()->toDateString())
-                ->whereHas('trainingSchedule.trainingGroup.members', fn ($q) => $q->whereIn('members.id', $memberIds))
+                ->whereHas('trainingSchedule.trainingGroup.members', fn($q) => $q->whereIn('members.id', $memberIds))
                 ->with(['trainingSchedule.trainingGroup', 'trainingSchedule.trainer:id,name', 'attendances'])
                 ->get()
                 ->map(function (TrainingSession $s) use ($memberIds) {
@@ -215,12 +218,12 @@ class DashboardController extends Controller
         }
 
         if ($memberIds->isNotEmpty()) {
-            $props['myTournaments'] = Tournament::whereHas('members', fn ($q) => $q->whereIn('members.id', $memberIds))
+            $props['myTournaments'] = Tournament::whereHas('members', fn($q) => $q->whereIn('members.id', $memberIds))
                 ->with(['members', 'attachments'])
                 ->orderByDesc('tournament_date')
                 ->get()
                 ->map(function (Tournament $t) use ($memberIds) {
-                    $myMember = $t->members->firstWhere(fn ($m) => $memberIds->contains($m->id));
+                    $myMember = $t->members->firstWhere(fn($m) => $memberIds->contains($m->id));
 
                     return [
                         'id' => $t->id,
@@ -236,7 +239,7 @@ class DashboardController extends Controller
                         'invitation_status' => $myMember?->pivot->invitation_status,
                         'invitation_status_label' => InvitationStatus::tryFrom($myMember?->pivot->invitation_status)?->label(),
                         'participants' => $t->members
-                            ->filter(fn ($m) => $m->pivot->invitation_status === InvitationStatus::Accepted->value)
+                            ->filter(fn($m) => $m->pivot->invitation_status === InvitationStatus::Accepted->value)
                             ->map(function ($m) use ($t) {
                                 $result = TournamentResult::where('tournament_id', $t->id)
                                     ->where('member_id', $m->id)
@@ -248,7 +251,7 @@ class DashboardController extends Controller
                                     'result' => $result?->result,
                                 ];
                             })->values()->all(),
-                        'attachments' => $t->attachments->map(fn ($a) => [
+                        'attachments' => $t->attachments->map(fn($a) => [
                             'id' => $a->id,
                             'original_name' => $a->original_name,
                             'url' => route('attachments.show', $a),

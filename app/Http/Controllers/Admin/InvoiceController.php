@@ -59,4 +59,20 @@ class InvoiceController extends Controller
             return back()->with('status', 'Status ophalen mislukt. Controleer de Mollie API key en logs.');
         }
     }
+
+    public function sendReminder(MembershipInvoice $invoice): RedirectResponse
+    {
+        if (!$invoice->isPending()) {
+            return back()->with('status', 'Alleen openstaande facturen kunnen een herinnering krijgen.');
+        }
+
+        if (!$invoice->mollie_payment_url) {
+            return back()->with('status', 'Deze factuur heeft nog geen betaallink.');
+        }
+
+        $invoice->load('lines.member', 'lines.trainingGroup');
+        $invoice->user->notify(new MembershipPaymentNotification($invoice));
+
+        return back()->with('status', "Betalingsherinnering verstuurd naar {$invoice->user->name}.");
+    }
 }

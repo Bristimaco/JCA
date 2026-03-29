@@ -10,6 +10,7 @@ import WeightCategoriesSection from './WeightCategoriesSection';
 export default function AdminPanel({ pendingUsers, users, roles, ageCategories, weightCategories, allMembers, clubSettings, renewalDueCount, renewalDueMembers, trainingGroups, trainers, invoices }) {
     const urlParams = new URLSearchParams(window.location.search);
     const [renewalListOpen, setRenewalListOpen] = useState(urlParams.get('renewal') === 'open');
+    const openSection = urlParams.get('section');
 
     return (
         <div className="space-y-4">
@@ -98,7 +99,7 @@ export default function AdminPanel({ pendingUsers, users, roles, ageCategories, 
                 </div>
             </CollapsibleSection>
 
-            <CollapsibleSection title="Facturen" count={invoices?.length || 0}>
+            <CollapsibleSection title="Facturen" count={invoices?.length || 0} defaultOpen={openSection === 'facturen'}>
                 <InvoicesSection invoices={invoices} />
             </CollapsibleSection>
         </div>

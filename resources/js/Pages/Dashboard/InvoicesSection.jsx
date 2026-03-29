@@ -107,6 +107,7 @@ export default function InvoicesSection({ invoices }) {
 function InvoiceRow({ invoice }) {
     const retryForm = useForm({});
     const checkStatusForm = useForm({});
+    const reminderForm = useForm({});
 
     const handleRetry = () => {
         retryForm.post(`/admin/invoices/${invoice.id}/retry-payment`, { preserveScroll: true });
@@ -114,6 +115,10 @@ function InvoiceRow({ invoice }) {
 
     const handleCheckStatus = () => {
         checkStatusForm.post(`/admin/invoices/${invoice.id}/check-status`, { preserveScroll: true });
+    };
+
+    const handleSendReminder = () => {
+        reminderForm.post(`/admin/invoices/${invoice.id}/send-reminder`, { preserveScroll: true });
     };
 
     return (
@@ -156,13 +161,22 @@ function InvoiceRow({ invoice }) {
                     </button>
                 )}
                 {invoice.status === 'pending' && invoice.has_payment_url && (
-                    <button
-                        onClick={handleCheckStatus}
-                        disabled={checkStatusForm.processing}
-                        className="text-xs font-medium text-sky-400 hover:text-sky-300 disabled:opacity-50"
-                    >
-                        {checkStatusForm.processing ? 'Bezig...' : 'Status controleren'}
-                    </button>
+                    <div className="flex flex-col gap-1">
+                        <button
+                            onClick={handleCheckStatus}
+                            disabled={checkStatusForm.processing}
+                            className="text-xs font-medium text-sky-400 hover:text-sky-300 disabled:opacity-50"
+                        >
+                            {checkStatusForm.processing ? 'Bezig...' : 'Status controleren'}
+                        </button>
+                        <button
+                            onClick={handleSendReminder}
+                            disabled={reminderForm.processing}
+                            className="text-xs font-medium text-amber-400 hover:text-amber-300 disabled:opacity-50"
+                        >
+                            {reminderForm.processing ? 'Bezig...' : 'Herinnering sturen'}
+                        </button>
+                    </div>
                 )}
                 {invoice.status === 'paid' && (
                     <span className="text-xs text-emerald-500">✓ Betaald</span>
