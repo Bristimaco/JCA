@@ -172,7 +172,6 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::get('/members', MemberIndexController::class)->name('admin.members.index');
         Route::post('/members', [MemberController::class, 'store'])->name('admin.members.store');
         Route::patch('/members/{member}', [MemberController::class, 'update'])->name('admin.members.update');
-        Route::post('/members/{member}/mark-paid', [MemberController::class, 'markAsPaid'])->name('admin.members.mark-paid');
         Route::post('/members/send-renewal-reminders', [MemberController::class, 'sendRenewalReminders'])->name('admin.members.send-renewal-reminders');
 
         // Invoices

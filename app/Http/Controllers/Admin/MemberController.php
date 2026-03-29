@@ -100,16 +100,6 @@ class MemberController extends Controller
         return back()->with('status', "{$member->fullName()} is bijgewerkt.");
     }
 
-    public function markAsPaid(Member $member): RedirectResponse
-    {
-        $member->update([
-            'membership_renewal_date' => $member->membership_renewal_date->addYear(),
-            'membership_fee_reminded_at' => null,
-        ]);
-
-        return back()->with('status', "Lidgeld voor {$member->fullName()} is geregistreerd als betaald. Vernieuwingsdatum: {$member->membership_renewal_date->format('d/m/Y')}.");
-    }
-
     public function destroy(Member $member): RedirectResponse
     {
         $name = $member->fullName();

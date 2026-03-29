@@ -230,19 +230,12 @@ export default function MembersSection({ members, ageCategories, weightCategorie
 
 function MemberRow({ member, ageCategoryName, weightCategoryName, onView, onEdit }) {
     const deleteForm = useForm({});
-    const paidForm = useForm({});
     const statusLabels = { active: 'Actief', inactive: 'Inactief', suspended: 'Geschorst', pending: 'In afwachting' };
     const statusColors = { active: 'bg-emerald-900/40 text-emerald-400', inactive: 'bg-slate-800 text-slate-400', suspended: 'bg-red-900/40 text-red-400', pending: 'bg-yellow-900/40 text-yellow-700' };
 
     const handleDelete = () => {
         if (confirm(`Weet je zeker dat je "${member.first_name} ${member.last_name}" wilt verwijderen?`)) {
             deleteForm.delete(`/admin/members/${member.id}`);
-        }
-    };
-
-    const handleMarkPaid = () => {
-        if (confirm(`Lidgeld voor "${member.first_name} ${member.last_name}" markeren als betaald?`)) {
-            paidForm.post(`/admin/members/${member.id}/mark-paid`);
         }
     };
 
@@ -288,14 +281,6 @@ function MemberRow({ member, ageCategoryName, weightCategoryName, onView, onEdit
                 <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${statusColors[member.membership_status] || ''}`}>
                     {statusLabels[member.membership_status] || member.membership_status}
                 </span>
-                <button
-                    onClick={handleMarkPaid}
-                    disabled={paidForm.processing}
-                    className="text-sm text-emerald-400 hover:text-emerald-300 disabled:opacity-50"
-                    title="Lidgeld betaald — vernieuwingsdatum +1 jaar"
-                >
-                    Betaald
-                </button>
                 <button onClick={onView} className="text-sm text-slate-400 hover:text-slate-200">
                     Kaart
                 </button>
