@@ -143,12 +143,14 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
     // Personal attendance toggle
     Route::post('/attendance/session/{session}/toggle', [MemberAttendanceController::class, 'toggle'])->name('member.attendance.toggle');
 
-    // Voucher activation (admin + coach)
+    // Voucher activation page (admin + coach)
     Route::middleware('coach')->group(function () {
         Route::get('/vouchers/activate', [VoucherController::class, 'activate'])->name('vouchers.activate');
-        Route::post('/vouchers/lookup', [VoucherController::class, 'lookup'])->name('vouchers.lookup');
-        Route::post('/vouchers/redeem', [VoucherController::class, 'redeem'])->name('vouchers.redeem');
     });
+
+    // Voucher lookup/redeem API (admin + coach + barmedewerker)
+    Route::post('/vouchers/lookup', [VoucherController::class, 'lookup'])->name('vouchers.lookup');
+    Route::post('/vouchers/redeem', [VoucherController::class, 'redeem'])->name('vouchers.redeem');
 
     // POS (barmedewerker + admin)
     Route::middleware('barmedewerker')->group(function () {

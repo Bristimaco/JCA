@@ -10,7 +10,7 @@ class EnsureUserIsBarmedewerker
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (!$request->user()?->isBarmedewerker() && !$request->user()?->isAdmin()) {
+        if (! $request->user()?->isBarmedewerker() && ! $request->user()?->isAdmin()) {
             abort(403);
         }
 
