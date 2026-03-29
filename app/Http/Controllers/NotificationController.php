@@ -15,7 +15,7 @@ class NotificationController extends Controller
             ->latest()
             ->take(50)
             ->get()
-            ->map(fn ($n) => [
+            ->map(fn($n) => [
                 'id' => $n->id,
                 'type' => class_basename($n->type),
                 'data' => $n->data,
@@ -41,6 +41,17 @@ class NotificationController extends Controller
     public function markAllAsRead(Request $request)
     {
         $request->user()->unreadNotifications->markAsRead();
+
+        return response()->json(['success' => true]);
+    }
+
+    public function destroy(Request $request, string $id)
+    {
+        $request->user()
+            ->notifications()
+            ->where('id', $id)
+            ->firstOrFail()
+            ->delete();
 
         return response()->json(['success' => true]);
     }
