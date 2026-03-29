@@ -12,7 +12,7 @@ class MolliePaymentService
     public function createPaymentLink(MembershipInvoice $invoice, string $description): MembershipInvoice
     {
         try {
-            $payment = Mollie::api()->paymentLinks()->create([
+            $payment = Mollie::api()->paymentLinks->create([
                 'amount' => [
                     'currency' => 'EUR',
                     'value' => number_format($invoice->total_amount, 2, '.', ''),
@@ -43,7 +43,7 @@ class MolliePaymentService
 
     public function getPaymentStatus(string $paymentId): string
     {
-        $payment = Mollie::api()->payments()->get($paymentId);
+        $payment = Mollie::api()->payments->get($paymentId);
 
         return match (true) {
             $payment->isPaid() => InvoiceStatus::Paid->value,

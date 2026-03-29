@@ -1,4 +1,4 @@
-import { useForm } from '@inertiajs/react';
+import { useForm, usePage } from '@inertiajs/react';
 
 const statusColors = {
     pending: 'bg-amber-900/30 text-amber-400',
@@ -15,6 +15,7 @@ const statusLabels = {
 };
 
 export default function InvoicesSection({ invoices }) {
+    const { flash } = usePage().props;
     const generateForm = useForm({});
 
     const handleGenerate = () => {
@@ -24,6 +25,11 @@ export default function InvoicesSection({ invoices }) {
     if (!invoices || invoices.length === 0) {
         return (
             <>
+                {flash.status && (
+                    <div className="mx-6 mt-4 rounded-md bg-emerald-900/30 border ring-1 ring-emerald-700/30 p-3">
+                        <p className="text-sm text-emerald-400">{flash.status}</p>
+                    </div>
+                )}
                 <div className="px-3 sm:px-6 py-3 flex items-center justify-end border-b border-slate-700">
                     <button
                         onClick={handleGenerate}
@@ -50,6 +56,11 @@ export default function InvoicesSection({ invoices }) {
 
     return (
         <>
+            {flash.status && (
+                <div className="mx-6 mt-4 rounded-md bg-emerald-900/30 border ring-1 ring-emerald-700/30 p-3">
+                    <p className="text-sm text-emerald-400">{flash.status}</p>
+                </div>
+            )}
             <div className="px-3 sm:px-6 py-3 border-b border-slate-700">
                 <div className="flex items-center justify-end">
                     <button
