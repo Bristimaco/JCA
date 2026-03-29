@@ -76,14 +76,14 @@ class MolliePaymentService
 
     public function syncInvoiceStatus(MembershipInvoice $invoice): ?string
     {
-        if (!$invoice->mollie_payment_id) {
+        if (! $invoice->mollie_payment_id) {
             return null;
         }
 
         $newStatus = $this->getPaymentStatus($invoice->mollie_payment_id);
         $invoice->update(['status' => $newStatus]);
 
-        if ($newStatus === InvoiceStatus::Paid->value && !$invoice->paid_at) {
+        if ($newStatus === InvoiceStatus::Paid->value && ! $invoice->paid_at) {
             $invoice->update(['paid_at' => now()]);
 
             foreach ($invoice->lines as $line) {

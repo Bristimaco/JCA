@@ -74,6 +74,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->role === UserRole::Coach;
     }
 
+    public function isBarmedewerker(): bool
+    {
+        return $this->role === UserRole::Barmedewerker;
+    }
+
     public function isApproved(): bool
     {
         return $this->role !== null && $this->is_active;

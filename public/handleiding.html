@@ -507,6 +507,11 @@
                     <a href="#admin-trainingsgroepen" class="nav-link">Trainingsgroepen</a>
                     <a href="#admin-facturen" class="nav-link">Facturen &amp; Betalingen</a>
                     <a href="#admin-vouchers" class="nav-link">Vouchers</a>
+                    <a href="#admin-bar-producten" class="nav-link">Bar Producten</a>
+                </div>
+                <div class="nav-group">
+                    <div class="nav-group-title">Bar &amp; Kassa</div>
+                    <a href="#pos-kassa" class="nav-link">POS Kassa</a>
                 </div>
                 <div class="nav-group">
                     <div class="nav-group-title">Trainingen</div>
@@ -1850,6 +1855,81 @@
                 <strong>Tip:</strong> Vouchers verlopen automatisch wanneer de geldigheidsdatum is bereikt.
                 Het systeem controleert dit dagelijks en markeert verlopen vouchers automatisch.
             </div>
+
+            <!-- Bar Producten -->
+            <h3 id="admin-bar-producten">Bar Producten</h3>
+            <p><span class="role-badge role-admin">Beheerder</span></p>
+            <p>
+                In het beheerderspaneel vind je de sectie <strong>&#8220;Bar Producten&#8221;</strong> waarin je
+                de producten beheert die beschikbaar zijn in de bar (en zichtbaar op het kassa-scherm).
+            </p>
+
+            <h4>Product toevoegen</h4>
+            <p>
+                Bovenaan de productsectie vul je de <strong>naam</strong>, <strong>prijs</strong> en
+                <strong>volgorde</strong> in en klik je op <strong>&#8220;Toevoegen&#8221;</strong>.
+                Het product verschijnt direct in de lijst en op het kassa-scherm.
+            </p>
+
+            <h4>Product bewerken</h4>
+            <p>
+                Klik op <strong>&#8220;Bewerken&#8221;</strong> naast een product om de naam, prijs,
+                volgordenummer en actief/inactief-status aan te passen. Klik op de statusbadge om te wisselen
+                tussen <strong>Actief</strong> en <strong>Inactief</strong>. Inactieve producten worden niet
+                getoond op het kassa-scherm.
+            </p>
+
+            <h4>Product verwijderen</h4>
+            <p>
+                Klik op <strong>&#8220;Verwijderen&#8221;</strong> en bevestig om een product permanent te verwijderen.
+            </p>
+
+            <div class="box box-info">
+                <strong>Tip:</strong> Gebruik het <em>volgorde</em>-veld om de producten in de gewenste volgorde
+                te tonen op het kassa-scherm. Lagere nummers verschijnen eerst.
+            </div>
+
+            <!-- POS Kassa -->
+            <h2 id="pos-kassa">POS Kassa</h2>
+            <p><span class="role-badge role-coach">Barmedewerker</span> <span
+                    class="role-badge role-admin">Beheerder</span></p>
+            <p>
+                De <strong>Kassa</strong> is een kassasysteem voor de bar van de club. Op het dashboard
+                verschijnt een <strong>&#8220;Kassa&#8221;</strong>-tegel voor gebruikers met de rol
+                <strong>Barmedewerker</strong> (en beheerders).
+            </p>
+
+            <h3>Hoe werkt de kassa?</h3>
+            <p>
+                Het kassa-scherm toont alle actieve barproducten als tegels met de productnaam en prijs.
+                Elk product heeft een <strong>+</strong> en <strong>&#8722;</strong> knop om het aantal te
+                verhogen of verlagen.
+            </p>
+            <ul>
+                <li>Klik op <strong>+</strong> om een product aan de bestelling toe te voegen</li>
+                <li>Klik op <strong>&#8722;</strong> om een product te verminderen</li>
+                <li>Het actuele aantal verschijnt als badge op de tegel</li>
+                <li>Onderaan het scherm staat een <strong>vaste balk</strong> met het <strong>totaalbedrag</strong>
+                    en het aantal items</li>
+            </ul>
+
+            <h3>Nieuwe bestelling</h3>
+            <p>
+                Klik op <strong>&#8220;Nieuwe bestelling&#8221;</strong> onderaan het scherm om alle aantallen
+                te resetten naar nul en een nieuwe bestelling te starten.
+            </p>
+
+            <div class="box box-info">
+                <strong>Let op:</strong> De kassa is puur een rekenmachine &#8212; bestellingen worden niet
+                opgeslagen. De betaling gebeurt via het fysieke bankcontact-apparaat in de bar.
+            </div>
+
+            <h3>Barmedewerker rol</h3>
+            <p>
+                De rol <strong>Barmedewerker</strong> geeft dezelfde basistoegang als een ouder of lid
+                (Mijn Leden, Archief, etc.), aangevuld met toegang tot het kassa-scherm.
+                Een beheerder kan deze rol toekennen bij het goedkeuren van een gebruiker.
+            </p>
 
             <!-- Trainingen & Aanwezigheid -->
             <h2 id="aanwezigheid">Trainingen &amp; Aanwezigheid</h2>

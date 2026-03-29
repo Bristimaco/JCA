@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminSessionHistoryController;
 use App\Http\Controllers\Admin\AgeCategoryController;
 use App\Http\Controllers\Admin\ApproveUserController;
+use App\Http\Controllers\Admin\BarProductController;
 use App\Http\Controllers\Admin\CategoryExcelController;
 use App\Http\Controllers\Admin\ClubSettingsController;
 use App\Http\Controllers\Admin\InvoiceController;
@@ -33,6 +34,7 @@ use App\Http\Controllers\MemberPhotoController;
 use App\Http\Controllers\MollieWebhookController;
 use App\Http\Controllers\MyMembersController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\POSController;
 use App\Http\Controllers\PushSubscriptionController;
 use App\Http\Controllers\TournamentAttachmentController;
 use App\Http\Controllers\TournamentDetailController;
@@ -148,6 +150,11 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::post('/vouchers/redeem', [VoucherController::class, 'redeem'])->name('vouchers.redeem');
     });
 
+    // POS (barmedewerker + admin)
+    Route::middleware('barmedewerker')->group(function () {
+        Route::get('/pos', POSController::class)->name('pos');
+    });
+
     // Admin routes
     Route::middleware('admin')->prefix('admin')->group(function () {
         Route::get('/', AdminDashboardController::class)->name('admin.dashboard');
@@ -191,6 +198,11 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
 
         // Vouchers
         Route::get('/vouchers', [VoucherController::class, 'index'])->name('admin.vouchers.index');
+
+        // Bar products
+        Route::post('/bar-products', [BarProductController::class, 'store'])->name('admin.bar-products.store');
+        Route::patch('/bar-products/{barProduct}', [BarProductController::class, 'update'])->name('admin.bar-products.update');
+        Route::delete('/bar-products/{barProduct}', [BarProductController::class, 'destroy'])->name('admin.bar-products.destroy');
 
         Route::delete('/members/{member}', [MemberController::class, 'destroy'])->name('admin.members.destroy');
 

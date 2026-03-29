@@ -3,12 +3,13 @@ import { useState } from 'react';
 import { Link } from '@inertiajs/react';
 import CollapsibleSection from '../../Components/CollapsibleSection';
 import AgeCategoriesSection from './AgeCategoriesSection';
+import BarProductsSection from './BarProductsSection';
 import InvoicesSection from './InvoicesSection';
 import TrainingGroupsSection from './TrainingGroupsSection';
 import VouchersSection from './VouchersSection';
 import WeightCategoriesSection from './WeightCategoriesSection';
 
-export default function AdminPanel({ pendingUsers, users, roles, ageCategories, weightCategories, allMembers, clubSettings, renewalDueCount, renewalDueMembers, trainingGroups, trainers, invoices, vouchers }) {
+export default function AdminPanel({ pendingUsers, users, roles, ageCategories, weightCategories, allMembers, clubSettings, renewalDueCount, renewalDueMembers, trainingGroups, trainers, invoices, vouchers, barProducts }) {
     const urlParams = new URLSearchParams(window.location.search);
     const [renewalListOpen, setRenewalListOpen] = useState(urlParams.get('renewal') === 'open');
     const openSection = urlParams.get('section');
@@ -106,6 +107,10 @@ export default function AdminPanel({ pendingUsers, users, roles, ageCategories, 
 
             <CollapsibleSection title="Vouchers" count={vouchers?.length || 0} defaultOpen={openSection === 'vouchers'}>
                 <VouchersSection vouchers={vouchers || []} />
+            </CollapsibleSection>
+
+            <CollapsibleSection title="Bar Producten" count={barProducts?.length || 0} defaultOpen={openSection === 'bar-producten'}>
+                <BarProductsSection products={barProducts || []} />
             </CollapsibleSection>
         </div>
     );
