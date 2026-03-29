@@ -13,6 +13,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 
+/**
+ * @property Carbon $date_of_birth
+ * @property Carbon|null $membership_start_date
+ * @property Carbon|null $membership_end_date
+ * @property Carbon $membership_renewal_date
+ * @property Carbon|null $membership_fee_reminded_at
+ */
 class Member extends Model
 {
     use HasFactory, SoftDeletes;
@@ -78,7 +85,7 @@ class Member extends Model
 
     public function fullName(): string
     {
-        return $this->first_name.' '.$this->last_name;
+        return $this->first_name . ' ' . $this->last_name;
     }
 
     public function isActive(): bool

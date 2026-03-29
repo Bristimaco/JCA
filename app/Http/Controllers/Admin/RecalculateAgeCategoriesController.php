@@ -16,6 +16,7 @@ class RecalculateAgeCategoriesController extends Controller
         $members = Member::whereNotNull('date_of_birth')->get();
         $updated = 0;
 
+        /** @var Member $member */
         foreach ($members as $member) {
             $category = $member->calculateAgeCategory($countryCode);
             $newId = $category?->id;

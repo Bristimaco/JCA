@@ -6,7 +6,13 @@ use App\Enums\InvoiceStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 
+/**
+ * @property float $total_amount
+ * @property Carbon|null $paid_at
+ * @property Carbon|null $due_date
+ */
 class MembershipInvoice extends Model
 {
     protected $guarded = ['id'];

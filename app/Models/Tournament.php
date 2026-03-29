@@ -6,7 +6,13 @@ use App\Enums\TournamentStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 
+/**
+ * @property Carbon $tournament_date
+ * @property Carbon|null $invitation_deadline
+ * @property Carbon|null $registration_deadline
+ */
 class Tournament extends Model
 {
     protected $guarded = ['id'];
