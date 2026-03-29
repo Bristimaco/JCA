@@ -693,6 +693,9 @@
                 <li><strong>Inactieve leden</strong> &#8212; leden met status &#8220;inactief&#8221;</li>
                 <li><strong>Vernieuwing nodig</strong> &#8212; leden waarvan de vernieuwingsdatum nadert of verlopen is
                 </li>
+                <li><strong>Openstaande facturen</strong> &#8212; het aantal onbetaalde facturen (status
+                    &#8220;In afwachting&#8221;). Klik op deze tegel om direct naar de facturensectie in het
+                    beheerderspaneel te navigeren.</li>
                 <li><strong>Komende toernooien</strong> &#8212; toernooien in voorbereiding of met lopende
                     inschrijvingen</li>
                 <li><strong>Actieve toernooien</strong> &#8212; toernooien die momenteel bezig zijn (status
@@ -1556,18 +1559,27 @@
                 weergegeven.
             </p>
 
-            <h4>Lidgeld betaald</h4>
+            <h4>Betaling via Mollie</h4>
             <p>
-                Wanneer een lid het lidgeld heeft betaald, klik je op de knop <strong>&#8220;Betaald&#8221;</strong> in
-                de ledenlijst of op de ledenkaart. Dit doet het volgende:
+                Het lidgeld wordt betaald via <strong>Mollie</strong>. Wanneer een factuur is aangemaakt, ontvangt
+                de gebruiker een melding met een betaallink en QR-code. Na succesvolle betaling via Mollie wordt
+                de status automatisch bijgewerkt:
             </p>
             <ul>
                 <li>De <strong>vernieuwingsdatum</strong> wordt automatisch met
                     <strong>1 jaar</strong> vooruit gezet.
                 </li>
+                <li>De lidmaatschapsstatus wordt op <strong>&#8220;Actief&#8221;</strong> gezet.</li>
+                <li>De gebruiker ontvangt een <strong>bevestigingsmelding</strong> dat de betaling is verwerkt.</li>
                 <li>De herinnering wordt gereset, zodat het systeem opnieuw een herinnering stuurt
                     &#233;&#233;n maand voor de nieuwe vernieuwingsdatum.</li>
             </ul>
+            <div class="box box-info">
+                <strong>Geen handmatige actie nodig</strong>
+                Betalingen worden volledig automatisch verwerkt via Mollie. De beheerder hoeft geen enkele
+                handmatige actie uit te voeren &#8212; de status, vernieuwingsdatum en bevestigingsmelding
+                worden automatisch afgehandeld.
+            </div>
 
             <h4>Automatische herinnering</h4>
             <p>
@@ -1711,6 +1723,11 @@
                 van alle facturen. Je ziet per factuur: de gebruiker, gekoppelde leden, bedrag, status, vervaldatum
                 en betaaldatum. Bovenaan staat een samenvatting met het aantal openstaande en betaalde facturen.
             </p>
+            <p>
+                Je kunt de facturensectie ook snel bereiken door op de
+                <strong>&#8220;Openstaande facturen&#8221;</strong>-tegel op het dashboard te klikken &#8212;
+                de sectie wordt dan automatisch opengeklapt.
+            </p>
             <h4>Facturen handmatig genereren</h4>
             <p>
                 Klik op <strong>&#8220;Facturen genereren&#8221;</strong> bovenaan de facturensectie om direct facturen
@@ -1722,6 +1739,27 @@
                 Als een factuur geen betaallink heeft (bijv. door een tijdelijke fout met Mollie), verschijnt de knop
                 <strong>&#8220;Betaallink aanmaken&#8221;</strong> in de actiekolom. Klik hierop om een nieuwe
                 Mollie betaallink te genereren en de gebruiker opnieuw op de hoogte te stellen.
+            </p>
+            <h4>Betalingsstatus controleren</h4>
+            <p>
+                Bij openstaande facturen met een betaallink verschijnt de knop
+                <strong>&#8220;Status controleren&#8221;</strong> (lichtblauw). Klik hierop om de huidige
+                betalingsstatus bij Mollie op te vragen. Dit is handig als je wilt controleren of een betaling
+                al is binnengekomen zonder te hoeven wachten op de automatische controle. Na het controleren
+                wordt de status direct bijgewerkt in het overzicht.
+            </p>
+            <div class="box box-tip">
+                <strong>Automatische statuscontrole</strong>
+                Het systeem controleert ook automatisch <strong>elk uur</strong> de status van alle openstaande
+                facturen bij Mollie. Daarnaast verwerkt Mollie betalingen via een webhook in real-time.
+                De handmatige controleknop is een extra vangnet.
+            </div>
+            <h4>Herinnering sturen</h4>
+            <p>
+                Bij openstaande facturen verschijnt een oranje knop <strong>&#8220;Herinnering sturen&#8221;</strong>.
+                Klik hierop om de gebruiker opnieuw een melding (en/of e-mail) te sturen met het openstaande bedrag,
+                de betaallink en de QR-code. Dit is handig als de gebruiker de oorspronkelijke melding over het hoofd
+                heeft gezien.
             </p>
             <div class="box box-info">
                 <strong>Let op:</strong> Facturen worden alleen aangemaakt voor leden die in een trainingsgroep zitten.
@@ -1792,12 +1830,24 @@
             <ol>
                 <li>Open het kiosk-scherm (<code>/attendance</code>) op de tablet.</li>
                 <li>Voer de <strong>PIN-code</strong> in (ingesteld door de beheerder in Club Instellingen) en klik op
-                    <strong>Doorgaan</strong>.</li>
-                <li>Het scherm toont alle <strong>actieve (geopende) trainingen</strong> van vandaag.</li>
+                    <strong>Doorgaan</strong>.
+                </li>
+                <li>Het scherm toont alle <strong>actieve (geopende) trainingen</strong> van vandaag. Als er nog
+                    geen actieve trainingen zijn, wordt het scherm <strong>automatisch elke 10 seconden
+                        ververst</strong>
+                    zodat nieuwe sessies direct verschijnen zodra een trainer ze opent.</li>
                 <li>Klik op een training om de ledenlijst te zien.</li>
                 <li>Tik op de naam van een lid om de aanwezigheid te registreren (groen = aanwezig). Tik opnieuw om te
                     annuleren.</li>
             </ol>
+
+            <div class="box box-info">
+                <strong>Beveiligde afmelding</strong>
+                Om het kiosk-scherm af te sluiten, klik je op <strong>&#8220;Uitloggen&#8221;</strong>. Er wordt
+                gevraagd om de <strong>PIN-code</strong> opnieuw in te voeren als beveiliging (zodat leden het
+                scherm niet per ongeluk afsluiten). Er verschijnt een <strong>afteltimer van 15 seconden</strong>
+                &#8212; als er niet wordt ingelogd, keert het scherm automatisch terug naar het PIN-invoerscherm.
+            </div>
 
             <h4>2. Via het trainerdashboard</h4>
             <p><span class="role-badge role-coach">Trainer</span></p>
@@ -2293,6 +2343,11 @@
                 ongelezen melding om deze als gelezen te markeren. Gebruik de knop <em>Alles gelezen</em> bovenaan de
                 lijst om alle meldingen in &#233;&#233;n keer als gelezen te markeren.
             </p>
+            <p>
+                <strong>Gelezen meldingen verwijderen:</strong> Bij gelezen meldingen verschijnt een
+                <strong>prullenbakicoon</strong> (&#128465;) waarmee je de melding permanent kunt verwijderen.
+                Ongelezen meldingen kunnen niet worden verwijderd &#8212; markeer ze eerst als gelezen.
+            </p>
 
             <h3>Soorten meldingen</h3>
             <p>
@@ -2338,9 +2393,10 @@
             <p>
                 Wanneer er een factuur is aangemaakt voor het lidgeld, ontvang je een melding met het totaalbedrag,
                 het boekjaar, de vervaldatum en een overzicht per lid met de bijbehorende trainingsgroep en het
-                bedrag. De melding bevat een <strong>QR-code</strong> die je kunt scannen om direct te betalen, en
-                een <strong>&#8220;Nu betalen&#8221;</strong>-knop die je rechtstreeks naar de Mollie betaalpagina
-                leidt.
+                bedrag. De melding bevat een <strong>QR-code</strong> die je kunt scannen <strong>of
+                    aantikken</strong> om direct te betalen. Op mobiel kun je de QR-code aantikken om rechtstreeks
+                naar de Mollie betaalpagina te gaan. Daarnaast is er een <strong>&#8220;Nu betalen&#8221;</strong>-knop
+                die je eveneens rechtstreeks naar de betaalpagina leidt.
             </p>
 
             <h4>&#9989; Betaling bevestigd</h4>
@@ -2514,9 +2570,17 @@
             <h4>Hoe betaal ik het lidgeld?</h4>
             <p>
                 Je ontvangt een melding (en/of e-mail) met een factuur. In de melding vind je een
-                <strong>&#8220;Nu betalen&#8221;</strong>-knop of een <strong>QR-code</strong> die je kunt scannen.
-                Beide leiden naar een beveiligde Mollie-betaalpagina waar je de betaling kunt afronden. Na succesvolle
-                betaling wordt je vernieuwingsdatum automatisch met 1 jaar verlengd.
+                <strong>&#8220;Nu betalen&#8221;</strong>-knop en een <strong>QR-code</strong> die je kunt scannen
+                of aantikken. Beide leiden naar een beveiligde Mollie-betaalpagina waar je de betaling kunt afronden.
+                Na succesvolle betaling wordt je vernieuwingsdatum automatisch met 1 jaar verlengd en ontvang je
+                een bevestigingsmelding.
+            </p>
+
+            <h4>De factuurstatus staat nog op &#8220;In afwachting&#8221; maar ik heb al betaald?</h4>
+            <p>
+                Het systeem controleert automatisch elk uur de betalingsstatus. De beheerder kan ook handmatig op
+                <strong>&#8220;Status controleren&#8221;</strong> klikken in de facturensectie om de status direct bij
+                Mollie op te vragen. De status wordt dan meteen bijgewerkt.
             </p>
 
             <h4>Kan ik mijn meldingsvoorkeur wijzigen?</h4>
@@ -2536,7 +2600,7 @@
             <div
                 style="margin-top: 80px; padding-top: 24px; border-top: 1px solid var(--slate-200); text-align: center;">
                 <p style="font-size: 12px; color: var(--slate-400);">
-                    JCA Handleiding &#8212; Laatst bijgewerkt: 29 maart 2026
+                    JCA Handleiding &#8212; Laatst bijgewerkt: 1 april 2026
                 </p>
             </div>
 
