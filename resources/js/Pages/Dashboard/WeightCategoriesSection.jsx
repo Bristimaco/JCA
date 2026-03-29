@@ -33,7 +33,7 @@ export default function WeightCategoriesSection({ ageCategories, weightCategorie
 
     return (
         <>
-            <div className="px-6 py-3 flex items-center justify-end gap-2 flex-wrap border-b border-slate-700">
+            <div className="px-3 sm:px-6 py-3 flex items-center justify-end gap-2 flex-wrap border-b border-slate-700">
                 <label className="text-sm text-slate-500">Land:</label>
                 <select
                     value={selectedCountry}
@@ -76,7 +76,7 @@ export default function WeightCategoriesSection({ ageCategories, weightCategorie
             )}
 
             {filteredAgeCategories.length === 0 ? (
-                <div className="px-6 py-8 text-center text-slate-500">
+                <div className="px-3 sm:px-6 py-8 text-center text-slate-500">
                     Geen leeftijdscategorieën voor {selectedCountry}. Maak eerst leeftijdscategorieën aan.
                 </div>
             ) : (
@@ -110,7 +110,7 @@ function AgeCategoryWeightBlock({ ageCategory, weights, isExpanded, onToggle }) 
         <div>
             <button
                 onClick={onToggle}
-                className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-slate-700/50"
+                className="w-full px-3 sm:px-6 py-4 flex items-center justify-between text-left hover:bg-slate-700/50"
             >
                 <div>
                     <span className="font-medium text-white">{ageCategory.name}</span>
@@ -132,7 +132,7 @@ function AgeCategoryWeightBlock({ ageCategory, weights, isExpanded, onToggle }) 
             </button>
 
             {isExpanded && (
-                <div className="px-6 pb-4">
+                <div className="px-3 sm:px-6 pb-4">
                     <div className="flex items-center justify-end mb-3">
                         <button
                             onClick={() => setShowAddForm(!showAddForm)}

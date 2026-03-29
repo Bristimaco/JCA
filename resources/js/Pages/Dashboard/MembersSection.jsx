@@ -63,7 +63,7 @@ export default function MembersSection({ members, ageCategories, weightCategorie
     if (viewingMember) {
         return (
             <div className="bg-slate-900 rounded-lg shadow-sm border border-slate-800 border-t-2 border-t-rose-700">
-                <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
+                <div className="px-3 sm:px-6 py-4 border-b border-slate-800 flex items-center justify-between">
                     <h2 className="text-lg font-semibold text-white">Lidkaart</h2>
                     <button
                         onClick={() => setViewingMember(null)}
@@ -114,7 +114,7 @@ export default function MembersSection({ members, ageCategories, weightCategorie
 
     return (
         <div className="bg-slate-900 rounded-lg shadow-sm border border-slate-800 border-t-2 border-t-rose-700">
-            <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
+            <div className="px-3 sm:px-6 py-4 border-b border-slate-800 flex items-center justify-between">
                 <h2 className="text-lg font-semibold text-white">
                     Leden
                     <span className="ml-2 inline-flex items-center rounded-full bg-slate-800 px-2.5 py-0.5 text-xs font-medium text-slate-400">
@@ -207,7 +207,7 @@ export default function MembersSection({ members, ageCategories, weightCategorie
             )}
 
             {filtered.length === 0 ? (
-                <div className="px-6 py-8 text-center text-slate-500">
+                <div className="px-3 sm:px-6 py-8 text-center text-slate-500">
                     {search ? 'Geen leden gevonden.' : 'Nog geen leden.'}
                 </div>
             ) : (
@@ -253,7 +253,7 @@ function MemberRow({ member, ageCategoryName, weightCategoryName, onView, onEdit
     const renewalOverdue = daysUntilRenewal !== null && daysUntilRenewal < 0;
 
     return (
-        <div className={`px-6 py-4 flex items-center justify-between gap-4 ${member.membership_status !== 'active' ? 'opacity-60' : ''}`}>
+        <div className={`px-3 sm:px-6 py-4 flex items-center justify-between gap-4 ${member.membership_status !== 'active' ? 'opacity-60' : ''}`}>
             <div className="flex items-center gap-3 min-w-0 flex-1">
                 {member.photo_url ? (
                     <img src={member.photo_url} alt="" className="w-10 h-10 rounded-full object-cover" />
@@ -375,7 +375,7 @@ function MemberForm({ member, onSuccess, onCancel, ageCategories, weightCategori
     };
 
     return (
-        <form onSubmit={handleSubmit} className="px-6 py-4 bg-slate-700/50 border-b border-slate-800">
+        <form onSubmit={handleSubmit} className="px-3 sm:px-6 py-4 bg-slate-700/50 border-b border-slate-800">
             <h3 className="text-sm font-semibold text-slate-300 mb-3">
                 {isEditing ? `Bewerk: ${member.first_name} ${member.last_name}` : 'Nieuw lid'}
             </h3>

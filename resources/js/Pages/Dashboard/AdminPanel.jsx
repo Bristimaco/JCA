@@ -85,7 +85,7 @@ export default function AdminPanel({ pendingUsers, users, roles, ageCategories, 
             </CollapsibleSection>
 
             <CollapsibleSection title="Trainingshistoriek">
-                <div className="px-6 py-4">
+                <div className="px-3 sm:px-6 py-4">
                     <div className="flex items-center gap-4 mb-2">
                         <Link href="/admin/attendance-report" className="text-sm font-medium text-emerald-400 hover:text-emerald-300">
                             Aanwezigheidsrapport
@@ -247,7 +247,7 @@ function PendingUsersSection({ pendingUsers, roles }) {
             )}
 
             {pendingUsers.length === 0 ? (
-                <div className="px-6 py-8 text-center text-slate-500">
+                <div className="px-3 sm:px-6 py-8 text-center text-slate-500">
                     Geen openstaande aanvragen.
                 </div>
             ) : (
@@ -272,7 +272,7 @@ function PendingUserRow({ user, roles }) {
     };
 
     return (
-        <div className="px-6 py-4 flex items-center justify-between gap-4">
+        <div className="px-3 sm:px-6 py-4 flex items-center justify-between gap-4">
             <div className="min-w-0 flex-1">
                 <p className="font-medium text-white truncate">{user.name}</p>
                 <p className="text-sm text-slate-500">{user.email}</p>
@@ -311,7 +311,7 @@ function UsersSection({ users, roles, allMembers }) {
     return (
         <>
             {users.length === 0 ? (
-                <div className="px-6 py-8 text-center text-slate-500">
+                <div className="px-3 sm:px-6 py-8 text-center text-slate-500">
                     Geen gebruikers gevonden.
                 </div>
             ) : (
@@ -352,7 +352,7 @@ function UserRow({ user, roles, allMembers }) {
 
     if (editing) {
         return (
-            <form onSubmit={handleSave} className="px-6 py-4 bg-slate-700/50">
+            <form onSubmit={handleSave} className="px-3 sm:px-6 py-4 bg-slate-700/50">
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
                     <div>
                         <label className="block text-xs font-medium text-slate-400 mb-1">Naam</label>
@@ -423,7 +423,7 @@ function UserRow({ user, roles, allMembers }) {
 
     return (
         <>
-            <div className={`px-6 py-4 flex items-center justify-between gap-4 ${!user.is_active ? 'opacity-50' : ''}`}>
+            <div className={`px-3 sm:px-6 py-4 flex items-center justify-between gap-4 ${!user.is_active ? 'opacity-50' : ''}`}>
                 <div className="min-w-0 flex-1">
                     <p className="font-medium text-white truncate">
                         {user.name}
@@ -474,7 +474,7 @@ function UserRow({ user, roles, allMembers }) {
             </div>
 
             {managingMembers && (
-                <div className="px-6 py-3 bg-slate-700/50 border-t border-slate-700">
+                <div className="px-3 sm:px-6 py-3 bg-slate-700/50 border-t border-slate-700">
                     <p className="text-xs font-medium text-slate-500 mb-2">Gekoppelde leden</p>
                     <div className="flex flex-wrap gap-2 mb-2">
                         {membersForm.data.member_ids.map((mid) => {

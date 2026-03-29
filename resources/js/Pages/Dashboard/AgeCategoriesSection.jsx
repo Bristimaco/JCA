@@ -32,7 +32,7 @@ export default function AgeCategoriesSection({ ageCategories }) {
 
     return (
         <>
-            <div className="px-6 py-3 flex items-center justify-end gap-3 flex-wrap border-b border-slate-700">
+            <div className="px-3 sm:px-6 py-3 flex items-center justify-end gap-3 flex-wrap border-b border-slate-700">
                 <div className="flex items-center gap-2">
                     <label className="text-sm text-slate-500">Land:</label>
                     <select
@@ -116,7 +116,7 @@ export default function AgeCategoriesSection({ ageCategories }) {
             )}
 
             {filtered.length === 0 ? (
-                <div className="px-6 py-8 text-center text-slate-500">
+                <div className="px-3 sm:px-6 py-8 text-center text-slate-500">
                     Geen leeftijdscategorieën voor {selectedCountry}.
                 </div>
             ) : (
@@ -160,7 +160,7 @@ function AddAgeCategoryForm({ countryCode, onSuccess }) {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="px-6 py-4 bg-slate-700/50 border-b border-slate-700">
+        <form onSubmit={handleSubmit} className="px-3 sm:px-6 py-4 bg-slate-700/50 border-b border-slate-700">
             <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-3">
                 <div>
                     <label className="block text-xs font-medium text-slate-400 mb-1">Naam</label>
@@ -259,7 +259,7 @@ function AgeCategoryRow({ category }) {
 
     if (editing) {
         return (
-            <form onSubmit={handleSave} className="px-6 py-4 bg-slate-700/50">
+            <form onSubmit={handleSave} className="px-3 sm:px-6 py-4 bg-slate-700/50">
                 <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-3">
                     <div>
                         <label className="block text-xs font-medium text-slate-400 mb-1">Naam</label>
@@ -337,7 +337,7 @@ function AgeCategoryRow({ category }) {
     }
 
     return (
-        <div className="px-6 py-4 flex items-center justify-between gap-4">
+        <div className="px-3 sm:px-6 py-4 flex items-center justify-between gap-4">
             <div className="min-w-0 flex-1">
                 <p className="font-medium text-white">
                     {category.name}

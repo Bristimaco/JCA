@@ -24,7 +24,7 @@ export default function InvoicesSection({ invoices }) {
     if (!invoices || invoices.length === 0) {
         return (
             <>
-                <div className="px-6 py-3 flex items-center justify-end border-b border-slate-700">
+                <div className="px-3 sm:px-6 py-3 flex items-center justify-end border-b border-slate-700">
                     <button
                         onClick={handleGenerate}
                         disabled={generateForm.processing}
@@ -33,7 +33,7 @@ export default function InvoicesSection({ invoices }) {
                         {generateForm.processing ? 'Bezig...' : 'Facturen genereren'}
                     </button>
                 </div>
-                <div className="px-6 py-8 text-center text-slate-500">
+                <div className="px-3 sm:px-6 py-8 text-center text-slate-500">
                     Geen facturen gevonden.
                 </div>
             </>
@@ -50,7 +50,7 @@ export default function InvoicesSection({ invoices }) {
 
     return (
         <>
-            <div className="px-6 py-3 border-b border-slate-700">
+            <div className="px-3 sm:px-6 py-3 border-b border-slate-700">
                 <div className="flex items-center justify-end">
                     <button
                         onClick={handleGenerate}
@@ -73,13 +73,13 @@ export default function InvoicesSection({ invoices }) {
                 <table className="w-full text-sm">
                     <thead>
                         <tr className="border-b border-slate-700 text-left">
-                            <th className="px-6 py-3 text-xs font-medium text-slate-400">Gebruiker</th>
-                            <th className="px-6 py-3 text-xs font-medium text-slate-400">Leden</th>
-                            <th className="px-6 py-3 text-xs font-medium text-slate-400">Bedrag</th>
-                            <th className="px-6 py-3 text-xs font-medium text-slate-400">Status</th>
-                            <th className="px-6 py-3 text-xs font-medium text-slate-400">Vervaldatum</th>
-                            <th className="px-6 py-3 text-xs font-medium text-slate-400">Betaald</th>
-                            <th className="px-6 py-3 text-xs font-medium text-slate-400">Acties</th>
+                            <th className="px-3 sm:px-6 py-3 text-xs font-medium text-slate-400">Gebruiker</th>
+                            <th className="px-3 sm:px-6 py-3 text-xs font-medium text-slate-400">Leden</th>
+                            <th className="px-3 sm:px-6 py-3 text-xs font-medium text-slate-400">Bedrag</th>
+                            <th className="px-3 sm:px-6 py-3 text-xs font-medium text-slate-400">Status</th>
+                            <th className="px-3 sm:px-6 py-3 text-xs font-medium text-slate-400">Vervaldatum</th>
+                            <th className="px-3 sm:px-6 py-3 text-xs font-medium text-slate-400">Betaald</th>
+                            <th className="px-3 sm:px-6 py-3 text-xs font-medium text-slate-400">Acties</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-800">
@@ -102,11 +102,11 @@ function InvoiceRow({ invoice }) {
 
     return (
         <tr className="hover:bg-slate-800/30">
-            <td className="px-6 py-3">
+            <td className="px-3 sm:px-6 py-3">
                 <p className="text-sm font-medium text-white">{invoice.user_name}</p>
                 <p className="text-xs text-slate-500">{invoice.user_email}</p>
             </td>
-            <td className="px-6 py-3">
+            <td className="px-3 sm:px-6 py-3">
                 <div className="flex flex-wrap gap-1">
                     {invoice.members.map((m, i) => (
                         <span key={i} className="inline-flex items-center rounded-full bg-slate-800 px-2 py-0.5 text-xs text-slate-300">
@@ -115,21 +115,21 @@ function InvoiceRow({ invoice }) {
                     ))}
                 </div>
             </td>
-            <td className="px-6 py-3 text-sm font-medium text-emerald-400">
+            <td className="px-3 sm:px-6 py-3 text-sm font-medium text-emerald-400">
                 €{Number(invoice.total_amount).toFixed(2)}
             </td>
-            <td className="px-6 py-3">
+            <td className="px-3 sm:px-6 py-3">
                 <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${statusColors[invoice.status] || 'bg-slate-700 text-slate-300'}`}>
                     {statusLabels[invoice.status] || invoice.status}
                 </span>
             </td>
-            <td className="px-6 py-3 text-xs text-slate-400">
+            <td className="px-3 sm:px-6 py-3 text-xs text-slate-400">
                 {invoice.due_date ? new Date(invoice.due_date).toLocaleDateString('nl-BE') : '-'}
             </td>
-            <td className="px-6 py-3 text-xs text-slate-400">
+            <td className="px-3 sm:px-6 py-3 text-xs text-slate-400">
                 {invoice.paid_at ? new Date(invoice.paid_at).toLocaleDateString('nl-BE') : '-'}
             </td>
-            <td className="px-6 py-3">
+            <td className="px-3 sm:px-6 py-3">
                 {invoice.status === 'pending' && !invoice.has_payment_url && (
                     <button
                         onClick={handleRetry}

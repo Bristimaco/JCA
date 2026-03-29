@@ -58,7 +58,7 @@ export default function TournamentsSection({ tournaments, ageCategories, competi
             )}
 
             {tournaments.length === 0 ? (
-                <div className="px-6 py-8 text-center text-slate-500">
+                <div className="px-3 sm:px-6 py-8 text-center text-slate-500">
                     Nog geen toernooien.
                 </div>
             ) : (
@@ -347,7 +347,7 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
                         <select
                             value={addMemberForm.data.member_id}
                             onChange={e => addMemberForm.setData('member_id', e.target.value)}
-                            className="rounded-md border border-slate-600 bg-slate-700/50 text-white text-xs py-1 px-2 max-w-[200px]"
+                            className="rounded-md border border-slate-600 bg-slate-700/50 text-white text-xs py-1 px-2 max-w-full sm:max-w-[200px]"
                         >
                             <option value="">Lid toevoegen...</option>
                             {availableMembers.map(m => (
@@ -500,22 +500,26 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
 
                 return (
                     <>
-                        <table className="w-full">
-                            {tableHeader}
-                            <tbody>
-                                {participating.map(renderMember)}
-                            </tbody>
-                        </table>
+                        <div className="overflow-x-auto">
+                            <table className="w-full">
+                                {tableHeader}
+                                <tbody>
+                                    {participating.map(renderMember)}
+                                </tbody>
+                            </table>
+                        </div>
                         {notParticipating.length > 0 && (
                             <>
                                 <div className="px-4 py-2 bg-slate-900 border-t border-b border-slate-800">
                                     <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Niet-deelnemers ({notParticipating.length})</span>
                                 </div>
-                                <table className="w-full opacity-60">
-                                    <tbody>
-                                        {notParticipating.map(renderMember)}
-                                    </tbody>
-                                </table>
+                                <div className="overflow-x-auto">
+                                    <table className="w-full opacity-60">
+                                        <tbody>
+                                            {notParticipating.map(renderMember)}
+                                        </tbody>
+                                    </table>
+                                </div>
                             </>
                         )}
                     </>
@@ -533,7 +537,7 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
                             <select
                                 value={addCoachForm.data.member_id}
                                 onChange={e => addCoachForm.setData('member_id', e.target.value)}
-                                className="rounded-md border border-slate-600 bg-slate-700/50 text-white text-xs py-1 px-2 max-w-[200px]"
+                                className="rounded-md border border-slate-600 bg-slate-700/50 text-white text-xs py-1 px-2 max-w-full sm:max-w-[200px]"
                             >
                                 <option value="">Trainer toevoegen...</option>
                                 {filteredCoaches.map(c => (
@@ -647,7 +651,7 @@ function TournamentForm({ tournament, ageCategories, onSuccess, onCancel }) {
     const hasMap = form.data.latitude && form.data.longitude;
 
     return (
-        <form onSubmit={handleSubmit} className="px-6 py-4 bg-slate-700/50 border-b border-slate-800">
+        <form onSubmit={handleSubmit} className="px-3 sm:px-6 py-4 bg-slate-700/50 border-b border-slate-800">
             <h3 className="text-sm font-semibold text-slate-300 mb-3">
                 {isEditing ? `Bewerk: ${tournament.name}` : 'Nieuw toernooi'}
             </h3>

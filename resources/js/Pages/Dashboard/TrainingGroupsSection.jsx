@@ -8,7 +8,7 @@ export default function TrainingGroupsSection({ trainingGroups, trainers, allMem
 
     return (
         <>
-            <div className="px-6 py-3 flex items-center justify-end border-b border-slate-700">
+            <div className="px-3 sm:px-6 py-3 flex items-center justify-end border-b border-slate-700">
                 <button
                     onClick={() => { setShowAddForm(!showAddForm); setEditingId(null); }}
                     className="rounded-md bg-rose-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-rose-700"
@@ -25,7 +25,7 @@ export default function TrainingGroupsSection({ trainingGroups, trainers, allMem
             )}
 
             {trainingGroups.length === 0 ? (
-                <div className="px-6 py-8 text-center text-slate-500">
+                <div className="px-3 sm:px-6 py-8 text-center text-slate-500">
                     Geen trainingsgroepen. Maak een nieuwe groep aan.
                 </div>
             ) : (
@@ -267,7 +267,7 @@ function TrainingGroupRow({ group, onEdit, onManageMembers, isManagingMembers })
     };
 
     return (
-        <div className="px-6 py-4">
+        <div className="px-3 sm:px-6 py-4">
             <div className="flex items-start justify-between gap-4">
                 <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap">
@@ -335,7 +335,7 @@ function MemberAssignment({ group, allMembers, onClose }) {
     };
 
     return (
-        <div className="px-6 py-3 bg-slate-800/50 border-t border-slate-700">
+        <div className="px-3 sm:px-6 py-3 bg-slate-800/50 border-t border-slate-700">
             <p className="text-xs font-medium text-slate-400 mb-2">Leden in {group.name}</p>
             <div className="flex flex-wrap gap-2 mb-3">
                 {form.data.member_ids.map((mid) => {

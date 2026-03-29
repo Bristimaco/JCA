@@ -7,7 +7,7 @@ export default function CollapsibleSection({ title, count, defaultOpen = false, 
         <div className="bg-slate-900 rounded-lg shadow-sm border border-slate-800 border-t-2 border-t-rose-700">
             <button
                 onClick={() => setOpen(!open)}
-                className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-slate-800/30 transition-colors"
+                className="w-full px-3 sm:px-6 py-4 flex items-center justify-between text-left hover:bg-slate-800/30 transition-colors"
             >
                 <h2 className="text-lg font-semibold text-white">
                     {title}

@@ -104,24 +104,26 @@ export default function ArchivedTournaments({ tournaments }) {
                                     {t.results.length === 0 ? (
                                         <p className="px-5 py-4 text-sm text-slate-500">Geen resultaten beschikbaar.</p>
                                     ) : (
-                                        <table className="w-full text-sm">
-                                            <thead>
-                                                <tr className="border-b border-slate-700/50">
-                                                    <th className="px-5 py-2 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-500">Naam</th>
-                                                    <th className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-500">Resultaat</th>
-                                                    <th className="px-5 py-2 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-500">Opmerking</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {t.results.map((r, idx) => (
-                                                    <tr key={idx} className={idx % 2 === 0 ? 'bg-slate-800/20' : ''}>
-                                                        <td className="px-5 py-2.5 text-slate-300 font-medium">{r.member_name}</td>
-                                                        <td className="px-3 py-2.5">{resultBadge(r.result)}</td>
-                                                        <td className="px-5 py-2.5 text-xs text-slate-400 italic">{r.notes || '—'}</td>
+                                        <div className="overflow-x-auto">
+                                            <table className="w-full text-sm">
+                                                <thead>
+                                                    <tr className="border-b border-slate-700/50">
+                                                        <th className="px-5 py-2 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-500">Naam</th>
+                                                        <th className="px-3 py-2 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-500">Resultaat</th>
+                                                        <th className="px-5 py-2 text-left text-[11px] font-semibold uppercase tracking-wider text-slate-500">Opmerking</th>
                                                     </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
+                                                </thead>
+                                                <tbody>
+                                                    {t.results.map((r, idx) => (
+                                                        <tr key={idx} className={idx % 2 === 0 ? 'bg-slate-800/20' : ''}>
+                                                            <td className="px-5 py-2.5 text-slate-300 font-medium">{r.member_name}</td>
+                                                            <td className="px-3 py-2.5">{resultBadge(r.result)}</td>
+                                                            <td className="px-5 py-2.5 text-xs text-slate-400 italic">{r.notes || '—'}</td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     )}
                                 </div>
                             )}

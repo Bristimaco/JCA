@@ -24,7 +24,7 @@ export default function TrainingGroups({ groups, allMembers }) {
                     <div className="space-y-4">
                         {groups.map((group) => (
                             <div key={group.id} className="bg-slate-900 rounded-xl ring-1 ring-slate-800 overflow-hidden">
-                                <div className="px-6 py-4">
+                                <div className="px-3 sm:px-6 py-4">
                                     <div className="flex items-start justify-between gap-4">
                                         <div className="min-w-0 flex-1">
                                             <div className="flex items-center gap-2 flex-wrap">
@@ -55,8 +55,8 @@ export default function TrainingGroups({ groups, allMembers }) {
                                             <button
                                                 onClick={() => setManagingId(managingId === group.id ? null : group.id)}
                                                 className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${managingId === group.id
-                                                        ? 'bg-rose-600 text-white'
-                                                        : 'bg-slate-800 text-rose-400 hover:bg-slate-700 ring-1 ring-slate-700'
+                                                    ? 'bg-rose-600 text-white'
+                                                    : 'bg-slate-800 text-rose-400 hover:bg-slate-700 ring-1 ring-slate-700'
                                                     }`}
                                             >
                                                 Leden beheren
@@ -108,7 +108,7 @@ function MemberAssignment({ group, allMembers, onClose }) {
     const availableMembers = allMembers.filter((m) => !form.data.member_ids.includes(m.id));
 
     return (
-        <div className="px-6 py-4 bg-slate-800/50 border-t border-slate-700">
+        <div className="px-3 sm:px-6 py-4 bg-slate-800/50 border-t border-slate-700">
             <p className="text-sm font-medium text-slate-300 mb-3">Leden in {group.name}</p>
 
             <div className="flex flex-wrap gap-2 mb-4">
