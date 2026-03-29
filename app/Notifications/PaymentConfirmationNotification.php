@@ -15,8 +15,7 @@ class PaymentConfirmationNotification extends Notification
 
     public function __construct(
         public MembershipInvoice $invoice,
-    ) {
-    }
+    ) {}
 
     public function via(object $notifiable): array
     {
@@ -39,9 +38,9 @@ class PaymentConfirmationNotification extends Notification
         $club = ClubSettings::current();
 
         return (new MailMessage)
-            ->subject('Betaling ontvangen — Lidgeld ' . $this->invoice->year)
+            ->subject('Betaling ontvangen — Lidgeld '.$this->invoice->year)
             ->greeting("Hallo {$notifiable->name},")
-            ->line('Uw betaling van €' . number_format($this->invoice->total_amount, 2, ',', '.') . " voor het lidgeld {$this->invoice->year} bij {$club->name} is ontvangen.")
+            ->line('Uw betaling van €'.number_format($this->invoice->total_amount, 2, ',', '.')." voor het lidgeld {$this->invoice->year} bij {$club->name} is ontvangen.")
             ->line('De vernieuwingsdatum van de leden is automatisch verlengd met een jaar.')
             ->line('Bedankt voor uw betaling!');
     }
@@ -51,12 +50,12 @@ class PaymentConfirmationNotification extends Notification
         $club = ClubSettings::current();
         $lines = $this->invoice->lines;
 
-        $memberNames = $lines->map(fn($line) => $line->member?->fullName() ?? 'Onbekend')->join(', ');
+        $memberNames = $lines->map(fn ($line) => $line->member?->fullName() ?? 'Onbekend')->join(', ');
 
         return [
             'icon' => '✅',
             'title' => 'Betaling ontvangen',
-            'message' => "Lidgeld {$this->invoice->year} — €" . number_format($this->invoice->total_amount, 2, ',', '.') . ' betaald',
+            'message' => "Lidgeld {$this->invoice->year} — €".number_format($this->invoice->total_amount, 2, ',', '.').' betaald',
             'invoice_id' => $this->invoice->id,
             'detail' => [
                 'club_name' => $club->name,
@@ -64,7 +63,7 @@ class PaymentConfirmationNotification extends Notification
                 'total_amount' => number_format($this->invoice->total_amount, 2, ',', '.'),
                 'paid_at' => $this->invoice->paid_at?->format('d/m/Y H:i'),
                 'member_names' => $memberNames,
-                'body' => 'Uw betaling van €' . number_format($this->invoice->total_amount, 2, ',', '.') . ' voor het lidgeld ' . $this->invoice->year . ' bij ' . $club->name . ' is ontvangen. De vernieuwingsdatum van de leden is automatisch verlengd.',
+                'body' => 'Uw betaling van €'.number_format($this->invoice->total_amount, 2, ',', '.').' voor het lidgeld '.$this->invoice->year.' bij '.$club->name.' is ontvangen. De vernieuwingsdatum van de leden is automatisch verlengd.',
             ],
         ];
     }
@@ -73,7 +72,7 @@ class PaymentConfirmationNotification extends Notification
     {
         return [
             'title' => 'Betaling ontvangen',
-            'body' => "Lidgeld {$this->invoice->year} — €" . number_format($this->invoice->total_amount, 2, ',', '.') . ' betaald',
+            'body' => "Lidgeld {$this->invoice->year} — €".number_format($this->invoice->total_amount, 2, ',', '.').' betaald',
             'url' => '/',
         ];
     }

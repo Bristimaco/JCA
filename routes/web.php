@@ -39,6 +39,7 @@ use App\Http\Controllers\TournamentDetailController;
 use App\Http\Controllers\TournamentRsvpController;
 use App\Http\Controllers\Trainer\TrainerAttendanceController;
 use App\Http\Controllers\Trainer\TrainerTournamentController;
+use App\Http\Controllers\Trainer\TrainerTrainingGroupController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -120,6 +121,7 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
 
     // Trainer routes
     Route::middleware('coach')->prefix('trainer')->group(function () {
+        Route::get('/training-groups', [TrainerTrainingGroupController::class, 'index'])->name('trainer.training-groups.index');
         Route::get('/toernooien/{tournament}', [TrainerTournamentController::class, 'show'])->name('trainer.tournament.show');
         Route::post('/toernooien/{tournament}/resultaten', [TrainerTournamentController::class, 'storeResults'])->name('trainer.tournament.results');
         Route::post('/toernooien/{tournament}/afsluiten', [TrainerTournamentController::class, 'closeTournament'])->name('trainer.tournament.close');
