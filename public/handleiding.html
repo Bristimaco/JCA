@@ -501,7 +501,9 @@
                     <a href="#admin-dashboard" class="nav-link">Beheerderspaneel</a>
                     <a href="#admin-gebruikers" class="nav-link">Gebruikersbeheer</a>
                     <a href="#admin-leden" class="nav-link">Ledenbeheer</a>
+                    <a href="#admin-voogden" class="nav-link">Voogden</a>
                     <a href="#admin-lidgeld" class="nav-link">Lidgeld &amp; Vernieuwing</a>
+                    <a href="#admin-lidmaatschap-status" class="nav-link">Lidmaatschapsstatus</a>
                     <a href="#admin-categorieen" class="nav-link">Categorie&#235;n</a>
                     <a href="#admin-club" class="nav-link">Clubinstellingen</a>
                     <a href="#admin-trainingsgroepen" class="nav-link">Trainingsgroepen</a>
@@ -525,6 +527,7 @@
                     <a href="#rechten-tabel" class="nav-link">Overzicht rechten</a>
                     <a href="#emails" class="nav-link">E-mails van het systeem</a>
                     <a href="#meldingen" class="nav-link">Meldingen &amp; Notificaties</a>
+                    <a href="#push-notificaties" class="nav-link">Push-notificaties (PWA)</a>
                     <a href="#installeren" class="nav-link">App installeren op telefoon</a>
                     <a href="#faq" class="nav-link">Veelgestelde vragen</a>
                 </div>
@@ -540,7 +543,8 @@
                 applicatie, georganiseerd per gebruikersrol, zodat je snel kunt terugvinden wat je nodig hebt.
             </p>
             <p>
-                De applicatie is gebouwd rond vier gebruikersrollen. Elke rol heeft toegang tot specifieke
+                De applicatie is gebouwd rond <strong>vijf gebruikersrollen</strong>. Elke rol heeft toegang tot
+                specifieke
                 functionaliteiten. In deze handleiding wordt bij elk onderdeel aangegeven welke rol(len) toegang hebben.
             </p>
             <div class="box box-info">
@@ -550,7 +554,7 @@
             </div>
 
             <h2 id="rollen">Rollen &amp; Rechten</h2>
-            <p>Er zijn vier rollen in het systeem. Elke rol bepaalt wat je kunt zien en doen:</p>
+            <p>Er zijn vijf rollen in het systeem. Elke rol bepaalt wat je kunt zien en doen:</p>
 
             <h3><span class="role-badge role-admin">Beheerder</span> Beheerder (Admin)</h3>
             <p>
@@ -581,6 +585,14 @@
                 gewichtscategorie bijwerken, toernooiuitnodigingen beantwoorden, en hun resultaten bekijken.
             </p>
 
+            <h3><span class="role-badge role-coach">Barmedewerker</span> Barmedewerker</h3>
+            <p>
+                De barmedewerker heeft dezelfde basistoegang als een ouder of lid (Mijn Leden, Archief, etc.),
+                aangevuld met toegang tot het <strong>kassa-scherm</strong> (POS). De barmedewerker kan producten
+                afrekenen en <strong>vouchers activeren</strong> via de kassa. Een beheerder kan deze rol toekennen
+                bij het goedkeuren van een nieuwe gebruiker.
+            </p>
+
             <div class="box box-tip">
                 <strong>Rolbadges in deze handleiding</strong>
                 Doorheen deze handleiding zie je gekleurde badges die aangeven welke rol(len) toegang hebben tot een
@@ -608,7 +620,8 @@
                 </li>
                 <li>
                     <strong>Rol toegewezen</strong><br>
-                    Zodra de beheerder je goedkeurt (als Beheerder, Trainer, Ouder of Lid), heb je toegang tot het
+                    Zodra de beheerder je goedkeurt (als Beheerder, Trainer, Ouder, Lid of Barmedewerker), heb je
+                    toegang tot het
                     dashboard en alle functies die bij je rol horen.
                 </li>
             </ol>
@@ -648,11 +661,13 @@
                         <th>Trainer</th>
                         <th>Ouder</th>
                         <th>Lid</th>
+                        <th>Barmedewerker</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td><strong>Mijn Leden</strong> &#8212; Je gekoppelde leden</td>
+                        <td class="check">&#10003;</td>
                         <td class="check">&#10003;</td>
                         <td class="check">&#10003;</td>
                         <td class="check">&#10003;</td>
@@ -664,11 +679,13 @@
                         <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
                     </tr>
                     <tr>
                         <td><strong>Toernooien</strong> &#8212; Toernooibeheer</td>
                         <td class="check">&#10003;</td>
                         <td class="check">&#10003;</td>
+                        <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
                     </tr>
@@ -677,6 +694,15 @@
                         <td class="check">&#10003;</td>
                         <td class="check">&#10003;</td>
                         <td class="check">&#10003;</td>
+                        <td class="check">&#10003;</td>
+                        <td class="check">&#10003;</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Kassa</strong> &#8212; POS kassasysteem voor de bar</td>
+                        <td class="check">&#10003;</td>
+                        <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
                         <td class="check">&#10003;</td>
                     </tr>
                 </tbody>
@@ -1468,7 +1494,8 @@
                 <li>Knop <strong>&#8220;Goedkeuren&#8221;</strong></li>
             </ul>
             <p>
-                Selecteer de gewenste rol (Beheerder, Trainer, Ouder of Lid) en klik op &#8220;Goedkeuren&#8221;. De
+                Selecteer de gewenste rol (Beheerder, Trainer, Ouder, Lid of Barmedewerker) en klik op
+                &#8220;Goedkeuren&#8221;. De
                 gebruiker krijgt dan toegang tot het systeem.
             </p>
 
@@ -1552,6 +1579,70 @@
                 <li><strong>&#8220;Importeren&#8221;</strong> &#8212; upload een Excel-bestand om leden in bulk aan te
                     maken of bij te werken</li>
             </ul>
+
+            <h3 id="admin-voogden">Voogden</h3>
+            <p><span class="role-badge role-admin">Beheerder</span></p>
+            <p>
+                Bij <strong>minderjarige leden</strong> kunnen &#233;&#233;n of meerdere <strong>voogden</strong>
+                (ouders/verzorgers) worden gekoppeld. Voogden zijn belangrijk omdat zij de e-mails en meldingen
+                ontvangen in plaats van het minderjarige lid zelf (bijv. toernooiuitnodigingen, lidgeldherinneringen).
+            </p>
+            <h4>Voogdgegevens</h4>
+            <p>
+                Elke voogd heeft de volgende gegevens:
+            </p>
+            <ul>
+                <li><strong>Naam</strong> &#8212; volledige naam van de voogd</li>
+                <li><strong>E-mailadres</strong> &#8212; wordt gebruikt voor toernooiuitnodigingen en herinneringen</li>
+                <li><strong>Telefoon</strong> &#8212; contactnummer</li>
+                <li><strong>Relatie</strong> &#8212; het type relatie met het lid:
+                    <ul>
+                        <li><strong>Vader</strong></li>
+                        <li><strong>Moeder</strong></li>
+                        <li><strong>Voogd</strong></li>
+                        <li><strong>Andere</strong></li>
+                    </ul>
+                </li>
+                <li><strong>Primaire voogd</strong> &#8212; de primaire voogd ontvangt alle e-mails en
+                    notificaties als er geen gebruikersaccount gekoppeld is</li>
+            </ul>
+            <h4>Hoe werken meldingen bij minderjarigen?</h4>
+            <p>
+                Als een minderjarig lid een uitnodiging of melding moet ontvangen, zoekt het systeem in deze volgorde
+                naar het juiste e-mailadres:
+            </p>
+            <ol>
+                <li>Het <strong>gebruikersaccount</strong> dat aan het lid gekoppeld is (als dat een ouder is)</li>
+                <li>De <strong>primaire voogd</strong> van het lid (als er geen gekoppeld account is)</li>
+                <li>Het <strong>e-mailadres van het lid zelf</strong> (als fallback)</li>
+            </ol>
+            <div class="box box-info">
+                <strong>Tip:</strong> Zorg ervoor dat bij elk minderjarig lid minstens &#233;&#233;n voogd is
+                ingevoerd met een geldig e-mailadres, of dat het lid aan een gebruikersaccount (ouder) is gekoppeld.
+                Zo is gegarandeerd dat uitnodigingen en herinneringen op het juiste adres aankomen.
+            </div>
+
+            <h3 id="admin-lidmaatschap-status">Lidmaatschapsstatus</h3>
+            <p><span class="role-badge role-admin">Beheerder</span></p>
+            <p>
+                Elk lid heeft een <strong>lidmaatschapsstatus</strong> die aangeeft of het lid actief is bij de club.
+                De status wordt automatisch beheerd door het systeem, maar kan ook handmatig worden aangepast
+                door de beheerder.
+            </p>
+            <h4>Mogelijke statussen</h4>
+            <ul>
+                <li><strong>Actief</strong> &#8212; het lid is actief en in orde met het lidgeld. Dit is de
+                    standaardstatus na succesvolle betaling.</li>
+                <li><strong>Inactief</strong> &#8212; het lid is niet langer actief (bijv. gestopt met judo).
+                    Inactieve leden worden geteld op het beheerderspaneel als &#8220;Inactieve leden&#8221;.</li>
+                <li><strong>Geschorst</strong> &#8212; het lid is tijdelijk geschorst door de beheerder.</li>
+                <li><strong>In afwachting</strong> &#8212; het lid wacht op bevestiging of activering.</li>
+            </ul>
+            <h4>Automatische statuswijzigingen</h4>
+            <p>
+                Na een succesvolle <strong>Mollie-betaling</strong> wordt de lidmaatschapsstatus automatisch op
+                <strong>&#8220;Actief&#8221;</strong> gezet. Er is geen handmatige actie nodig van de beheerder.
+            </p>
 
             <h3 id="admin-lidgeld">Lidgeld &amp; Vernieuwing</h3>
             <p><span class="role-badge role-admin">Beheerder</span></p>
@@ -2149,11 +2240,13 @@
                         <th>Trainer</th>
                         <th>Ouder</th>
                         <th>Lid</th>
+                        <th>Barmedewerker</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td>Dashboard bekijken</td>
+                        <td class="check">&#10003;</td>
                         <td class="check">&#10003;</td>
                         <td class="check">&#10003;</td>
                         <td class="check">&#10003;</td>
@@ -2165,9 +2258,11 @@
                         <td class="check">&#10003;</td>
                         <td class="check">&#10003;</td>
                         <td class="check">&#10003;</td>
+                        <td class="check">&#10003;</td>
                     </tr>
                     <tr>
                         <td>Archief bekijken</td>
+                        <td class="check">&#10003;</td>
                         <td class="check">&#10003;</td>
                         <td class="check">&#10003;</td>
                         <td class="check">&#10003;</td>
@@ -2179,9 +2274,11 @@
                         <td class="check">&#10003;</td>
                         <td class="check">&#10003;</td>
                         <td class="check">&#10003;</td>
+                        <td class="check">&#10003;</td>
                     </tr>
                     <tr>
                         <td>Uitnodiging accepteren/afwijzen (via e-mail)</td>
+                        <td class="check">&#10003;</td>
                         <td class="check">&#10003;</td>
                         <td class="check">&#10003;</td>
                         <td class="check">&#10003;</td>
@@ -2193,9 +2290,11 @@
                         <td class="check">&#10003;</td>
                         <td class="check">&#10003;</td>
                         <td class="check">&#10003;</td>
+                        <td class="check">&#10003;</td>
                     </tr>
                     <tr>
                         <td>Meldingsvoorkeur instellen</td>
+                        <td class="check">&#10003;</td>
                         <td class="check">&#10003;</td>
                         <td class="check">&#10003;</td>
                         <td class="check">&#10003;</td>
@@ -2206,6 +2305,23 @@
                         <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
                         <td class="check">&#10003;</td>
+                        <td class="check">&#10003;</td>
+                        <td class="cross">&#8212;</td>
+                    </tr>
+                    <tr>
+                        <td>Kassa (POS) gebruiken</td>
+                        <td class="check">&#10003;</td>
+                        <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
+                        <td class="check">&#10003;</td>
+                    </tr>
+                    <tr>
+                        <td>Vouchers opzoeken en activeren</td>
+                        <td class="check">&#10003;</td>
+                        <td class="check">&#10003;</td>
+                        <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
                         <td class="check">&#10003;</td>
                     </tr>
                 </tbody>
@@ -2220,12 +2336,14 @@
                         <th>Trainer</th>
                         <th>Ouder</th>
                         <th>Lid</th>
+                        <th>Barmedewerker</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td>Trainingsgroepen aanmaken/bewerken</td>
                         <td class="check">&#10003;</td>
+                        <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
@@ -2236,11 +2354,13 @@
                         <td class="check">&#10003; (eigen groepen)</td>
                         <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
                     </tr>
                     <tr>
                         <td>Trainingssessie openen/sluiten</td>
                         <td class="cross">&#8212;</td>
                         <td class="check">&#10003;</td>
+                        <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
                     </tr>
@@ -2250,6 +2370,7 @@
                         <td class="check">&#10003;</td>
                         <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
                     </tr>
                     <tr>
                         <td>Aanwezigheidsrapport bekijken</td>
@@ -2257,10 +2378,12 @@
                         <td class="check">&#10003;</td>
                         <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
                     </tr>
                     <tr>
                         <td>Kiosk-scherm PIN instellen</td>
                         <td class="check">&#10003;</td>
+                        <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
@@ -2271,10 +2394,12 @@
                         <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
                     </tr>
                     <tr>
                         <td>Factuuroverzicht bekijken</td>
                         <td class="check">&#10003;</td>
+                        <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
@@ -2291,12 +2416,14 @@
                         <th>Trainer</th>
                         <th>Ouder</th>
                         <th>Lid</th>
+                        <th>Barmedewerker</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td>Beheerderspaneel openen</td>
                         <td class="check">&#10003;</td>
+                        <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
@@ -2307,10 +2434,12 @@
                         <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
                     </tr>
                     <tr>
                         <td>Gebruikers bewerken/deactiveren</td>
                         <td class="check">&#10003;</td>
+                        <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
@@ -2321,10 +2450,12 @@
                         <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
                     </tr>
                     <tr>
                         <td>Leden aanmaken/bewerken (alle velden)</td>
                         <td class="check">&#10003;</td>
+                        <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
@@ -2335,10 +2466,12 @@
                         <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
                     </tr>
                     <tr>
                         <td>Categorie&#235;n beheren</td>
                         <td class="check">&#10003;</td>
+                        <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
@@ -2349,10 +2482,28 @@
                         <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
                     </tr>
                     <tr>
                         <td>Excel import/export</td>
                         <td class="check">&#10003;</td>
+                        <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
+                    </tr>
+                    <tr>
+                        <td>Bar producten beheren</td>
+                        <td class="check">&#10003;</td>
+                        <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
+                    </tr>
+                    <tr>
+                        <td>Vouchers overzicht bekijken</td>
+                        <td class="check">&#10003;</td>
+                        <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
@@ -2587,6 +2738,14 @@
                 met 1 jaar verlengd.
             </p>
 
+            <h4>&#127915; Voucher ontvangen</h4>
+            <p>
+                Na succesvolle betaling van het lidgeld ontvang je een melding met de voucher(s) voor je lid(leden).
+                De melding bevat per lid de unieke vouchercode en de geldigheidsdatum. Je kunt de voucher
+                terugvinden op de ledenkaart bij <strong>Mijn Leden</strong>, inclusief een QR-code die gescand
+                kan worden bij de bar of door een trainer.
+            </p>
+
             <h3>Meldingsvoorkeur instellen</h3>
             <p>
                 Je kunt kiezen hoe je meldingen ontvangt. Klik op je <strong>profielicoon</strong> rechtsboven in
@@ -2603,6 +2762,65 @@
             <div class="box box-tip">
                 <strong>Tip:</strong> De meldingsvoorkeur geldt voor alle soorten meldingen tegelijk. Het is niet
                 mogelijk om per meldingstype een andere voorkeur in te stellen.
+            </div>
+
+            <h2 id="push-notificaties">Push-notificaties (PWA)</h2>
+            <p><span class="role-badge role-all">Alle rollen</span></p>
+            <p>
+                De JCA-applicatie ondersteunt <strong>push-notificaties</strong> &#8212; meldingen die direct op je
+                telefoon of computer verschijnen, ook als je de app niet open hebt staan. Dit werkt via de
+                <strong>PWA</strong> (Progressive Web App) technologie.
+            </p>
+
+            <h3>Hoe schakel ik push-notificaties in?</h3>
+            <ol class="steps">
+                <li>
+                    <strong>Installeer de app</strong> op je telefoon of computer (zie <a href="#installeren">App
+                        installeren</a>). Push-notificaties werken het beste als de app ge&#239;nstalleerd is.
+                </li>
+                <li>
+                    <strong>Sta meldingen toe</strong> &#8212; wanneer je de app voor het eerst opent, verschijnt er
+                    een melding van je browser met de vraag of je push-notificaties wilt toestaan. Klik op
+                    <strong>&#8220;Toestaan&#8221;</strong>.
+                </li>
+                <li>
+                    <strong>Klaar!</strong> &#8212; je ontvangt nu automatisch push-meldingen bij belangrijke
+                    gebeurtenissen (toernooiuitnodigingen, betalingsverzoeken, bevestigingen, etc.).
+                </li>
+            </ol>
+
+            <h3>Wanneer ontvang je push-notificaties?</h3>
+            <p>
+                Push-notificaties worden verstuurd bij dezelfde gebeurtenissen als in-app meldingen:
+            </p>
+            <ul>
+                <li>Toernooiuitnodigingen</li>
+                <li>Inschrijvingsbevestigingen</li>
+                <li>Toernooirapporten</li>
+                <li>Lidgeldherinneringen en facturatie</li>
+                <li>Betalingsbevestigingen</li>
+                <li>Vouchers</li>
+                <li>Trainernotificaties</li>
+            </ul>
+            <p>
+                Elke push-notificatie bevat een <strong>titel</strong>, een <strong>korte beschrijving</strong> en
+                een <strong>link</strong> die je direct naar het relevante onderdeel in de app brengt wanneer je
+                op de melding tikt.
+            </p>
+
+            <h3>Push-notificaties uitschakelen</h3>
+            <p>
+                Om push-notificaties uit te schakelen, ga je naar de instellingen van je browser of apparaat en
+                blokkeer je meldingen voor de JCA-website. In de app zelf kun je via de
+                <strong>meldingsvoorkeur</strong> kiezen om alleen e-mail of alleen in-app meldingen te ontvangen
+                &#8212; push-notificaties volgen de in-app instelling.
+            </p>
+
+            <div class="box box-info">
+                <strong>Compatibiliteit</strong>
+                Push-notificaties werken op de meeste moderne browsers en apparaten: Chrome, Edge, Firefox en
+                Samsung Internet op Android, en Safari op macOS en iOS 16.4+. Oudere iOS-versies ondersteunen
+                geen web push-notificaties.
             </div>
 
             <h2 id="installeren">App installeren op je telefoon</h2>
@@ -2778,10 +2996,62 @@
                 Aanwezigheidsrapport. Dit is beschikbaar voor trainers en beheerders.
             </p>
 
+            <h4>Wat is een voucher en hoe gebruik ik het?</h4>
+            <p>
+                Na betaling van het lidgeld ontvang je automatisch een voucher per lid. Deze voucher kan worden
+                ingewisseld voor een t-shirt of hoodie van de club. Je vindt de vouchercode op de
+                <strong>ledenkaart</strong> bij Mijn Leden, inclusief een QR-code. Toon de QR-code aan een trainer
+                of barmedewerker bij de bar om de voucher te laten activeren.
+            </p>
+
+            <h4>Mijn voucher is verlopen &#8212; wat nu?</h4>
+            <p>
+                Vouchers zijn geldig tot de volgende vernieuwingsdatum van het lid. Eenmaal verlopen kan een voucher
+                niet meer worden gebruikt. Het systeem controleert dagelijks op verlopen vouchers en markeert ze
+                automatisch.
+            </p>
+
+            <h4>Wie kan vouchers activeren?</h4>
+            <p>
+                Vouchers kunnen geactiveerd worden door <strong>beheerders</strong>, <strong>trainers</strong> en
+                <strong>barmedewerkers</strong>. Beheerders en trainers kunnen dit doen via het beheerderspaneel of
+                de voucher-activeringspagina. Barmedewerkers gebruiken de <strong>voucher-tegel</strong> op het
+                kassa-scherm.
+            </p>
+
+            <h4>Hoe werkt de kassa (POS)?</h4>
+            <p>
+                De kassa is een rekenmachine voor de bar van de club. Tik op producten om ze aan de bestelling toe
+                te voegen, en het totaalbedrag wordt onderaan het scherm berekend. Bestellingen worden niet
+                opgeslagen &#8212; de betaling gebeurt via het fysieke bankcontact-apparaat. De kassa bevat ook
+                een <strong>voucher-tegel</strong> waarmee vouchers direct gescand en geactiveerd kunnen worden.
+            </p>
+
+            <h4>Ik ben barmedewerker maar zie de kassa niet op het dashboard?</h4>
+            <p>
+                Controleer of je account de rol <strong>&#8220;Barmedewerker&#8221;</strong> heeft. Vraag de
+                beheerder om je rol te controleren in het beheerderspaneel &#8594; Gebruikers. Alleen
+                barmedewerkers en beheerders zien de kassategel op het dashboard.
+            </p>
+
+            <h4>Kan een beheerder een factuur verwijderen?</h4>
+            <p>
+                Ja, maar alleen facturen die <strong>nog niet betaald</strong> zijn (status &#8220;In
+                afwachting&#8221;, &#8220;Verlopen&#8221; of &#8220;Mislukt&#8221;). Bij het verwijderen wordt ook
+                de Mollie betaallink automatisch verwijderd. Betaalde facturen kunnen niet worden verwijderd.
+            </p>
+
+            <h4>Hoe worden voogden gebruikt in het systeem?</h4>
+            <p>
+                Bij minderjarige leden worden voogden (ouders/verzorgers) opgeslagen. De primaire voogd ontvangt
+                alle e-mails en meldingen als er geen gebruikersaccount aan het lid gekoppeld is. Zorg ervoor
+                dat minstens &#233;&#233;n voogd is ingevoerd met een geldig e-mailadres.
+            </p>
+
             <div
                 style="margin-top: 80px; padding-top: 24px; border-top: 1px solid var(--slate-200); text-align: center;">
                 <p style="font-size: 12px; color: var(--slate-400);">
-                    JCA Handleiding &#8212; Laatst bijgewerkt: 1 april 2026
+                    JCA Handleiding &#8212; Laatst bijgewerkt: 29 maart 2026
                 </p>
             </div>
 
