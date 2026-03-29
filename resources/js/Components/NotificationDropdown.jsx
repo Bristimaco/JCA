@@ -201,12 +201,17 @@ function NotificationDetailView({ notification, onBack }) {
 
                 {type === 'MembershipPaymentNotification' && d.payment_url && (
                     <div className="space-y-3">
-                        <div className="flex justify-center">
-                            <div className="bg-white p-3 rounded-lg">
-                                <QRCodeSVG value={d.payment_url} size={160} />
+                        <a
+                            href={d.payment_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex justify-center"
+                        >
+                            <div className="bg-white p-2 sm:p-3 rounded-lg">
+                                <QRCodeSVG value={d.payment_url} size={120} className="sm:w-[160px] sm:h-[160px]" />
                             </div>
-                        </div>
-                        <p className="text-[10px] text-slate-500 text-center">Scan de QR code om te betalen</p>
+                        </a>
+                        <p className="text-[10px] text-slate-500 text-center">Scan of tik op de QR code om te betalen</p>
                         <a
                             href={d.payment_url}
                             target="_blank"
