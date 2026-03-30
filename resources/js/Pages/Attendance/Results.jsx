@@ -1,7 +1,8 @@
 import { Head, Link } from '@inertiajs/react';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 
 const SLIDE_DURATION = 15000;
+const MAX_CARDS_PER_SLIDE = 6;
 
 const resultBadge = (result) => {
     if (!result) return null;
@@ -37,11 +38,43 @@ const formatDate = (dateStr) => {
     });
 };
 
+// Build slides from tournaments, chunking weight cards so each slide fits on screen
+function buildSlides(tournaments) {
+    const slides = [];
+    for (const tournament of tournaments) {
+        // Flatten all weight cards with their age group info
+        const cards = [];
+        for (const ageGroup of tournament.participantGroups) {
+            for (const weightGroup of ageGroup.weights) {
+                cards.push({ ageGroup, weightGroup });
+            }
+        }
+
+        if (cards.length === 0) {
+            slides.push({ tournament, cards: [], page: 1, totalPages: 1 });
+            continue;
+        }
+
+        // Chunk cards into slides
+        const totalPages = Math.ceil(cards.length / MAX_CARDS_PER_SLIDE);
+        for (let i = 0; i < totalPages; i++) {
+            slides.push({
+                tournament,
+                cards: cards.slice(i * MAX_CARDS_PER_SLIDE, (i + 1) * MAX_CARDS_PER_SLIDE),
+                page: i + 1,
+                totalPages,
+            });
+        }
+    }
+    return slides;
+}
+
 export default function Results({ tournaments }) {
+    const slides = useMemo(() => buildSlides(tournaments), [tournaments]);
     const [activeIndex, setActiveIndex] = useState(0);
     const [progress, setProgress] = useState(0);
 
-    const count = tournaments.length;
+    const count = slides.length;
 
     const goTo = useCallback((idx) => {
         setActiveIndex(idx);
@@ -82,7 +115,19 @@ export default function Results({ tournaments }) {
         );
     }
 
-    const tournament = tournaments[activeIndex];
+    const slide = slides[activeIndex];
+    const { tournament, cards, page, totalPages } = slide;
+
+    // Group cards by age group for display
+    const groupedCards = [];
+    for (const card of cards) {
+        const last = groupedCards[groupedCards.length - 1];
+        if (last && last.ageGroup.name === card.ageGroup.name) {
+            last.weights.push(card.weightGroup);
+        } else {
+            groupedCards.push({ ageGroup: card.ageGroup, weights: [card.weightGroup] });
+        }
+    }
 
     return (
         <div className="min-h-screen bg-slate-950 flex flex-col">
@@ -95,15 +140,17 @@ export default function Results({ tournaments }) {
                         ← Terug
                     </Link>
 
-                    {/* Tournament dots */}
+                    {/* Slide dots */}
                     <div className="flex items-center gap-3">
-                        {tournaments.map((t, idx) => (
+                        {slides.map((s, idx) => (
                             <button
-                                key={t.id}
+                                key={idx}
                                 onClick={() => goTo(idx)}
                                 className={`w-4 h-4 rounded-full transition-all ${idx === activeIndex
                                     ? 'bg-rose-500 scale-125'
-                                    : 'bg-slate-700 hover:bg-slate-600'
+                                    : s.tournament.id === tournament.id
+                                        ? 'bg-rose-800 hover:bg-rose-700'
+                                        : 'bg-slate-700 hover:bg-slate-600'
                                     }`}
                             />
                         ))}
@@ -124,7 +171,7 @@ export default function Results({ tournaments }) {
             </div>
 
             {/* Tournament content */}
-            <div className="flex-1 px-10 pb-8 overflow-auto">
+            <div className="flex-1 px-10 pb-8">
                 <div>
                     {/* Tournament title */}
                     <div className="mb-8">
@@ -135,7 +182,14 @@ export default function Results({ tournaments }) {
                                 </svg>
                             </div>
                             <div>
-                                <h1 className="text-5xl font-bold text-white">{tournament.name}</h1>
+                                <h1 className="text-5xl font-bold text-white">
+                                    {tournament.name}
+                                    {totalPages > 1 && (
+                                        <span className="ml-4 text-2xl font-normal text-slate-500">
+                                            pagina {page}/{totalPages}
+                                        </span>
+                                    )}
+                                </h1>
                                 <p className="text-xl text-slate-400 mt-1">
                                     {formatDate(tournament.tournament_date)}
                                     {tournament.address_city && ` — ${tournament.address_city}`}
@@ -148,24 +202,24 @@ export default function Results({ tournaments }) {
                     </div>
 
                     {/* Results grouped by age/weight */}
-                    {tournament.participantGroups.length === 0 ? (
+                    {cards.length === 0 ? (
                         <div className="text-center py-24">
                             <p className="text-3xl text-slate-400">Geen deelnemers voor dit toernooi</p>
                         </div>
                     ) : (
                         <div className="space-y-8">
-                            {tournament.participantGroups.map((ageGroup) => (
-                                <div key={ageGroup.name} className="bg-slate-900 rounded-2xl ring-1 ring-slate-800/60 border-t-3 border-t-rose-700 overflow-hidden">
+                            {groupedCards.map((group) => (
+                                <div key={`${group.ageGroup.name}-${page}`} className="bg-slate-900 rounded-2xl ring-1 ring-slate-800/60 border-t-3 border-t-rose-700 overflow-hidden">
                                     <div className="px-7 py-4 border-b border-slate-800/60">
                                         <h2 className="text-2xl font-semibold text-white">
                                             <span className="inline-flex items-center rounded-full bg-rose-900/30 px-4 py-1 text-xl font-semibold text-rose-300">
-                                                {ageGroup.name}
+                                                {group.ageGroup.name}
                                             </span>
                                         </h2>
                                     </div>
                                     <div className="p-6">
                                         <div className="grid gap-5 grid-cols-2 lg:grid-cols-3">
-                                            {ageGroup.weights.map((weightGroup) => (
+                                            {group.weights.map((weightGroup) => (
                                                 <div key={weightGroup.name} className="rounded-2xl ring-1 ring-slate-800 bg-slate-800/30 p-5">
                                                     <h4 className="text-lg font-semibold text-rose-400 mb-3">
                                                         <span className="inline-flex items-center rounded-full bg-rose-900/30 px-3 py-1">
@@ -176,7 +230,7 @@ export default function Results({ tournaments }) {
                                                         </span>
                                                     </h4>
                                                     {(() => {
-                                                        const photoKey = `${ageGroup.name}|${weightGroup.name}`;
+                                                        const photoKey = `${group.ageGroup.name}|${weightGroup.name}`;
                                                         const photoUrl = tournament.podiumPhotos?.[photoKey];
                                                         return photoUrl ? (
                                                             <img src={photoUrl} alt="Podiumfoto" className="w-full rounded-xl mb-4 ring-1 ring-slate-700 object-cover max-h-64" />

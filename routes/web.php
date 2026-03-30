@@ -66,6 +66,9 @@ Route::get('/attendance/session/{session}', [AttendanceKioskController::class, '
 Route::post('/attendance/session/{session}/toggle/{member}', [AttendanceKioskController::class, 'toggle'])->name('attendance.toggle');
 Route::post('/attendance/logout', [AttendanceKioskController::class, 'logout'])->name('attendance.logout');
 
+// Podium photo display (no auth — used by kiosk mode)
+Route::get('/podium-foto/{podiumPhoto}', PodiumPhotoController::class)->name('podium-photo.show');
+
 // Guest routes (unauthenticated only)
 Route::middleware('guest')->group(function () {
     Route::get('/register', [RegisterController::class, 'create'])->name('register');
@@ -122,8 +125,6 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
     // Tournament attachment download
     Route::get('/bijlagen/{attachment}', TournamentAttachmentController::class)->name('attachments.show');
 
-    // Podium photo display
-    Route::get('/podium-foto/{podiumPhoto}', PodiumPhotoController::class)->name('podium-photo.show');
     Route::get('/toernooien/{tournament}', TournamentDetailController::class)->name('tournament.detail');
 
     // Archived tournaments (any authenticated user)
