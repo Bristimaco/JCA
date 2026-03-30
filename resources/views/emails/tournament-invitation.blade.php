@@ -108,26 +108,50 @@
                             @endif
 
                             {{-- RSVP buttons --}}
-                            <p style="font-size:15px;color:#374151;margin:0 0 16px;">
-                                Gelieve je deelname te bevestigen door op een van de onderstaande knoppen te klikken:
-                            </p>
+                            @if(!empty($paymentUrl))
+                                <p style="font-size:15px;color:#374151;margin:0 0 16px;">
+                                    Dit toernooi heeft een inschrijfgeld van <strong>&euro;{{ number_format($entryFee, 2, ',', '.') }}</strong>.
+                                    Na betaling wordt je deelname automatisch bevestigd.
+                                </p>
 
-                            <table cellpadding="0" cellspacing="0" style="margin:0 auto;">
-                                <tr>
-                                    <td style="padding-right:12px;">
-                                        <a href="{{ $acceptUrl }}"
-                                            style="display:inline-block;padding:12px 32px;background-color:#16a34a;color:#ffffff;font-size:16px;font-weight:bold;text-decoration:none;border-radius:6px;">
-                                            ✓ Deelnemen
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <a href="{{ $declineUrl }}"
-                                            style="display:inline-block;padding:12px 32px;background-color:#dc2626;color:#ffffff;font-size:16px;font-weight:bold;text-decoration:none;border-radius:6px;">
-                                            ✗ Niet deelnemen
-                                        </a>
-                                    </td>
-                                </tr>
-                            </table>
+                                <table cellpadding="0" cellspacing="0" style="margin:0 auto;">
+                                    <tr>
+                                        <td style="padding-right:12px;">
+                                            <a href="{{ $paymentUrl }}"
+                                                style="display:inline-block;padding:12px 32px;background-color:#2563eb;color:#ffffff;font-size:16px;font-weight:bold;text-decoration:none;border-radius:6px;">
+                                                💳 Betaal inschrijfgeld
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a href="{{ $declineUrl }}"
+                                                style="display:inline-block;padding:12px 32px;background-color:#dc2626;color:#ffffff;font-size:16px;font-weight:bold;text-decoration:none;border-radius:6px;">
+                                                ✗ Niet deelnemen
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </table>
+                            @else
+                                <p style="font-size:15px;color:#374151;margin:0 0 16px;">
+                                    Gelieve je deelname te bevestigen door op een van de onderstaande knoppen te klikken:
+                                </p>
+
+                                <table cellpadding="0" cellspacing="0" style="margin:0 auto;">
+                                    <tr>
+                                        <td style="padding-right:12px;">
+                                            <a href="{{ $acceptUrl }}"
+                                                style="display:inline-block;padding:12px 32px;background-color:#16a34a;color:#ffffff;font-size:16px;font-weight:bold;text-decoration:none;border-radius:6px;">
+                                                ✓ Deelnemen
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a href="{{ $declineUrl }}"
+                                                style="display:inline-block;padding:12px 32px;background-color:#dc2626;color:#ffffff;font-size:16px;font-weight:bold;text-decoration:none;border-radius:6px;">
+                                                ✗ Niet deelnemen
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </table>
+                            @endif
                         </td>
                     </tr>
 

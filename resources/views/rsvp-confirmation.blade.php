@@ -42,6 +42,18 @@
             color: #6b7280;
             margin: 0;
         }
+
+        .btn {
+            display: inline-block;
+            margin-top: 24px;
+            padding: 10px 24px;
+            background-color: #e11d48;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 8px;
+        }
     </style>
 </head>
 
@@ -52,6 +64,13 @@
             <h1>Deadline verlopen</h1>
             <p>De uitnodigingsdeadline voor <strong>{{ $tournamentName }}</strong> is verlopen. Neem contact op met de club
                 als je toch wilt reageren.</p>
+        @elseif($paymentRequired ?? false)
+            <div class="icon">💳</div>
+            <h1>Betaling vereist</h1>
+            <p>Om deel te nemen aan <strong>{{ $tournamentName }}</strong> moet je eerst het inschrijfgeld betalen. Na betaling wordt je deelname automatisch bevestigd.</p>
+            @if($paymentUrl ?? null)
+                <a href="{{ $paymentUrl }}" class="btn" style="background-color:#2563eb;">💳 Betaal inschrijfgeld</a>
+            @endif
         @elseif($status === \App\Enums\InvitationStatus::Accepted)
             <div class="icon">✅</div>
             <h1>Bedankt, {{ $memberName }}!</h1>
@@ -61,6 +80,8 @@
             <h1>Bedankt, {{ $memberName }}!</h1>
             <p>Je hebt aangegeven niet deel te nemen aan <strong>{{ $tournamentName }}</strong>.</p>
         @endif
+
+        <a href="/" class="btn">Terug naar de app</a>
     </div>
 </body>
 

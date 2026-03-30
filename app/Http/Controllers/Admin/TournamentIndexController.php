@@ -20,7 +20,7 @@ class TournamentIndexController extends Controller
         $user = $request->user();
         $isAdmin = $user->isAdmin();
 
-        $query = Tournament::with(['ageCategories:id,name', 'attachments', 'members.weightCategory.ageCategory', 'coaches'])
+        $query = Tournament::with(['ageCategories', 'attachments', 'members.weightCategory.ageCategory', 'coaches'])
             ->where('status', '!=', TournamentStatus::Archived)
             ->orderBy('tournament_date');
 
@@ -35,6 +35,7 @@ class TournamentIndexController extends Controller
                 ...$t->toArray(),
                 'status_label' => $t->status->label(),
                 'age_category_ids' => $t->ageCategories->pluck('id')->values()->all(),
+                'age_category_fees' => $t->ageCategories->mapWithKeys(fn ($cat) => [$cat->id => $cat->pivot->entry_fee])->all(),
                 'attachments' => $t->attachments->map(fn ($a) => [
                     'id' => $a->id,
                     'original_name' => $a->original_name,
@@ -54,6 +55,8 @@ class TournamentIndexController extends Controller
                     'invitation_status' => $m->pivot->invitation_status,
                     'invitation_status_label' => InvitationStatus::tryFrom($m->pivot->invitation_status)?->label() ?? $m->pivot->invitation_status,
                     'registration_status' => $m->pivot->registration_status,
+                    'payment_status' => $m->pivot->payment_status,
+                    'mollie_payment_url' => $m->pivot->mollie_payment_url,
                     'invited_at' => $m->pivot->invited_at,
                     'responded_at' => $m->pivot->responded_at,
                 ]),

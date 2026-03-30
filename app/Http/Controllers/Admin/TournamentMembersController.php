@@ -8,11 +8,13 @@ use App\Http\Controllers\Controller;
 use App\Mail\TournamentInvitation;
 use App\Mail\TournamentRegistrationNotification as TournamentRegistrationMail;
 use App\Mail\TournamentTrainerNotification as TournamentTrainerMail;
+use App\Models\ClubSettings;
 use App\Models\Member;
 use App\Models\Tournament;
 use App\Notifications\TournamentInvitationNotification;
 use App\Notifications\TournamentRegistrationNotification;
 use App\Notifications\TrainerTournamentNotification;
+use App\Services\MolliePaymentService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -294,6 +296,14 @@ class TournamentMembersController extends Controller
             return back()->with('status', 'Het toernooi kan alleen worden gestart vanuit de status "Inschrijvingen voltooid".');
         }
 
+        $registeredCount = $tournament->members()
+            ->wherePivot('registration_status', 'registered')
+            ->count();
+
+        if ($registeredCount === 0) {
+            return back()->with('status', 'Het toernooi kan niet gestart worden zonder ingeschreven deelnemers.');
+        }
+
         $tournament->update(['status' => TournamentStatus::Started]);
 
         return back()->with('status', 'Toernooi gestart!');
@@ -305,8 +315,8 @@ class TournamentMembersController extends Controller
      */
     public function revertStatus(Tournament $tournament): RedirectResponse
     {
-        if (in_array($tournament->status, [TournamentStatus::Started, TournamentStatus::Finished], true)) {
-            return back()->with('status', 'Een gestart of afgelopen toernooi kan niet worden teruggezet.');
+        if ($tournament->status === TournamentStatus::Finished) {
+            return back()->with('status', 'Een afgelopen toernooi kan niet worden teruggezet.');
         }
 
         $previous = $tournament->status->previous();
@@ -368,14 +378,38 @@ class TournamentMembersController extends Controller
 
     private function sendInvitation(Tournament $tournament, Member $member, $pivot): void
     {
-        $notification = new TournamentInvitationNotification($tournament, $member, $pivot->invitation_token);
+        // Determine entry fee for this member's age category
+        $paymentUrl = null;
+        $entryFee = null;
+        $ageCategory = $member->calculateAgeCategory($tournament->country_code, $tournament->tournament_date);
+
+        if ($ageCategory) {
+            $fee = $tournament->feeForAgeCategory($ageCategory);
+            if ($fee && $fee > 0) {
+                $entryFee = $fee;
+                $club = ClubSettings::current();
+                $description = collect([$club->name, $tournament->name, $member->fullName()])->filter()->implode(' — ');
+
+                app(MolliePaymentService::class)->createTournamentPaymentLink(
+                    $pivot->id,
+                    $fee,
+                    $description,
+                    url("/tournaments/rsvp/{$pivot->invitation_token}/accept"),
+                );
+
+                // Reload pivot to get the payment URL
+                $pivot = DB::table('member_tournament')->where('id', $pivot->id)->first();
+                $paymentUrl = $pivot->mollie_payment_url;
+            }
+        }
+
+        $notification = new TournamentInvitationNotification($tournament, $member, $pivot->invitation_token, $paymentUrl, $entryFee);
         $notified = $this->notifyMemberUsers($member, $notification);
 
         if (! $notified) {
-            // Email-only fallback for members with no linked users
             $email = $this->resolveEmail($member, $tournament);
             if ($email) {
-                Mail::to($email)->send(new TournamentInvitation($tournament, $member, $pivot->invitation_token));
+                Mail::to($email)->send(new TournamentInvitation($tournament, $member, $pivot->invitation_token, $paymentUrl, $entryFee));
             }
         }
 
@@ -486,5 +520,43 @@ class TournamentMembersController extends Controller
             ]);
 
         return back()->with('status', $member->fullName().' is afgeslagen.');
+    }
+
+    public function markPaid(Tournament $tournament, Member $member): RedirectResponse
+    {
+        $pivot = $tournament->members()->where('members.id', $member->id)->first()?->pivot;
+
+        if (! $pivot) {
+            return back()->with('status', 'Dit lid staat niet op de lijst.');
+        }
+
+        DB::table('member_tournament')
+            ->where('id', $pivot->id)
+            ->update([
+                'payment_status' => 'paid',
+                'invitation_status' => InvitationStatus::Accepted->value,
+                'responded_at' => now(),
+            ]);
+
+        return back()->with('status', $member->fullName().' is als betaald gemarkeerd.');
+    }
+
+    public function checkPaymentStatus(Tournament $tournament, Member $member, MolliePaymentService $mollieService): RedirectResponse
+    {
+        $pivot = $tournament->members()->where('members.id', $member->id)->first()?->pivot;
+
+        if (! $pivot || ! $pivot->mollie_payment_id) {
+            return back()->with('status', 'Geen betaallink gevonden voor dit lid.');
+        }
+
+        $status = $mollieService->syncTournamentPaymentStatus($pivot->id);
+
+        $label = match ($status) {
+            'paid' => 'Betaald',
+            'expired' => 'Verlopen',
+            default => 'In afwachting',
+        };
+
+        return back()->with('status', $member->fullName().': '.$label.'.');
     }
 }

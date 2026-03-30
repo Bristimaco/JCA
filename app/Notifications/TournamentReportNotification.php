@@ -57,7 +57,7 @@ class TournamentReportNotification extends Notification
         $results = $this->resultGroups->map(fn ($g) => [
             'category' => $g['age_category'].' — '.$g['weight_category'],
             'participants' => collect($g['results'])->map(fn ($r) => [
-                'name' => $r['member_name'],
+                'name' => $r['name'],
                 'result' => $r['result'] ?? '-',
                 'notes' => $r['notes'] ?? null,
             ])->all(),

@@ -15,11 +15,14 @@ const resultOptions = [
     { value: 'Gediskwalificeerd', label: 'Gediskwalificeerd' },
 ];
 
+const uniquePlacements = ['1e plaats', '2e plaats', '3e plaats', '5e plaats', '7e plaats'];
+
 export default function TournamentDetail({ tournament, participantGroups, totalParticipants, podiumPhotos = {} }) {
-    const { flash } = usePage().props;
+    const { flash, errors } = usePage().props;
     const t = tournament;
     const hasMap = t.latitude && t.longitude;
     const fileInputRef = useRef(null);
+    const uploadTargetRef = useRef(null);
 
     // Build initial results state from existing data
     const buildInitialResults = () => {
@@ -109,28 +112,60 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
         closeForm.post(`/trainer/toernooien/${t.id}/afsluiten`);
     };
 
-    const openPhotoPicker = (ageName, weightName) => {
-        if (fileInputRef.current) {
-            fileInputRef.current.dataset.ageName = ageName;
-            fileInputRef.current.dataset.weightName = weightName;
-            fileInputRef.current.click();
-        }
+    const resizeImage = (file, maxSize = 1920) => {
+        return new Promise((resolve) => {
+            const img = new Image();
+            const url = URL.createObjectURL(file);
+            img.onload = () => {
+                URL.revokeObjectURL(url);
+                let { width, height } = img;
+                if (width > maxSize || height > maxSize) {
+                    if (width > height) {
+                        height = Math.round(height * maxSize / width);
+                        width = maxSize;
+                    } else {
+                        width = Math.round(width * maxSize / height);
+                        height = maxSize;
+                    }
+                }
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+                canvas.toBlob((blob) => resolve(blob), 'image/jpeg', 0.85);
+            };
+            img.onerror = () => {
+                URL.revokeObjectURL(url);
+                resolve(null);
+            };
+            img.src = url;
+        });
     };
 
-    const handlePhotoSelected = (e) => {
+    const openPhotoPicker = (ageName, weightName) => {
+        uploadTargetRef.current = { ageName, weightName };
+        fileInputRef.current?.click();
+    };
+
+    const handlePhotoSelected = async (e) => {
         const file = e.target.files?.[0];
-        const ageName = e.target.dataset.ageName;
-        const weightName = e.target.dataset.weightName;
-        if (!file || !ageName || !weightName) return;
+        const target = uploadTargetRef.current;
+        if (!file || !target) return;
+
+        const resized = await resizeImage(file);
+        if (!resized) return;
+
+        const resizedFile = new File([resized], 'podium.jpg', { type: 'image/jpeg' });
 
         router.post(`/trainer/toernooien/${t.id}/podium-foto`, {
-            age_category_name: ageName,
-            weight_category_name: weightName,
-            photo: file,
+            age_category_name: target.ageName,
+            weight_category_name: target.weightName,
+            photo: resizedFile,
         }, {
             forceFormData: true,
         });
 
+        uploadTargetRef.current = null;
         e.target.value = '';
     };
 
@@ -150,7 +185,6 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                 ref={fileInputRef}
                 type="file"
                 accept="image/*"
-                capture="environment"
                 className="hidden"
                 onChange={handlePhotoSelected}
             />
@@ -170,6 +204,14 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
             {flash.status && (
                 <div className="mb-4 rounded-md bg-emerald-900/30 border ring-1 ring-emerald-700/30 p-3">
                     <p className="text-sm text-emerald-400">{flash.status}</p>
+                </div>
+            )}
+
+            {errors && Object.keys(errors).length > 0 && (
+                <div className="mb-4 rounded-md bg-red-900/30 border ring-1 ring-red-700/30 p-3">
+                    {Object.values(errors).map((err, i) => (
+                        <p key={i} className="text-sm text-red-400">{err}</p>
+                    ))}
                 </div>
             )}
 
@@ -241,15 +283,11 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                         <button
                             onClick={handleClose}
                             disabled={!canClose || closeForm.processing}
+                            title={!allFilled ? 'Vul eerst alle resultaten in' : ''}
                             className="w-full rounded-lg bg-purple-600 px-4 py-3 text-sm font-semibold text-white hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                         >
-                            {closeForm.processing ? 'Afsluiten...' : 'Toernooi afsluiten'}
+                            {closeForm.processing ? 'Afsluiten...' : `Toernooi afsluiten (${filledCount}/${totalParticipants})`}
                         </button>
-                        {!allFilled && (
-                            <p className="text-xs text-rose-600 text-center">
-                                Vul eerst alle resultaten in om af te sluiten.
-                            </p>
-                        )}
                     </>
                 )}
             </div>
@@ -336,20 +374,14 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
 
                     {/* Close tournament button */}
                     {t.status === 'started' && (
-                        <div className="space-y-2">
-                            <button
-                                onClick={handleClose}
-                                disabled={!canClose || closeForm.processing}
-                                className="w-full rounded-lg bg-purple-600 px-4 py-3 text-sm font-semibold text-white hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                            >
-                                {closeForm.processing ? 'Afsluiten...' : 'Toernooi afsluiten'}
-                            </button>
-                            {!allFilled && (
-                                <p className="text-xs text-rose-600 text-center">
-                                    Alle deelnemers moeten eerst een resultaat hebben voordat het toernooi kan worden afgesloten.
-                                </p>
-                            )}
-                        </div>
+                        <button
+                            onClick={handleClose}
+                            disabled={!canClose || closeForm.processing}
+                            title={!allFilled ? 'Vul eerst alle resultaten in' : ''}
+                            className="w-full rounded-lg bg-purple-600 px-4 py-3 text-sm font-semibold text-white hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                            {closeForm.processing ? 'Afsluiten...' : `Toernooi afsluiten (${filledCount}/${totalParticipants})`}
+                        </button>
                     )}
                 </div>
 
@@ -368,8 +400,8 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                                     <button
                                         onClick={toggleAll}
                                         className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${allFiltersActive
-                                                ? 'bg-rose-600 text-white'
-                                                : 'bg-slate-800 text-slate-400 border border-slate-700 hover:border-slate-500'
+                                            ? 'bg-rose-600 text-white'
+                                            : 'bg-slate-800 text-slate-400 border border-slate-700 hover:border-slate-500'
                                             }`}
                                     >
                                         Alles
@@ -383,8 +415,8 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                                                 key={name}
                                                 onClick={() => toggleFilter(name)}
                                                 className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${isActive
-                                                        ? 'bg-rose-600 text-white'
-                                                        : 'bg-slate-800 text-slate-400 border border-slate-700 hover:border-slate-500'
+                                                    ? 'bg-rose-600 text-white'
+                                                    : 'bg-slate-800 text-slate-400 border border-slate-700 hover:border-slate-500'
                                                     }`}
                                             >
                                                 {name} ({count})
@@ -420,32 +452,46 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                                                         </span>
                                                     </h4>
                                                     <div className="space-y-2">
-                                                        {weightGroup.members.map(member => (
-                                                            <div key={member.id} className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 bg-slate-800 rounded-md p-2.5 sm:p-2 border border-slate-800">
-                                                                <div className="sm:flex-1 min-w-0">
-                                                                    <p className="text-sm font-medium text-white truncate">{member.name}</p>
+                                                        {weightGroup.members.map(member => {
+                                                            // Compute placements taken by OTHER members in this weight group
+                                                            const takenPlacements = weightGroup.members
+                                                                .filter(m => m.id !== member.id)
+                                                                .map(m => results[m.id]?.result)
+                                                                .filter(r => r && uniquePlacements.includes(r));
+
+                                                            return (
+                                                                <div key={member.id} className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 bg-slate-800 rounded-md p-2.5 sm:p-2 border border-slate-800">
+                                                                    <div className="sm:flex-1 min-w-0">
+                                                                        <p className="text-sm font-medium text-white truncate">{member.name}</p>
+                                                                    </div>
+                                                                    <select
+                                                                        value={results[member.id]?.result || ''}
+                                                                        onChange={(e) => updateResult(member.id, 'result', e.target.value)}
+                                                                        disabled={isFinished}
+                                                                        className={`w-full sm:w-auto rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-2.5 sm:py-1 px-2 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500 ${isFinished ? 'bg-slate-800 cursor-not-allowed' : ''}`}
+                                                                    >
+                                                                        {resultOptions.map(opt => (
+                                                                            <option
+                                                                                key={opt.value}
+                                                                                value={opt.value}
+                                                                                disabled={opt.value && takenPlacements.includes(opt.value)}
+                                                                            >
+                                                                                {opt.label}
+                                                                            </option>
+                                                                        ))}
+                                                                    </select>
+                                                                    <textarea
+                                                                        placeholder="Opmerking..."
+                                                                        value={results[member.id]?.notes || ''}
+                                                                        onChange={(e) => updateResult(member.id, 'notes', e.target.value)}
+                                                                        disabled={isFinished}
+                                                                        rows={1}
+                                                                        onInput={(e) => { e.target.style.height = 'auto'; e.target.style.height = e.target.scrollHeight + 'px'; }}
+                                                                        className={`w-full sm:w-auto sm:min-w-32 sm:flex-1 rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-2.5 sm:py-1 px-2 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500 resize-none overflow-hidden ${isFinished ? 'bg-slate-800 cursor-not-allowed' : ''}`}
+                                                                    />
                                                                 </div>
-                                                                <select
-                                                                    value={results[member.id]?.result || ''}
-                                                                    onChange={(e) => updateResult(member.id, 'result', e.target.value)}
-                                                                    disabled={isFinished}
-                                                                    className={`w-full sm:w-auto rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-2.5 sm:py-1 px-2 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500 ${isFinished ? 'bg-slate-800 cursor-not-allowed' : ''}`}
-                                                                >
-                                                                    {resultOptions.map(opt => (
-                                                                        <option key={opt.value} value={opt.value}>{opt.label}</option>
-                                                                    ))}
-                                                                </select>
-                                                                <textarea
-                                                                    placeholder="Opmerking..."
-                                                                    value={results[member.id]?.notes || ''}
-                                                                    onChange={(e) => updateResult(member.id, 'notes', e.target.value)}
-                                                                    disabled={isFinished}
-                                                                    rows={1}
-                                                                    onInput={(e) => { e.target.style.height = 'auto'; e.target.style.height = e.target.scrollHeight + 'px'; }}
-                                                                    className={`w-full sm:w-auto sm:min-w-32 sm:flex-1 rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-2.5 sm:py-1 px-2 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500 resize-none overflow-hidden ${isFinished ? 'bg-slate-800 cursor-not-allowed' : ''}`}
-                                                                />
-                                                            </div>
-                                                        ))}
+                                                            );
+                                                        })}
                                                     </div>
 
                                                     {/* Podium photo */}

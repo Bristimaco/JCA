@@ -19,6 +19,8 @@ class TournamentInvitation extends Mailable
         public Tournament $tournament,
         public Member $member,
         public string $token,
+        public ?string $paymentUrl = null,
+        public ?float $entryFee = null,
     ) {}
 
     public function envelope(): Envelope
@@ -40,6 +42,8 @@ class TournamentInvitation extends Mailable
                 'acceptUrl' => url("/tournaments/rsvp/{$this->token}/accept"),
                 'declineUrl' => url("/tournaments/rsvp/{$this->token}/decline"),
                 'club' => ClubSettings::current(),
+                'paymentUrl' => $this->paymentUrl,
+                'entryFee' => $this->entryFee,
             ],
         );
     }

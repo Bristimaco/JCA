@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\ClubSettings;
 use App\Models\Member;
 use App\Models\MembershipInvoice;
 use App\Models\MembershipInvoiceLine;
@@ -21,7 +22,6 @@ class MembershipInvoiceService
     public function generateInvoicesForDueMembers(): int
     {
         $dueMembers = Member::where('membership_renewal_date', '<=', Carbon::today()->addDays(30))
-            ->whereHas('trainingGroups')
             ->with(['trainingGroups', 'users.members.trainingGroups', 'guardians.user.members.trainingGroups'])
             ->get();
 
@@ -103,30 +103,44 @@ class MembershipInvoiceService
         // For each due member, find their most expensive training group
         foreach ($members as $member) {
             $mostExpensiveGroup = $this->getMostExpensiveGroup($member);
-            if (! $mostExpensiveGroup) {
-                continue;
+
+            if ($mostExpensiveGroup) {
+                // Count how many of this payer's members are in the same group (for discount calculation)
+                $sameGroupMembers = collect($allPayerMemberIds)
+                    ->filter(fn ($mid) => $mostExpensiveGroup->members->pluck('id')->contains($mid))
+                    ->values();
+
+                $memberPosition = $sameGroupMembers->search($member->id);
+                $isDiscounted = $memberPosition > 0 && $mostExpensiveGroup->membership_fee_discount > 0;
+
+                $amount = $isDiscounted
+                    ? max(0, $mostExpensiveGroup->membership_fee - $mostExpensiveGroup->membership_fee_discount)
+                    : $mostExpensiveGroup->membership_fee;
+
+                $lines[] = [
+                    'member_id' => $member->id,
+                    'training_group_id' => $mostExpensiveGroup->id,
+                    'amount' => $amount,
+                    'is_discounted' => $isDiscounted,
+                ];
+
+                $total += $amount;
+            } else {
+                // Member not in any training group — use default club fee
+                $defaultFee = ClubSettings::current()->default_membership_fee;
+                if (! $defaultFee || $defaultFee <= 0) {
+                    continue;
+                }
+
+                $lines[] = [
+                    'member_id' => $member->id,
+                    'training_group_id' => null,
+                    'amount' => $defaultFee,
+                    'is_discounted' => false,
+                ];
+
+                $total += $defaultFee;
             }
-
-            // Count how many of this payer's members are in the same group (for discount calculation)
-            $sameGroupMembers = collect($allPayerMemberIds)
-                ->filter(fn ($mid) => $mostExpensiveGroup->members->pluck('id')->contains($mid))
-                ->values();
-
-            $memberPosition = $sameGroupMembers->search($member->id);
-            $isDiscounted = $memberPosition > 0 && $mostExpensiveGroup->membership_fee_discount > 0;
-
-            $amount = $isDiscounted
-                ? max(0, $mostExpensiveGroup->membership_fee - $mostExpensiveGroup->membership_fee_discount)
-                : $mostExpensiveGroup->membership_fee;
-
-            $lines[] = [
-                'member_id' => $member->id,
-                'training_group_id' => $mostExpensiveGroup->id,
-                'amount' => $amount,
-                'is_discounted' => $isDiscounted,
-            ];
-
-            $total += $amount;
         }
 
         if (empty($lines) || $total <= 0) {

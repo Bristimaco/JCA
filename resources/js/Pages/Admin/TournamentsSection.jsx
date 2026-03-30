@@ -317,6 +317,24 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
         });
     };
 
+    const handleMarkPaid = (memberId) => {
+        setProcessing(prev => ({ ...prev, [memberId]: true }));
+        router.post(`/admin/tournaments/${tournament.id}/mark-paid/${memberId}`, {}, {
+            preserveScroll: true,
+            onFinish: () => setProcessing(prev => ({ ...prev, [memberId]: false })),
+        });
+    };
+
+    const handleCheckPayment = (memberId) => {
+        setProcessing(prev => ({ ...prev, [memberId]: true }));
+        router.post(`/admin/tournaments/${tournament.id}/check-payment/${memberId}`, {}, {
+            preserveScroll: true,
+            onFinish: () => setProcessing(prev => ({ ...prev, [memberId]: false })),
+        });
+    };
+
+    const isPaidTournament = Object.values(tournament.age_category_fees || {}).some(f => f && parseFloat(f) > 0);
+
     return (
         <div className="mt-4 border border-slate-800 rounded-lg bg-slate-700/50">
             <div className="px-4 py-3 border-b border-slate-800 flex flex-wrap items-center gap-2">
@@ -421,6 +439,25 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
                                 </span>
                             )}
                         </td>
+                        {isPaidTournament && (
+                            <td className="px-3 py-2 whitespace-nowrap">
+                                {member.payment_status === 'paid' ? (
+                                    <span className="inline-flex items-center rounded-full bg-emerald-900/40 text-emerald-400 px-2 py-0.5 text-xs font-medium">
+                                        💳 Betaald
+                                    </span>
+                                ) : member.payment_status === 'expired' ? (
+                                    <span className="inline-flex items-center rounded-full bg-red-900/40 text-red-400 px-2 py-0.5 text-xs font-medium">
+                                        Verlopen
+                                    </span>
+                                ) : member.payment_status === 'pending' ? (
+                                    <span className="inline-flex items-center rounded-full bg-amber-900/40 text-amber-400 px-2 py-0.5 text-xs font-medium">
+                                        In afwachting
+                                    </span>
+                                ) : (
+                                    <span className="text-xs text-slate-500">—</span>
+                                )}
+                            </td>
+                        )}
                         <td className="px-3 py-2 whitespace-nowrap text-right">
                             <div className="flex items-center justify-end gap-2">
                                 {member.invitation_status === 'pending' && tournament.status === 'preparation' && (
@@ -478,6 +515,26 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
                                         ✕
                                     </button>
                                 )}
+                                {isPaidTournament && member.payment_status && member.payment_status !== 'paid' && (
+                                    <>
+                                        <button
+                                            onClick={() => handleMarkPaid(member.id)}
+                                            disabled={processing[member.id]}
+                                            className="text-xs text-emerald-600 hover:text-emerald-400 disabled:opacity-50"
+                                            title="Markeer als betaald"
+                                        >
+                                            💳
+                                        </button>
+                                        <button
+                                            onClick={() => handleCheckPayment(member.id)}
+                                            disabled={processing[member.id]}
+                                            className="text-xs text-blue-500 hover:text-blue-400 disabled:opacity-50"
+                                            title="Status controleren"
+                                        >
+                                            🔄
+                                        </button>
+                                    </>
+                                )}
                             </div>
                         </td>
                     </tr>
@@ -493,6 +550,7 @@ function TournamentMembersPanel({ tournament, members, competitionMembers, avail
                             <th className="px-3 py-2">Gewicht</th>
                             <th className="px-3 py-2">Uitnodiging</th>
                             <th className="px-3 py-2">Inschrijving</th>
+                            {isPaidTournament && <th className="px-3 py-2">Betaling</th>}
                             <th className="px-3 py-2 text-right">Acties</th>
                         </tr>
                     </thead>
@@ -594,6 +652,7 @@ function TournamentForm({ tournament, ageCategories, onSuccess, onCancel }) {
         invitation_deadline: tournament?.invitation_deadline ? tournament.invitation_deadline.split('T')[0] : '',
         registration_deadline: tournament?.registration_deadline ? tournament.registration_deadline.split('T')[0] : '',
         age_category_ids: tournament?.age_category_ids || [],
+        age_category_fees: tournament?.age_category_fees || {},
         attachments: [],
         remove_attachment_ids: [],
     });
@@ -604,10 +663,18 @@ function TournamentForm({ tournament, ageCategories, onSuccess, onCancel }) {
     const toggleAgeCategory = (id) => {
         const current = form.data.age_category_ids;
         if (current.includes(id)) {
-            form.setData('age_category_ids', current.filter(x => x !== id));
+            form.setData(prev => {
+                const fees = { ...prev.age_category_fees };
+                delete fees[id];
+                return { ...prev, age_category_ids: current.filter(x => x !== id), age_category_fees: fees };
+            });
         } else {
             form.setData('age_category_ids', [...current, id]);
         }
+    };
+
+    const setAgeCategoryFee = (id, value) => {
+        form.setData('age_category_fees', { ...form.data.age_category_fees, [id]: value === '' ? null : parseFloat(value) });
     };
 
     const toggleRemoveAttachment = (id) => {
@@ -750,13 +817,29 @@ function TournamentForm({ tournament, ageCategories, onSuccess, onCancel }) {
                         ) : (
                             <div className="flex flex-wrap gap-2">
                                 {filteredAgeCategories.map(cat => (
-                                    <label key={cat.id} className="flex items-center gap-1.5 text-sm text-slate-300">
-                                        <input type="checkbox"
-                                            checked={form.data.age_category_ids.includes(cat.id)}
-                                            onChange={() => toggleAgeCategory(cat.id)}
-                                            className="rounded border-slate-600 bg-slate-700 text-rose-400 focus:ring-rose-500" />
-                                        {cat.name} ({cat.min_age}–{cat.max_age})
-                                    </label>
+                                    <div key={cat.id} className="flex items-center gap-1.5">
+                                        <label className="flex items-center gap-1.5 text-sm text-slate-300">
+                                            <input type="checkbox"
+                                                checked={form.data.age_category_ids.includes(cat.id)}
+                                                onChange={() => toggleAgeCategory(cat.id)}
+                                                className="rounded border-slate-600 bg-slate-700 text-rose-400 focus:ring-rose-500" />
+                                            {cat.name} ({cat.min_age}–{cat.max_age})
+                                        </label>
+                                        {form.data.age_category_ids.includes(cat.id) && (
+                                            <div className="flex items-center gap-0.5">
+                                                <span className="text-xs text-slate-400">€</span>
+                                                <input
+                                                    type="number"
+                                                    step="0.01"
+                                                    min="0"
+                                                    placeholder="0"
+                                                    value={form.data.age_category_fees[cat.id] ?? ''}
+                                                    onChange={e => setAgeCategoryFee(cat.id, e.target.value)}
+                                                    className="w-16 rounded-md border border-slate-600 bg-slate-700/50 text-white text-xs py-1 px-1.5 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
+                                                />
+                                            </div>
+                                        )}
+                                    </div>
                                 ))}
                             </div>
                         )}

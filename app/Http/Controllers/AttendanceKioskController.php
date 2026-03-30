@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Enums\InvitationStatus;
 use App\Enums\TournamentStatus;
+use App\Models\Announcement;
 use App\Models\ClubSettings;
 use App\Models\Member;
 use App\Models\PodiumPhoto;
+use App\Models\Sponsor;
 use App\Models\Tournament;
 use App\Models\TournamentResult;
 use App\Models\TrainingAttendance;
@@ -161,7 +163,7 @@ class AttendanceKioskController extends Controller
         foreach ($tournaments as $tournament) {
             $participants = $tournament->members->filter(
                 fn (Member $m) => $m->pivot->invitation_status === InvitationStatus::Accepted->value
-                    && $m->pivot->registration_status === 'registered'
+                && $m->pivot->registration_status === 'registered'
             );
 
             $existingResults = TournamentResult::where('tournament_id', $tournament->id)
@@ -203,19 +205,25 @@ class AttendanceKioskController extends Controller
                 ];
             }
 
+            $resultRank = ['1e plaats' => 1, '2e plaats' => 2, '3e plaats' => 3, '5e plaats' => 5, '7e plaats' => 7];
+
             usort($grouped, fn ($a, $b) => $a['order'] <=> $b['order']);
             foreach ($grouped as &$ageGroup) {
                 $weights = array_values($ageGroup['weights']);
                 usort($weights, fn ($a, $b) => $a['order'] <=> $b['order']);
+                foreach ($weights as &$weight) {
+                    usort($weight['members'], fn ($a, $b) => ($resultRank[$a['result']] ?? 99) <=> ($resultRank[$b['result']] ?? 99));
+                }
+                unset($weight);
                 $ageGroup['weights'] = $weights;
             }
             unset($ageGroup);
 
-            // Load podium photos for this tournament
+            // Load podium photos as inline data URIs (avoids separate HTTP requests from kiosk)
             $podiumPhotos = PodiumPhoto::where('tournament_id', $tournament->id)
-                ->get()
+                ->get(['id', 'tournament_id', 'age_category_name', 'weight_category_name', 'photo_data', 'photo_mime'])
                 ->mapWithKeys(fn (PodiumPhoto $p) => [
-                    $p->age_category_name.'|'.$p->weight_category_name => route('podium-photo.show', $p),
+                    $p->age_category_name.'|'.$p->weight_category_name => 'data:'.$p->photo_mime.';base64,'.$p->photo_data,
                 ])
                 ->all();
 
@@ -231,8 +239,39 @@ class AttendanceKioskController extends Controller
             ];
         }
 
+        $activeAnnouncements = Announcement::active()->ordered()->get()
+            ->map(fn (Announcement $a) => [
+                'id' => $a->id,
+                'title' => $a->title,
+                'content' => $a->content,
+                'start_date' => $a->start_date->toDateString(),
+                'end_date' => $a->end_date->toDateString(),
+                'photo' => $a->photo_data ? 'data:'.$a->photo_mime.';base64,'.$a->photo_data : null,
+            ])
+            ->all();
+
+        $settings = ClubSettings::current();
+
+        $activeSponsors = Sponsor::active()->get()
+            ->map(fn (Sponsor $s) => [
+                'id' => $s->id,
+                'name' => $s->name,
+                'tier' => $s->tier->value,
+                'logo' => $s->logoDataUri(),
+            ])
+            ->filter(fn ($s) => $s['logo'] !== null)
+            ->values()
+            ->all();
+
         return Inertia::render('Attendance/Results', [
             'tournaments' => $tournamentData,
+            'announcements' => $activeAnnouncements,
+            'sponsors' => $activeSponsors,
+            'sponsorFrequencies' => [
+                'bronze' => $settings->sponsor_frequency_bronze ?? 60,
+                'silver' => $settings->sponsor_frequency_silver ?? 30,
+                'gold' => $settings->sponsor_frequency_gold ?? 15,
+            ],
         ]);
     }
 

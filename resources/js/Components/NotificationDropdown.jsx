@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
 import { usePage, router } from '@inertiajs/react';
-import { QRCodeSVG } from 'qrcode.react';
 
 const ICONS = {
     MembershipRenewalNotification: '💳',
@@ -41,7 +40,7 @@ function NotificationDetailView({ notification, onBack }) {
     const type = notification.type;
 
     return (
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-full min-h-0">
             <div className="flex items-center gap-2 px-4 py-3 border-b border-slate-800">
                 <button onClick={onBack} className="text-slate-400 hover:text-white transition-colors">
                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -119,12 +118,25 @@ function NotificationDetailView({ notification, onBack }) {
 
                 {type === 'TournamentInvitationNotification' && notification.data?.accept_url && (
                     <div className="flex gap-2">
-                        <a href={notification.data.accept_url} className="flex-1 text-center rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium py-2 transition-colors">
-                            ✓ Deelnemen
-                        </a>
-                        <a href={notification.data.decline_url} className="flex-1 text-center rounded-lg bg-slate-700 hover:bg-slate-600 text-white text-sm font-medium py-2 transition-colors">
-                            ✗ Afwijzen
-                        </a>
+                        {notification.data.payment_url ? (
+                            <>
+                                <a href={notification.data.payment_url} className="flex-1 text-center rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium py-2 transition-colors">
+                                    💳 Betaal €{Number(notification.data.entry_fee).toFixed(2).replace('.', ',')}
+                                </a>
+                                <a href={notification.data.decline_url} className="flex-1 text-center rounded-lg bg-slate-700 hover:bg-slate-600 text-white text-sm font-medium py-2 transition-colors">
+                                    ✗ Afwijzen
+                                </a>
+                            </>
+                        ) : (
+                            <>
+                                <a href={notification.data.accept_url} className="flex-1 text-center rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium py-2 transition-colors">
+                                    ✓ Deelnemen
+                                </a>
+                                <a href={notification.data.decline_url} className="flex-1 text-center rounded-lg bg-slate-700 hover:bg-slate-600 text-white text-sm font-medium py-2 transition-colors">
+                                    ✗ Afwijzen
+                                </a>
+                            </>
+                        )}
                     </div>
                 )}
 
@@ -200,27 +212,14 @@ function NotificationDetailView({ notification, onBack }) {
                 )}
 
                 {type === 'MembershipPaymentNotification' && d.payment_url && (
-                    <div className="space-y-3">
-                        <a
-                            href={d.payment_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex justify-center"
-                        >
-                            <div className="bg-white p-2 sm:p-3 rounded-lg">
-                                <QRCodeSVG value={d.payment_url} size={120} className="sm:w-[160px] sm:h-[160px]" />
-                            </div>
-                        </a>
-                        <p className="text-[10px] text-slate-500 text-center">Scan of tik op de QR code om te betalen</p>
-                        <a
-                            href={d.payment_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="block text-center rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium py-2.5 transition-colors"
-                        >
-                            💶 Nu betalen
-                        </a>
-                    </div>
+                    <a
+                        href={d.payment_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block text-center rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium py-2.5 transition-colors"
+                    >
+                        💶 Nu betalen
+                    </a>
                 )}
 
                 <p className="text-[10px] text-slate-600 text-center pt-2">{timeAgo(notification.created_at)}</p>

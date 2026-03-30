@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminSessionHistoryController;
 use App\Http\Controllers\Admin\AgeCategoryController;
+use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\Admin\ApproveUserController;
 use App\Http\Controllers\Admin\BarProductController;
 use App\Http\Controllers\Admin\CategoryExcelController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\Admin\MemberController;
 use App\Http\Controllers\Admin\MemberExcelController;
 use App\Http\Controllers\Admin\MemberIndexController;
 use App\Http\Controllers\Admin\RecalculateAgeCategoriesController;
+use App\Http\Controllers\Admin\SponsorController;
 use App\Http\Controllers\Admin\ToggleUserActiveController;
 use App\Http\Controllers\Admin\TournamentController;
 use App\Http\Controllers\Admin\TournamentIndexController;
@@ -39,6 +41,7 @@ use App\Http\Controllers\POSController;
 use App\Http\Controllers\PushSubscriptionController;
 use App\Http\Controllers\TournamentAttachmentController;
 use App\Http\Controllers\TournamentDetailController;
+use App\Http\Controllers\TournamentPaymentWebhookController;
 use App\Http\Controllers\TournamentRsvpController;
 use App\Http\Controllers\Trainer\TrainerAttendanceController;
 use App\Http\Controllers\Trainer\TrainerTournamentController;
@@ -55,6 +58,7 @@ Route::get('/club-logo', ClubLogoController::class)->name('club.logo');
 
 // Mollie webhook (no auth, CSRF excluded in bootstrap/app.php)
 Route::post('/webhooks/mollie', MollieWebhookController::class)->name('webhooks.mollie');
+Route::post('/webhooks/mollie/tournament', TournamentPaymentWebhookController::class)->name('webhooks.mollie.tournament');
 
 // Attendance kiosk (PIN-protected, no auth)
 Route::get('/attendance', [AttendanceKioskController::class, 'pin'])->name('attendance.pin');
@@ -65,6 +69,9 @@ Route::get('/attendance/results', [AttendanceKioskController::class, 'results'])
 Route::get('/attendance/session/{session}', [AttendanceKioskController::class, 'session'])->name('attendance.session');
 Route::post('/attendance/session/{session}/toggle/{member}', [AttendanceKioskController::class, 'toggle'])->name('attendance.toggle');
 Route::post('/attendance/logout', [AttendanceKioskController::class, 'logout'])->name('attendance.logout');
+
+// Podium photo display (no auth — used by kiosk mode)
+Route::get('/podium-foto/{podiumPhoto}', PodiumPhotoController::class)->name('podium-photo.show');
 
 // Guest routes (unauthenticated only)
 Route::middleware('guest')->group(function () {
@@ -122,12 +129,11 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
     // Tournament attachment download
     Route::get('/bijlagen/{attachment}', TournamentAttachmentController::class)->name('attachments.show');
 
-    // Podium photo display
-    Route::get('/podium-foto/{podiumPhoto}', PodiumPhotoController::class)->name('podium-photo.show');
     Route::get('/toernooien/{tournament}', TournamentDetailController::class)->name('tournament.detail');
 
     // Archived tournaments (any authenticated user)
     Route::get('/archief', ArchivedTournamentsController::class)->name('archived.tournaments');
+    Route::delete('/archief/{tournament}', [ArchivedTournamentsController::class, 'destroy'])->middleware('admin')->name('archived.tournaments.destroy');
 
     // Trainer routes
     Route::middleware('coach')->prefix('trainer')->group(function () {
@@ -210,6 +216,18 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         // Vouchers
         Route::get('/vouchers', [VoucherController::class, 'index'])->name('admin.vouchers.index');
 
+        // Announcements
+        Route::post('/announcements', [AnnouncementController::class, 'store'])->name('admin.announcements.store');
+        Route::patch('/announcements/{announcement}', [AnnouncementController::class, 'update'])->name('admin.announcements.update');
+        Route::post('/announcements/{announcement}/archive', [AnnouncementController::class, 'archive'])->name('admin.announcements.archive');
+        Route::delete('/announcements/{announcement}', [AnnouncementController::class, 'destroy'])->name('admin.announcements.destroy');
+
+        // Sponsors
+        Route::post('/sponsors', [SponsorController::class, 'store'])->name('admin.sponsors.store');
+        Route::patch('/sponsors/{sponsor}', [SponsorController::class, 'update'])->name('admin.sponsors.update');
+        Route::post('/sponsors/{sponsor}/renew', [SponsorController::class, 'renew'])->name('admin.sponsors.renew');
+        Route::delete('/sponsors/{sponsor}', [SponsorController::class, 'destroy'])->name('admin.sponsors.destroy');
+
         // Bar products
         Route::post('/bar-products', [BarProductController::class, 'store'])->name('admin.bar-products.store');
         Route::patch('/bar-products/{barProduct}', [BarProductController::class, 'update'])->name('admin.bar-products.update');
@@ -263,6 +281,10 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         // RSVP management (both admin + coach)
         Route::post('/tournaments/{tournament}/accept/{member}', [TournamentMembersController::class, 'adminAccept'])->name('admin.tournaments.accept');
         Route::post('/tournaments/{tournament}/decline/{member}', [TournamentMembersController::class, 'adminDecline'])->name('admin.tournaments.decline');
+
+        // Payment management (both admin + coach)
+        Route::post('/tournaments/{tournament}/mark-paid/{member}', [TournamentMembersController::class, 'markPaid'])->name('admin.tournaments.mark-paid');
+        Route::post('/tournaments/{tournament}/check-payment/{member}', [TournamentMembersController::class, 'checkPaymentStatus'])->name('admin.tournaments.check-payment');
 
         // Start tournament (coach-only, enforced in controller)
         Route::post('/tournaments/{tournament}/start', [TournamentMembersController::class, 'startTournament'])->name('admin.tournaments.start');

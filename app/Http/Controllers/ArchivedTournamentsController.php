@@ -5,11 +5,21 @@ namespace App\Http\Controllers;
 use App\Enums\TournamentStatus;
 use App\Models\Tournament;
 use App\Models\TournamentResult;
+use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class ArchivedTournamentsController extends Controller
 {
+    public function destroy(Tournament $tournament): RedirectResponse
+    {
+        abort_unless($tournament->status === TournamentStatus::Archived, 403);
+
+        $tournament->delete();
+
+        return redirect()->route('archived.tournaments')->with('status', 'Toernooi is verwijderd.');
+    }
+
     public function __invoke(): Response
     {
         $tournaments = Tournament::where('status', TournamentStatus::Archived)
@@ -32,14 +42,14 @@ class ArchivedTournamentsController extends Controller
                     'longitude' => $t->longitude,
                     'status' => $t->status->value,
                     'status_label' => $t->status->label(),
-                    'coaches' => $t->coaches->map(fn ($m) => $m->fullName())->values()->all(),
+                    'coaches' => $t->coaches->map(fn ($m) => $m->fullName())->filter()->values()->all(),
                     'attachments' => $t->attachments->map(fn ($a) => [
                         'id' => $a->id,
                         'original_name' => $a->original_name,
                         'url' => route('attachments.show', $a),
                     ])->values()->all(),
                     'results' => $results->map(fn ($r) => [
-                        'member_name' => $r->member->fullName(),
+                        'member_name' => $r->member?->fullName() ?? 'Verwijderd lid',
                         'result' => $r->result,
                         'notes' => $r->notes,
                     ])->values()->all(),

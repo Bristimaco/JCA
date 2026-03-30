@@ -21,7 +21,7 @@ export default function MyMembers({ members, ageCategories, weightCategories }) 
                             ← Terug naar lijst
                         </button>
                     </div>
-                    <div className="p-6">
+                    <div className="p-3 sm:p-6">
                         <div className="grid gap-6 lg:grid-cols-2">
                             <MemberCard member={viewingMember} ageCategories={ageCategories} />
                             <div className="space-y-6">

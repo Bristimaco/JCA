@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Models\AgeCategory;
+use App\Models\Announcement;
 use App\Models\BarProduct;
 use App\Models\ClubSettings;
 use App\Models\Member;
 use App\Models\MembershipInvoice;
+use App\Models\Sponsor;
 use App\Models\TrainingGroup;
 use App\Models\User;
 use App\Models\Voucher;
@@ -138,8 +140,18 @@ class AdminDashboardController extends Controller
             'trainers' => $trainers,
             'invoices' => $invoices,
             'vouchers' => $vouchers,
+            'announcements' => Announcement::ordered()->get(['id', 'title', 'content', 'start_date', 'end_date', 'is_archived', 'display_order', 'photo_mime', 'created_at'])
+                ->map(fn (Announcement $a) => [
+                    ...$a->toArray(),
+                    'has_photo' => (bool) $a->photo_mime,
+                ]),
             'barProducts' => BarProduct::ordered()->get(),
             'refillProducts' => BarProduct::needsRefill()->ordered()->get(['id', 'name', 'price', 'needs_refill_at']),
+            'sponsors' => Sponsor::orderBy('name')->get(['id', 'name', 'address_street', 'address_city', 'address_postal_code', 'tier', 'contract_start_date', 'contract_end_date', 'is_active', 'logo_mime', 'created_at'])
+                ->map(fn (Sponsor $s) => [
+                    ...$s->toArray(),
+                    'has_logo' => (bool) $s->logo_mime,
+                ]),
         ]);
     }
 }

@@ -19,7 +19,7 @@ export default function MemberCard({ member, ageCategories, showPaidButton = fal
         <div className="max-w-md mx-auto">
             <div className="bg-slate-900 rounded-2xl shadow-lg ring-1 ring-slate-800 overflow-hidden">
                 {/* Header */}
-                <div className="bg-gradient-to-r from-amber-600 to-yellow-700 px-6 py-4 flex items-center justify-between relative overflow-hidden">
+                <div className="bg-gradient-to-r from-amber-600 to-yellow-700 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between relative overflow-hidden">
                     <div className="absolute inset-0 seigaiha opacity-20"></div>
                     <div className="relative z-10">
                         <p className="text-amber-200 text-xs font-semibold uppercase tracking-wider">柔道 Judo Club</p>
@@ -30,8 +30,8 @@ export default function MemberCard({ member, ageCategories, showPaidButton = fal
                 </div>
 
                 {/* Body */}
-                <div className="p-6">
-                    <div className="flex gap-5">
+                <div className="p-4 sm:p-6">
+                    <div className="flex gap-3 sm:gap-5">
                         {/* Info */}
                         <div className="flex-1 min-w-0">
                             <h3 className="text-xl font-bold text-white truncate">
@@ -85,9 +85,9 @@ export default function MemberCard({ member, ageCategories, showPaidButton = fal
                         {/* Photo */}
                         <div className="flex-shrink-0">
                             {member.photo_url ? (
-                                <img src={member.photo_url} alt="" className="w-24 h-28 rounded-xl object-cover ring-1 ring-slate-600/60 shadow-sm" />
+                                <img src={member.photo_url} alt="" className="w-20 h-24 sm:w-24 sm:h-28 rounded-xl object-cover ring-1 ring-slate-600/60 shadow-sm" />
                             ) : (
-                                <div className="w-24 h-28 rounded-xl bg-gradient-to-br from-rose-600 to-red-800 flex items-center justify-center shadow-sm">
+                                <div className="w-20 h-24 sm:w-24 sm:h-28 rounded-xl bg-gradient-to-br from-rose-600 to-red-800 flex items-center justify-center shadow-sm">
                                     <span className="text-2xl font-bold text-white">
                                         {member.first_name[0]}{member.last_name[0]}
                                     </span>
@@ -97,7 +97,7 @@ export default function MemberCard({ member, ageCategories, showPaidButton = fal
                     </div>
 
                     {/* Contact & Address */}
-                    <div className="mt-4 pt-4 border-t border-slate-800 grid grid-cols-2 gap-3 text-sm text-slate-400">
+                    <div className="mt-4 pt-4 border-t border-slate-800 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-slate-400">
                         <div>
                             {member.email && (
                                 <p className="truncate">{member.email}</p>
@@ -106,7 +106,7 @@ export default function MemberCard({ member, ageCategories, showPaidButton = fal
                                 <p>{member.phone}</p>
                             )}
                         </div>
-                        <div className="text-right">
+                        <div className="sm:text-right">
                             {member.address_street && <p>{member.address_street}</p>}
                             {(member.address_postal_code || member.address_city) && (
                                 <p>{[member.address_postal_code, member.address_city].filter(Boolean).join(' ')}</p>

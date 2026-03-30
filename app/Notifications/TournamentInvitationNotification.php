@@ -18,6 +18,8 @@ class TournamentInvitationNotification extends Notification
         public Tournament $tournament,
         public Member $member,
         public string $token,
+        public ?string $paymentUrl = null,
+        public ?float $entryFee = null,
     ) {}
 
     public function via(object $notifiable): array
@@ -49,6 +51,8 @@ class TournamentInvitationNotification extends Notification
                 'acceptUrl' => url("/tournaments/rsvp/{$this->token}/accept"),
                 'declineUrl' => url("/tournaments/rsvp/{$this->token}/decline"),
                 'club' => $club,
+                'paymentUrl' => $this->paymentUrl,
+                'entryFee' => $this->entryFee,
             ]);
     }
 
@@ -65,6 +69,8 @@ class TournamentInvitationNotification extends Notification
             'member_id' => $this->member->id,
             'accept_url' => url("/tournaments/rsvp/{$this->token}/accept"),
             'decline_url' => url("/tournaments/rsvp/{$this->token}/decline"),
+            'payment_url' => $this->paymentUrl,
+            'entry_fee' => $this->entryFee,
             'detail' => [
                 'member_name' => $this->member->fullName(),
                 'tournament_name' => $t->name,
