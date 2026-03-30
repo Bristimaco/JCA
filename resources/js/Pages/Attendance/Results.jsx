@@ -233,7 +233,7 @@ export default function Results({ tournaments }) {
                                                         const photoKey = `${group.ageGroup.name}|${weightGroup.name}`;
                                                         const photoUrl = tournament.podiumPhotos?.[photoKey];
                                                         return photoUrl ? (
-                                                            <img src={photoUrl} alt="Podiumfoto" className="w-full rounded-xl mb-4 ring-1 ring-slate-700 object-cover max-h-64" />
+                                                            <img src={photoUrl} alt="Podiumfoto" className="w-full rounded-xl mb-4 ring-1 ring-slate-700 object-contain" />
                                                         ) : null;
                                                     })()}
                                                     <ul className="space-y-3">
