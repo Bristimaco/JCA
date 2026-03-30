@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
 import { usePage, router } from '@inertiajs/react';
-import { QRCodeSVG } from 'qrcode.react';
 
 const ICONS = {
     MembershipRenewalNotification: '💳',
@@ -200,27 +199,14 @@ function NotificationDetailView({ notification, onBack }) {
                 )}
 
                 {type === 'MembershipPaymentNotification' && d.payment_url && (
-                    <div className="space-y-3">
-                        <a
-                            href={d.payment_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex justify-center"
-                        >
-                            <div className="bg-white p-2 sm:p-3 rounded-lg">
-                                <QRCodeSVG value={d.payment_url} size={120} className="sm:w-[160px] sm:h-[160px]" />
-                            </div>
-                        </a>
-                        <p className="text-[10px] text-slate-500 text-center">Scan of tik op de QR code om te betalen</p>
-                        <a
-                            href={d.payment_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="block text-center rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium py-2.5 transition-colors"
-                        >
-                            💶 Nu betalen
-                        </a>
-                    </div>
+                    <a
+                        href={d.payment_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block text-center rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium py-2.5 transition-colors"
+                    >
+                        💶 Nu betalen
+                    </a>
                 )}
 
                 <p className="text-[10px] text-slate-600 text-center pt-2">{timeAgo(notification.created_at)}</p>
