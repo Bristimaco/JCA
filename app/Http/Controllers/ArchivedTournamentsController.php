@@ -5,11 +5,21 @@ namespace App\Http\Controllers;
 use App\Enums\TournamentStatus;
 use App\Models\Tournament;
 use App\Models\TournamentResult;
+use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class ArchivedTournamentsController extends Controller
 {
+    public function destroy(Tournament $tournament): RedirectResponse
+    {
+        abort_unless($tournament->status === TournamentStatus::Archived, 403);
+
+        $tournament->delete();
+
+        return redirect()->route('archived.tournaments')->with('status', 'Toernooi is verwijderd.');
+    }
+
     public function __invoke(): Response
     {
         $tournaments = Tournament::where('status', TournamentStatus::Archived)

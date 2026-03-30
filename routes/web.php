@@ -129,6 +129,7 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
 
     // Archived tournaments (any authenticated user)
     Route::get('/archief', ArchivedTournamentsController::class)->name('archived.tournaments');
+    Route::delete('/archief/{tournament}', [ArchivedTournamentsController::class, 'destroy'])->middleware('admin')->name('archived.tournaments.destroy');
 
     // Trainer routes
     Route::middleware('coach')->prefix('trainer')->group(function () {
