@@ -294,6 +294,14 @@ class TournamentMembersController extends Controller
             return back()->with('status', 'Het toernooi kan alleen worden gestart vanuit de status "Inschrijvingen voltooid".');
         }
 
+        $registeredCount = $tournament->members()
+            ->wherePivot('registration_status', 'registered')
+            ->count();
+
+        if ($registeredCount === 0) {
+            return back()->with('status', 'Het toernooi kan niet gestart worden zonder ingeschreven deelnemers.');
+        }
+
         $tournament->update(['status' => TournamentStatus::Started]);
 
         return back()->with('status', 'Toernooi gestart!');
@@ -305,8 +313,8 @@ class TournamentMembersController extends Controller
      */
     public function revertStatus(Tournament $tournament): RedirectResponse
     {
-        if (in_array($tournament->status, [TournamentStatus::Started, TournamentStatus::Finished], true)) {
-            return back()->with('status', 'Een gestart of afgelopen toernooi kan niet worden teruggezet.');
+        if ($tournament->status === TournamentStatus::Finished) {
+            return back()->with('status', 'Een afgelopen toernooi kan niet worden teruggezet.');
         }
 
         $previous = $tournament->status->previous();
