@@ -15,6 +15,7 @@ use Illuminate\Support\Carbon;
  * @property string|null $logo_mime_type
  * @property int $attendance_threshold
  * @property string|null $attendance_pin
+ * @property float|null $default_membership_fee
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
@@ -24,6 +25,7 @@ class ClubSettings extends Model
 
     protected $casts = [
         'attendance_threshold' => 'integer',
+        'default_membership_fee' => 'decimal:2',
     ];
 
     public static function current(): self

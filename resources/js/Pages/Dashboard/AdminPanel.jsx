@@ -134,6 +134,7 @@ function ClubSettingsSection({ clubSettings }) {
         address_postal_code: clubSettings.address_postal_code || '',
         attendance_pin: clubSettings.attendance_pin || '',
         attendance_threshold: clubSettings.attendance_threshold ?? 70,
+        default_membership_fee: clubSettings.default_membership_fee || '',
         logo: null,
     });
 
@@ -197,6 +198,20 @@ function ClubSettingsSection({ clubSettings }) {
                         className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-rose-500 focus:ring-rose-500 text-sm"
                     />
                 </div>
+            </div>
+
+            <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1">Standaard lidgeld (€)</label>
+                <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={form.data.default_membership_fee}
+                    onChange={(e) => form.setData('default_membership_fee', e.target.value)}
+                    className="w-full max-w-xs rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-rose-500 focus:ring-rose-500 text-sm"
+                />
+                <p className="text-xs text-slate-500 mt-1">Voor leden die niet in een trainingsgroep zitten</p>
+                {form.errors.default_membership_fee && <p className="text-sm text-red-400 mt-1">{form.errors.default_membership_fee}</p>}
             </div>
 
             <div>

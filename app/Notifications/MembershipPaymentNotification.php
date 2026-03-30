@@ -46,7 +46,7 @@ class MembershipPaymentNotification extends Notification
 
         foreach ($lines as $line) {
             $memberName = $line->member?->fullName() ?? 'Onbekend lid';
-            $groupName = $line->trainingGroup?->name ?? '-';
+            $groupName = $line->trainingGroup?->name ?? 'Geen trainingsgroep';
             $label = $line->is_discounted ? ' (korting)' : '';
             $mail->line("• {$memberName} — {$groupName}: €".number_format($line->amount, 2, ',', '.')."{$label}");
         }
@@ -70,7 +70,7 @@ class MembershipPaymentNotification extends Notification
 
         $lineDetails = $lines->map(fn ($line) => [
             'member_name' => $line->member?->fullName() ?? 'Onbekend lid',
-            'group_name' => $line->trainingGroup?->name ?? '-',
+            'group_name' => $line->trainingGroup?->name ?? 'Geen trainingsgroep',
             'amount' => number_format($line->amount, 2, ',', '.'),
             'is_discounted' => $line->is_discounted,
         ])->values()->all();
