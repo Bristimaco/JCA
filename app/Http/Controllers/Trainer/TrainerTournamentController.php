@@ -6,10 +6,12 @@ use App\Enums\InvitationStatus;
 use App\Enums\TournamentStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Member;
+use App\Models\PodiumPhoto;
 use App\Models\Tournament;
 use App\Models\TournamentResult;
 use App\Models\User;
 use App\Notifications\TournamentReportNotification;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
@@ -20,6 +22,14 @@ class TrainerTournamentController extends Controller
     public function show(Request $request, Tournament $tournament): Response
     {
         $tournament->load(['ageCategories.weightCategories', 'attachments', 'coaches', 'members.weightCategory.ageCategory']);
+
+        // Load podium photos for this tournament
+        $podiumPhotos = PodiumPhoto::where('tournament_id', $tournament->id)
+            ->get()
+            ->mapWithKeys(fn (PodiumPhoto $p) => [
+                $p->age_category_name.'|'.$p->weight_category_name => route('podium-photo.show', $p),
+            ])
+            ->all();
 
         // Only show participants who accepted & registered (for live/finished tournaments)
         $isLive = in_array($tournament->status, [TournamentStatus::Started, TournamentStatus::Finished, TournamentStatus::Archived], true);
@@ -111,6 +121,7 @@ class TrainerTournamentController extends Controller
             ],
             'participantGroups' => array_values($grouped),
             'totalParticipants' => $participants->count(),
+            'podiumPhotos' => $podiumPhotos,
         ]);
     }
 
@@ -224,5 +235,50 @@ class TrainerTournamentController extends Controller
         $mailCount = $interestedUsers->count();
 
         return redirect()->back()->with('status', "Toernooi afgesloten. Verslag verstuurd naar {$mailCount} geïnteresseerde(n).");
+    }
+
+    public function storePodiumPhoto(Request $request, Tournament $tournament): RedirectResponse
+    {
+        if (! in_array($tournament->status, [TournamentStatus::Started, TournamentStatus::Finished], true)) {
+            return redirect()->back()->withErrors(['photo' => 'Podiumfoto\'s kunnen alleen worden geüpload voor actieve of afgelopen toernooien.']);
+        }
+
+        $validated = $request->validate([
+            'age_category_name' => ['required', 'string', 'max:255'],
+            'weight_category_name' => ['required', 'string', 'max:255'],
+            'photo' => ['required', 'image', 'max:10240'],
+        ]);
+
+        $file = $validated['photo'];
+
+        PodiumPhoto::updateOrCreate(
+            [
+                'tournament_id' => $tournament->id,
+                'age_category_name' => $validated['age_category_name'],
+                'weight_category_name' => $validated['weight_category_name'],
+            ],
+            [
+                'photo_data' => base64_encode(file_get_contents($file->getRealPath())),
+                'photo_mime' => $file->getMimeType(),
+                'uploaded_by' => $request->user()->id,
+            ]
+        );
+
+        return redirect()->back()->with('status', 'Podiumfoto opgeslagen.');
+    }
+
+    public function deletePodiumPhoto(Request $request, Tournament $tournament): RedirectResponse
+    {
+        $validated = $request->validate([
+            'age_category_name' => ['required', 'string', 'max:255'],
+            'weight_category_name' => ['required', 'string', 'max:255'],
+        ]);
+
+        PodiumPhoto::where('tournament_id', $tournament->id)
+            ->where('age_category_name', $validated['age_category_name'])
+            ->where('weight_category_name', $validated['weight_category_name'])
+            ->delete();
+
+        return redirect()->back()->with('status', 'Podiumfoto verwijderd.');
     }
 }

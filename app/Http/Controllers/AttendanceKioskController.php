@@ -6,6 +6,7 @@ use App\Enums\InvitationStatus;
 use App\Enums\TournamentStatus;
 use App\Models\ClubSettings;
 use App\Models\Member;
+use App\Models\PodiumPhoto;
 use App\Models\Tournament;
 use App\Models\TournamentResult;
 use App\Models\TrainingAttendance;
@@ -210,6 +211,14 @@ class AttendanceKioskController extends Controller
             }
             unset($ageGroup);
 
+            // Load podium photos for this tournament
+            $podiumPhotos = PodiumPhoto::where('tournament_id', $tournament->id)
+                ->get()
+                ->mapWithKeys(fn (PodiumPhoto $p) => [
+                    $p->age_category_name.'|'.$p->weight_category_name => route('podium-photo.show', $p),
+                ])
+                ->all();
+
             $tournamentData[] = [
                 'id' => $tournament->id,
                 'name' => $tournament->name,
@@ -218,6 +227,7 @@ class AttendanceKioskController extends Controller
                 'country_code' => $tournament->country_code,
                 'participantGroups' => array_values($grouped),
                 'totalParticipants' => $participants->count(),
+                'podiumPhotos' => $podiumPhotos,
             ];
         }
 

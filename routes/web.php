@@ -34,6 +34,7 @@ use App\Http\Controllers\MemberPhotoController;
 use App\Http\Controllers\MollieWebhookController;
 use App\Http\Controllers\MyMembersController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PodiumPhotoController;
 use App\Http\Controllers\POSController;
 use App\Http\Controllers\PushSubscriptionController;
 use App\Http\Controllers\TournamentAttachmentController;
@@ -120,6 +121,9 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
 
     // Tournament attachment download
     Route::get('/bijlagen/{attachment}', TournamentAttachmentController::class)->name('attachments.show');
+
+    // Podium photo display
+    Route::get('/podium-foto/{podiumPhoto}', PodiumPhotoController::class)->name('podium-photo.show');
     Route::get('/toernooien/{tournament}', TournamentDetailController::class)->name('tournament.detail');
 
     // Archived tournaments (any authenticated user)
@@ -131,6 +135,8 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::get('/toernooien/{tournament}', [TrainerTournamentController::class, 'show'])->name('trainer.tournament.show');
         Route::post('/toernooien/{tournament}/resultaten', [TrainerTournamentController::class, 'storeResults'])->name('trainer.tournament.results');
         Route::post('/toernooien/{tournament}/afsluiten', [TrainerTournamentController::class, 'closeTournament'])->name('trainer.tournament.close');
+        Route::post('/toernooien/{tournament}/podium-foto', [TrainerTournamentController::class, 'storePodiumPhoto'])->name('trainer.tournament.podium-photo');
+        Route::delete('/toernooien/{tournament}/podium-foto', [TrainerTournamentController::class, 'deletePodiumPhoto'])->name('trainer.tournament.podium-photo.delete');
 
         // Training group member assignment (trainer)
         Route::put('/training-groups/{trainingGroup}/members', [TrainingGroupMemberController::class, 'update'])->name('trainer.training-groups.members');

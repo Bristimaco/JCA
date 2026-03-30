@@ -175,6 +175,13 @@ export default function Results({ tournaments }) {
                                                             ({weightGroup.members.length})
                                                         </span>
                                                     </h4>
+                                                    {(() => {
+                                                        const photoKey = `${ageGroup.name}|${weightGroup.name}`;
+                                                        const photoUrl = tournament.podiumPhotos?.[photoKey];
+                                                        return photoUrl ? (
+                                                            <img src={photoUrl} alt="Podiumfoto" className="w-full rounded-xl mb-4 ring-1 ring-slate-700 object-cover max-h-64" />
+                                                        ) : null;
+                                                    })()}
                                                     <ul className="space-y-3">
                                                         {weightGroup.members.map((member) => (
                                                             <li key={member.id} className="flex items-center justify-between text-xl">

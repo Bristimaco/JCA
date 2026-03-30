@@ -1,5 +1,5 @@
-import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import { useState } from 'react';
+import { Head, Link, useForm, usePage, router } from '@inertiajs/react';
+import { useState, useRef } from 'react';
 import AppLayout from '../../Layouts/AppLayout';
 import TournamentStepper from '../../Components/TournamentStepper';
 
@@ -15,10 +15,12 @@ const resultOptions = [
     { value: 'Gediskwalificeerd', label: 'Gediskwalificeerd' },
 ];
 
-export default function TournamentDetail({ tournament, participantGroups, totalParticipants }) {
+export default function TournamentDetail({ tournament, participantGroups, totalParticipants, podiumPhotos = {} }) {
     const { flash } = usePage().props;
     const t = tournament;
     const hasMap = t.latitude && t.longitude;
+    const fileInputRef = useRef(null);
+    const [uploadTarget, setUploadTarget] = useState(null);
 
     // Build initial results state from existing data
     const buildInitialResults = () => {
@@ -108,9 +110,48 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
         closeForm.post(`/trainer/toernooien/${t.id}/afsluiten`);
     };
 
+    const openPhotoPicker = (ageName, weightName) => {
+        setUploadTarget({ ageName, weightName });
+        fileInputRef.current?.click();
+    };
+
+    const handlePhotoSelected = (e) => {
+        const file = e.target.files?.[0];
+        if (!file || !uploadTarget) return;
+
+        const formData = new FormData();
+        formData.append('age_category_name', uploadTarget.ageName);
+        formData.append('weight_category_name', uploadTarget.weightName);
+        formData.append('photo', file);
+
+        router.post(`/trainer/toernooien/${t.id}/podium-foto`, formData, {
+            forceFormData: true,
+        });
+
+        setUploadTarget(null);
+        e.target.value = '';
+    };
+
+    const handleDeletePhoto = (ageName, weightName) => {
+        if (!confirm('Podiumfoto verwijderen?')) return;
+        router.delete(`/trainer/toernooien/${t.id}/podium-foto`, {
+            data: { age_category_name: ageName, weight_category_name: weightName },
+        });
+    };
+
     return (
         <AppLayout>
             <Head title={`Trainer - ${t.name}`} />
+
+            {/* Hidden file input for photo upload */}
+            <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                capture="environment"
+                className="hidden"
+                onChange={handlePhotoSelected}
+            />
 
             <div className="mb-2 flex items-center gap-2 sm:gap-4">
                 <Link href="/" className="text-sm text-slate-500 hover:text-slate-300">
@@ -404,6 +445,49 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                                                             </div>
                                                         ))}
                                                     </div>
+
+                                                    {/* Podium photo */}
+                                                    {(() => {
+                                                        const photoKey = `${ageGroup.name}|${weightGroup.name}`;
+                                                        const photoUrl = podiumPhotos[photoKey];
+                                                        return (
+                                                            <div className="mt-3 pt-3 border-t border-slate-700">
+                                                                {photoUrl ? (
+                                                                    <div className="flex items-start gap-3">
+                                                                        <img src={photoUrl} alt="Podiumfoto" className="w-24 h-24 rounded-lg object-cover ring-1 ring-slate-700" />
+                                                                        <div className="flex flex-col gap-1.5">
+                                                                            <button
+                                                                                type="button"
+                                                                                onClick={() => openPhotoPicker(ageGroup.name, weightGroup.name)}
+                                                                                className="text-xs text-slate-400 hover:text-white transition-colors"
+                                                                            >
+                                                                                📷 Vervangen
+                                                                            </button>
+                                                                            <button
+                                                                                type="button"
+                                                                                onClick={() => handleDeletePhoto(ageGroup.name, weightGroup.name)}
+                                                                                className="text-xs text-red-400 hover:text-red-300 transition-colors"
+                                                                            >
+                                                                                🗑 Verwijderen
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                ) : (
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => openPhotoPicker(ageGroup.name, weightGroup.name)}
+                                                                        className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors"
+                                                                    >
+                                                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
+                                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z" />
+                                                                        </svg>
+                                                                        Podiumfoto toevoegen
+                                                                    </button>
+                                                                )}
+                                                            </div>
+                                                        );
+                                                    })()}
                                                 </div>
                                             ))}
                                         </div>
