@@ -6,9 +6,22 @@ use App\Http\Controllers\Controller;
 use App\Models\BarProduct;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class BarProductController extends Controller
 {
+    public function refillIndex(): Response
+    {
+        $refillProducts = BarProduct::needsRefill()
+            ->ordered()
+            ->get(['id', 'name', 'price', 'needs_refill_at']);
+
+        return Inertia::render('Admin/RefillProducts', [
+            'refillProducts' => $refillProducts,
+        ]);
+    }
+
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([

@@ -8,9 +8,25 @@ use App\Models\Sponsor;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class SponsorController extends Controller
 {
+    public function index(): Response
+    {
+        $sponsors = Sponsor::orderBy('name')
+            ->get(['id', 'name', 'address_street', 'address_city', 'address_postal_code', 'tier', 'contract_start_date', 'contract_end_date', 'is_active', 'logo_mime', 'created_at'])
+            ->map(fn (Sponsor $s) => [
+                ...$s->toArray(),
+                'has_logo' => (bool) $s->logo_mime,
+            ]);
+
+        return Inertia::render('Admin/Sponsors', [
+            'sponsors' => $sponsors,
+        ]);
+    }
+
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([

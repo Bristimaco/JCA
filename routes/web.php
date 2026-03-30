@@ -22,6 +22,7 @@ use App\Http\Controllers\Admin\TrainingGroupController;
 use App\Http\Controllers\Admin\TrainingGroupMemberController;
 use App\Http\Controllers\Admin\UpdateUserController;
 use App\Http\Controllers\Admin\UserMembersController;
+use App\Http\Controllers\Admin\VoucherController as AdminVoucherController;
 use App\Http\Controllers\Admin\WeightCategoryController;
 use App\Http\Controllers\ArchivedTournamentsController;
 use App\Http\Controllers\AttendanceKioskController;
@@ -207,6 +208,7 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::post('/members/send-renewal-reminders', [MemberController::class, 'sendRenewalReminders'])->name('admin.members.send-renewal-reminders');
 
         // Invoices
+        Route::get('/facturen', [InvoiceController::class, 'index'])->name('admin.invoices.index');
         Route::post('/invoices/generate', [InvoiceController::class, 'generate'])->name('admin.invoices.generate');
         Route::post('/invoices/{invoice}/retry-payment', [InvoiceController::class, 'retryPayment'])->name('admin.invoices.retry-payment');
         Route::post('/invoices/{invoice}/check-status', [InvoiceController::class, 'checkStatus'])->name('admin.invoices.check-status');
@@ -214,21 +216,24 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::delete('/invoices/{invoice}', [InvoiceController::class, 'destroy'])->name('admin.invoices.destroy');
 
         // Vouchers
-        Route::get('/vouchers', [VoucherController::class, 'index'])->name('admin.vouchers.index');
+        Route::get('/vouchers', [AdminVoucherController::class, 'index'])->name('admin.vouchers.index');
 
         // Announcements
+        Route::get('/mededelingen', [AnnouncementController::class, 'index'])->name('admin.announcements.index');
         Route::post('/announcements', [AnnouncementController::class, 'store'])->name('admin.announcements.store');
         Route::patch('/announcements/{announcement}', [AnnouncementController::class, 'update'])->name('admin.announcements.update');
         Route::post('/announcements/{announcement}/archive', [AnnouncementController::class, 'archive'])->name('admin.announcements.archive');
         Route::delete('/announcements/{announcement}', [AnnouncementController::class, 'destroy'])->name('admin.announcements.destroy');
 
         // Sponsors
+        Route::get('/sponsors', [SponsorController::class, 'index'])->name('admin.sponsors.index');
         Route::post('/sponsors', [SponsorController::class, 'store'])->name('admin.sponsors.store');
         Route::patch('/sponsors/{sponsor}', [SponsorController::class, 'update'])->name('admin.sponsors.update');
         Route::post('/sponsors/{sponsor}/renew', [SponsorController::class, 'renew'])->name('admin.sponsors.renew');
         Route::delete('/sponsors/{sponsor}', [SponsorController::class, 'destroy'])->name('admin.sponsors.destroy');
 
         // Bar products
+        Route::get('/aan-te-vullen', [BarProductController::class, 'refillIndex'])->name('admin.refill-products.index');
         Route::post('/bar-products', [BarProductController::class, 'store'])->name('admin.bar-products.store');
         Route::patch('/bar-products/{barProduct}', [BarProductController::class, 'update'])->name('admin.bar-products.update');
         Route::delete('/bar-products/{barProduct}', [BarProductController::class, 'destroy'])->name('admin.bar-products.destroy');

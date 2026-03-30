@@ -6,9 +6,25 @@ use App\Http\Controllers\Controller;
 use App\Models\Announcement;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class AnnouncementController extends Controller
 {
+    public function index(): Response
+    {
+        $announcements = Announcement::ordered()
+            ->get(['id', 'title', 'content', 'start_date', 'end_date', 'is_archived', 'display_order', 'photo_mime', 'created_at'])
+            ->map(fn (Announcement $a) => [
+                ...$a->toArray(),
+                'has_photo' => (bool) $a->photo_mime,
+            ]);
+
+        return Inertia::render('Admin/Announcements', [
+            'announcements' => $announcements,
+        ]);
+    }
+
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([

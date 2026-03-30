@@ -5,15 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Models\AgeCategory;
-use App\Models\Announcement;
-use App\Models\BarProduct;
 use App\Models\ClubSettings;
 use App\Models\Member;
-use App\Models\MembershipInvoice;
-use App\Models\Sponsor;
 use App\Models\TrainingGroup;
 use App\Models\User;
-use App\Models\Voucher;
 use App\Models\WeightCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -96,36 +91,6 @@ class AdminDashboardController extends Controller
                 'name' => $u->name,
             ]);
 
-        $invoices = MembershipInvoice::with(['user:id,name,email', 'lines.member:id,first_name,last_name'])
-            ->orderByDesc('created_at')
-            ->get()
-            ->map(fn (MembershipInvoice $inv) => [
-                'id' => $inv->id,
-                'user_name' => $inv->user?->name ?? '-',
-                'user_email' => $inv->user?->email ?? '-',
-                'total_amount' => $inv->total_amount,
-                'status' => $inv->status->value,
-                'due_date' => $inv->due_date?->toDateString(),
-                'paid_at' => $inv->paid_at?->toDateString(),
-                'year' => $inv->year,
-                'has_payment_url' => (bool) $inv->mollie_payment_url,
-                'members' => $inv->lines->map(fn ($l) => $l->member?->fullName() ?? '-')->values()->all(),
-            ]);
-
-        $vouchers = Voucher::with(['member:id,first_name,last_name', 'redeemedByUser:id,name'])
-            ->orderByDesc('created_at')
-            ->get()
-            ->map(fn (Voucher $v) => [
-                'id' => $v->id,
-                'code' => $v->code,
-                'status' => $v->status->value,
-                'status_label' => $v->status->label(),
-                'member_name' => $v->member->fullName(),
-                'expires_at' => $v->expires_at->toDateString(),
-                'redeemed_at' => $v->redeemed_at?->format('d/m/Y H:i'),
-                'redeemed_by_name' => $v->redeemedByUser?->name,
-            ]);
-
         return Inertia::render('Admin/Dashboard', [
             'pendingUsers' => $pendingUsers,
             'users' => $users,
@@ -138,20 +103,6 @@ class AdminDashboardController extends Controller
             'renewalDueMembers' => $renewalDueMembers,
             'trainingGroups' => $trainingGroups,
             'trainers' => $trainers,
-            'invoices' => $invoices,
-            'vouchers' => $vouchers,
-            'announcements' => Announcement::ordered()->get(['id', 'title', 'content', 'start_date', 'end_date', 'is_archived', 'display_order', 'photo_mime', 'created_at'])
-                ->map(fn (Announcement $a) => [
-                    ...$a->toArray(),
-                    'has_photo' => (bool) $a->photo_mime,
-                ]),
-            'barProducts' => BarProduct::ordered()->get(),
-            'refillProducts' => BarProduct::needsRefill()->ordered()->get(['id', 'name', 'price', 'needs_refill_at']),
-            'sponsors' => Sponsor::orderBy('name')->get(['id', 'name', 'address_street', 'address_city', 'address_postal_code', 'tier', 'contract_start_date', 'contract_end_date', 'is_active', 'logo_mime', 'created_at'])
-                ->map(fn (Sponsor $s) => [
-                    ...$s->toArray(),
-                    'has_logo' => (bool) $s->logo_mime,
-                ]),
         ]);
     }
 }

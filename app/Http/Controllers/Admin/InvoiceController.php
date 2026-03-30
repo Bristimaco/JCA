@@ -9,9 +9,34 @@ use App\Notifications\MembershipPaymentNotification;
 use App\Services\MolliePaymentService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Artisan;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class InvoiceController extends Controller
 {
+    public function index(): Response
+    {
+        $invoices = MembershipInvoice::with(['user:id,name,email', 'lines.member:id,first_name,last_name'])
+            ->orderByDesc('created_at')
+            ->get()
+            ->map(fn (MembershipInvoice $inv) => [
+                'id' => $inv->id,
+                'user_name' => $inv->user?->name ?? '-',
+                'user_email' => $inv->user?->email ?? '-',
+                'total_amount' => $inv->total_amount,
+                'status' => $inv->status->value,
+                'due_date' => $inv->due_date?->toDateString(),
+                'paid_at' => $inv->paid_at?->toDateString(),
+                'year' => $inv->year,
+                'has_payment_url' => (bool) $inv->mollie_payment_url,
+                'members' => $inv->lines->map(fn ($l) => $l->member?->fullName() ?? '-')->values()->all(),
+            ]);
+
+        return Inertia::render('Admin/Invoices', [
+            'invoices' => $invoices,
+        ]);
+    }
+
     public function generate(): RedirectResponse
     {
         Artisan::call('membership:generate-invoices');

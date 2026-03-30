@@ -22,6 +22,21 @@ const moduleIcons = {
     'Kassa': (
         <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" /></svg>
     ),
+    'Facturen': (
+        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>
+    ),
+    'Vouchers': (
+        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-5.25h5.25M7.5 15h3M3.375 5.25c-.621 0-1.125.504-1.125 1.125v3.026a2.999 2.999 0 010 5.198v3.026c0 .621.504 1.125 1.125 1.125h17.25c.621 0 1.125-.504 1.125-1.125v-3.026a2.999 2.999 0 010-5.198V6.375c0-.621-.504-1.125-1.125-1.125H3.375z" /></svg>
+    ),
+    'Aan te vullen': (
+        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5m6 4.125l2.25 2.25m0 0l2.25 2.25M12 11.625l2.25-2.25M12 11.625l-2.25 2.25M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" /></svg>
+    ),
+    'Sponsors': (
+        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" /></svg>
+    ),
+    'Mededelingen': (
+        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H7.5a4.5 4.5 0 110-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783.247.55.06 1.21-.463 1.511l-.657.38c-.551.318-1.26.117-1.527-.461a20.845 20.845 0 01-1.44-4.282m3.102.069a18.03 18.03 0 01-.59-4.59c0-1.586.205-3.124.59-4.59m0 9.18a23.848 23.848 0 018.835 2.535M10.34 6.66a23.847 23.847 0 008.835-2.535m0 0A23.74 23.74 0 0018.795 3m.38 1.125a23.91 23.91 0 011.014 5.395m-1.014 8.855c-.118.38-.245.754-.38 1.125m.38-1.125a23.91 23.91 0 001.014-5.395m0-3.46c.495.413.811 1.035.811 1.73 0 .695-.316 1.317-.811 1.73m0-3.46a24.347 24.347 0 010 3.46" /></svg>
+    ),
 };
 
 const moduleColors = {
@@ -31,6 +46,11 @@ const moduleColors = {
     'Toernooien': 'from-red-700 to-rose-600',
     'Archief': 'from-slate-600 to-slate-500',
     'Kassa': 'from-emerald-600 to-teal-700',
+    'Facturen': 'from-blue-600 to-indigo-700',
+    'Vouchers': 'from-purple-600 to-violet-700',
+    'Aan te vullen': 'from-amber-600 to-yellow-700',
+    'Sponsors': 'from-pink-600 to-rose-700',
+    'Mededelingen': 'from-cyan-600 to-teal-700',
 };
 
 const modules = [
@@ -39,6 +59,11 @@ const modules = [
     { name: 'Leden', href: '/admin/members', roles: ['admin'] },
     { name: 'Toernooien', href: '/admin/tournaments', roles: ['admin', 'coach'] },
     { name: 'Kassa', href: '/pos', roles: ['barmedewerker', 'admin'] },
+    { name: 'Facturen', href: '/admin/facturen', roles: ['admin'] },
+    { name: 'Vouchers', href: '/admin/vouchers', roles: ['admin'] },
+    { name: 'Aan te vullen', href: '/admin/aan-te-vullen', roles: ['admin'] },
+    { name: 'Sponsors', href: '/admin/sponsors', roles: ['admin'] },
+    { name: 'Mededelingen', href: '/admin/mededelingen', roles: ['admin'] },
     { name: 'Archief', href: '/archief', roles: ['parent', 'member', 'admin', 'coach', 'barmedewerker'] },
 ];
 
@@ -60,7 +85,7 @@ export default function Dashboard({ pendingCount, pendingUsers, adminCounters, m
             </div>
 
             {role === 'admin' && (
-                <AdminTile pendingCount={pendingCount} pendingUsers={pendingUsers} adminCounters={adminCounters} />
+                <AdminTile pendingCount={pendingCount} adminCounters={adminCounters} />
             )}
 
             {visibleModules.length > 0 && (
@@ -190,88 +215,63 @@ export default function Dashboard({ pendingCount, pendingUsers, adminCounters, m
     );
 }
 
-function AdminTile({ pendingCount, pendingUsers, adminCounters }) {
+function AdminTile({ pendingCount, adminCounters }) {
     const hasPending = pendingCount > 0;
 
-    const formatDate = (dateStr) => {
-        if (!dateStr) return '-';
-        return new Date(dateStr).toLocaleDateString('nl-BE');
-    };
-
     const counters = [
-        { label: 'Nieuwe aanvragen', value: pendingCount, icon: '👤', bg: 'bg-rose-900/30', text: 'text-rose-400', ring: 'ring-rose-700/30' },
-        { label: 'Inactieve leden', value: adminCounters?.inactiveMemberCount ?? 0, icon: '⏸', bg: 'bg-slate-700/50', text: 'text-slate-300', ring: 'ring-slate-600/30' },
-        { label: 'Vernieuwing nodig', value: adminCounters?.renewalDueCount ?? 0, icon: '💳', bg: 'bg-amber-900/30', text: 'text-amber-400', ring: 'ring-amber-700/30', href: '/admin/members?filter=renewal' },
-        { label: 'Openstaande facturen', value: adminCounters?.pendingInvoiceCount ?? 0, icon: '💶', bg: 'bg-rose-900/30', text: 'text-rose-400', ring: 'ring-rose-700/30', href: '/admin?section=facturen' },
-        { label: 'Komende toernooien', value: adminCounters?.upcomingTournamentCount ?? 0, icon: '📅', bg: 'bg-blue-900/30', text: 'text-blue-400', ring: 'ring-blue-700/30' },
-        { label: 'Actieve toernooien', value: adminCounters?.activeTournamentCount ?? 0, icon: '🏆', bg: 'bg-emerald-900/30', text: 'text-emerald-400', ring: 'ring-emerald-700/30' },
-        { label: 'Actieve vouchers', value: adminCounters?.activeVoucherCount ?? 0, icon: '🎟️', bg: 'bg-purple-900/30', text: 'text-purple-400', ring: 'ring-purple-700/30', href: '/admin?section=vouchers' },
+        { label: 'Aanvragen', value: pendingCount, text: 'text-rose-400', bg: 'bg-rose-900/30', ring: 'ring-rose-700/30' },
+        { label: 'Inactief', value: adminCounters?.inactiveMemberCount ?? 0, text: 'text-slate-300', bg: 'bg-slate-700/50', ring: 'ring-slate-600/30' },
+        { label: 'Vernieuwing', value: adminCounters?.renewalDueCount ?? 0, text: 'text-amber-400', bg: 'bg-amber-900/30', ring: 'ring-amber-700/30', href: '/admin/members?filter=renewal' },
+        { label: 'Komende', value: adminCounters?.upcomingTournamentCount ?? 0, text: 'text-blue-400', bg: 'bg-blue-900/30', ring: 'ring-blue-700/30' },
+        { label: 'Actieve', value: adminCounters?.activeTournamentCount ?? 0, text: 'text-emerald-400', bg: 'bg-emerald-900/30', ring: 'ring-emerald-700/30' },
     ];
 
     return (
         <Link
             href="/admin"
-            className={`group block mb-6 rounded-xl shadow-sm ring-1 border-t-2 border-t-rose-700/40 p-6 hover:shadow-md hover:-translate-y-0.5 ${hasPending
+            className={`group block mb-6 rounded-xl shadow-sm ring-1 border-t-2 border-t-rose-700/40 p-5 hover:shadow-md hover:-translate-y-0.5 ${hasPending
                 ? 'ring-rose-600/50 bg-gradient-to-br from-rose-900/30 to-red-900/20 hover:ring-rose-500/60'
                 : 'ring-slate-800 bg-slate-900 hover:ring-rose-500/40'
                 }`}
         >
-            <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-slate-600 to-slate-700 flex items-center justify-center shadow-sm">
-                        <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+            <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2.5">
+                    <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-slate-600 to-slate-700 flex items-center justify-center shadow-sm">
+                        <svg className="w-4.5 h-4.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                     </div>
-                    <h2 className="text-lg font-bold text-white">Beheer</h2>
+                    <h2 className="text-base font-bold text-white">Beheer</h2>
                 </div>
                 {hasPending && (
-                    <span className="inline-flex items-center rounded-full bg-rose-600 px-2.5 py-1 text-xs font-bold text-white shadow-sm animate-pulse">
-                        {pendingCount} {pendingCount === 1 ? 'aanvraag' : 'aanvragen'}
+                    <span className="inline-flex items-center rounded-full bg-rose-600 px-2 py-0.5 text-xs font-bold text-white shadow-sm animate-pulse">
+                        {pendingCount}
                     </span>
                 )}
             </div>
 
-            <div className="grid grid-cols-2 gap-2 mb-4">
+            <div className="grid grid-cols-5 gap-1.5">
                 {counters.map((c) => {
                     const inner = (
-                        <>
-                            <span className="text-xs font-medium text-slate-400">{c.label}</span>
-                            <span className={`text-lg font-bold ${c.text}`}>{c.value}</span>
-                        </>
+                        <div className="text-center">
+                            <span className={`block text-lg font-bold ${c.text}`}>{c.value}</span>
+                            <span className="block text-[10px] font-medium text-slate-400 leading-tight">{c.label}</span>
+                        </div>
                     );
                     return c.href ? (
                         <Link
                             key={c.label}
                             href={c.href}
                             onClick={(e) => e.stopPropagation()}
-                            className={`flex items-center justify-between rounded-lg ${c.bg} ring-1 ${c.ring} px-3 py-2.5 hover:brightness-125 transition-all`}
+                            className={`rounded-lg ${c.bg} ring-1 ${c.ring} px-2 py-2 hover:brightness-125 transition-all`}
                         >
                             {inner}
                         </Link>
                     ) : (
-                        <div key={c.label} className={`flex items-center justify-between rounded-lg ${c.bg} ring-1 ${c.ring} px-3 py-2.5`}>
+                        <div key={c.label} className={`rounded-lg ${c.bg} ring-1 ${c.ring} px-2 py-2`}>
                             {inner}
                         </div>
                     );
                 })}
             </div>
-
-            {pendingUsers && pendingUsers.length > 0 && (
-                <div className="border-t border-slate-800/60 pt-3">
-                    <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-2">Recente aanvragen</p>
-                    <ul className="space-y-1.5">
-                        {pendingUsers.map((u, i) => (
-                            <li key={i} className="flex items-center justify-between text-sm">
-                                <div>
-                                    <span className="font-medium text-slate-200">{u.name}</span>
-                                    <span className="ml-2 text-slate-500 text-xs">{u.email}</span>
-                                </div>
-                                <span className="text-xs text-slate-500">{formatDate(u.created_at)}</span>
-                            </li>
-                        ))}
-                    </ul>
-                    <p className="mt-2 text-xs text-rose-400 font-semibold group-hover:text-rose-300">Bekijk alle →</p>
-                </div>
-            )}
         </Link>
     );
 }

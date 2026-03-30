@@ -3,19 +3,12 @@ import { useState } from 'react';
 import { Link } from '@inertiajs/react';
 import CollapsibleSection from '../../Components/CollapsibleSection';
 import AgeCategoriesSection from './AgeCategoriesSection';
-import AnnouncementsSection from './AnnouncementsSection';
-import BarProductsSection from './BarProductsSection';
-import InvoicesSection from './InvoicesSection';
-import RefillProductsSection from './RefillProductsSection';
-import SponsorsSection from './SponsorsSection';
 import TrainingGroupsSection from './TrainingGroupsSection';
-import VouchersSection from './VouchersSection';
 import WeightCategoriesSection from './WeightCategoriesSection';
 
-export default function AdminPanel({ pendingUsers, users, roles, ageCategories, weightCategories, allMembers, clubSettings, renewalDueCount, renewalDueMembers, trainingGroups, trainers, invoices, vouchers, barProducts, refillProducts, announcements, sponsors }) {
+export default function AdminPanel({ pendingUsers, users, roles, ageCategories, weightCategories, allMembers, clubSettings, renewalDueCount, renewalDueMembers, trainingGroups, trainers }) {
     const urlParams = new URLSearchParams(window.location.search);
     const [renewalListOpen, setRenewalListOpen] = useState(urlParams.get('renewal') === 'open');
-    const openSection = urlParams.get('section');
 
     return (
         <div className="space-y-4">
@@ -102,30 +95,6 @@ export default function AdminPanel({ pendingUsers, users, roles, ageCategories, 
                     </div>
                     <p className="text-sm text-slate-400">Bekijk de volledige historiek van alle afgesloten trainingen, inclusief deelnemers en opmerkingen.</p>
                 </div>
-            </CollapsibleSection>
-
-            <CollapsibleSection title="Facturen" count={invoices?.length || 0} defaultOpen={openSection === 'facturen'}>
-                <InvoicesSection invoices={invoices} />
-            </CollapsibleSection>
-
-            <CollapsibleSection title="Vouchers" count={vouchers?.length || 0} defaultOpen={openSection === 'vouchers'}>
-                <VouchersSection vouchers={vouchers || []} />
-            </CollapsibleSection>
-
-            <CollapsibleSection title="Aan te vullen" count={refillProducts?.length || 0} defaultOpen={(refillProducts?.length || 0) > 0 || openSection === 'aan-te-vullen'} badge="bg-amber-900/30 text-amber-300">
-                <RefillProductsSection products={refillProducts || []} />
-            </CollapsibleSection>
-
-            <CollapsibleSection title="Bar Producten" count={barProducts?.length || 0} defaultOpen={openSection === 'bar-producten'}>
-                <BarProductsSection products={barProducts || []} />
-            </CollapsibleSection>
-
-            <CollapsibleSection title="Sponsors" count={sponsors?.length || 0} defaultOpen={openSection === 'sponsors'}>
-                <SponsorsSection sponsors={sponsors || []} />
-            </CollapsibleSection>
-
-            <CollapsibleSection title="Mededelingen" count={announcements?.length || 0} defaultOpen={openSection === 'mededelingen'}>
-                <AnnouncementsSection announcements={announcements || []} />
             </CollapsibleSection>
         </div>
     );
