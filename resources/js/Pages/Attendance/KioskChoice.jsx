@@ -1,7 +1,7 @@
-import { Head, Link, router, useForm } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import { useEffect, useState, useCallback } from 'react';
 
-export default function Today({ sessions }) {
+export default function KioskChoice() {
     const [showLogoutModal, setShowLogoutModal] = useState(false);
     const [logoutTimeLeft, setLogoutTimeLeft] = useState(15);
     const logoutForm = useForm({ pin: '' });
@@ -35,88 +35,64 @@ export default function Today({ sessions }) {
         e.preventDefault();
         logoutForm.post('/attendance/logout');
     };
-    useEffect(() => {
-        if (sessions && sessions.length > 0) return;
-
-        const interval = setInterval(() => {
-            router.reload({ only: ['sessions'] });
-        }, 10000);
-
-        return () => clearInterval(interval);
-    }, [sessions]);
 
     return (
-        <div className="min-h-screen bg-slate-950 p-6">
-            <Head title="Aanwezigheid - Vandaag" />
+        <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-6">
+            <Head title="Kiosk - Kies modus" />
 
-            <div className="max-w-4xl mx-auto">
-                <div className="flex items-center justify-between mb-8">
-                    <div>
-                        <Link
-                            href="/attendance/choose"
-                            className="text-sm text-slate-500 hover:text-slate-400 mb-1 inline-block"
-                        >
-                            ← Terug
-                        </Link>
-                        <h1 className="text-2xl font-bold text-white">Actieve Trainingen</h1>
-                        <p className="text-slate-400 mt-1">{new Date().toLocaleDateString('nl-BE', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p>
-                    </div>
-                    <div className="flex gap-3">
-                        <button
-                            onClick={() => router.reload()}
-                            className="rounded-lg bg-slate-800 px-4 py-2 text-sm font-medium text-slate-300 hover:bg-slate-700 ring-1 ring-slate-700"
-                        >
-                            Vernieuwen
-                        </button>
-                        <button
-                            onClick={openLogoutModal}
-                            className="rounded-lg bg-slate-800 px-4 py-2 text-sm font-medium text-red-400 hover:bg-slate-700 ring-1 ring-slate-700"
-                        >
-                            Afmelden
-                        </button>
-                    </div>
+            <div className="text-center mb-12">
+                <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-rose-600 to-red-800 flex items-center justify-center mx-auto mb-5 shadow-lg">
+                    <span className="text-3xl font-bold text-white">柔</span>
                 </div>
-
-                {(!sessions || sessions.length === 0) ? (
-                    <div className="text-center py-16">
-                        <div className="w-16 h-16 rounded-2xl bg-slate-800 flex items-center justify-center mx-auto mb-4">
-                            <svg className="w-8 h-8 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                        </div>
-                        <p className="text-lg text-slate-400">Geen actieve trainingen op dit moment</p>
-                        <p className="text-sm text-slate-500 mt-1">Een trainer moet eerst een training openen</p>
-                    </div>
-                ) : (
-                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                        {sessions.map((s) => (
-                            <Link
-                                key={s.id}
-                                href={`/attendance/session/${s.id}`}
-                                className="group bg-slate-900 rounded-xl shadow-sm ring-1 ring-slate-800 border-t-2 border-t-emerald-600/60 p-6 hover:shadow-md hover:ring-emerald-500/40 hover:-translate-y-0.5 transition-all"
-                            >
-                                <div className="flex items-center gap-2 mb-2">
-                                    <div className="relative flex h-3 w-3">
-                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                        <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
-                                    </div>
-                                    <span className="text-xs font-semibold text-emerald-400 uppercase tracking-wider">Open</span>
-                                </div>
-                                <p className="text-lg font-bold text-white">{s.group_name}</p>
-                                <p className="text-sm text-slate-400 mt-1">{s.day} {s.start_time}{s.end_time ? `–${s.end_time}` : ''}</p>
-                                {s.trainer_name && <p className="text-xs text-slate-500 mt-1">Trainer: {s.trainer_name}</p>}
-                                <div className="mt-4 flex items-center justify-between">
-                                    <span className="inline-flex items-center rounded-full bg-slate-800 px-3 py-1 text-sm font-medium text-slate-300">
-                                        {s.attendance_count} aanwezig
-                                    </span>
-                                    <span className="text-xs font-medium text-rose-400 group-hover:text-rose-300">Registreren →</span>
-                                </div>
-                            </Link>
-                        ))}
-                    </div>
-                )}
+                <h1 className="text-3xl font-bold text-white">Kiosk Modus</h1>
+                <p className="text-slate-400 mt-2">Kies welk scherm je wilt weergeven</p>
             </div>
 
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-2xl">
+                {/* Trainingsdeelnames */}
+                <Link
+                    href="/attendance/today"
+                    className="group bg-slate-900 rounded-2xl shadow-sm ring-1 ring-slate-800 border-t-2 border-t-emerald-600/60 p-8 hover:shadow-xl hover:ring-emerald-500/40 hover:-translate-y-1 transition-all"
+                >
+                    <div className="w-16 h-16 rounded-2xl bg-emerald-900/40 flex items-center justify-center mb-5">
+                        <svg className="w-8 h-8 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <h2 className="text-xl font-bold text-white mb-2">Trainingsdeelnames</h2>
+                    <p className="text-sm text-slate-400">Leden registreren hun aanwezigheid bij de training</p>
+                    <div className="mt-5 flex items-center text-sm font-medium text-emerald-400 group-hover:text-emerald-300">
+                        Openen <span className="ml-1">→</span>
+                    </div>
+                </Link>
+
+                {/* Toernooi Resultaten */}
+                <Link
+                    href="/attendance/results"
+                    className="group bg-slate-900 rounded-2xl shadow-sm ring-1 ring-slate-800 border-t-2 border-t-yellow-600/60 p-8 hover:shadow-xl hover:ring-yellow-500/40 hover:-translate-y-1 transition-all"
+                >
+                    <div className="w-16 h-16 rounded-2xl bg-yellow-900/40 flex items-center justify-center mb-5">
+                        <svg className="w-8 h-8 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 01-.982-3.172M9.497 14.25a7.454 7.454 0 00.981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 007.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M18.75 4.236c.982.143 1.954.317 2.916.52A6.003 6.003 0 0016.27 9.728M18.75 4.236V4.5c0 2.108-.966 3.99-2.48 5.228m0 0a6.023 6.023 0 01-7.54 0" />
+                        </svg>
+                    </div>
+                    <h2 className="text-xl font-bold text-white mb-2">Toernooi Resultaten</h2>
+                    <p className="text-sm text-slate-400">Slideshow met resultaten van de laatste toernooien</p>
+                    <div className="mt-5 flex items-center text-sm font-medium text-yellow-400 group-hover:text-yellow-300">
+                        Openen <span className="ml-1">→</span>
+                    </div>
+                </Link>
+            </div>
+
+            {/* Logout button */}
+            <button
+                onClick={openLogoutModal}
+                className="mt-12 rounded-lg bg-slate-800 px-5 py-2.5 text-sm font-medium text-red-400 hover:bg-slate-700 ring-1 ring-slate-700 transition-colors"
+            >
+                Kiosk afsluiten
+            </button>
+
+            {/* Logout modal */}
             {showLogoutModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={closeLogoutModal}>
                     <div className="w-full max-w-sm mx-4 bg-slate-900 rounded-2xl ring-1 ring-slate-700 p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>

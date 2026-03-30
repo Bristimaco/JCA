@@ -2,7 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\InvitationStatus;
+use App\Enums\TournamentStatus;
 use App\Models\ClubSettings;
+use App\Models\Member;
+use App\Models\Tournament;
+use App\Models\TournamentResult;
 use App\Models\TrainingAttendance;
 use App\Models\TrainingSession;
 use Illuminate\Http\RedirectResponse;
@@ -12,10 +17,10 @@ use Inertia\Response;
 
 class AttendanceKioskController extends Controller
 {
-    public function pin(): Response
+    public function pin(): Response|RedirectResponse
     {
         if (session('kiosk_authenticated')) {
-            return Inertia::render('Attendance/Today');
+            return redirect()->route('attendance.choose');
         }
 
         return Inertia::render('Attendance/Pin');
@@ -35,7 +40,16 @@ class AttendanceKioskController extends Controller
 
         session(['kiosk_authenticated' => true]);
 
-        return redirect()->route('attendance.today');
+        return redirect()->route('attendance.choose');
+    }
+
+    public function choose(): Response|RedirectResponse
+    {
+        if (! session('kiosk_authenticated')) {
+            return redirect()->route('attendance.pin');
+        }
+
+        return Inertia::render('Attendance/KioskChoice');
     }
 
     public function today(): Response|RedirectResponse
@@ -126,6 +140,90 @@ class AttendanceKioskController extends Controller
         }
 
         return back();
+    }
+
+    public function results(): Response|RedirectResponse
+    {
+        if (! session('kiosk_authenticated')) {
+            return redirect()->route('attendance.pin');
+        }
+
+        $tournaments = Tournament::whereIn('status', [TournamentStatus::Finished, TournamentStatus::Archived])
+            ->orderByDesc('tournament_date')
+            ->take(5)
+            ->get();
+
+        $tournaments->load(['members.weightCategory.ageCategory']);
+
+        $tournamentData = [];
+
+        foreach ($tournaments as $tournament) {
+            $participants = $tournament->members->filter(
+                fn (Member $m) => $m->pivot->invitation_status === InvitationStatus::Accepted->value
+                    && $m->pivot->registration_status === 'registered'
+            );
+
+            $existingResults = TournamentResult::where('tournament_id', $tournament->id)
+                ->get()
+                ->keyBy('member_id');
+
+            $grouped = [];
+            foreach ($participants as $member) {
+                $ageCategory = $member->calculateAgeCategory($tournament->country_code, $tournament->tournament_date);
+                $ageName = $ageCategory?->name ?? 'Onbekend';
+                $ageOrder = $ageCategory?->display_order ?? 999;
+
+                $weightCat = $member->weightCategory;
+                $weightName = $weightCat ? $weightCat->name : 'Geen gewichtscategorie';
+                $weightOrder = $weightCat?->display_order ?? 999;
+
+                if (! isset($grouped[$ageName])) {
+                    $grouped[$ageName] = [
+                        'name' => $ageName,
+                        'order' => $ageOrder,
+                        'weights' => [],
+                    ];
+                }
+
+                if (! isset($grouped[$ageName]['weights'][$weightName])) {
+                    $grouped[$ageName]['weights'][$weightName] = [
+                        'name' => $weightName,
+                        'order' => $weightOrder,
+                        'members' => [],
+                    ];
+                }
+
+                $result = $existingResults->get($member->id);
+
+                $grouped[$ageName]['weights'][$weightName]['members'][] = [
+                    'id' => $member->id,
+                    'name' => $member->fullName(),
+                    'result' => $result?->result,
+                ];
+            }
+
+            usort($grouped, fn ($a, $b) => $a['order'] <=> $b['order']);
+            foreach ($grouped as &$ageGroup) {
+                $weights = array_values($ageGroup['weights']);
+                usort($weights, fn ($a, $b) => $a['order'] <=> $b['order']);
+                $ageGroup['weights'] = $weights;
+            }
+            unset($ageGroup);
+
+            $tournamentData[] = [
+                'id' => $tournament->id,
+                'name' => $tournament->name,
+                'tournament_date' => $tournament->tournament_date->toDateString(),
+                'address_city' => $tournament->address_city,
+                'country_code' => $tournament->country_code,
+                'participantGroups' => array_values($grouped),
+                'totalParticipants' => $participants->count(),
+            ];
+        }
+
+        return Inertia::render('Attendance/Results', [
+            'tournaments' => $tournamentData,
+        ]);
     }
 
     public function logout(Request $request): RedirectResponse

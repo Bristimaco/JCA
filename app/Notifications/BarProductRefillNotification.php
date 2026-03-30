@@ -14,8 +14,7 @@ class BarProductRefillNotification extends Notification
 
     public function __construct(
         public BarProduct $product,
-    ) {
-    }
+    ) {}
 
     public function via(object $notifiable): array
     {
@@ -36,8 +35,8 @@ class BarProductRefillNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Product bijna op: ' . $this->product->name)
-            ->line('Het product "' . $this->product->name . '" is als bijna op gemarkeerd door een barmedewerker.')
+            ->subject('Product bijna op: '.$this->product->name)
+            ->line('Het product "'.$this->product->name.'" is als bijna op gemarkeerd door een barmedewerker.')
             ->line('Gelieve dit product aan te vullen.')
             ->action('Bekijk in admin', url('/admin?section=aan-te-vullen'));
     }
@@ -47,11 +46,11 @@ class BarProductRefillNotification extends Notification
         return [
             'icon' => '📦',
             'title' => 'Product bijna op',
-            'message' => $this->product->name . ' moet aangevuld worden.',
+            'message' => $this->product->name.' moet aangevuld worden.',
             'bar_product_id' => $this->product->id,
             'detail' => [
                 'product_name' => $this->product->name,
-                'body' => 'Het product "' . $this->product->name . '" is als bijna op gemarkeerd door een barmedewerker. Gelieve dit product aan te vullen.',
+                'body' => 'Het product "'.$this->product->name.'" is als bijna op gemarkeerd door een barmedewerker. Gelieve dit product aan te vullen.',
             ],
         ];
     }
@@ -60,7 +59,7 @@ class BarProductRefillNotification extends Notification
     {
         return [
             'title' => 'Product bijna op',
-            'body' => $this->product->name . ' moet aangevuld worden.',
+            'body' => $this->product->name.' moet aangevuld worden.',
             'url' => '/admin?section=aan-te-vullen',
         ];
     }

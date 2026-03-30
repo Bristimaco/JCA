@@ -58,7 +58,9 @@ Route::post('/webhooks/mollie', MollieWebhookController::class)->name('webhooks.
 // Attendance kiosk (PIN-protected, no auth)
 Route::get('/attendance', [AttendanceKioskController::class, 'pin'])->name('attendance.pin');
 Route::post('/attendance/verify', [AttendanceKioskController::class, 'verifyPin'])->name('attendance.verify');
+Route::get('/attendance/choose', [AttendanceKioskController::class, 'choose'])->name('attendance.choose');
 Route::get('/attendance/today', [AttendanceKioskController::class, 'today'])->name('attendance.today');
+Route::get('/attendance/results', [AttendanceKioskController::class, 'results'])->name('attendance.results');
 Route::get('/attendance/session/{session}', [AttendanceKioskController::class, 'session'])->name('attendance.session');
 Route::post('/attendance/session/{session}/toggle/{member}', [AttendanceKioskController::class, 'toggle'])->name('attendance.toggle');
 Route::post('/attendance/logout', [AttendanceKioskController::class, 'logout'])->name('attendance.logout');

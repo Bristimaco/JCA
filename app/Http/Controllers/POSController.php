@@ -26,8 +26,8 @@ class POSController extends Controller
     public function toggleRefill(BarProduct $barProduct): JsonResponse
     {
         $barProduct->update([
-            'needs_refill' => !$barProduct->needs_refill,
-            'needs_refill_at' => !$barProduct->needs_refill ? now() : null,
+            'needs_refill' => ! $barProduct->needs_refill,
+            'needs_refill_at' => ! $barProduct->needs_refill ? now() : null,
         ]);
 
         if ($barProduct->needs_refill) {
