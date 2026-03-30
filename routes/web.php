@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\MemberController;
 use App\Http\Controllers\Admin\MemberExcelController;
 use App\Http\Controllers\Admin\MemberIndexController;
 use App\Http\Controllers\Admin\RecalculateAgeCategoriesController;
+use App\Http\Controllers\Admin\SponsorController;
 use App\Http\Controllers\Admin\ToggleUserActiveController;
 use App\Http\Controllers\Admin\TournamentController;
 use App\Http\Controllers\Admin\TournamentIndexController;
@@ -218,6 +219,12 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::patch('/announcements/{announcement}', [AnnouncementController::class, 'update'])->name('admin.announcements.update');
         Route::post('/announcements/{announcement}/archive', [AnnouncementController::class, 'archive'])->name('admin.announcements.archive');
         Route::delete('/announcements/{announcement}', [AnnouncementController::class, 'destroy'])->name('admin.announcements.destroy');
+
+        // Sponsors
+        Route::post('/sponsors', [SponsorController::class, 'store'])->name('admin.sponsors.store');
+        Route::patch('/sponsors/{sponsor}', [SponsorController::class, 'update'])->name('admin.sponsors.update');
+        Route::post('/sponsors/{sponsor}/renew', [SponsorController::class, 'renew'])->name('admin.sponsors.renew');
+        Route::delete('/sponsors/{sponsor}', [SponsorController::class, 'destroy'])->name('admin.sponsors.destroy');
 
         // Bar products
         Route::post('/bar-products', [BarProductController::class, 'store'])->name('admin.bar-products.store');

@@ -26,6 +26,9 @@ class ClubSettings extends Model
     protected $casts = [
         'attendance_threshold' => 'integer',
         'default_membership_fee' => 'decimal:2',
+        'sponsor_frequency_bronze' => 'integer',
+        'sponsor_frequency_silver' => 'integer',
+        'sponsor_frequency_gold' => 'integer',
     ];
 
     public static function current(): self

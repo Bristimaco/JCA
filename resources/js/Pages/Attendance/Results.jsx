@@ -76,10 +76,11 @@ function buildSlides(tournaments, announcements = []) {
     return slides;
 }
 
-export default function Results({ tournaments, announcements = [] }) {
+export default function Results({ tournaments, announcements = [], sponsors = [], sponsorFrequencies = {} }) {
     const slides = useMemo(() => buildSlides(tournaments, announcements), [tournaments, announcements]);
     const [activeIndex, setActiveIndex] = useState(0);
     const [progress, setProgress] = useState(0);
+    const [currentSponsor, setCurrentSponsor] = useState(null);
 
     const count = slides.length;
 
@@ -104,6 +105,54 @@ export default function Results({ tournaments, announcements = [] }) {
 
         return () => clearInterval(interval);
     }, [count]);
+
+    // Sponsor banner rotation based on tier frequency
+    useEffect(() => {
+        if (sponsors.length === 0) return;
+
+        const freqs = {
+            gold: (sponsorFrequencies.gold || 15) * 1000,
+            silver: (sponsorFrequencies.silver || 30) * 1000,
+            bronze: (sponsorFrequencies.bronze || 60) * 1000,
+        };
+
+        // Build weighted queue: gold first (most frequent), then silver, then bronze
+        const byTier = { gold: [], silver: [], bronze: [] };
+        sponsors.forEach((s) => {
+            if (byTier[s.tier]) byTier[s.tier].push(s);
+        });
+
+        const indices = { gold: 0, silver: 0, bronze: 0 };
+        const lastShown = { gold: 0, silver: 0, bronze: 0 };
+
+        const pickNext = () => {
+            const now = Date.now();
+            // Priority: gold > silver > bronze
+            for (const tier of ['gold', 'silver', 'bronze']) {
+                if (byTier[tier].length === 0) continue;
+                if (now - lastShown[tier] >= freqs[tier]) {
+                    const sponsor = byTier[tier][indices[tier] % byTier[tier].length];
+                    indices[tier]++;
+                    lastShown[tier] = now;
+                    return sponsor;
+                }
+            }
+            return null;
+        };
+
+        // Show first sponsor immediately
+        const first = sponsors.find((s) => s.tier === 'gold') || sponsors[0];
+        setCurrentSponsor(first);
+        lastShown[first.tier] = Date.now();
+        indices[first.tier] = 1;
+
+        const interval = setInterval(() => {
+            const next = pickNext();
+            if (next) setCurrentSponsor(next);
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, [sponsors, sponsorFrequencies]);
 
     if (count === 0) {
         return (
@@ -140,6 +189,17 @@ export default function Results({ tournaments, announcements = [] }) {
     return (
         <div className="h-screen bg-slate-950 flex flex-col overflow-hidden">
             <Head title="Resultaten" />
+
+            {/* Sponsor banner */}
+            {currentSponsor && (
+                <div className="flex-shrink-0 bg-white/5 border-b border-slate-800 px-8 py-2 flex items-center justify-center">
+                    <img
+                        src={currentSponsor.logo}
+                        alt={currentSponsor.name}
+                        className="max-h-14 max-w-[50vw] object-contain"
+                    />
+                </div>
+            )}
 
             {/* Header — fixed height */}
             <div className="flex-shrink-0 px-8 pt-4 pb-2">

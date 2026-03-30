@@ -8,6 +8,7 @@ use App\Models\Announcement;
 use App\Models\ClubSettings;
 use App\Models\Member;
 use App\Models\PodiumPhoto;
+use App\Models\Sponsor;
 use App\Models\Tournament;
 use App\Models\TournamentResult;
 use App\Models\TrainingAttendance;
@@ -249,9 +250,28 @@ class AttendanceKioskController extends Controller
             ])
             ->all();
 
+        $settings = ClubSettings::current();
+
+        $activeSponsors = Sponsor::active()->get()
+            ->map(fn (Sponsor $s) => [
+                'id' => $s->id,
+                'name' => $s->name,
+                'tier' => $s->tier->value,
+                'logo' => $s->logoDataUri(),
+            ])
+            ->filter(fn ($s) => $s['logo'] !== null)
+            ->values()
+            ->all();
+
         return Inertia::render('Attendance/Results', [
             'tournaments' => $tournamentData,
             'announcements' => $activeAnnouncements,
+            'sponsors' => $activeSponsors,
+            'sponsorFrequencies' => [
+                'bronze' => $settings->sponsor_frequency_bronze ?? 60,
+                'silver' => $settings->sponsor_frequency_silver ?? 30,
+                'gold' => $settings->sponsor_frequency_gold ?? 15,
+            ],
         ]);
     }
 

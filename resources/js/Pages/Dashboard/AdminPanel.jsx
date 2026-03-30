@@ -7,11 +7,12 @@ import AnnouncementsSection from './AnnouncementsSection';
 import BarProductsSection from './BarProductsSection';
 import InvoicesSection from './InvoicesSection';
 import RefillProductsSection from './RefillProductsSection';
+import SponsorsSection from './SponsorsSection';
 import TrainingGroupsSection from './TrainingGroupsSection';
 import VouchersSection from './VouchersSection';
 import WeightCategoriesSection from './WeightCategoriesSection';
 
-export default function AdminPanel({ pendingUsers, users, roles, ageCategories, weightCategories, allMembers, clubSettings, renewalDueCount, renewalDueMembers, trainingGroups, trainers, invoices, vouchers, barProducts, refillProducts, announcements }) {
+export default function AdminPanel({ pendingUsers, users, roles, ageCategories, weightCategories, allMembers, clubSettings, renewalDueCount, renewalDueMembers, trainingGroups, trainers, invoices, vouchers, barProducts, refillProducts, announcements, sponsors }) {
     const urlParams = new URLSearchParams(window.location.search);
     const [renewalListOpen, setRenewalListOpen] = useState(urlParams.get('renewal') === 'open');
     const openSection = urlParams.get('section');
@@ -119,6 +120,10 @@ export default function AdminPanel({ pendingUsers, users, roles, ageCategories, 
                 <BarProductsSection products={barProducts || []} />
             </CollapsibleSection>
 
+            <CollapsibleSection title="Sponsors" count={sponsors?.length || 0} defaultOpen={openSection === 'sponsors'}>
+                <SponsorsSection sponsors={sponsors || []} />
+            </CollapsibleSection>
+
             <CollapsibleSection title="Mededelingen" count={announcements?.length || 0} defaultOpen={openSection === 'mededelingen'}>
                 <AnnouncementsSection announcements={announcements || []} />
             </CollapsibleSection>
@@ -135,6 +140,9 @@ function ClubSettingsSection({ clubSettings }) {
         attendance_pin: clubSettings.attendance_pin || '',
         attendance_threshold: clubSettings.attendance_threshold ?? 70,
         default_membership_fee: clubSettings.default_membership_fee || '',
+        sponsor_frequency_bronze: clubSettings.sponsor_frequency_bronze ?? 60,
+        sponsor_frequency_silver: clubSettings.sponsor_frequency_silver ?? 30,
+        sponsor_frequency_gold: clubSettings.sponsor_frequency_gold ?? 15,
         logo: null,
     });
 
@@ -256,6 +264,43 @@ function ClubSettingsSection({ clubSettings }) {
                 />
                 <p className="text-xs text-slate-500 mt-1">Leden onder dit percentage worden rood gemarkeerd in het aanwezigheidsrapport</p>
                 {form.errors.attendance_threshold && <p className="text-sm text-red-400 mt-1">{form.errors.attendance_threshold}</p>}
+            </div>
+
+            <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Sponsor weergavefrequentie (seconden)</label>
+                <div className="grid grid-cols-3 gap-3 max-w-md">
+                    <div>
+                        <label className="block text-xs text-slate-400 mb-1">🥉 Brons</label>
+                        <input
+                            type="number"
+                            min="5"
+                            value={form.data.sponsor_frequency_bronze}
+                            onChange={(e) => form.setData('sponsor_frequency_bronze', parseInt(e.target.value) || 60)}
+                            className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-rose-500 focus:ring-rose-500 text-sm"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-xs text-slate-400 mb-1">🥈 Zilver</label>
+                        <input
+                            type="number"
+                            min="5"
+                            value={form.data.sponsor_frequency_silver}
+                            onChange={(e) => form.setData('sponsor_frequency_silver', parseInt(e.target.value) || 30)}
+                            className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-rose-500 focus:ring-rose-500 text-sm"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-xs text-slate-400 mb-1">🥇 Goud</label>
+                        <input
+                            type="number"
+                            min="5"
+                            value={form.data.sponsor_frequency_gold}
+                            onChange={(e) => form.setData('sponsor_frequency_gold', parseInt(e.target.value) || 15)}
+                            className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-rose-500 focus:ring-rose-500 text-sm"
+                        />
+                    </div>
+                </div>
+                <p className="text-xs text-slate-500 mt-1">Hoe vaak een sponsorlogo verschijnt op het resultaten scherm (lagere waarde = vaker)</p>
             </div>
 
             <div className="flex justify-end">

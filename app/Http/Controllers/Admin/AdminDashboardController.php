@@ -10,6 +10,7 @@ use App\Models\BarProduct;
 use App\Models\ClubSettings;
 use App\Models\Member;
 use App\Models\MembershipInvoice;
+use App\Models\Sponsor;
 use App\Models\TrainingGroup;
 use App\Models\User;
 use App\Models\Voucher;
@@ -146,6 +147,11 @@ class AdminDashboardController extends Controller
                 ]),
             'barProducts' => BarProduct::ordered()->get(),
             'refillProducts' => BarProduct::needsRefill()->ordered()->get(['id', 'name', 'price', 'needs_refill_at']),
+            'sponsors' => Sponsor::orderBy('name')->get(['id', 'name', 'address_street', 'address_city', 'address_postal_code', 'tier', 'contract_start_date', 'contract_end_date', 'is_active', 'logo_mime', 'created_at'])
+                ->map(fn (Sponsor $s) => [
+                    ...$s->toArray(),
+                    'has_logo' => (bool) $s->logo_mime,
+                ]),
         ]);
     }
 }

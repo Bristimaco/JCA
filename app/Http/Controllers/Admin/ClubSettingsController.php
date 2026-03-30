@@ -21,6 +21,9 @@ class ClubSettingsController extends Controller
             'attendance_pin' => ['nullable', 'string', 'min:4', 'max:8'],
             'attendance_threshold' => ['nullable', 'integer', 'min:0', 'max:100'],
             'default_membership_fee' => ['nullable', 'numeric', 'min:0'],
+            'sponsor_frequency_bronze' => ['nullable', 'integer', 'min:5'],
+            'sponsor_frequency_silver' => ['nullable', 'integer', 'min:5'],
+            'sponsor_frequency_gold' => ['nullable', 'integer', 'min:5'],
         ]);
 
         $settings = ClubSettings::first();
@@ -33,6 +36,9 @@ class ClubSettingsController extends Controller
             'attendance_pin' => $validated['attendance_pin'] ?? null,
             'attendance_threshold' => $validated['attendance_threshold'] ?? 70,
             'default_membership_fee' => $validated['default_membership_fee'] ?? null,
+            'sponsor_frequency_bronze' => $validated['sponsor_frequency_bronze'] ?? 60,
+            'sponsor_frequency_silver' => $validated['sponsor_frequency_silver'] ?? 30,
+            'sponsor_frequency_gold' => $validated['sponsor_frequency_gold'] ?? 15,
         ];
 
         if ($request->hasFile('logo')) {
