@@ -211,11 +211,11 @@ class AttendanceKioskController extends Controller
             }
             unset($ageGroup);
 
-            // Load podium photos for this tournament
+            // Load podium photos as inline data URIs (avoids separate HTTP requests from kiosk)
             $podiumPhotos = PodiumPhoto::where('tournament_id', $tournament->id)
-                ->get()
+                ->get(['id', 'tournament_id', 'age_category_name', 'weight_category_name', 'photo_data', 'photo_mime'])
                 ->mapWithKeys(fn (PodiumPhoto $p) => [
-                    $p->age_category_name.'|'.$p->weight_category_name => route('podium-photo.show', $p),
+                    $p->age_category_name.'|'.$p->weight_category_name => 'data:'.$p->photo_mime.';base64,'.$p->photo_data,
                 ])
                 ->all();
 
