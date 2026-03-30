@@ -41,7 +41,7 @@ function NotificationDetailView({ notification, onBack }) {
     const type = notification.type;
 
     return (
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-full min-h-0">
             <div className="flex items-center gap-2 px-4 py-3 border-b border-slate-800">
                 <button onClick={onBack} className="text-slate-400 hover:text-white transition-colors">
                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
