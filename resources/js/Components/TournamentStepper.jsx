@@ -83,13 +83,13 @@ export default function TournamentStepper({ status, compact = false, interactive
 
         // Backward: revert to previous status
         if (stepIndex < currentIndex) {
-            // Backend blocks revert for started and finished
-            if (status === 'started' || status === 'finished') return;
+            // Backend blocks revert for finished
+            if (status === 'finished') return;
 
             // Role-based revert restrictions
             if (userRole === 'coach') {
-                // Coach can only revert from invitations_sent
-                if (status !== 'invitations_sent') return;
+                // Coach can revert from invitations_sent and started
+                if (status !== 'invitations_sent' && status !== 'started') return;
             }
             if (userRole === 'admin') {
                 // Admin can revert from: registrations_open, registrations_closed, archived
@@ -142,8 +142,8 @@ export default function TournamentStepper({ status, compact = false, interactive
         }
         // Previous step (revert) — only to immediate previous
         if (index === currentIndex - 1) {
-            if (status === 'started' || status === 'finished' || status === 'preparation') return false;
-            if (userRole === 'coach' && status !== 'invitations_sent') return false;
+            if (status === 'finished' || status === 'preparation') return false;
+            if (userRole === 'coach' && status !== 'invitations_sent' && status !== 'started') return false;
             if (userRole === 'admin' && !['registrations_open', 'registrations_closed', 'archived'].includes(status)) return false;
             return true;
         }
