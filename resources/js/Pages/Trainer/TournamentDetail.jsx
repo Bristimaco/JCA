@@ -20,7 +20,6 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
     const t = tournament;
     const hasMap = t.latitude && t.longitude;
     const fileInputRef = useRef(null);
-    const [uploadTarget, setUploadTarget] = useState(null);
 
     // Build initial results state from existing data
     const buildInitialResults = () => {
@@ -111,24 +110,27 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
     };
 
     const openPhotoPicker = (ageName, weightName) => {
-        setUploadTarget({ ageName, weightName });
-        fileInputRef.current?.click();
+        if (fileInputRef.current) {
+            fileInputRef.current.dataset.ageName = ageName;
+            fileInputRef.current.dataset.weightName = weightName;
+            fileInputRef.current.click();
+        }
     };
 
     const handlePhotoSelected = (e) => {
         const file = e.target.files?.[0];
-        if (!file || !uploadTarget) return;
+        const ageName = e.target.dataset.ageName;
+        const weightName = e.target.dataset.weightName;
+        if (!file || !ageName || !weightName) return;
 
-        const formData = new FormData();
-        formData.append('age_category_name', uploadTarget.ageName);
-        formData.append('weight_category_name', uploadTarget.weightName);
-        formData.append('photo', file);
-
-        router.post(`/trainer/toernooien/${t.id}/podium-foto`, formData, {
+        router.post(`/trainer/toernooien/${t.id}/podium-foto`, {
+            age_category_name: ageName,
+            weight_category_name: weightName,
+            photo: file,
+        }, {
             forceFormData: true,
         });
 
-        setUploadTarget(null);
         e.target.value = '';
     };
 

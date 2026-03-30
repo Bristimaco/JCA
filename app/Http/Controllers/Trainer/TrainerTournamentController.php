@@ -239,7 +239,7 @@ class TrainerTournamentController extends Controller
 
     public function storePodiumPhoto(Request $request, Tournament $tournament): RedirectResponse
     {
-        if (! in_array($tournament->status, [TournamentStatus::Started, TournamentStatus::Finished], true)) {
+        if (! in_array($tournament->status, [TournamentStatus::Started, TournamentStatus::Finished, TournamentStatus::Archived], true)) {
             return redirect()->back()->withErrors(['photo' => 'Podiumfoto\'s kunnen alleen worden geüpload voor actieve of afgelopen toernooien.']);
         }
 
