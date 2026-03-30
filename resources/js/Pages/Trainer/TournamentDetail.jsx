@@ -110,20 +110,55 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
         closeForm.post(`/trainer/toernooien/${t.id}/afsluiten`);
     };
 
+    const resizeImage = (file, maxSize = 1920) => {
+        return new Promise((resolve) => {
+            const img = new Image();
+            const url = URL.createObjectURL(file);
+            img.onload = () => {
+                URL.revokeObjectURL(url);
+                let { width, height } = img;
+                if (width > maxSize || height > maxSize) {
+                    if (width > height) {
+                        height = Math.round(height * maxSize / width);
+                        width = maxSize;
+                    } else {
+                        width = Math.round(width * maxSize / height);
+                        height = maxSize;
+                    }
+                }
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+                canvas.toBlob((blob) => resolve(blob), 'image/jpeg', 0.85);
+            };
+            img.onerror = () => {
+                URL.revokeObjectURL(url);
+                resolve(null);
+            };
+            img.src = url;
+        });
+    };
+
     const openPhotoPicker = (ageName, weightName) => {
         uploadTargetRef.current = { ageName, weightName };
         fileInputRef.current?.click();
     };
 
-    const handlePhotoSelected = (e) => {
+    const handlePhotoSelected = async (e) => {
         const file = e.target.files?.[0];
         const target = uploadTargetRef.current;
         if (!file || !target) return;
 
+        const resized = await resizeImage(file);
+        if (!resized) return;
+
+        const resizedFile = new File([resized], 'podium.jpg', { type: 'image/jpeg' });
+
         router.post(`/trainer/toernooien/${t.id}/podium-foto`, {
             age_category_name: target.ageName,
             weight_category_name: target.weightName,
-            photo: file,
+            photo: resizedFile,
         }, {
             forceFormData: true,
         });
