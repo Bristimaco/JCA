@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Models\AgeCategory;
+use App\Models\Announcement;
 use App\Models\BarProduct;
 use App\Models\ClubSettings;
 use App\Models\Member;
@@ -138,6 +139,11 @@ class AdminDashboardController extends Controller
             'trainers' => $trainers,
             'invoices' => $invoices,
             'vouchers' => $vouchers,
+            'announcements' => Announcement::ordered()->get(['id', 'title', 'content', 'start_date', 'end_date', 'is_archived', 'display_order', 'photo_mime', 'created_at'])
+                ->map(fn (Announcement $a) => [
+                    ...$a->toArray(),
+                    'has_photo' => (bool) $a->photo_mime,
+                ]),
             'barProducts' => BarProduct::ordered()->get(),
             'refillProducts' => BarProduct::needsRefill()->ordered()->get(['id', 'name', 'price', 'needs_refill_at']),
         ]);

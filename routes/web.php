@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminSessionHistoryController;
 use App\Http\Controllers\Admin\AgeCategoryController;
+use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\Admin\ApproveUserController;
 use App\Http\Controllers\Admin\BarProductController;
 use App\Http\Controllers\Admin\CategoryExcelController;
@@ -211,6 +212,12 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
 
         // Vouchers
         Route::get('/vouchers', [VoucherController::class, 'index'])->name('admin.vouchers.index');
+
+        // Announcements
+        Route::post('/announcements', [AnnouncementController::class, 'store'])->name('admin.announcements.store');
+        Route::patch('/announcements/{announcement}', [AnnouncementController::class, 'update'])->name('admin.announcements.update');
+        Route::post('/announcements/{announcement}/archive', [AnnouncementController::class, 'archive'])->name('admin.announcements.archive');
+        Route::delete('/announcements/{announcement}', [AnnouncementController::class, 'destroy'])->name('admin.announcements.destroy');
 
         // Bar products
         Route::post('/bar-products', [BarProductController::class, 'store'])->name('admin.bar-products.store');

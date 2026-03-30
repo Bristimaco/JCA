@@ -26,8 +26,8 @@ class TrainerTournamentController extends Controller
         // Load podium photos for this tournament
         $podiumPhotos = PodiumPhoto::where('tournament_id', $tournament->id)
             ->get()
-            ->mapWithKeys(fn(PodiumPhoto $p) => [
-                $p->age_category_name . '|' . $p->weight_category_name => route('podium-photo.show', $p),
+            ->mapWithKeys(fn (PodiumPhoto $p) => [
+                $p->age_category_name.'|'.$p->weight_category_name => route('podium-photo.show', $p),
             ])
             ->all();
 
@@ -61,7 +61,7 @@ class TrainerTournamentController extends Controller
                 : 'Geen gewichtscategorie';
             $weightOrder = $weightCat?->display_order ?? 999;
 
-            if (!isset($grouped[$ageName])) {
+            if (! isset($grouped[$ageName])) {
                 $grouped[$ageName] = [
                     'name' => $ageName,
                     'order' => $ageOrder,
@@ -69,7 +69,7 @@ class TrainerTournamentController extends Controller
                 ];
             }
 
-            if (!isset($grouped[$ageName]['weights'][$weightName])) {
+            if (! isset($grouped[$ageName]['weights'][$weightName])) {
                 $grouped[$ageName]['weights'][$weightName] = [
                     'name' => $weightName,
                     'order' => $weightOrder,
@@ -88,10 +88,10 @@ class TrainerTournamentController extends Controller
         }
 
         // Sort
-        usort($grouped, fn($a, $b) => $a['order'] <=> $b['order']);
+        usort($grouped, fn ($a, $b) => $a['order'] <=> $b['order']);
         foreach ($grouped as &$ageGroup) {
             $weights = array_values($ageGroup['weights']);
-            usort($weights, fn($a, $b) => $a['order'] <=> $b['order']);
+            usort($weights, fn ($a, $b) => $a['order'] <=> $b['order']);
             $ageGroup['weights'] = $weights;
         }
         unset($ageGroup);
@@ -109,12 +109,12 @@ class TrainerTournamentController extends Controller
                 'longitude' => $tournament->longitude,
                 'status' => $tournament->status->value,
                 'status_label' => $tournament->status->label(),
-                'attachments' => $tournament->attachments->map(fn($a) => [
+                'attachments' => $tournament->attachments->map(fn ($a) => [
                     'id' => $a->id,
                     'original_name' => $a->original_name,
                     'url' => route('attachments.show', $a),
                 ])->values()->all(),
-                'coaches' => $tournament->coaches->map(fn(Member $m) => [
+                'coaches' => $tournament->coaches->map(fn (Member $m) => [
                     'id' => $m->id,
                     'name' => $m->fullName(),
                 ])->values()->all(),
@@ -149,21 +149,21 @@ class TrainerTournamentController extends Controller
             $ageCategory = $member->calculateAgeCategory($tournament->country_code, $tournament->tournament_date);
             $ageName = $ageCategory?->name ?? 'Onbekend';
             $weightName = $member->weightCategory?->name ?? 'Geen gewichtscategorie';
-            $memberCategory[$member->id] = $ageName . '|' . $weightName;
+            $memberCategory[$member->id] = $ageName.'|'.$weightName;
         }
 
         // Check for duplicate placements within the same category
         $categoryPlacements = [];
         foreach ($validated['results'] as $entry) {
             $result = $entry['result'];
-            if (!in_array($result, $uniquePlacements, true)) {
+            if (! in_array($result, $uniquePlacements, true)) {
                 continue;
             }
             $cat = $memberCategory[$entry['member_id']] ?? null;
-            if (!$cat) {
+            if (! $cat) {
                 continue;
             }
-            $key = $cat . '|' . $result;
+            $key = $cat.'|'.$result;
             if (isset($categoryPlacements[$key])) {
                 return redirect()->back()->withErrors(['results' => "$result kan maar één keer toegewezen worden binnen dezelfde categorie."]);
             }
@@ -171,7 +171,7 @@ class TrainerTournamentController extends Controller
         }
 
         foreach ($validated['results'] as $entry) {
-            if (!in_array($entry['member_id'], $tournamentMemberIds)) {
+            if (! in_array($entry['member_id'], $tournamentMemberIds)) {
                 continue;
             }
 
@@ -228,10 +228,10 @@ class TrainerTournamentController extends Controller
             $ageCategory = $member->calculateAgeCategory($tournament->country_code, $tournament->tournament_date);
             $ageName = $ageCategory?->name ?? 'Onbekend';
             $weightCat = $member->weightCategory;
-            $weightName = $weightCat ? $weightCat->max_weight_kg . 'kg' : null;
-            $key = $ageName . '_' . ($weightName ?? 'geen');
+            $weightName = $weightCat ? $weightCat->max_weight_kg.'kg' : null;
+            $key = $ageName.'_'.($weightName ?? 'geen');
 
-            if (!isset($grouped[$key])) {
+            if (! isset($grouped[$key])) {
                 $grouped[$key] = [
                     'age_category' => $ageName,
                     'weight_category' => $weightName,
@@ -268,7 +268,7 @@ class TrainerTournamentController extends Controller
 
     public function storePodiumPhoto(Request $request, Tournament $tournament): RedirectResponse
     {
-        if (!in_array($tournament->status, [TournamentStatus::Started, TournamentStatus::Finished, TournamentStatus::Archived], true)) {
+        if (! in_array($tournament->status, [TournamentStatus::Started, TournamentStatus::Finished, TournamentStatus::Archived], true)) {
             return redirect()->back()->withErrors(['photo' => 'Podiumfoto\'s kunnen alleen worden geüpload voor actieve of afgelopen toernooien.']);
         }
 
