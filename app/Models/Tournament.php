@@ -42,7 +42,19 @@ class Tournament extends Model
 
     public function ageCategories(): BelongsToMany
     {
-        return $this->belongsToMany(AgeCategory::class);
+        return $this->belongsToMany(AgeCategory::class)->withPivot('entry_fee');
+    }
+
+    public function isPaid(): bool
+    {
+        return $this->ageCategories->contains(fn ($cat) => $cat->pivot->entry_fee > 0);
+    }
+
+    public function feeForAgeCategory(AgeCategory $category): ?float
+    {
+        $pivot = $this->ageCategories->firstWhere('id', $category->id)?->pivot;
+
+        return $pivot?->entry_fee;
     }
 
     public function attachments(): HasMany
@@ -53,7 +65,7 @@ class Tournament extends Model
     public function members(): BelongsToMany
     {
         return $this->belongsToMany(Member::class)
-            ->withPivot(['id', 'invitation_status', 'registration_status', 'invited_at', 'responded_at', 'invitation_token'])
+            ->withPivot(['id', 'invitation_status', 'registration_status', 'invited_at', 'responded_at', 'invitation_token', 'mollie_payment_id', 'mollie_payment_url', 'payment_status'])
             ->withTimestamps();
     }
 

@@ -25,16 +25,24 @@ class TournamentController extends Controller
             'registration_deadline' => ['required', 'date', 'before:tournament_date'],
             'age_category_ids' => ['required', 'array', 'min:1'],
             'age_category_ids.*' => ['integer', 'exists:age_categories,id'],
+            'age_category_fees' => ['nullable', 'array'],
+            'age_category_fees.*' => ['nullable', 'numeric', 'min:0'],
             'attachments' => ['nullable', 'array'],
             'attachments.*' => ['file', 'max:10240'],
         ]);
 
         $ageCategoryIds = $validated['age_category_ids'] ?? [];
+        $ageCategoryFees = $validated['age_category_fees'] ?? [];
         $attachments = $request->file('attachments', []);
-        unset($validated['age_category_ids'], $validated['attachments']);
+        unset($validated['age_category_ids'], $validated['age_category_fees'], $validated['attachments']);
 
         $tournament = Tournament::create($validated);
-        $tournament->ageCategories()->sync($ageCategoryIds);
+
+        $syncData = [];
+        foreach ($ageCategoryIds as $id) {
+            $syncData[$id] = ['entry_fee' => $ageCategoryFees[$id] ?? null];
+        }
+        $tournament->ageCategories()->sync($syncData);
 
         foreach ($attachments as $file) {
             $tournament->attachments()->create([
@@ -62,6 +70,8 @@ class TournamentController extends Controller
             'registration_deadline' => ['required', 'date', 'before:tournament_date'],
             'age_category_ids' => ['required', 'array', 'min:1'],
             'age_category_ids.*' => ['integer', 'exists:age_categories,id'],
+            'age_category_fees' => ['nullable', 'array'],
+            'age_category_fees.*' => ['nullable', 'numeric', 'min:0'],
             'attachments' => ['nullable', 'array'],
             'attachments.*' => ['file', 'max:10240'],
             'remove_attachment_ids' => ['nullable', 'array'],
@@ -69,12 +79,18 @@ class TournamentController extends Controller
         ]);
 
         $ageCategoryIds = $validated['age_category_ids'] ?? [];
+        $ageCategoryFees = $validated['age_category_fees'] ?? [];
         $attachments = $request->file('attachments', []);
         $removeAttachmentIds = $validated['remove_attachment_ids'] ?? [];
-        unset($validated['age_category_ids'], $validated['attachments'], $validated['remove_attachment_ids']);
+        unset($validated['age_category_ids'], $validated['age_category_fees'], $validated['attachments'], $validated['remove_attachment_ids']);
 
         $tournament->update($validated);
-        $tournament->ageCategories()->sync($ageCategoryIds);
+
+        $syncData = [];
+        foreach ($ageCategoryIds as $id) {
+            $syncData[$id] = ['entry_fee' => $ageCategoryFees[$id] ?? null];
+        }
+        $tournament->ageCategories()->sync($syncData);
 
         // Remove attachments
         if ($removeAttachmentIds) {

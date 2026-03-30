@@ -41,6 +41,7 @@ use App\Http\Controllers\POSController;
 use App\Http\Controllers\PushSubscriptionController;
 use App\Http\Controllers\TournamentAttachmentController;
 use App\Http\Controllers\TournamentDetailController;
+use App\Http\Controllers\TournamentPaymentWebhookController;
 use App\Http\Controllers\TournamentRsvpController;
 use App\Http\Controllers\Trainer\TrainerAttendanceController;
 use App\Http\Controllers\Trainer\TrainerTournamentController;
@@ -57,6 +58,7 @@ Route::get('/club-logo', ClubLogoController::class)->name('club.logo');
 
 // Mollie webhook (no auth, CSRF excluded in bootstrap/app.php)
 Route::post('/webhooks/mollie', MollieWebhookController::class)->name('webhooks.mollie');
+Route::post('/webhooks/mollie/tournament', TournamentPaymentWebhookController::class)->name('webhooks.mollie.tournament');
 
 // Attendance kiosk (PIN-protected, no auth)
 Route::get('/attendance', [AttendanceKioskController::class, 'pin'])->name('attendance.pin');
@@ -279,6 +281,10 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         // RSVP management (both admin + coach)
         Route::post('/tournaments/{tournament}/accept/{member}', [TournamentMembersController::class, 'adminAccept'])->name('admin.tournaments.accept');
         Route::post('/tournaments/{tournament}/decline/{member}', [TournamentMembersController::class, 'adminDecline'])->name('admin.tournaments.decline');
+
+        // Payment management (both admin + coach)
+        Route::post('/tournaments/{tournament}/mark-paid/{member}', [TournamentMembersController::class, 'markPaid'])->name('admin.tournaments.mark-paid');
+        Route::post('/tournaments/{tournament}/check-payment/{member}', [TournamentMembersController::class, 'checkPaymentStatus'])->name('admin.tournaments.check-payment');
 
         // Start tournament (coach-only, enforced in controller)
         Route::post('/tournaments/{tournament}/start', [TournamentMembersController::class, 'startTournament'])->name('admin.tournaments.start');

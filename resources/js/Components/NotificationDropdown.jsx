@@ -118,12 +118,25 @@ function NotificationDetailView({ notification, onBack }) {
 
                 {type === 'TournamentInvitationNotification' && notification.data?.accept_url && (
                     <div className="flex gap-2">
-                        <a href={notification.data.accept_url} className="flex-1 text-center rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium py-2 transition-colors">
-                            ✓ Deelnemen
-                        </a>
-                        <a href={notification.data.decline_url} className="flex-1 text-center rounded-lg bg-slate-700 hover:bg-slate-600 text-white text-sm font-medium py-2 transition-colors">
-                            ✗ Afwijzen
-                        </a>
+                        {notification.data.payment_url ? (
+                            <>
+                                <a href={notification.data.payment_url} className="flex-1 text-center rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium py-2 transition-colors">
+                                    💳 Betaal €{Number(notification.data.entry_fee).toFixed(2).replace('.', ',')}
+                                </a>
+                                <a href={notification.data.decline_url} className="flex-1 text-center rounded-lg bg-slate-700 hover:bg-slate-600 text-white text-sm font-medium py-2 transition-colors">
+                                    ✗ Afwijzen
+                                </a>
+                            </>
+                        ) : (
+                            <>
+                                <a href={notification.data.accept_url} className="flex-1 text-center rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium py-2 transition-colors">
+                                    ✓ Deelnemen
+                                </a>
+                                <a href={notification.data.decline_url} className="flex-1 text-center rounded-lg bg-slate-700 hover:bg-slate-600 text-white text-sm font-medium py-2 transition-colors">
+                                    ✗ Afwijzen
+                                </a>
+                            </>
+                        )}
                     </div>
                 )}
 

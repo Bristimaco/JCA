@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\InvitationStatus;
+use App\Services\MolliePaymentService;
 use Illuminate\Support\Facades\DB;
 
 class TournamentRsvpController extends Controller
@@ -32,6 +33,28 @@ class TournamentRsvpController extends Controller
                 'memberName' => ($member->first_name ?? '').' '.($member->last_name ?? ''),
                 'expired' => true,
             ]);
+        }
+
+        // For paid tournaments: block accept if not yet paid
+        if ($response === 'accept' && $pivot->mollie_payment_id) {
+            // Sync status from Mollie first
+            if ($pivot->payment_status !== 'paid') {
+                app(MolliePaymentService::class)->syncTournamentPaymentStatus($pivot->id);
+                $pivot = DB::table('member_tournament')->where('id', $pivot->id)->first();
+            }
+
+            if ($pivot->payment_status !== 'paid') {
+                $member = DB::table('members')->where('id', $pivot->member_id)->first();
+
+                return view('rsvp-confirmation', [
+                    'status' => null,
+                    'tournamentName' => $tournament->name ?? 'Toernooi',
+                    'memberName' => ($member->first_name ?? '').' '.($member->last_name ?? ''),
+                    'expired' => false,
+                    'paymentRequired' => true,
+                    'paymentUrl' => $pivot->mollie_payment_url,
+                ]);
+            }
         }
 
         $status = $response === 'accept'

@@ -64,6 +64,13 @@
             <h1>Deadline verlopen</h1>
             <p>De uitnodigingsdeadline voor <strong>{{ $tournamentName }}</strong> is verlopen. Neem contact op met de club
                 als je toch wilt reageren.</p>
+        @elseif($paymentRequired ?? false)
+            <div class="icon">💳</div>
+            <h1>Betaling vereist</h1>
+            <p>Om deel te nemen aan <strong>{{ $tournamentName }}</strong> moet je eerst het inschrijfgeld betalen. Na betaling wordt je deelname automatisch bevestigd.</p>
+            @if($paymentUrl ?? null)
+                <a href="{{ $paymentUrl }}" class="btn" style="background-color:#2563eb;">💳 Betaal inschrijfgeld</a>
+            @endif
         @elseif($status === \App\Enums\InvitationStatus::Accepted)
             <div class="icon">✅</div>
             <h1>Bedankt, {{ $memberName }}!</h1>

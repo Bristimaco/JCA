@@ -2,12 +2,14 @@
 
 namespace App\Services;
 
+use App\Enums\InvitationStatus;
 use App\Enums\InvoiceStatus;
 use App\Enums\VoucherStatus;
 use App\Models\MembershipInvoice;
 use App\Models\Voucher;
 use App\Notifications\PaymentConfirmationNotification;
 use App\Notifications\VoucherNotification;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Mollie\Laravel\Facades\Mollie;
 
@@ -118,5 +120,81 @@ class MolliePaymentService
         }
 
         return $newStatus;
+    }
+
+    public function createTournamentPaymentLink(int $pivotId, float $amount, string $description, string $redirectUrl): void
+    {
+        try {
+            $payment = Mollie::api()->paymentLinks->create([
+                'amount' => [
+                    'currency' => 'EUR',
+                    'value' => number_format($amount, 2, '.', ''),
+                ],
+                'description' => $description,
+                'redirectUrl' => $redirectUrl,
+                'webhookUrl' => url('/webhooks/mollie/tournament'),
+            ]);
+
+            DB::table('member_tournament')
+                ->where('id', $pivotId)
+                ->update([
+                    'mollie_payment_id' => $payment->id,
+                    'mollie_payment_url' => $payment->getCheckoutUrl(),
+                    'payment_status' => 'pending',
+                ]);
+
+            Log::info('Toernooi betaallink aangemaakt', [
+                'pivot_id' => $pivotId,
+                'mollie_id' => $payment->id,
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('Toernooi betaallink aanmaken mislukt', [
+                'pivot_id' => $pivotId,
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function syncTournamentPaymentStatus(int $pivotId): ?string
+    {
+        $pivot = DB::table('member_tournament')->where('id', $pivotId)->first();
+
+        if (! $pivot || ! $pivot->mollie_payment_id) {
+            return null;
+        }
+
+        try {
+            $paymentLink = Mollie::api()->paymentLinks->get($pivot->mollie_payment_id);
+
+            $status = 'pending';
+            if ($paymentLink->isPaid()) {
+                $status = 'paid';
+            } elseif ($paymentLink->expiresAt && now()->greaterThan($paymentLink->expiresAt)) {
+                $status = 'expired';
+            }
+
+            $update = ['payment_status' => $status];
+
+            if ($status === 'paid' && $pivot->invitation_status !== InvitationStatus::Accepted->value) {
+                $update['invitation_status'] = InvitationStatus::Accepted->value;
+                $update['responded_at'] = now();
+            }
+
+            DB::table('member_tournament')->where('id', $pivotId)->update($update);
+
+            Log::info('Toernooi betaalstatus gesynchroniseerd', [
+                'pivot_id' => $pivotId,
+                'status' => $status,
+            ]);
+
+            return $status;
+        } catch (\Throwable $e) {
+            Log::error('Toernooi betaalstatus sync mislukt', [
+                'pivot_id' => $pivotId,
+                'error' => $e->getMessage(),
+            ]);
+
+            return null;
+        }
     }
 }
