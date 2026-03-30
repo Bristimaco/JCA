@@ -20,6 +20,7 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
     const t = tournament;
     const hasMap = t.latitude && t.longitude;
     const fileInputRef = useRef(null);
+    const uploadTargetRef = useRef(null);
 
     // Build initial results state from existing data
     const buildInitialResults = () => {
@@ -110,27 +111,24 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
     };
 
     const openPhotoPicker = (ageName, weightName) => {
-        if (fileInputRef.current) {
-            fileInputRef.current.dataset.ageName = ageName;
-            fileInputRef.current.dataset.weightName = weightName;
-            fileInputRef.current.click();
-        }
+        uploadTargetRef.current = { ageName, weightName };
+        fileInputRef.current?.click();
     };
 
     const handlePhotoSelected = (e) => {
         const file = e.target.files?.[0];
-        const ageName = e.target.dataset.ageName;
-        const weightName = e.target.dataset.weightName;
-        if (!file || !ageName || !weightName) return;
+        const target = uploadTargetRef.current;
+        if (!file || !target) return;
 
         router.post(`/trainer/toernooien/${t.id}/podium-foto`, {
-            age_category_name: ageName,
-            weight_category_name: weightName,
+            age_category_name: target.ageName,
+            weight_category_name: target.weightName,
             photo: file,
         }, {
             forceFormData: true,
         });
 
+        uploadTargetRef.current = null;
         e.target.value = '';
     };
 
@@ -150,7 +148,6 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                 ref={fileInputRef}
                 type="file"
                 accept="image/*"
-                capture="environment"
                 className="hidden"
                 onChange={handlePhotoSelected}
             />
