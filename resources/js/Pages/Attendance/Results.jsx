@@ -2,7 +2,7 @@ import { Head, Link } from '@inertiajs/react';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 
 const SLIDE_DURATION = 15000;
-const MAX_CARDS_PER_SLIDE = 6;
+const MAX_CARDS_PER_SLIDE = 2;
 
 const resultBadge = (result) => {
     if (!result) return null;
