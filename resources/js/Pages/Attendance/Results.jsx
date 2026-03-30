@@ -218,7 +218,7 @@ export default function Results({ tournaments }) {
                                         </h2>
                                     </div>
                                     <div className="p-6">
-                                        <div className="grid gap-5 grid-cols-2 lg:grid-cols-3">
+                                        <div className="grid gap-8 grid-cols-2">
                                             {group.weights.map((weightGroup) => (
                                                 <div key={weightGroup.name} className="rounded-2xl ring-1 ring-slate-800 bg-slate-800/30 p-5">
                                                     <h4 className="text-lg font-semibold text-rose-400 mb-3">
