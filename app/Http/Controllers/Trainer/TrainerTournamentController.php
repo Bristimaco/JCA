@@ -141,6 +141,35 @@ class TrainerTournamentController extends Controller
         // Verify all members belong to the tournament
         $tournamentMemberIds = $tournament->members()->pluck('members.id')->toArray();
 
+        // Build member → category lookup for uniqueness validation
+        $uniquePlacements = ['1e plaats', '2e plaats', '3e plaats', '5e plaats', '7e plaats'];
+        $memberCategory = [];
+        $tournament->load('members.weightCategory');
+        foreach ($tournament->members as $member) {
+            $ageCategory = $member->calculateAgeCategory($tournament->country_code, $tournament->tournament_date);
+            $ageName = $ageCategory?->name ?? 'Onbekend';
+            $weightName = $member->weightCategory?->name ?? 'Geen gewichtscategorie';
+            $memberCategory[$member->id] = $ageName.'|'.$weightName;
+        }
+
+        // Check for duplicate placements within the same category
+        $categoryPlacements = [];
+        foreach ($validated['results'] as $entry) {
+            $result = $entry['result'];
+            if (! in_array($result, $uniquePlacements, true)) {
+                continue;
+            }
+            $cat = $memberCategory[$entry['member_id']] ?? null;
+            if (! $cat) {
+                continue;
+            }
+            $key = $cat.'|'.$result;
+            if (isset($categoryPlacements[$key])) {
+                return redirect()->back()->withErrors(['results' => "$result kan maar één keer toegewezen worden binnen dezelfde categorie."]);
+            }
+            $categoryPlacements[$key] = true;
+        }
+
         foreach ($validated['results'] as $entry) {
             if (! in_array($entry['member_id'], $tournamentMemberIds)) {
                 continue;

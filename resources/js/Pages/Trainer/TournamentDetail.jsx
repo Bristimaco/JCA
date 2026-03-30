@@ -15,6 +15,8 @@ const resultOptions = [
     { value: 'Gediskwalificeerd', label: 'Gediskwalificeerd' },
 ];
 
+const uniquePlacements = ['1e plaats', '2e plaats', '3e plaats', '5e plaats', '7e plaats'];
+
 export default function TournamentDetail({ tournament, participantGroups, totalParticipants, podiumPhotos = {} }) {
     const { flash, errors } = usePage().props;
     const t = tournament;
@@ -450,7 +452,14 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                                                         </span>
                                                     </h4>
                                                     <div className="space-y-2">
-                                                        {weightGroup.members.map(member => (
+                                                        {weightGroup.members.map(member => {
+                                                            // Compute placements taken by OTHER members in this weight group
+                                                            const takenPlacements = weightGroup.members
+                                                                .filter(m => m.id !== member.id)
+                                                                .map(m => results[m.id]?.result)
+                                                                .filter(r => r && uniquePlacements.includes(r));
+
+                                                            return (
                                                             <div key={member.id} className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 bg-slate-800 rounded-md p-2.5 sm:p-2 border border-slate-800">
                                                                 <div className="sm:flex-1 min-w-0">
                                                                     <p className="text-sm font-medium text-white truncate">{member.name}</p>
@@ -462,7 +471,13 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                                                                     className={`w-full sm:w-auto rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-2.5 sm:py-1 px-2 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500 ${isFinished ? 'bg-slate-800 cursor-not-allowed' : ''}`}
                                                                 >
                                                                     {resultOptions.map(opt => (
-                                                                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                                                        <option
+                                                                            key={opt.value}
+                                                                            value={opt.value}
+                                                                            disabled={opt.value && takenPlacements.includes(opt.value)}
+                                                                        >
+                                                                            {opt.label}
+                                                                        </option>
                                                                     ))}
                                                                 </select>
                                                                 <textarea
@@ -475,7 +490,8 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                                                                     className={`w-full sm:w-auto sm:min-w-32 sm:flex-1 rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-2.5 sm:py-1 px-2 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500 resize-none overflow-hidden ${isFinished ? 'bg-slate-800 cursor-not-allowed' : ''}`}
                                                                 />
                                                             </div>
-                                                        ))}
+                                                            );
+                                                        })}
                                                     </div>
 
                                                     {/* Podium photo */}
