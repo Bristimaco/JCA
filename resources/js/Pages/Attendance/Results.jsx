@@ -130,23 +130,22 @@ export default function Results({ tournaments }) {
     }
 
     return (
-        <div className="min-h-screen bg-slate-950 flex flex-col">
+        <div className="h-screen bg-slate-950 flex flex-col overflow-hidden">
             <Head title="Toernooi Resultaten" />
 
-            {/* Header */}
-            <div className="flex-shrink-0 px-10 pt-6 pb-4">
+            {/* Header — fixed height */}
+            <div className="flex-shrink-0 px-8 pt-4 pb-2">
                 <div className="flex items-center justify-between">
                     <Link href="/attendance/choose" className="text-sm text-slate-500 hover:text-slate-400 transition-colors">
                         ← Terug
                     </Link>
 
-                    {/* Slide dots */}
                     <div className="flex items-center gap-3">
                         {slides.map((s, idx) => (
                             <button
                                 key={idx}
                                 onClick={() => goTo(idx)}
-                                className={`w-4 h-4 rounded-full transition-all ${idx === activeIndex
+                                className={`w-3.5 h-3.5 rounded-full transition-all ${idx === activeIndex
                                     ? 'bg-rose-500 scale-125'
                                     : s.tournament.id === tournament.id
                                         ? 'bg-rose-800 hover:bg-rose-700'
@@ -156,13 +155,12 @@ export default function Results({ tournaments }) {
                         ))}
                     </div>
 
-                    <span className="text-lg text-slate-600 tabular-nums">
+                    <span className="text-base text-slate-600 tabular-nums">
                         {activeIndex + 1} / {count}
                     </span>
                 </div>
 
-                {/* Progress bar */}
-                <div className="mt-4 h-1.5 w-full rounded-full bg-slate-800 overflow-hidden">
+                <div className="mt-2 h-1 w-full rounded-full bg-slate-800 overflow-hidden">
                     <div
                         className="h-full rounded-full bg-rose-600 transition-[width] duration-100 ease-linear"
                         style={{ width: `${progress}%` }}
@@ -170,89 +168,85 @@ export default function Results({ tournaments }) {
                 </div>
             </div>
 
-            {/* Tournament content */}
-            <div className="flex-1 px-10 pb-8">
-                <div>
-                    {/* Tournament title */}
-                    <div className="mb-8">
-                        <div className="flex items-center gap-5 mb-1">
-                            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-rose-600 to-red-800 flex items-center justify-center shadow-lg">
-                                <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 01-.982-3.172M9.497 14.25a7.454 7.454 0 00.981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 007.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M18.75 4.236c.982.143 1.954.317 2.916.52A6.003 6.003 0 0016.27 9.728M18.75 4.236V4.5c0 2.108-.966 3.99-2.48 5.228m0 0a6.023 6.023 0 01-7.54 0" />
-                                </svg>
-                            </div>
-                            <div>
-                                <h1 className="text-5xl font-bold text-white">
-                                    {tournament.name}
-                                    {totalPages > 1 && (
-                                        <span className="ml-4 text-2xl font-normal text-slate-500">
-                                            pagina {page}/{totalPages}
-                                        </span>
-                                    )}
-                                </h1>
-                                <p className="text-xl text-slate-400 mt-1">
-                                    {formatDate(tournament.tournament_date)}
-                                    {tournament.address_city && ` — ${tournament.address_city}`}
-                                    <span className="ml-4 inline-flex items-center rounded-full bg-slate-800 px-4 py-1 text-lg font-medium text-slate-400">
-                                        {tournament.totalParticipants} deelnemers
+            {/* Content — fills remaining height, never scrolls */}
+            <div className="flex-1 min-h-0 flex flex-col px-8 pb-4">
+                {/* Tournament title — fixed */}
+                <div className="flex-shrink-0 mb-3">
+                    <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-rose-600 to-red-800 flex items-center justify-center shadow-lg">
+                            <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 01-.982-3.172M9.497 14.25a7.454 7.454 0 00.981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 007.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M18.75 4.236c.982.143 1.954.317 2.916.52A6.003 6.003 0 0016.27 9.728M18.75 4.236V4.5c0 2.108-.966 3.99-2.48 5.228m0 0a6.023 6.023 0 01-7.54 0" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h1 className="text-4xl font-bold text-white leading-tight">
+                                {tournament.name}
+                                {totalPages > 1 && (
+                                    <span className="ml-3 text-xl font-normal text-slate-500">
+                                        pagina {page}/{totalPages}
                                     </span>
-                                </p>
-                            </div>
+                                )}
+                            </h1>
+                            <p className="text-lg text-slate-400">
+                                {formatDate(tournament.tournament_date)}
+                                {tournament.address_city && ` — ${tournament.address_city}`}
+                                <span className="ml-3 inline-flex items-center rounded-full bg-slate-800 px-3 py-0.5 text-base font-medium text-slate-400">
+                                    {tournament.totalParticipants} deelnemers
+                                </span>
+                            </p>
                         </div>
                     </div>
+                </div>
 
-                    {/* Results grouped by age/weight */}
-                    {cards.length === 0 ? (
-                        <div className="text-center py-24">
-                            <p className="text-3xl text-slate-400">Geen deelnemers voor dit toernooi</p>
-                        </div>
-                    ) : (
-                        <div className="space-y-8">
-                            {groupedCards.map((group) => (
-                                <div key={`${group.ageGroup.name}-${page}`} className="bg-slate-900 rounded-2xl ring-1 ring-slate-800/60 border-t-3 border-t-rose-700 overflow-hidden">
-                                    <div className="px-7 py-4 border-b border-slate-800/60">
-                                        <h2 className="text-2xl font-semibold text-white">
-                                            <span className="inline-flex items-center rounded-full bg-rose-900/30 px-4 py-1 text-xl font-semibold text-rose-300">
-                                                {group.ageGroup.name}
-                                            </span>
-                                        </h2>
-                                    </div>
-                                    <div className="p-6">
-                                        <div className="grid gap-8 grid-cols-2">
-                                            {group.weights.map((weightGroup) => (
-                                                <div key={weightGroup.name} className="rounded-2xl ring-1 ring-slate-800 bg-slate-800/30 p-5">
-                                                    <h4 className="text-lg font-semibold text-rose-400 mb-3">
-                                                        <span className="inline-flex items-center rounded-full bg-rose-900/30 px-3 py-1">
-                                                            {weightGroup.name}
-                                                        </span>
-                                                        <span className="ml-2 text-slate-400 font-normal">
-                                                            ({weightGroup.members.length})
-                                                        </span>
-                                                    </h4>
-                                                    {(() => {
-                                                        const photoKey = `${group.ageGroup.name}|${weightGroup.name}`;
-                                                        const photoUrl = tournament.podiumPhotos?.[photoKey];
-                                                        return photoUrl ? (
-                                                            <img src={photoUrl} alt="Podiumfoto" className="w-full rounded-xl mb-4 ring-1 ring-slate-700 object-contain" />
-                                                        ) : null;
-                                                    })()}
-                                                    <ul className="space-y-3">
-                                                        {weightGroup.members.map((member) => (
-                                                            <li key={member.id} className="flex items-center justify-between text-xl">
-                                                                <span className="text-slate-300 truncate mr-3">{member.name}</span>
-                                                                {resultBadge(member.result)}
-                                                            </li>
-                                                        ))}
-                                                    </ul>
-                                                </div>
-                                            ))}
-                                        </div>
+                {/* Cards area — fills remaining, flexes to fit */}
+                {cards.length === 0 ? (
+                    <div className="flex-1 flex items-center justify-center">
+                        <p className="text-3xl text-slate-400">Geen deelnemers voor dit toernooi</p>
+                    </div>
+                ) : (
+                    <div className="flex-1 min-h-0 flex flex-col gap-3">
+                        {groupedCards.map((group) => (
+                            <div key={`${group.ageGroup.name}-${page}`} className="flex-1 min-h-0 flex flex-col bg-slate-900 rounded-2xl ring-1 ring-slate-800/60 border-t-2 border-t-rose-700 overflow-hidden">
+                                <div className="flex-shrink-0 px-5 py-2 border-b border-slate-800/60">
+                                    <span className="inline-flex items-center rounded-full bg-rose-900/30 px-4 py-1 text-lg font-semibold text-rose-300">
+                                        {group.ageGroup.name}
+                                    </span>
+                                </div>
+                                <div className="flex-1 min-h-0 p-4">
+                                    <div className="grid grid-cols-2 gap-6 h-full">
+                                        {group.weights.map((weightGroup) => (
+                                            <div key={weightGroup.name} className="flex flex-col min-h-0 rounded-2xl ring-1 ring-slate-800 bg-slate-800/30 p-4">
+                                                <h4 className="flex-shrink-0 text-lg font-semibold text-rose-400 mb-2">
+                                                    <span className="inline-flex items-center rounded-full bg-rose-900/30 px-3 py-0.5">
+                                                        {weightGroup.name}
+                                                    </span>
+                                                    <span className="ml-2 text-slate-400 font-normal">
+                                                        ({weightGroup.members.length})
+                                                    </span>
+                                                </h4>
+                                                {(() => {
+                                                    const photoKey = `${group.ageGroup.name}|${weightGroup.name}`;
+                                                    const photoUrl = tournament.podiumPhotos?.[photoKey];
+                                                    return photoUrl ? (
+                                                        <img src={photoUrl} alt="Podiumfoto" className="flex-1 min-h-0 w-full rounded-xl mb-2 ring-1 ring-slate-700 object-contain" />
+                                                    ) : null;
+                                                })()}
+                                                <ul className="flex-shrink-0 space-y-1.5">
+                                                    {weightGroup.members.map((member) => (
+                                                        <li key={member.id} className="flex items-center justify-between text-xl">
+                                                            <span className="text-slate-300 truncate mr-3">{member.name}</span>
+                                                            {resultBadge(member.result)}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
             </div>
         </div>
     );
