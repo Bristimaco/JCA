@@ -161,7 +161,7 @@ class AttendanceKioskController extends Controller
         foreach ($tournaments as $tournament) {
             $participants = $tournament->members->filter(
                 fn (Member $m) => $m->pivot->invitation_status === InvitationStatus::Accepted->value
-                    && $m->pivot->registration_status === 'registered'
+                && $m->pivot->registration_status === 'registered'
             );
 
             $existingResults = TournamentResult::where('tournament_id', $tournament->id)

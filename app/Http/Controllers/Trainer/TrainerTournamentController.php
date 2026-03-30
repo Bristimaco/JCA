@@ -246,7 +246,7 @@ class TrainerTournamentController extends Controller
         $validated = $request->validate([
             'age_category_name' => ['required', 'string', 'max:255'],
             'weight_category_name' => ['required', 'string', 'max:255'],
-            'photo' => ['required', 'image', 'max:10240'],
+            'photo' => ['required', 'file', 'mimes:jpeg,jpg,png,gif,webp,heic,heif', 'max:10240'],
         ]);
 
         $file = $validated['photo'];

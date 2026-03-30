@@ -16,7 +16,7 @@ const resultOptions = [
 ];
 
 export default function TournamentDetail({ tournament, participantGroups, totalParticipants, podiumPhotos = {} }) {
-    const { flash } = usePage().props;
+    const { flash, errors } = usePage().props;
     const t = tournament;
     const hasMap = t.latitude && t.longitude;
     const fileInputRef = useRef(null);
@@ -170,6 +170,14 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                 </div>
             )}
 
+            {errors && Object.keys(errors).length > 0 && (
+                <div className="mb-4 rounded-md bg-red-900/30 border ring-1 ring-red-700/30 p-3">
+                    {Object.values(errors).map((err, i) => (
+                        <p key={i} className="text-sm text-red-400">{err}</p>
+                    ))}
+                </div>
+            )}
+
             {/* Phone-only: collapsible info header */}
             <details className="sm:hidden mb-3 bg-slate-900 rounded-lg border border-slate-800 border-t-2 border-t-rose-700">
                 <summary className="flex items-center justify-between px-4 py-3 cursor-pointer">
@@ -238,15 +246,11 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                         <button
                             onClick={handleClose}
                             disabled={!canClose || closeForm.processing}
+                            title={!allFilled ? 'Vul eerst alle resultaten in' : ''}
                             className="w-full rounded-lg bg-purple-600 px-4 py-3 text-sm font-semibold text-white hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                         >
-                            {closeForm.processing ? 'Afsluiten...' : 'Toernooi afsluiten'}
+                            {closeForm.processing ? 'Afsluiten...' : `Toernooi afsluiten (${filledCount}/${totalParticipants})`}
                         </button>
-                        {!allFilled && (
-                            <p className="text-xs text-rose-600 text-center">
-                                Vul eerst alle resultaten in om af te sluiten.
-                            </p>
-                        )}
                     </>
                 )}
             </div>
@@ -333,20 +337,14 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
 
                     {/* Close tournament button */}
                     {t.status === 'started' && (
-                        <div className="space-y-2">
-                            <button
-                                onClick={handleClose}
-                                disabled={!canClose || closeForm.processing}
-                                className="w-full rounded-lg bg-purple-600 px-4 py-3 text-sm font-semibold text-white hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                            >
-                                {closeForm.processing ? 'Afsluiten...' : 'Toernooi afsluiten'}
-                            </button>
-                            {!allFilled && (
-                                <p className="text-xs text-rose-600 text-center">
-                                    Alle deelnemers moeten eerst een resultaat hebben voordat het toernooi kan worden afgesloten.
-                                </p>
-                            )}
-                        </div>
+                        <button
+                            onClick={handleClose}
+                            disabled={!canClose || closeForm.processing}
+                            title={!allFilled ? 'Vul eerst alle resultaten in' : ''}
+                            className="w-full rounded-lg bg-purple-600 px-4 py-3 text-sm font-semibold text-white hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                            {closeForm.processing ? 'Afsluiten...' : `Toernooi afsluiten (${filledCount}/${totalParticipants})`}
+                        </button>
                     )}
                 </div>
 
@@ -365,8 +363,8 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                                     <button
                                         onClick={toggleAll}
                                         className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${allFiltersActive
-                                                ? 'bg-rose-600 text-white'
-                                                : 'bg-slate-800 text-slate-400 border border-slate-700 hover:border-slate-500'
+                                            ? 'bg-rose-600 text-white'
+                                            : 'bg-slate-800 text-slate-400 border border-slate-700 hover:border-slate-500'
                                             }`}
                                     >
                                         Alles
@@ -380,8 +378,8 @@ export default function TournamentDetail({ tournament, participantGroups, totalP
                                                 key={name}
                                                 onClick={() => toggleFilter(name)}
                                                 className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${isActive
-                                                        ? 'bg-rose-600 text-white'
-                                                        : 'bg-slate-800 text-slate-400 border border-slate-700 hover:border-slate-500'
+                                                    ? 'bg-rose-600 text-white'
+                                                    : 'bg-slate-800 text-slate-400 border border-slate-700 hover:border-slate-500'
                                                     }`}
                                             >
                                                 {name} ({count})

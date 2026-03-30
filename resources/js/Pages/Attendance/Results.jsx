@@ -102,8 +102,8 @@ export default function Results({ tournaments }) {
                                 key={t.id}
                                 onClick={() => goTo(idx)}
                                 className={`w-4 h-4 rounded-full transition-all ${idx === activeIndex
-                                        ? 'bg-rose-500 scale-125'
-                                        : 'bg-slate-700 hover:bg-slate-600'
+                                    ? 'bg-rose-500 scale-125'
+                                    : 'bg-slate-700 hover:bg-slate-600'
                                     }`}
                             />
                         ))}
