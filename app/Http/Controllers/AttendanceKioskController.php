@@ -300,6 +300,6 @@ class AttendanceKioskController extends Controller
 
         session()->forget('kiosk_authenticated');
 
-        return redirect()->route('attendance.pin');
+        return redirect()->route('login');
     }
 }
