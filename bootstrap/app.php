@@ -21,6 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->validateCsrfTokens(except: [
             'webhooks/mollie',
             'webhooks/mollie/tournament',
+            'webhooks/mollie/event',
         ]);
 
         $middleware->web(append: [

@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Enums\InvitationStatus;
 use App\Enums\InvoiceStatus;
 use App\Enums\VoucherStatus;
+use App\Models\EventRegistration;
 use App\Models\MembershipInvoice;
 use App\Models\Voucher;
 use App\Notifications\PaymentConfirmationNotification;
@@ -191,6 +192,77 @@ class MolliePaymentService
         } catch (\Throwable $e) {
             Log::error('Toernooi betaalstatus sync mislukt', [
                 'pivot_id' => $pivotId,
+                'error' => $e->getMessage(),
+            ]);
+
+            return null;
+        }
+    }
+
+    public function createEventPaymentLink(EventRegistration $registration, string $description, string $redirectUrl): void
+    {
+        try {
+            $payment = Mollie::api()->paymentLinks->create([
+                'amount' => [
+                    'currency' => 'EUR',
+                    'value' => number_format($registration->total_amount, 2, '.', ''),
+                ],
+                'description' => $description,
+                'redirectUrl' => $redirectUrl,
+                'webhookUrl' => url('/webhooks/mollie/event'),
+            ]);
+
+            $registration->update([
+                'mollie_payment_id' => $payment->id,
+                'mollie_payment_url' => $payment->getCheckoutUrl(),
+                'payment_status' => 'pending',
+            ]);
+
+            Log::info('Evenement betaallink aangemaakt', [
+                'registration_id' => $registration->id,
+                'mollie_id' => $payment->id,
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('Evenement betaallink aanmaken mislukt', [
+                'registration_id' => $registration->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function syncEventPaymentStatus(EventRegistration $registration): ?string
+    {
+        if (! $registration->mollie_payment_id) {
+            return null;
+        }
+
+        try {
+            $paymentLink = Mollie::api()->paymentLinks->get($registration->mollie_payment_id);
+
+            $status = 'pending';
+            if ($paymentLink->isPaid()) {
+                $status = 'paid';
+            } elseif ($paymentLink->expiresAt && now()->greaterThan($paymentLink->expiresAt)) {
+                $status = 'expired';
+            }
+
+            $update = ['payment_status' => $status];
+
+            if ($status === 'paid' && ! $registration->paid_at) {
+                $update['paid_at'] = now();
+            }
+
+            $registration->update($update);
+
+            Log::info('Evenement betaalstatus gesynchroniseerd', [
+                'registration_id' => $registration->id,
+                'status' => $status,
+            ]);
+
+            return $status;
+        } catch (\Throwable $e) {
+            Log::error('Evenement betaalstatus sync mislukt', [
+                'registration_id' => $registration->id,
                 'error' => $e->getMessage(),
             ]);
 

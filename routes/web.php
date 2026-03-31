@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\ApproveUserController;
 use App\Http\Controllers\Admin\BarProductController;
 use App\Http\Controllers\Admin\CategoryExcelController;
 use App\Http\Controllers\Admin\ClubSettingsController;
+use App\Http\Controllers\Admin\EventController as AdminEventController;
 use App\Http\Controllers\Admin\InvoiceController;
 use App\Http\Controllers\Admin\MemberController;
 use App\Http\Controllers\Admin\MemberExcelController;
@@ -32,6 +33,10 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ClubLogoController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EventController;
+use App\Http\Controllers\EventImageController;
+use App\Http\Controllers\EventPaymentWebhookController;
+use App\Http\Controllers\EventRsvpController;
 use App\Http\Controllers\MemberAttendanceController;
 use App\Http\Controllers\MemberPhotoController;
 use App\Http\Controllers\MollieWebhookController;
@@ -60,6 +65,13 @@ Route::get('/club-logo', ClubLogoController::class)->name('club.logo');
 // Mollie webhook (no auth, CSRF excluded in bootstrap/app.php)
 Route::post('/webhooks/mollie', MollieWebhookController::class)->name('webhooks.mollie');
 Route::post('/webhooks/mollie/tournament', TournamentPaymentWebhookController::class)->name('webhooks.mollie.tournament');
+Route::post('/webhooks/mollie/event', EventPaymentWebhookController::class)->name('webhooks.mollie.event');
+
+// Public event image
+Route::get('/event-afbeelding/{event}', EventImageController::class)->name('event.image');
+
+// Public event confirmation (token-based, no auth needed)
+Route::get('/evenementen/{event}/bevestiging/{token}', [EventRsvpController::class, 'confirmation'])->name('event.confirmation');
 
 // Attendance kiosk (PIN-protected, no auth)
 Route::get('/attendance', [AttendanceKioskController::class, 'pin'])->name('attendance.pin');
@@ -131,6 +143,11 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
     Route::get('/bijlagen/{attachment}', TournamentAttachmentController::class)->name('attachments.show');
 
     Route::get('/toernooien/{tournament}', TournamentDetailController::class)->name('tournament.detail');
+
+    // Events (any authenticated user)
+    Route::get('/evenementen', [EventController::class, 'index'])->name('events.index');
+    Route::get('/evenementen/{event}/inschrijven', [EventRsvpController::class, 'show'])->name('event.register');
+    Route::post('/evenementen/{event}/inschrijven', [EventRsvpController::class, 'store'])->name('event.register.store');
 
     // Archived tournaments (any authenticated user)
     Route::get('/archief', ArchivedTournamentsController::class)->name('archived.tournaments');
@@ -231,6 +248,16 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::patch('/sponsors/{sponsor}', [SponsorController::class, 'update'])->name('admin.sponsors.update');
         Route::post('/sponsors/{sponsor}/renew', [SponsorController::class, 'renew'])->name('admin.sponsors.renew');
         Route::delete('/sponsors/{sponsor}', [SponsorController::class, 'destroy'])->name('admin.sponsors.destroy');
+
+        // Events
+        Route::get('/evenementen', [AdminEventController::class, 'index'])->name('admin.events.index');
+        Route::post('/evenementen', [AdminEventController::class, 'store'])->name('admin.events.store');
+        Route::put('/evenementen/{event}', [AdminEventController::class, 'update'])->name('admin.events.update');
+        Route::delete('/evenementen/{event}', [AdminEventController::class, 'destroy'])->name('admin.events.destroy');
+        Route::post('/evenementen/{event}/publish', [AdminEventController::class, 'publish'])->name('admin.events.publish');
+        Route::post('/evenementen/{event}/archive', [AdminEventController::class, 'archive'])->name('admin.events.archive');
+        Route::get('/evenementen/{event}/registrations', [AdminEventController::class, 'registrations'])->name('admin.events.registrations');
+        Route::post('/evenementen/{event}/registrations/{registration}/mark-paid', [AdminEventController::class, 'markPaid'])->name('admin.events.mark-paid');
 
         // Bar products
         Route::get('/aan-te-vullen', [BarProductController::class, 'refillIndex'])->name('admin.refill-products.index');
