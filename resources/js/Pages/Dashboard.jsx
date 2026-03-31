@@ -79,24 +79,24 @@ export default function Dashboard({ pendingCount, pendingUsers, adminCounters, m
         <AppLayout>
             <Head title="Dashboard" />
 
-            <div className="mb-8">
-                <h1 className="text-3xl font-bold text-stone-100 tracking-tight">Dashboard</h1>
-                <p className="text-slate-400 mt-1">Welkom terug, {auth.user.name}</p>
+            <div className="mb-3">
+                <h1 className="text-2xl font-bold text-stone-100 tracking-tight">Dashboard</h1>
+                <p className="text-slate-400 text-sm">Welkom terug, {auth.user.name}</p>
             </div>
 
             {visibleModules.length > 0 && (
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
                     {visibleModules.map((m) => (
                         <Link
                             key={m.name}
                             href={m.href}
-                            className="group bg-slate-900 rounded-xl shadow-sm ring-1 ring-slate-800 border-t-2 border-t-rose-700/40 p-5 hover:shadow-md hover:ring-rose-500/40 hover:-translate-y-0.5"
+                            className="group bg-slate-900 rounded-xl shadow-sm ring-1 ring-slate-800 border-t-2 border-t-rose-700/40 p-3 hover:shadow-md hover:ring-rose-500/40 hover:-translate-y-0.5"
                         >
                             <div className="flex flex-col items-center text-center">
-                                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${moduleColors[m.name]} flex items-center justify-center text-white mb-3 shadow-sm group-hover:scale-105`}>
+                                <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${moduleColors[m.name]} flex items-center justify-center text-white mb-1.5 shadow-sm group-hover:scale-105 [&_svg]:w-4 [&_svg]:h-4`}>
                                     {moduleIcons[m.name]}
                                 </div>
-                                <span className="text-base font-semibold text-white">{m.name}</span>
+                                <span className="text-sm font-semibold text-white">{m.name}</span>
                                 {m.name === 'Leden' && memberStats && (
                                     <span className="mt-1 inline-flex items-center rounded-full bg-slate-800 px-2 py-0.5 text-xs font-medium text-slate-300">
                                         {memberStats.total}
@@ -109,80 +109,7 @@ export default function Dashboard({ pendingCount, pendingUsers, adminCounters, m
                                 )}
                             </div>
 
-                            {m.name === 'Toernooien' && (
-                                <div className="mt-3 pt-3 border-t border-slate-800 text-left">
-                                    {upcomingTournaments && upcomingTournaments.length > 0 ? (
-                                        <>
-                                            <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Komende toernooien</p>
-                                            <ul className="space-y-1">
-                                                {upcomingTournaments.map((t) => (
-                                                    <li key={t.id}>
-                                                        <Link
-                                                            href={`/toernooien/${t.id}`}
-                                                            className="block text-sm text-rose-400 hover:text-rose-300 hover:underline truncate"
-                                                            onClick={(e) => e.stopPropagation()}
-                                                        >
-                                                            {t.name}
-                                                            <span className="text-xs text-slate-500 ml-1">{new Date(t.tournament_date).toLocaleDateString('nl-BE')}</span>
-                                                        </Link>
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </>
-                                    ) : (
-                                        <p className="text-sm text-slate-500">Geen geplande toernooien</p>
-                                    )}
-                                </div>
-                            )}
 
-                            {m.name === 'Archief' && recentArchived && recentArchived.length > 0 && (
-                                <div className="mt-3 pt-3 border-t border-slate-800 text-left">
-                                    <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Laatste toernooien</p>
-                                    <ul className="space-y-1">
-                                        {recentArchived.map((t) => (
-                                            <li key={t.id}>
-                                                <Link
-                                                    href={`/toernooien/${t.id}`}
-                                                    className="block text-sm text-rose-400 hover:text-rose-300 hover:underline truncate"
-                                                    onClick={(e) => e.stopPropagation()}
-                                                >
-                                                    {t.name}
-                                                    <span className="text-xs text-slate-500 ml-1">{new Date(t.tournament_date).toLocaleDateString('nl-BE')}</span>
-                                                </Link>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            )}
-
-                            {m.name === 'Leden' && memberStats && (memberStats.gender.length > 0 || memberStats.belts.length > 0) && (
-                                <div className="mt-3 pt-3 border-t border-slate-800 space-y-2 text-left">
-                                    {memberStats.gender.length > 0 && (
-                                        <div>
-                                            <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Geslacht</p>
-                                            <div className="flex flex-wrap gap-x-3 gap-y-0.5">
-                                                {memberStats.gender.map((g) => (
-                                                    <span key={g.label} className="text-xs text-slate-400">
-                                                        {g.label} <span className="font-semibold text-slate-200">{g.count}</span>
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    )}
-                                    {memberStats.belts.length > 0 && (
-                                        <div>
-                                            <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Gordels</p>
-                                            <div className="flex flex-wrap gap-x-3 gap-y-0.5">
-                                                {memberStats.belts.map((b) => (
-                                                    <span key={b.label} className="text-xs text-slate-400">
-                                                        {b.label} <span className="font-semibold text-slate-200">{b.count}</span>
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                            )}
                         </Link>
                     ))}
                 </div>
@@ -229,13 +156,13 @@ function AdminTile({ pendingCount, adminCounters }) {
     return (
         <Link
             href="/admin"
-            className={`group block mt-6 rounded-xl shadow-sm ring-1 border-t-2 border-t-rose-700/40 p-5 hover:shadow-md hover:-translate-y-0.5 ${hasPending
+            className={`group block mt-3 rounded-xl shadow-sm ring-1 border-t-2 border-t-rose-700/40 p-3 hover:shadow-md hover:-translate-y-0.5 ${hasPending
                 ? 'ring-rose-600/50 bg-gradient-to-br from-rose-900/30 to-red-900/20 hover:ring-rose-500/60'
                 : 'ring-slate-800 bg-slate-900 hover:ring-rose-500/40'
                 }`}
         >
-            <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2.5">
+            <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
                     <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-slate-600 to-slate-700 flex items-center justify-center shadow-sm">
                         <svg className="w-4.5 h-4.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                     </div>
@@ -252,8 +179,8 @@ function AdminTile({ pendingCount, adminCounters }) {
                 {counters.map((c) => {
                     const inner = (
                         <div className="text-center">
-                            <span className={`block text-lg font-bold ${c.text}`}>{c.value}</span>
-                            <span className="block text-[10px] font-medium text-slate-400 leading-tight">{c.label}</span>
+                            <span className={`block text-base font-bold ${c.text}`}>{c.value}</span>
+                            <span className="block text-[9px] font-medium text-slate-400 leading-tight">{c.label}</span>
                         </div>
                     );
                     return c.href ? (
