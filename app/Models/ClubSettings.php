@@ -29,6 +29,8 @@ class ClubSettings extends Model
         'sponsor_frequency_bronze' => 'integer',
         'sponsor_frequency_silver' => 'integer',
         'sponsor_frequency_gold' => 'integer',
+        'slide_duration_results' => 'integer',
+        'slide_duration_announcements' => 'integer',
     ];
 
     public static function current(): self

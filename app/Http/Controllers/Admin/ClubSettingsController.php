@@ -24,6 +24,8 @@ class ClubSettingsController extends Controller
             'sponsor_frequency_bronze' => ['nullable', 'integer', 'min:5'],
             'sponsor_frequency_silver' => ['nullable', 'integer', 'min:5'],
             'sponsor_frequency_gold' => ['nullable', 'integer', 'min:5'],
+            'slide_duration_results' => ['nullable', 'integer', 'min:5'],
+            'slide_duration_announcements' => ['nullable', 'integer', 'min:5'],
         ]);
 
         $settings = ClubSettings::first();
@@ -39,6 +41,8 @@ class ClubSettingsController extends Controller
             'sponsor_frequency_bronze' => $validated['sponsor_frequency_bronze'] ?? 60,
             'sponsor_frequency_silver' => $validated['sponsor_frequency_silver'] ?? 30,
             'sponsor_frequency_gold' => $validated['sponsor_frequency_gold'] ?? 15,
+            'slide_duration_results' => $validated['slide_duration_results'] ?? 15,
+            'slide_duration_announcements' => $validated['slide_duration_announcements'] ?? 15,
         ];
 
         if ($request->hasFile('logo')) {

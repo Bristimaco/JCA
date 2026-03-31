@@ -112,6 +112,8 @@ function ClubSettingsSection({ clubSettings }) {
         sponsor_frequency_bronze: clubSettings.sponsor_frequency_bronze ?? 60,
         sponsor_frequency_silver: clubSettings.sponsor_frequency_silver ?? 30,
         sponsor_frequency_gold: clubSettings.sponsor_frequency_gold ?? 15,
+        slide_duration_results: clubSettings.slide_duration_results ?? 15,
+        slide_duration_announcements: clubSettings.slide_duration_announcements ?? 15,
         logo: null,
     });
 
@@ -270,6 +272,33 @@ function ClubSettingsSection({ clubSettings }) {
                     </div>
                 </div>
                 <p className="text-xs text-slate-500 mt-1">Hoe vaak een sponsorlogo verschijnt op het resultaten scherm (lagere waarde = vaker)</p>
+            </div>
+
+            <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Slidetijd resultaten scherm (seconden)</label>
+                <div className="grid grid-cols-2 gap-3 max-w-md">
+                    <div>
+                        <label className="block text-xs text-slate-400 mb-1">🏆 Resultaten</label>
+                        <input
+                            type="number"
+                            min="5"
+                            value={form.data.slide_duration_results}
+                            onChange={(e) => form.setData('slide_duration_results', parseInt(e.target.value) || 15)}
+                            className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-rose-500 focus:ring-rose-500 text-sm"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-xs text-slate-400 mb-1">📢 Mededelingen</label>
+                        <input
+                            type="number"
+                            min="5"
+                            value={form.data.slide_duration_announcements}
+                            onChange={(e) => form.setData('slide_duration_announcements', parseInt(e.target.value) || 15)}
+                            className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-rose-500 focus:ring-rose-500 text-sm"
+                        />
+                    </div>
+                </div>
+                <p className="text-xs text-slate-500 mt-1">Hoe lang elke slide wordt getoond op het kiosk resultaten scherm</p>
             </div>
 
             <div className="flex justify-end">

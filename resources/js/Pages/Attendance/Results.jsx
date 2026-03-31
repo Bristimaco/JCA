@@ -1,7 +1,6 @@
 import { Head, Link, useForm } from '@inertiajs/react';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 
-const SLIDE_DURATION = 15000;
 const MAX_CARDS_PER_SLIDE = 2;
 
 const resultBadge = (result) => {
@@ -76,7 +75,7 @@ function buildSlides(tournaments, announcements = []) {
     return slides;
 }
 
-export default function Results({ tournaments, announcements = [], sponsors = [], sponsorFrequencies = {} }) {
+export default function Results({ tournaments, announcements = [], sponsors = [], sponsorFrequencies = {}, slideDurations = {} }) {
     const slides = useMemo(() => buildSlides(tournaments, announcements), [tournaments, announcements]);
     const [activeIndex, setActiveIndex] = useState(0);
     const [progress, setProgress] = useState(0);
@@ -122,22 +121,32 @@ export default function Results({ tournaments, announcements = [], sponsors = []
         setProgress(0);
     }, []);
 
+    const resultsDuration = (slideDurations.results || 15) * 1000;
+    const announcementsDuration = (slideDurations.announcements || 15) * 1000;
+
+    const getCurrentDuration = useCallback(() => {
+        if (count === 0) return resultsDuration;
+        const s = slides[activeIndex];
+        return s?.type === 'announcement' ? announcementsDuration : resultsDuration;
+    }, [activeIndex, count, slides, resultsDuration, announcementsDuration]);
+
     // Auto-advance slideshow
     useEffect(() => {
         if (count === 0) return;
 
+        const duration = getCurrentDuration();
         const interval = setInterval(() => {
             setProgress((prev) => {
                 if (prev >= 100) {
                     setActiveIndex((i) => (i + 1) % count);
                     return 0;
                 }
-                return prev + (100 / (SLIDE_DURATION / 100));
+                return prev + (100 / (duration / 100));
             });
         }, 100);
 
         return () => clearInterval(interval);
-    }, [count]);
+    }, [count, activeIndex, getCurrentDuration]);
 
     // Sponsor banner rotation based on tier frequency
     useEffect(() => {

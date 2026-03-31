@@ -272,6 +272,10 @@ class AttendanceKioskController extends Controller
                 'silver' => $settings->sponsor_frequency_silver ?? 30,
                 'gold' => $settings->sponsor_frequency_gold ?? 15,
             ],
+            'slideDurations' => [
+                'results' => $settings->slide_duration_results ?? 15,
+                'announcements' => $settings->slide_duration_announcements ?? 15,
+            ],
         ]);
     }
 
