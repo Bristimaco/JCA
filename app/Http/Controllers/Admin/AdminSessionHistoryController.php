@@ -35,8 +35,8 @@ class AdminSessionHistoryController extends Controller
                     'opened_at' => $s->opened_at?->format('H:i'),
                     'closed_at' => $s->closed_at?->format('H:i'),
                     'attendees' => $s->attendances->map(fn ($a) => [
-                        'name' => $a->member->fullName(),
-                        'confirmed_at' => $a->confirmed_at->format('H:i'),
+                        'name' => $a->member?->fullName() ?? 'Verwijderd lid',
+                        'confirmed_at' => $a->confirmed_at?->format('H:i'),
                     ])->values()->all(),
                     'attendance_count' => $s->attendances->count(),
                     'absentees' => $absentees,
