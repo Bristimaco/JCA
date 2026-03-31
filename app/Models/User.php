@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\NotificationPreference;
 use App\Enums\UserRole;
+use App\Mail\PasswordResetMail;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -14,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Mail;
 
 /**
  * @property int $id
@@ -102,5 +104,12 @@ class User extends Authenticatable implements MustVerifyEmail
     public function pushSubscriptions(): HasMany
     {
         return $this->hasMany(PushSubscription::class);
+    }
+
+    public function sendPasswordResetNotification($token): void
+    {
+        $url = url('/wachtwoord-reset/'.$token.'?email='.urlencode($this->email));
+
+        Mail::to($this->email)->send(new PasswordResetMail($this, $url));
     }
 }

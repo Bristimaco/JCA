@@ -30,6 +30,7 @@ use App\Http\Controllers\AttendanceKioskController;
 use App\Http\Controllers\AttendanceReportController;
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ClubLogoController;
 use App\Http\Controllers\DashboardController;
@@ -93,6 +94,10 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [RegisterController::class, 'store']);
     Route::get('/login', [LoginController::class, 'create'])->name('login');
     Route::post('/login', [LoginController::class, 'store']);
+    Route::get('/wachtwoord-vergeten', [PasswordResetController::class, 'create'])->name('password.request');
+    Route::post('/wachtwoord-vergeten', [PasswordResetController::class, 'store'])->name('password.email');
+    Route::get('/wachtwoord-reset/{token}', [PasswordResetController::class, 'edit'])->name('password.reset');
+    Route::post('/wachtwoord-reset', [PasswordResetController::class, 'update'])->name('password.update');
 });
 
 // Authenticated routes (any logged-in user)

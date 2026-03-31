@@ -52,17 +52,22 @@ export default function Login() {
                     {errors.password && <p className="mt-1.5 text-sm text-rose-400">{errors.password}</p>}
                 </div>
 
-                <div className="flex items-center">
-                    <input
-                        id="remember"
-                        type="checkbox"
-                        checked={data.remember}
-                        onChange={e => setData('remember', e.target.checked)}
-                        className="h-4 w-4 rounded border-slate-700 bg-slate-800 text-rose-500 focus:ring-rose-500"
-                    />
-                    <label htmlFor="remember" className="ml-2 text-sm text-slate-400">
-                        Onthoud mij
-                    </label>
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                        <input
+                            id="remember"
+                            type="checkbox"
+                            checked={data.remember}
+                            onChange={e => setData('remember', e.target.checked)}
+                            className="h-4 w-4 rounded border-slate-700 bg-slate-800 text-rose-500 focus:ring-rose-500"
+                        />
+                        <label htmlFor="remember" className="ml-2 text-sm text-slate-400">
+                            Onthoud mij
+                        </label>
+                    </div>
+                    <Link href="/wachtwoord-vergeten" className="text-sm text-rose-400 hover:text-rose-300">
+                        Wachtwoord vergeten?
+                    </Link>
                 </div>
 
                 <button
