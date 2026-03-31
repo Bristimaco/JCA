@@ -11,10 +11,17 @@ const TYPE_STYLES = {
     event: { bg: 'bg-blue-900/40', border: 'border-l-blue-500', text: 'text-blue-300', label: 'Evenement' },
 };
 
+function toDateString(d) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+}
+
 function addDays(dateStr, days) {
     const d = new Date(dateStr + 'T00:00:00');
     d.setDate(d.getDate() + days);
-    return d.toISOString().slice(0, 10);
+    return toDateString(d);
 }
 
 function formatDateRange(startDate) {
@@ -32,7 +39,7 @@ function formatDateRange(startDate) {
 }
 
 function isToday(dateStr) {
-    return dateStr === new Date().toISOString().slice(0, 10);
+    return dateStr === toDateString(new Date());
 }
 
 export default function Calendar({ items, startDate }) {
