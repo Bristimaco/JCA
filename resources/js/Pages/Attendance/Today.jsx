@@ -33,7 +33,7 @@ export default function Today({ sessions }) {
 
     const handleLogoutSubmit = (e) => {
         e.preventDefault();
-        logoutForm.post('/attendance/logout');
+        logoutForm.post('/attendance/exit-to-choice');
     };
     useEffect(() => {
         if (sessions && sessions.length > 0) return;
@@ -52,12 +52,6 @@ export default function Today({ sessions }) {
             <div className="max-w-4xl mx-auto">
                 <div className="flex items-center justify-between mb-8">
                     <div>
-                        <Link
-                            href="/attendance/choose"
-                            className="text-sm text-slate-500 hover:text-slate-400 mb-1 inline-block"
-                        >
-                            ← Terug
-                        </Link>
                         <h1 className="text-2xl font-bold text-white">Actieve Trainingen</h1>
                         <p className="text-slate-400 mt-1">{new Date().toLocaleDateString('nl-BE', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p>
                     </div>
@@ -126,8 +120,8 @@ export default function Today({ sessions }) {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
                                 </svg>
                             </div>
-                            <h2 className="text-lg font-bold text-white">Kiosk afsluiten</h2>
-                            <p className="text-sm text-slate-400 mt-1">Voer de PIN-code in om af te melden</p>
+                            <h2 className="text-lg font-bold text-white">Scherm vergrendeld</h2>
+                            <p className="text-sm text-slate-400 mt-1">Voer de PIN-code in om terug te gaan</p>
                         </div>
 
                         <form onSubmit={handleLogoutSubmit} className="space-y-4">
@@ -153,7 +147,7 @@ export default function Today({ sessions }) {
                                 disabled={logoutForm.processing || !logoutForm.data.pin}
                                 className="w-full rounded-xl bg-rose-600 px-4 py-3 text-base font-semibold text-white hover:bg-rose-700 disabled:opacity-50 transition-colors"
                             >
-                                Afmelden
+                                Ontgrendelen
                             </button>
 
                             <div className="text-center">

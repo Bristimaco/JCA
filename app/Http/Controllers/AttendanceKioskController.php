@@ -275,6 +275,17 @@ class AttendanceKioskController extends Controller
         ]);
     }
 
+    public function exitToChoice(Request $request): RedirectResponse
+    {
+        $settings = ClubSettings::current();
+
+        if (! $settings->attendance_pin || ! hash_equals($settings->attendance_pin, $request->input('pin', ''))) {
+            return back()->withErrors(['pin' => 'Ongeldige PIN-code.']);
+        }
+
+        return redirect()->route('attendance.choose');
+    }
+
     public function logout(Request $request): RedirectResponse
     {
         $settings = ClubSettings::current();
