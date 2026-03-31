@@ -32,6 +32,7 @@ use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\ClubLogoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventController;
@@ -158,6 +159,9 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
     // Archived tournaments (any authenticated user)
     Route::get('/archief', ArchivedTournamentsController::class)->name('archived.tournaments');
     Route::delete('/archief/{tournament}', [ArchivedTournamentsController::class, 'destroy'])->middleware('admin')->name('archived.tournaments.destroy');
+
+    // Calendar
+    Route::get('/kalender', CalendarController::class)->name('calendar');
 
     // Trainer routes
     Route::middleware('coach')->prefix('trainer')->group(function () {
