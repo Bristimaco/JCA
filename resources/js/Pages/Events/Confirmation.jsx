@@ -4,6 +4,7 @@ import AppLayout from '../../Layouts/AppLayout';
 export default function Confirmation({ event, registration }) {
     const fmtDate = (d) => d ? new Date(d).toLocaleDateString('nl-BE') : '-';
     const isPaid = registration.payment_status === 'paid';
+    const isOpen = registration.payment_status === 'open';
 
     return (
         <AppLayout>
@@ -16,8 +17,17 @@ export default function Confirmation({ event, registration }) {
                             <div className="w-16 h-16 rounded-full bg-emerald-900/40 flex items-center justify-center mx-auto mb-4">
                                 <svg className="w-8 h-8 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                             </div>
-                            <h1 className="text-2xl font-bold text-white">Inschrijving bevestigd!</h1>
+                            <h1 className="text-2xl font-bold text-white">Inschrijving betaald!</h1>
                             <p className="text-slate-400 mt-2">Je betaling voor <span className="text-white font-medium">{event.name}</span> is ontvangen.</p>
+                        </>
+                    ) : isOpen ? (
+                        <>
+                            <div className="w-16 h-16 rounded-full bg-blue-900/40 flex items-center justify-center mx-auto mb-4">
+                                <svg className="w-8 h-8 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                            </div>
+                            <h1 className="text-2xl font-bold text-white">Inschrijving bevestigd!</h1>
+                            <p className="text-slate-400 mt-2">Je bent ingeschreven voor <span className="text-white font-medium">{event.name}</span>.</p>
+                            <p className="text-sm text-slate-500 mt-1">De betaallink wordt verstuurd zodra de inschrijvingen zijn gesloten.</p>
                         </>
                     ) : (
                         <>

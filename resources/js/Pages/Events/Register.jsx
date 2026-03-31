@@ -1,7 +1,7 @@
 import { Head, useForm, usePage } from '@inertiajs/react';
 import AppLayout from '../../Layouts/AppLayout';
 
-export default function Register({ event, existingRegistration }) {
+export default function Register({ event, registrationOpen, existingRegistration }) {
     const { flash } = usePage().props;
     const fmtDate = (d) => d ? new Date(d).toLocaleDateString('nl-BE') : '-';
 
@@ -13,6 +13,8 @@ export default function Register({ event, existingRegistration }) {
     const total = (form.data.adult_count * event.price_adult) + (form.data.child_count * event.price_child);
 
     const isPaid = existingRegistration?.payment_status === 'paid';
+    const isOpen = existingRegistration?.payment_status === 'open';
+    const isPending = existingRegistration?.payment_status === 'pending';
 
     const submit = (e) => {
         e.preventDefault();
@@ -49,20 +51,33 @@ export default function Register({ event, existingRegistration }) {
 
                         {isPaid ? (
                             <div className="mt-6 rounded-lg bg-emerald-900/30 ring-1 ring-emerald-700/30 px-4 py-3 text-center">
-                                <p className="text-emerald-400 font-semibold">✓ Je bent ingeschreven!</p>
+                                <p className="text-emerald-400 font-semibold">✓ Inschrijving betaald!</p>
                                 <p className="text-sm text-slate-400 mt-1">
                                     {existingRegistration.adult_count} volwassene(n) + {existingRegistration.child_count} kind(eren) — €{Number(existingRegistration.total_amount).toFixed(2)}
                                 </p>
                             </div>
+                        ) : isOpen ? (
+                            <div className="mt-6 rounded-lg bg-blue-900/30 ring-1 ring-blue-700/30 px-4 py-3 text-center">
+                                <p className="text-blue-400 font-semibold">✓ Je bent ingeschreven!</p>
+                                <p className="text-sm text-slate-400 mt-1">
+                                    {existingRegistration.adult_count} volwassene(n) + {existingRegistration.child_count} kind(eren) — €{Number(existingRegistration.total_amount).toFixed(2)}
+                                </p>
+                                <p className="text-xs text-slate-500 mt-2">De betaallink wordt verstuurd zodra de inschrijvingen zijn gesloten.</p>
+                            </div>
+                        ) : isPending && existingRegistration.payment_url ? (
+                            <div className="mt-6 rounded-lg bg-amber-900/30 ring-1 ring-amber-700/30 px-4 py-3 text-center">
+                                <p className="text-amber-400 font-semibold">Betaling openstaand</p>
+                                <p className="text-sm text-slate-400 mt-1">
+                                    {existingRegistration.adult_count} volwassene(n) + {existingRegistration.child_count} kind(eren) — €{Number(existingRegistration.total_amount).toFixed(2)}
+                                </p>
+                                <a href={existingRegistration.payment_url} className="mt-3 inline-block rounded-lg bg-rose-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-rose-700">Betaling voltooien</a>
+                            </div>
+                        ) : !registrationOpen ? (
+                            <div className="mt-6 rounded-lg bg-slate-800/50 ring-1 ring-slate-700/50 px-4 py-3 text-center">
+                                <p className="text-slate-400 font-medium">Inschrijvingen zijn gesloten</p>
+                            </div>
                         ) : (
                             <form onSubmit={submit} className="mt-6">
-                                {existingRegistration && existingRegistration.payment_status === 'pending' && existingRegistration.payment_url && (
-                                    <div className="mb-4 rounded-lg bg-amber-900/30 ring-1 ring-amber-700/30 px-4 py-3">
-                                        <p className="text-sm text-amber-400">Je hebt al een inschrijving, maar de betaling is nog niet afgerond.</p>
-                                        <a href={existingRegistration.payment_url} className="mt-2 inline-block rounded-lg bg-amber-600 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-700">Betaling voltooien</a>
-                                    </div>
-                                )}
-
                                 <div className="space-y-4">
                                     <div>
                                         <label className="block text-sm font-medium text-slate-300 mb-1">Aantal volwassenen</label>
@@ -78,7 +93,7 @@ export default function Register({ event, existingRegistration }) {
 
                                 <div className="mt-4 p-3 rounded-lg bg-rose-900/20 ring-1 ring-rose-700/30">
                                     <div className="flex justify-between">
-                                        <span className="text-sm font-medium text-slate-300">Totaal te betalen</span>
+                                        <span className="text-sm font-medium text-slate-300">Totaal</span>
                                         <span className="text-lg font-bold text-rose-400">€{total.toFixed(2)}</span>
                                     </div>
                                 </div>
@@ -89,8 +104,8 @@ export default function Register({ event, existingRegistration }) {
                                     </div>
                                 )}
 
-                                <button type="submit" disabled={form.processing || total <= 0} className="mt-4 w-full rounded-lg bg-rose-600 px-4 py-3 text-sm font-semibold text-white hover:bg-rose-700 disabled:opacity-50 transition-colors">
-                                    {total > 0 ? `Betalen — €${total.toFixed(2)}` : 'Inschrijven'}
+                                <button type="submit" disabled={form.processing} className="mt-4 w-full rounded-lg bg-rose-600 px-4 py-3 text-sm font-semibold text-white hover:bg-rose-700 disabled:opacity-50 transition-colors">
+                                    Inschrijven
                                 </button>
                             </form>
                         )}

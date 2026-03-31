@@ -10,15 +10,16 @@ class EventController extends Controller
 {
     public function index(): Response
     {
-        $events = Event::published()
+        $events = Event::notArchived()
+            ->whereNot('status', 'draft')
             ->orderBy('event_date')
-            ->get(['id', 'name', 'description', 'address_street', 'address_city', 'address_postal_code', 'event_date', 'event_time', 'image_mime', 'price_adult', 'price_child'])
+            ->get(['id', 'name', 'description', 'address_street', 'address_city', 'address_postal_code', 'event_date', 'event_time', 'image_mime', 'price_adult', 'price_child', 'status'])
             ->map(fn (Event $e) => [
                 ...$e->toArray(),
                 'has_image' => $e->hasImage(),
                 'my_registration' => $e->registrations()
                     ->where('user_id', auth()->id())
-                    ->first(['payment_status', 'adult_count', 'child_count', 'total_amount']),
+                    ->first(['payment_status', 'adult_count', 'child_count', 'total_amount', 'mollie_payment_url']),
             ]);
 
         return Inertia::render('Events/Index', [

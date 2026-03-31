@@ -35,14 +35,26 @@ export default function Index({ events }) {
                                     <span>Kind: €{Number(ev.price_child).toFixed(2)}</span>
                                 </div>
 
-                                {ev.my_registration && ev.my_registration.payment_status === 'paid' ? (
+                                {ev.my_registration?.payment_status === 'paid' ? (
                                     <div className="mt-3 rounded-lg bg-emerald-900/30 ring-1 ring-emerald-700/30 px-3 py-2 text-sm text-emerald-400 font-medium">
+                                        ✓ Betaald ({ev.my_registration.adult_count} volw. + {ev.my_registration.child_count} kind.)
+                                    </div>
+                                ) : ev.my_registration?.payment_status === 'open' ? (
+                                    <div className="mt-3 rounded-lg bg-blue-900/30 ring-1 ring-blue-700/30 px-3 py-2 text-sm text-blue-400 font-medium">
                                         ✓ Ingeschreven ({ev.my_registration.adult_count} volw. + {ev.my_registration.child_count} kind.)
                                     </div>
-                                ) : (
+                                ) : ev.my_registration?.payment_status === 'pending' && ev.my_registration.mollie_payment_url ? (
+                                    <a href={ev.my_registration.mollie_payment_url} className="mt-3 block text-center rounded-lg bg-amber-600 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-700 transition-colors">
+                                        Betaling voltooien
+                                    </a>
+                                ) : ev.status === 'published' ? (
                                     <Link href={`/evenementen/${ev.id}/inschrijven`} className="mt-3 block text-center rounded-lg bg-rose-600 px-4 py-2 text-sm font-semibold text-white hover:bg-rose-700 transition-colors">
                                         Inschrijven
                                     </Link>
+                                ) : (
+                                    <div className="mt-3 rounded-lg bg-slate-800/50 ring-1 ring-slate-700/50 px-3 py-2 text-sm text-slate-500 text-center">
+                                        Inschrijvingen gesloten
+                                    </div>
                                 )}
                             </div>
                         </div>

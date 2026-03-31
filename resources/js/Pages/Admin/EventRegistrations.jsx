@@ -54,9 +54,14 @@ export default function EventRegistrations({ event, registrations }) {
                                     <span className="font-medium text-white">€{Number(r.total_amount).toFixed(2)}</span>
                                     {r.payment_status === 'paid' ? (
                                         <span className="inline-flex items-center rounded-full bg-emerald-900/40 px-2.5 py-0.5 text-xs font-semibold text-emerald-400">Betaald</span>
+                                    ) : r.payment_status === 'open' ? (
+                                        <span className="inline-flex items-center rounded-full bg-blue-900/40 px-2.5 py-0.5 text-xs font-semibold text-blue-400">Ingeschreven</span>
                                     ) : (
                                         <div className="flex items-center gap-2">
                                             <span className="inline-flex items-center rounded-full bg-amber-900/40 px-2.5 py-0.5 text-xs font-semibold text-amber-400">{r.payment_status === 'expired' ? 'Verlopen' : 'In afwachting'}</span>
+                                            {r.mollie_payment_url && (
+                                                <button onClick={() => { navigator.clipboard.writeText(r.mollie_payment_url); }} className="rounded-lg bg-slate-700 px-2 py-1 text-xs font-semibold text-slate-300 hover:bg-slate-600">Link kopiëren</button>
+                                            )}
                                             <button
                                                 onClick={() => router.post(`/admin/evenementen/${event.id}/registrations/${r.id}/mark-paid`, {}, { preserveScroll: true })}
                                                 className="rounded-lg bg-emerald-900/30 px-2 py-1 text-xs font-semibold text-emerald-400 hover:bg-emerald-900/50 ring-1 ring-emerald-700/30"

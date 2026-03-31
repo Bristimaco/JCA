@@ -30,6 +30,7 @@ function resizeImage(file, maxSize = 1920, quality = 0.85) {
 const STATUS_BADGES = {
     draft: { label: 'Concept', bg: 'bg-slate-700', text: 'text-slate-300' },
     published: { label: 'Gepubliceerd', bg: 'bg-emerald-900/40', text: 'text-emerald-400' },
+    registration_closed: { label: 'Inschrijvingen gesloten', bg: 'bg-rose-900/40', text: 'text-rose-400' },
     archived: { label: 'Gearchiveerd', bg: 'bg-amber-900/40', text: 'text-amber-400' },
 };
 
@@ -168,6 +169,12 @@ function EventRow({ event, onEdit }) {
                     <button onClick={() => router.post(`/admin/evenementen/${event.id}/publish`, {}, { preserveScroll: true })} className="rounded-lg bg-emerald-900/30 px-3 py-1.5 text-xs font-semibold text-emerald-400 hover:bg-emerald-900/50 ring-1 ring-emerald-700/30">Publiceren</button>
                 )}
                 {event.status === 'published' && (
+                    <>
+                        <a href={`/admin/evenementen/${event.id}/registrations`} className="rounded-lg bg-blue-900/30 px-3 py-1.5 text-xs font-semibold text-blue-400 hover:bg-blue-900/50 ring-1 ring-blue-700/30">Inschrijvingen</a>
+                        <button onClick={() => { if (confirm('Inschrijvingen sluiten? Betaallinks worden aangemaakt.')) router.post(`/admin/evenementen/${event.id}/close-registrations`, {}, { preserveScroll: true }); }} className="rounded-lg bg-rose-900/30 px-3 py-1.5 text-xs font-semibold text-rose-400 hover:bg-rose-900/50 ring-1 ring-rose-700/30">Inschrijvingen sluiten</button>
+                    </>
+                )}
+                {event.status === 'registration_closed' && (
                     <>
                         <a href={`/admin/evenementen/${event.id}/registrations`} className="rounded-lg bg-blue-900/30 px-3 py-1.5 text-xs font-semibold text-blue-400 hover:bg-blue-900/50 ring-1 ring-blue-700/30">Inschrijvingen</a>
                         <button onClick={() => { if (confirm('Dit evenement archiveren?')) router.post(`/admin/evenementen/${event.id}/archive`, {}, { preserveScroll: true }); }} className="rounded-lg bg-amber-900/30 px-3 py-1.5 text-xs font-semibold text-amber-400 hover:bg-amber-900/50 ring-1 ring-amber-700/30">Archiveren</button>
