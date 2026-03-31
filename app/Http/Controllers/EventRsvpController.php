@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Enums\EventStatus;
 use App\Models\Event;
 use App\Models\EventRegistration;
-use App\Services\MolliePaymentService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -16,7 +15,7 @@ class EventRsvpController extends Controller
 {
     public function show(Event $event): Response
     {
-        abort_unless($event->status === EventStatus::Published, 404);
+        abort_unless(in_array($event->status, [EventStatus::Published, EventStatus::RegistrationClosed]), 404);
 
         $registration = null;
         if (auth()->check()) {
@@ -39,6 +38,7 @@ class EventRsvpController extends Controller
                 'price_adult' => (float) $event->price_adult,
                 'price_child' => (float) $event->price_child,
             ],
+            'registrationOpen' => $event->status === EventStatus::Published,
             'existingRegistration' => $registration ? [
                 'adult_count' => $registration->adult_count,
                 'child_count' => $registration->child_count,
@@ -49,7 +49,7 @@ class EventRsvpController extends Controller
         ]);
     }
 
-    public function store(Request $request, Event $event, MolliePaymentService $mollieService): RedirectResponse
+    public function store(Request $request, Event $event): RedirectResponse
     {
         abort_unless($event->status === EventStatus::Published, 404);
 
@@ -74,37 +74,18 @@ class EventRsvpController extends Controller
 
         $token = Str::random(64);
 
-        $registration = EventRegistration::updateOrCreate(
+        EventRegistration::updateOrCreate(
             ['event_id' => $event->id, 'user_id' => auth()->id()],
             [
                 'adult_count' => $adultCount,
                 'child_count' => $childCount,
                 'total_amount' => $total,
                 'rsvp_token' => $token,
-                'payment_status' => 'pending',
+                'payment_status' => 'open',
             ],
         );
 
-        if ($total > 0) {
-            $description = $event->name.' — '.auth()->user()->name;
-            $redirectUrl = url("/evenementen/{$event->id}/bevestiging/{$token}");
-            $mollieService->createEventPaymentLink($registration, $description, $redirectUrl);
-
-            $registration->refresh();
-
-            if ($registration->mollie_payment_url) {
-                return redirect($registration->mollie_payment_url);
-            }
-        } else {
-            $registration->update([
-                'payment_status' => 'paid',
-                'paid_at' => now(),
-            ]);
-
-            return redirect("/evenementen/{$event->id}/bevestiging/{$token}");
-        }
-
-        return back()->with('status', 'Inschrijving verwerkt.');
+        return redirect("/evenementen/{$event->id}/bevestiging/{$token}");
     }
 
     public function confirmation(Event $event, string $token): Response

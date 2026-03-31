@@ -8,6 +8,7 @@ use App\Models\Event;
 use App\Models\EventRegistration;
 use App\Models\User;
 use App\Notifications\EventInvitationNotification;
+use App\Services\MolliePaymentService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -118,6 +119,30 @@ class EventController extends Controller
         return back()->with('status', "Evenement '{$event->name}' gearchiveerd.");
     }
 
+    public function closeRegistrations(Event $event, MolliePaymentService $mollieService): RedirectResponse
+    {
+        $event->update(['status' => EventStatus::RegistrationClosed]);
+
+        $registrations = $event->registrations()->where('payment_status', 'open')->with('user:id,name')->get();
+
+        $linkCount = 0;
+        foreach ($registrations as $registration) {
+            if ($registration->total_amount > 0) {
+                $description = $event->name.' — '.$registration->user->name;
+                $redirectUrl = url("/evenementen/{$event->id}/bevestiging/{$registration->rsvp_token}");
+                $mollieService->createEventPaymentLink($registration, $description, $redirectUrl);
+                $linkCount++;
+            } else {
+                $registration->update([
+                    'payment_status' => 'paid',
+                    'paid_at' => now(),
+                ]);
+            }
+        }
+
+        return back()->with('status', "Inschrijvingen gesloten. {$linkCount} betaallinks aangemaakt.");
+    }
+
     public function registrations(Event $event): Response
     {
         $registrations = $event->registrations()
@@ -132,12 +157,13 @@ class EventController extends Controller
                 'child_count' => $r->child_count,
                 'total_amount' => $r->total_amount,
                 'payment_status' => $r->payment_status,
+                'mollie_payment_url' => $r->mollie_payment_url,
                 'paid_at' => $r->paid_at?->toDateTimeString(),
                 'created_at' => $r->created_at->toDateTimeString(),
             ]);
 
         return Inertia::render('Admin/EventRegistrations', [
-            'event' => $event->only('id', 'name', 'event_date', 'price_adult', 'price_child'),
+            'event' => $event->only('id', 'name', 'event_date', 'status', 'price_adult', 'price_child'),
             'registrations' => $registrations,
         ]);
     }
