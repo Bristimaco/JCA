@@ -157,10 +157,7 @@ function AdminTile({ pendingCount, adminCounters }) {
 
     const counters = [
         { label: 'Openstaande aanvragen', value: pendingCount, text: 'text-rose-400', bg: 'bg-rose-900/30', ring: 'ring-rose-700/30' },
-        { label: 'Inactieve leden', value: adminCounters?.inactiveMemberCount ?? 0, text: 'text-slate-300', bg: 'bg-slate-700/50', ring: 'ring-slate-600/30' },
         { label: 'Lidmaatschap vernieuwen', value: adminCounters?.renewalDueCount ?? 0, text: 'text-amber-400', bg: 'bg-amber-900/30', ring: 'ring-amber-700/30', href: '/admin/members?filter=renewal' },
-        { label: 'Komende toernooien', value: adminCounters?.upcomingTournamentCount ?? 0, text: 'text-blue-400', bg: 'bg-blue-900/30', ring: 'ring-blue-700/30' },
-        { label: 'Actieve toernooien', value: adminCounters?.activeTournamentCount ?? 0, text: 'text-emerald-400', bg: 'bg-emerald-900/30', ring: 'ring-emerald-700/30' },
     ];
 
     return (
@@ -185,7 +182,7 @@ function AdminTile({ pendingCount, adminCounters }) {
                 )}
             </div>
 
-            <div className="grid grid-cols-5 gap-1.5">
+            <div className="grid grid-cols-2 gap-1.5">
                 {counters.map((c) => {
                     const inner = (
                         <div className="text-center">

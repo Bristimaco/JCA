@@ -6,7 +6,6 @@ use App\Enums\BeltRank;
 use App\Enums\Gender;
 use App\Enums\InvitationStatus;
 use App\Enums\InvoiceStatus;
-use App\Enums\MembershipStatus;
 use App\Enums\TournamentStatus;
 use App\Enums\VoucherStatus;
 use App\Models\BeltHistory;
@@ -46,15 +45,7 @@ class DashboardController extends Controller
                 ]);
 
             $props['adminCounters'] = [
-                'inactiveMemberCount' => Member::where('membership_status', MembershipStatus::Inactive)->count(),
                 'renewalDueCount' => Member::where('membership_renewal_date', '<=', now()->addDays(30))->count(),
-                'upcomingTournamentCount' => Tournament::whereIn('status', [
-                    TournamentStatus::Preparation,
-                    TournamentStatus::InvitationsSent,
-                    TournamentStatus::RegistrationsOpen,
-                    TournamentStatus::RegistrationsClosed,
-                ])->count(),
-                'activeTournamentCount' => Tournament::where('status', TournamentStatus::Started)->count(),
                 'pendingInvoiceCount' => MembershipInvoice::where('status', InvoiceStatus::Pending)->count(),
                 'activeVoucherCount' => Voucher::where('status', VoucherStatus::Active)->where('expires_at', '>=', now())->count(),
             ];
