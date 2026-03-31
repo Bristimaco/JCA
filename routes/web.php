@@ -258,6 +258,7 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::post('/evenementen/{event}/publish', [AdminEventController::class, 'publish'])->name('admin.events.publish');
         Route::post('/evenementen/{event}/archive', [AdminEventController::class, 'archive'])->name('admin.events.archive');
         Route::post('/evenementen/{event}/close-registrations', [AdminEventController::class, 'closeRegistrations'])->name('admin.events.close-registrations');
+        Route::post('/evenementen/{event}/resend-invitations', [AdminEventController::class, 'resendInvitations'])->name('admin.events.resend-invitations');
         Route::get('/evenementen/{event}/registrations', [AdminEventController::class, 'registrations'])->name('admin.events.registrations');
         Route::post('/evenementen/{event}/registrations/{registration}/mark-paid', [AdminEventController::class, 'markPaid'])->name('admin.events.mark-paid');
 

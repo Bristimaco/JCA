@@ -112,6 +112,25 @@ class EventController extends Controller
         return back()->with('status', "Evenement '{$event->name}' gepubliceerd. {$users->count()} uitnodigingen verstuurd.");
     }
 
+    public function resendInvitations(Event $event): RedirectResponse
+    {
+        abort_unless($event->status === EventStatus::Published, 403);
+
+        $registeredUserIds = $event->registrations()->pluck('user_id');
+
+        $users = User::whereNotNull('email_verified_at')
+            ->whereNotNull('role')
+            ->where('is_active', true)
+            ->whereNotIn('id', $registeredUserIds)
+            ->get();
+
+        foreach ($users as $user) {
+            $user->notify(new EventInvitationNotification($event));
+        }
+
+        return back()->with('status', "{$users->count()} herinneringen verstuurd voor '{$event->name}'.");
+    }
+
     public function archive(Event $event): RedirectResponse
     {
         $event->update(['status' => EventStatus::Archived]);

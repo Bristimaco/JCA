@@ -171,6 +171,7 @@ function EventRow({ event, onEdit }) {
                 {event.status === 'published' && (
                     <>
                         <a href={`/admin/evenementen/${event.id}/registrations`} className="rounded-lg bg-blue-900/30 px-3 py-1.5 text-xs font-semibold text-blue-400 hover:bg-blue-900/50 ring-1 ring-blue-700/30">Inschrijvingen</a>
+                        <button onClick={() => { if (confirm('Herinneringen versturen naar niet-ingeschreven leden?')) router.post(`/admin/evenementen/${event.id}/resend-invitations`, {}, { preserveScroll: true }); }} className="rounded-lg bg-amber-900/30 px-3 py-1.5 text-xs font-semibold text-amber-400 hover:bg-amber-900/50 ring-1 ring-amber-700/30">Herinnering versturen</button>
                         <button onClick={() => { if (confirm('Inschrijvingen sluiten? Betaallinks worden aangemaakt.')) router.post(`/admin/evenementen/${event.id}/close-registrations`, {}, { preserveScroll: true }); }} className="rounded-lg bg-rose-900/30 px-3 py-1.5 text-xs font-semibold text-rose-400 hover:bg-rose-900/50 ring-1 ring-rose-700/30">Inschrijvingen sluiten</button>
                     </>
                 )}
