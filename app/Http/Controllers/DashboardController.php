@@ -3,14 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Enums\BeltRank;
+use App\Enums\EventStatus;
 use App\Enums\Gender;
 use App\Enums\InvitationStatus;
 use App\Enums\InvoiceStatus;
 use App\Enums\TournamentStatus;
 use App\Enums\VoucherStatus;
+use App\Models\Announcement;
+use App\Models\BarProduct;
 use App\Models\BeltHistory;
+use App\Models\Event;
+use App\Models\EventRegistration;
 use App\Models\Member;
 use App\Models\MembershipInvoice;
+use App\Models\Sponsor;
 use App\Models\Tournament;
 use App\Models\TournamentResult;
 use App\Models\TrainingGroup;
@@ -48,6 +54,11 @@ class DashboardController extends Controller
                 'renewalDueCount' => Member::where('membership_renewal_date', '<=', now()->addDays(30))->count(),
                 'pendingInvoiceCount' => MembershipInvoice::where('status', InvoiceStatus::Pending)->count(),
                 'activeVoucherCount' => Voucher::where('status', VoucherStatus::Active)->where('expires_at', '>=', now())->count(),
+                'activeTournamentCount' => Tournament::where('status', '!=', TournamentStatus::Archived)->count(),
+                'refillProductCount' => BarProduct::needsRefill()->count(),
+                'activeSponsorCount' => Sponsor::active()->count(),
+                'activeAnnouncementCount' => Announcement::active()->count(),
+                'activeEventCount' => Event::notArchived()->where('status', '!=', EventStatus::Draft)->count(),
             ];
 
             $props['memberStats'] = $this->memberStats();
@@ -82,6 +93,12 @@ class DashboardController extends Controller
                 ->values()
                 ->all();
         }
+
+        $props['myEventCount'] = EventRegistration::where('user_id', $request->user()->id)
+            ->whereHas('event', fn ($q) => $q->notArchived())
+            ->count();
+
+        $props['archivedTournamentCount'] = Tournament::where('status', TournamentStatus::Archived)->count();
 
         $props['myMemberCount'] = $request->user()->members()->count();
 

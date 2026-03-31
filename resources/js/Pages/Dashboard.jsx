@@ -77,7 +77,7 @@ const modules = [
     { name: 'Archief', href: '/archief', roles: ['parent', 'member', 'admin', 'coach', 'barmedewerker'] },
 ];
 
-export default function Dashboard({ pendingCount, pendingUsers, adminCounters, memberStats, myMemberCount, myTournaments, activeTournaments, coachTournaments, coachTrainingGroups, upcomingTournaments, recentArchived, activeTrainingSessions }) {
+export default function Dashboard({ pendingCount, pendingUsers, adminCounters, memberStats, myMemberCount, myEventCount, archivedTournamentCount, myTournaments, activeTournaments, coachTournaments, coachTrainingGroups, upcomingTournaments, recentArchived, activeTrainingSessions }) {
     const { auth } = usePage().props;
     const role = auth.user.role;
 
@@ -107,16 +107,26 @@ export default function Dashboard({ pendingCount, pendingUsers, adminCounters, m
                                     {moduleIcons[m.name]}
                                 </div>
                                 <span className="text-sm font-semibold text-white">{m.name}</span>
-                                {m.name === 'Leden' && memberStats && (
-                                    <span className="mt-1 inline-flex items-center rounded-full bg-slate-800 px-2 py-0.5 text-xs font-medium text-slate-300">
-                                        {memberStats.total}
-                                    </span>
-                                )}
-                                {m.name === 'Mijn Leden' && myMemberCount !== undefined && (
-                                    <span className="mt-1 inline-flex items-center rounded-full bg-slate-800 px-2 py-0.5 text-xs font-medium text-slate-300">
-                                        {myMemberCount}
-                                    </span>
-                                )}
+                                {(() => {
+                                    const count = {
+                                        'Leden': memberStats?.total,
+                                        'Mijn Leden': myMemberCount,
+                                        'Toernooien': adminCounters?.activeTournamentCount,
+                                        'Facturen': adminCounters?.pendingInvoiceCount,
+                                        'Vouchers': adminCounters?.activeVoucherCount,
+                                        'Aan te vullen': adminCounters?.refillProductCount,
+                                        'Sponsors': adminCounters?.activeSponsorCount,
+                                        'Mededelingen': adminCounters?.activeAnnouncementCount,
+                                        'Evenementen Beheer': adminCounters?.activeEventCount,
+                                        'Evenementen': myEventCount,
+                                        'Archief': archivedTournamentCount,
+                                    }[m.name];
+                                    return count !== undefined && count !== null ? (
+                                        <span className="mt-1 inline-flex items-center rounded-full bg-slate-800 px-2 py-0.5 text-xs font-medium text-slate-300">
+                                            {count}
+                                        </span>
+                                    ) : null;
+                                })()}
                             </div>
 
 
