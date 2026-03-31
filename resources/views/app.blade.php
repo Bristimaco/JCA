@@ -10,7 +10,10 @@
     <meta name="apple-mobile-web-app-title" content="JCA">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ \App\Models\ClubSettings::current()->name }}</title>
-    <link rel="icon" href="{{ route('club.logo') }}">
+    @php $clubSettings = \App\Models\ClubSettings::current(); @endphp
+    @if($clubSettings->hasLogo())
+        <link rel="icon" type="{{ $clubSettings->logo_mime_type }}" href="{{ route('club.logo') }}">
+    @endif
     <link rel="manifest" href="/manifest.json">
     <link rel="apple-touch-icon" href="/icons/icon-192.png">
     <link rel="preconnect" href="https://fonts.bunny.net">
