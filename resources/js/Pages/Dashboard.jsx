@@ -84,10 +84,6 @@ export default function Dashboard({ pendingCount, pendingUsers, adminCounters, m
                 <p className="text-slate-400 mt-1">Welkom terug, {auth.user.name}</p>
             </div>
 
-            {role === 'admin' && (
-                <AdminTile pendingCount={pendingCount} adminCounters={adminCounters} />
-            )}
-
             {visibleModules.length > 0 && (
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                     {visibleModules.map((m) => (
@@ -211,6 +207,10 @@ export default function Dashboard({ pendingCount, pendingUsers, adminCounters, m
             {myTournaments && myTournaments.length > 0 && (
                 <MyTournaments tournaments={myTournaments} />
             )}
+
+            {role === 'admin' && (
+                <AdminTile pendingCount={pendingCount} adminCounters={adminCounters} />
+            )}
         </AppLayout>
     );
 }
@@ -219,17 +219,17 @@ function AdminTile({ pendingCount, adminCounters }) {
     const hasPending = pendingCount > 0;
 
     const counters = [
-        { label: 'Aanvragen', value: pendingCount, text: 'text-rose-400', bg: 'bg-rose-900/30', ring: 'ring-rose-700/30' },
-        { label: 'Inactief', value: adminCounters?.inactiveMemberCount ?? 0, text: 'text-slate-300', bg: 'bg-slate-700/50', ring: 'ring-slate-600/30' },
-        { label: 'Vernieuwing', value: adminCounters?.renewalDueCount ?? 0, text: 'text-amber-400', bg: 'bg-amber-900/30', ring: 'ring-amber-700/30', href: '/admin/members?filter=renewal' },
-        { label: 'Komende', value: adminCounters?.upcomingTournamentCount ?? 0, text: 'text-blue-400', bg: 'bg-blue-900/30', ring: 'ring-blue-700/30' },
-        { label: 'Actieve', value: adminCounters?.activeTournamentCount ?? 0, text: 'text-emerald-400', bg: 'bg-emerald-900/30', ring: 'ring-emerald-700/30' },
+        { label: 'Openstaande aanvragen', value: pendingCount, text: 'text-rose-400', bg: 'bg-rose-900/30', ring: 'ring-rose-700/30' },
+        { label: 'Inactieve leden', value: adminCounters?.inactiveMemberCount ?? 0, text: 'text-slate-300', bg: 'bg-slate-700/50', ring: 'ring-slate-600/30' },
+        { label: 'Lidmaatschap vernieuwen', value: adminCounters?.renewalDueCount ?? 0, text: 'text-amber-400', bg: 'bg-amber-900/30', ring: 'ring-amber-700/30', href: '/admin/members?filter=renewal' },
+        { label: 'Komende toernooien', value: adminCounters?.upcomingTournamentCount ?? 0, text: 'text-blue-400', bg: 'bg-blue-900/30', ring: 'ring-blue-700/30' },
+        { label: 'Actieve toernooien', value: adminCounters?.activeTournamentCount ?? 0, text: 'text-emerald-400', bg: 'bg-emerald-900/30', ring: 'ring-emerald-700/30' },
     ];
 
     return (
         <Link
             href="/admin"
-            className={`group block mb-6 rounded-xl shadow-sm ring-1 border-t-2 border-t-rose-700/40 p-5 hover:shadow-md hover:-translate-y-0.5 ${hasPending
+            className={`group block mt-6 rounded-xl shadow-sm ring-1 border-t-2 border-t-rose-700/40 p-5 hover:shadow-md hover:-translate-y-0.5 ${hasPending
                 ? 'ring-rose-600/50 bg-gradient-to-br from-rose-900/30 to-red-900/20 hover:ring-rose-500/60'
                 : 'ring-slate-800 bg-slate-900 hover:ring-rose-500/40'
                 }`}
