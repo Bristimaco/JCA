@@ -25,6 +25,7 @@ class MembersExport implements FromCollection, WithHeadings
             'membership_status',
             'membership_start_date',
             'membership_end_date',
+            'membership_renewal_date',
             'is_competition',
             'is_trainer',
             'nationality',

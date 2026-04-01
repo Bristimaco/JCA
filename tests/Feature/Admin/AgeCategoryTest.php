@@ -4,7 +4,6 @@ namespace Tests\Feature\Admin;
 
 use App\Enums\UserRole;
 use App\Models\AgeCategory;
-use App\Models\Member;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -168,53 +167,5 @@ class AgeCategoryTest extends TestCase
             ->component('Admin/Dashboard')
             ->has('ageCategories', 1)
         );
-    }
-
-    public function test_admin_can_recalculate_age_categories(): void
-    {
-        $u15 = AgeCategory::create([
-            'name' => 'U15',
-            'country_code' => 'BE',
-            'min_age' => 13,
-            'max_age' => 14,
-            'display_order' => 1,
-        ]);
-
-        $u18 = AgeCategory::create([
-            'name' => 'U18',
-            'country_code' => 'BE',
-            'min_age' => 15,
-            'max_age' => 17,
-            'display_order' => 2,
-        ]);
-
-        // Member born in 2012 → turns 14 in 2026 → U15
-        $member14 = Member::factory()->create(['date_of_birth' => '2012-06-15']);
-        // Member born in 2009 → turns 17 in 2026 → U18
-        $member17 = Member::factory()->create(['date_of_birth' => '2009-03-01']);
-
-        $this->assertNull($member14->fresh()->age_category_id);
-        $this->assertNull($member17->fresh()->age_category_id);
-
-        $response = $this->actingAs($this->admin())->post('/admin/age-categories/recalculate', [
-            'country_code' => 'BE',
-        ]);
-
-        $response->assertRedirect();
-        $response->assertSessionHas('status');
-        $this->assertEquals($u15->id, $member14->fresh()->age_category_id);
-        $this->assertEquals($u18->id, $member17->fresh()->age_category_id);
-    }
-
-    public function test_non_admin_cannot_recalculate_age_categories(): void
-    {
-        $member = User::factory()->create([
-            'role' => UserRole::Member,
-            'email_verified_at' => now(),
-        ]);
-
-        $response = $this->actingAs($member)->post('/admin/age-categories/recalculate');
-
-        $response->assertStatus(403);
     }
 }

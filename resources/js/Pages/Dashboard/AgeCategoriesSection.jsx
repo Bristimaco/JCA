@@ -5,7 +5,6 @@ export default function AgeCategoriesSection({ ageCategories }) {
     const { flash } = usePage().props;
     const [selectedCountry, setSelectedCountry] = useState('BE');
     const [showAddForm, setShowAddForm] = useState(false);
-    const recalcForm = useForm({ country_code: 'BE' });
     const importFileRef = useRef(null);
     const [importing, setImporting] = useState(false);
 
@@ -89,16 +88,6 @@ export default function AgeCategoriesSection({ ageCategories }) {
                     className="rounded-md border border-slate-600 bg-slate-800 px-3 py-1.5 text-sm font-medium text-slate-300 hover:bg-slate-700/50 disabled:opacity-50"
                 >
                     {importing ? 'Importeren...' : 'Import'}
-                </button>
-                <button
-                    onClick={() => {
-                        recalcForm.setData('country_code', selectedCountry);
-                        recalcForm.post('/admin/age-categories/recalculate', { preserveScroll: true });
-                    }}
-                    disabled={recalcForm.processing}
-                    className="rounded-md bg-green-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-50"
-                >
-                    {recalcForm.processing ? 'Bezig...' : 'Herbereken'}
                 </button>
             </div>
 

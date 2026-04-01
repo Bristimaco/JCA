@@ -106,6 +106,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(PushSubscription::class);
     }
 
+    public function eventRegistrations(): HasMany
+    {
+        return $this->hasMany(EventRegistration::class);
+    }
+
     public function sendPasswordResetNotification($token): void
     {
         $url = url('/wachtwoord-reset/'.$token.'?email='.urlencode($this->email));

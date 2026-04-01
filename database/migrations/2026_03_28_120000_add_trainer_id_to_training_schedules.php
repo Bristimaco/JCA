@@ -16,10 +16,16 @@ return new class extends Migration
         // Copy trainer_id from each group to its schedules
         DB::statement('
             UPDATE training_schedules
-            SET trainer_id = training_groups.trainer_id
-            FROM training_groups
-            WHERE training_schedules.training_group_id = training_groups.id
-              AND training_groups.trainer_id IS NOT NULL
+            SET trainer_id = (
+                SELECT training_groups.trainer_id
+                FROM training_groups
+                WHERE training_groups.id = training_schedules.training_group_id
+            )
+            WHERE EXISTS (
+                SELECT 1 FROM training_groups
+                WHERE training_groups.id = training_schedules.training_group_id
+                AND training_groups.trainer_id IS NOT NULL
+            )
         ');
 
         Schema::table('training_groups', function (Blueprint $table) {

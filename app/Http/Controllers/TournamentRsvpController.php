@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Enums\InvitationStatus;
+use App\Models\Member;
+use App\Models\Tournament;
 use App\Services\MolliePaymentService;
 use Illuminate\Support\Facades\DB;
 
@@ -22,15 +24,14 @@ class TournamentRsvpController extends Controller
             abort(404);
         }
 
-        $tournament = DB::table('tournaments')->where('id', $pivot->tournament_id)->first();
+        $tournament = Tournament::findOrFail($pivot->tournament_id);
+        $member = Member::findOrFail($pivot->member_id);
 
         if ($tournament->invitation_deadline && now()->startOfDay()->gt($tournament->invitation_deadline)) {
-            $member = DB::table('members')->where('id', $pivot->member_id)->first();
-
             return view('rsvp-confirmation', [
                 'status' => null,
                 'tournamentName' => $tournament->name ?? 'Toernooi',
-                'memberName' => ($member->first_name ?? '').' '.($member->last_name ?? ''),
+                'memberName' => $member->fullName(),
                 'expired' => true,
             ]);
         }
@@ -44,12 +45,10 @@ class TournamentRsvpController extends Controller
             }
 
             if ($pivot->payment_status !== 'paid') {
-                $member = DB::table('members')->where('id', $pivot->member_id)->first();
-
                 return view('rsvp-confirmation', [
                     'status' => null,
                     'tournamentName' => $tournament->name ?? 'Toernooi',
-                    'memberName' => ($member->first_name ?? '').' '.($member->last_name ?? ''),
+                    'memberName' => $member->fullName(),
                     'expired' => false,
                     'paymentRequired' => true,
                     'paymentUrl' => $pivot->mollie_payment_url,
@@ -68,12 +67,10 @@ class TournamentRsvpController extends Controller
                 'responded_at' => now(),
             ]);
 
-        $member = DB::table('members')->where('id', $pivot->member_id)->first();
-
         return view('rsvp-confirmation', [
             'status' => $status,
             'tournamentName' => $tournament->name ?? 'Toernooi',
-            'memberName' => ($member->first_name ?? '').' '.($member->last_name ?? ''),
+            'memberName' => $member->fullName(),
             'expired' => false,
         ]);
     }

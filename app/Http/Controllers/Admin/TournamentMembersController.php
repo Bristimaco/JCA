@@ -29,7 +29,7 @@ class TournamentMembersController extends Controller
      */
     public function populate(Tournament $tournament): RedirectResponse
     {
-        if (request()->user()->isAdmin() && ! request()->user()->isCoach()) {
+        if (! request()->user()->isAdmin() && ! request()->user()->isCoach()) {
             abort(403, 'Alleen trainers mogen de deelnemerslijst beheren.');
         }
 
@@ -80,7 +80,7 @@ class TournamentMembersController extends Controller
      */
     public function addMember(Request $request, Tournament $tournament): RedirectResponse
     {
-        if (request()->user()->isAdmin() && ! request()->user()->isCoach()) {
+        if (! request()->user()->isAdmin() && ! request()->user()->isCoach()) {
             abort(403, 'Alleen trainers mogen de deelnemerslijst beheren.');
         }
 
@@ -125,7 +125,7 @@ class TournamentMembersController extends Controller
      */
     public function removeMember(Tournament $tournament, Member $member): RedirectResponse
     {
-        if (request()->user()->isAdmin() && ! request()->user()->isCoach()) {
+        if (! request()->user()->isAdmin() && ! request()->user()->isCoach()) {
             abort(403, 'Alleen trainers mogen de deelnemerslijst beheren.');
         }
 
@@ -221,6 +221,10 @@ class TournamentMembersController extends Controller
             return back()->with('status', 'Dit lid staat niet op de lijst.');
         }
 
+        if ($pivot->invitation_status !== InvitationStatus::Accepted->value) {
+            return back()->with('status', 'Dit lid heeft de uitnodiging nog niet geaccepteerd.');
+        }
+
         DB::table('member_tournament')
             ->where('id', $pivot->id)
             ->update(['registration_status' => 'registered']);
@@ -288,7 +292,7 @@ class TournamentMembersController extends Controller
      */
     public function startTournament(Tournament $tournament): RedirectResponse
     {
-        if (request()->user()->isAdmin() && ! request()->user()->isCoach()) {
+        if (! request()->user()->isAdmin() && ! request()->user()->isCoach()) {
             abort(403, 'Alleen trainers mogen een toernooi starten.');
         }
 

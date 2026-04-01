@@ -43,7 +43,6 @@ use Illuminate\Support\Carbon;
  * @property bool $is_competition
  * @property bool $is_trainer
  * @property int|null $weight_category_id
- * @property int|null $age_category_id
  * @property string|null $notes
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -125,11 +124,6 @@ class Member extends Model
     public function weightCategory(): BelongsTo
     {
         return $this->belongsTo(WeightCategory::class);
-    }
-
-    public function ageCategory(): BelongsTo
-    {
-        return $this->belongsTo(AgeCategory::class);
     }
 
     public function tournamentResults(): HasMany

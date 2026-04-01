@@ -74,4 +74,9 @@ class Tournament extends Model
         return $this->belongsToMany(Member::class, 'tournament_coaches')
             ->withTimestamps();
     }
+
+    public function results(): HasMany
+    {
+        return $this->hasMany(TournamentResult::class);
+    }
 }

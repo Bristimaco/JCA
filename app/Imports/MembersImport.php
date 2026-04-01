@@ -51,6 +51,7 @@ class MembersImport implements ToModel, WithHeadingRow, WithValidation
             'first_name' => 'required',
             'last_name' => 'required',
             'date_of_birth' => 'required|date',
+            'email' => 'required|email',
         ];
     }
 }

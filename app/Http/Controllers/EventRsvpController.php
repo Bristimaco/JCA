@@ -15,7 +15,8 @@ class EventRsvpController extends Controller
 {
     public function show(Event $event): Response
     {
-        abort_unless(in_array($event->status, [EventStatus::Published, EventStatus::RegistrationClosed]), 404);
+        $registrationOpen = $event->status === EventStatus::Published;
+        abort_unless($registrationOpen || $event->status === EventStatus::RegistrationClosed, 404);
 
         $registration = null;
         if (auth()->check()) {
@@ -38,7 +39,7 @@ class EventRsvpController extends Controller
                 'price_adult' => (float) $event->price_adult,
                 'price_child' => (float) $event->price_child,
             ],
-            'registrationOpen' => $event->status === EventStatus::Published,
+            'registrationOpen' => $registrationOpen,
             'existingRegistration' => $registration ? [
                 'adult_count' => $registration->adult_count,
                 'child_count' => $registration->child_count,
