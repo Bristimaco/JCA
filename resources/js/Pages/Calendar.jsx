@@ -1,5 +1,5 @@
-import { Head, router } from '@inertiajs/react';
-import { useMemo, useCallback } from 'react';
+import { Head, router, usePage } from '@inertiajs/react';
+import { useMemo, useCallback, useState } from 'react';
 import AppLayout from '../Layouts/AppLayout';
 
 const DAY_LABELS = ['Ma', 'Di', 'Wo', 'Do', 'Vr', 'Za', 'Zo'];
@@ -42,7 +42,13 @@ function isToday(dateStr) {
     return dateStr === toDateString(new Date());
 }
 
-export default function Calendar({ items, startDate }) {
+export default function Calendar({ items, startDate, myMemberIds }) {
+    const [absenceModal, setAbsenceModal] = useState(null);
+    const [absenceReason, setAbsenceReason] = useState('');
+    const [absenceSubmitting, setAbsenceSubmitting] = useState(false);
+
+    const todayStr = toDateString(new Date());
+
     const weeks = useMemo(() => {
         const itemsByDate = {};
         items.forEach((item) => {
@@ -127,16 +133,27 @@ export default function Calendar({ items, startDate }) {
                                     <div className="flex-1 overflow-y-auto space-y-0.5 min-h-0 scrollbar-thin">
                                         {day.items.map((item, i) => {
                                             const style = TYPE_STYLES[item.type];
+                                            const isAbsent = item.type === 'training' && item.absent_member_ids && myMemberIds.some(id => item.absent_member_ids.includes(id));
+                                            const canReportAbsence = item.type === 'training' && item.participating && item.date >= todayStr;
                                             return (
                                                 <div
                                                     key={`${item.type}-${i}`}
-                                                    className={`${style.bg} border-l-2 ${style.border} rounded-r px-1.5 py-0.5`}
+                                                    className={`${style.bg} border-l-2 ${style.border} rounded-r px-1.5 py-0.5 ${canReportAbsence ? 'cursor-pointer hover:ring-1 hover:ring-slate-500' : ''}`}
+                                                    onClick={canReportAbsence ? () => {
+                                                        setAbsenceModal(item);
+                                                        setAbsenceReason('');
+                                                    } : undefined}
                                                 >
                                                     <div className="flex items-center gap-1">
                                                         <span className={`text-[10px] font-semibold ${style.text} truncate flex-1`}>
                                                             {item.name}
                                                         </span>
-                                                        {item.participating && (
+                                                        {isAbsent && (
+                                                            <span className="shrink-0 inline-flex items-center rounded bg-red-900/60 px-1 py-px text-[8px] font-bold text-red-400">
+                                                                ✗
+                                                            </span>
+                                                        )}
+                                                        {!isAbsent && item.participating && (
                                                             <span className="shrink-0 inline-flex items-center rounded bg-emerald-900/60 px-1 py-px text-[8px] font-bold text-emerald-400">
                                                                 ✓
                                                             </span>
@@ -172,8 +189,95 @@ export default function Calendar({ items, startDate }) {
                         <span className="inline-flex items-center rounded bg-emerald-900/60 px-1 py-px text-[8px] font-bold text-emerald-400">✓</span>
                         <span className="text-xs text-slate-400">Deelname</span>
                     </div>
+                    <div className="flex items-center gap-1.5">
+                        <span className="inline-flex items-center rounded bg-red-900/60 px-1 py-px text-[8px] font-bold text-red-400">✗</span>
+                        <span className="text-xs text-slate-400">Afwezig gemeld</span>
+                    </div>
                 </div>
             </div>
+
+            {/* Absence modal */}
+            {absenceModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={() => setAbsenceModal(null)}>
+                    <div className="bg-slate-900 rounded-xl ring-1 ring-slate-700 p-6 w-full max-w-sm shadow-2xl" onClick={e => e.stopPropagation()}>
+                        {(() => {
+                            const isAlreadyAbsent = absenceModal.absent_member_ids && myMemberIds.some(id => absenceModal.absent_member_ids.includes(id));
+                            return (
+                                <>
+                                    <h3 className="text-lg font-bold text-white mb-1">{absenceModal.name}</h3>
+                                    <p className="text-sm text-slate-400 mb-4">
+                                        {absenceModal.date} · {absenceModal.start_time}{absenceModal.end_time ? `–${absenceModal.end_time}` : ''}
+                                    </p>
+
+                                    {isAlreadyAbsent ? (
+                                        <>
+                                            <p className="text-sm text-red-400 mb-4">Je hebt je afwezig gemeld voor deze training.</p>
+                                            <div className="flex gap-3">
+                                                <button
+                                                    disabled={absenceSubmitting}
+                                                    onClick={() => {
+                                                        setAbsenceSubmitting(true);
+                                                        fetch('/training-absences', {
+                                                            method: 'DELETE',
+                                                            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content },
+                                                            body: JSON.stringify({ training_schedule_id: absenceModal.training_schedule_id, date: absenceModal.date }),
+                                                        }).then(() => {
+                                                            setAbsenceSubmitting(false);
+                                                            setAbsenceModal(null);
+                                                            router.reload();
+                                                        }).catch(() => setAbsenceSubmitting(false));
+                                                    }}
+                                                    className="flex-1 rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600 disabled:opacity-50"
+                                                >
+                                                    Afwezigheid annuleren
+                                                </button>
+                                                <button onClick={() => setAbsenceModal(null)} className="rounded-lg bg-slate-800 px-4 py-2 text-sm font-medium text-slate-300 hover:bg-slate-700">
+                                                    Sluiten
+                                                </button>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <label className="block text-sm font-medium text-slate-300 mb-1">Reden (optioneel)</label>
+                                            <input
+                                                type="text"
+                                                value={absenceReason}
+                                                onChange={e => setAbsenceReason(e.target.value)}
+                                                maxLength={255}
+                                                placeholder="Bijv. ziek, vakantie..."
+                                                className="w-full rounded-md border border-slate-600 bg-slate-800 text-white text-sm py-2 px-3 mb-4 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
+                                            />
+                                            <div className="flex gap-3">
+                                                <button
+                                                    disabled={absenceSubmitting}
+                                                    onClick={() => {
+                                                        setAbsenceSubmitting(true);
+                                                        fetch('/training-absences', {
+                                                            method: 'POST',
+                                                            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content },
+                                                            body: JSON.stringify({ training_schedule_id: absenceModal.training_schedule_id, date: absenceModal.date, reason: absenceReason || null }),
+                                                        }).then(() => {
+                                                            setAbsenceSubmitting(false);
+                                                            setAbsenceModal(null);
+                                                            router.reload();
+                                                        }).catch(() => setAbsenceSubmitting(false));
+                                                    }}
+                                                    className="flex-1 rounded-lg bg-red-700 px-4 py-2 text-sm font-semibold text-white hover:bg-red-600 disabled:opacity-50"
+                                                >
+                                                    Afwezig melden
+                                                </button>
+                                                <button onClick={() => setAbsenceModal(null)} className="rounded-lg bg-slate-800 px-4 py-2 text-sm font-medium text-slate-300 hover:bg-slate-700">
+                                                    Annuleren
+                                                </button>
+                                            </div>
+                                        </>
+                                    )}
+                                </>
+                            );
+                        })()}
+                    </div>
+                </div>
+            )}
         </AppLayout>
     );
 }

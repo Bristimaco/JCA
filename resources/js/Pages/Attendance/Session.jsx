@@ -74,25 +74,33 @@ export default function Session({ session, members }) {
                     {members.map((m) => (
                         <button
                             key={m.id}
-                            onClick={() => handleToggle(m.id)}
+                            onClick={() => !m.absent && handleToggle(m.id)}
+                            disabled={m.absent}
                             className={`rounded-xl p-4 text-center transition-all active:scale-95 ${
-                                m.attending
+                                m.absent
+                                    ? 'bg-slate-900/50 ring-1 ring-slate-800 opacity-50 cursor-not-allowed'
+                                    : m.attending
                                     ? 'bg-emerald-900/40 ring-2 ring-emerald-500/60 shadow-lg shadow-emerald-900/20'
                                     : 'bg-slate-900 ring-1 ring-slate-700 hover:ring-slate-600'
                             }`}
                         >
                             <div className={`w-12 h-12 rounded-full mx-auto mb-2 flex items-center justify-center text-lg font-bold ${
-                                m.attending
+                                m.absent
+                                    ? 'bg-red-900/40 text-red-400'
+                                    : m.attending
                                     ? 'bg-emerald-600 text-white'
                                     : 'bg-slate-700 text-slate-400'
                             }`}>
-                                {m.attending ? '✓' : m.name.charAt(0)}
+                                {m.absent ? '✗' : m.attending ? '✓' : m.name.charAt(0)}
                             </div>
                             <p className={`text-sm font-medium truncate ${
-                                m.attending ? 'text-emerald-300' : 'text-slate-300'
+                                m.absent ? 'text-red-400' : m.attending ? 'text-emerald-300' : 'text-slate-300'
                             }`}>
                                 {m.name}
                             </p>
+                            {m.absent && (
+                                <p className="text-[10px] font-semibold text-red-500 mt-0.5 uppercase">Afwezig</p>
+                            )}
                         </button>
                     ))}
                 </div>

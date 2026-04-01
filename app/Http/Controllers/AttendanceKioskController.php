@@ -11,6 +11,7 @@ use App\Models\PodiumPhoto;
 use App\Models\Sponsor;
 use App\Models\Tournament;
 use App\Models\TournamentResult;
+use App\Models\TrainingAbsence;
 use App\Models\TrainingAttendance;
 use App\Models\TrainingSession;
 use Illuminate\Http\RedirectResponse;
@@ -99,10 +100,17 @@ class AttendanceKioskController extends Controller
             'attendances',
         ]);
 
+        // Fetch absences for this schedule/date
+        $absentMemberIds = TrainingAbsence::where('training_schedule_id', $session->training_schedule_id)
+            ->where('date', $session->date->toDateString())
+            ->pluck('member_id')
+            ->all();
+
         $members = $session->trainingSchedule->trainingGroup->members->map(fn ($m) => [
             'id' => $m->id,
             'name' => $m->fullName(),
             'attending' => $session->attendances->contains('member_id', $m->id),
+            'absent' => in_array($m->id, $absentMemberIds),
         ])->sortBy('name')->values()->all();
 
         return Inertia::render('Attendance/Session', [

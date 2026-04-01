@@ -171,6 +171,11 @@ class Member extends Model
         return $this->hasMany(TrainingAttendance::class);
     }
 
+    public function trainingAbsences()
+    {
+        return $this->hasMany(TrainingAbsence::class);
+    }
+
     public function resolveEmail(?Carbon $referenceDate = null): ?string
     {
         if ($this->isMinor($referenceDate)) {

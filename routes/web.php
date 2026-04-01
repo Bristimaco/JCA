@@ -54,6 +54,7 @@ use App\Http\Controllers\TournamentRsvpController;
 use App\Http\Controllers\Trainer\TrainerAttendanceController;
 use App\Http\Controllers\Trainer\TrainerTournamentController;
 use App\Http\Controllers\Trainer\TrainerTrainingGroupController;
+use App\Http\Controllers\TrainingAbsenceController;
 use App\Http\Controllers\VoucherController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -162,6 +163,10 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
 
     // Calendar
     Route::get('/kalender', CalendarController::class)->name('calendar');
+
+    // Training absence reporting
+    Route::post('/training-absences', [TrainingAbsenceController::class, 'store'])->name('training-absences.store');
+    Route::delete('/training-absences', [TrainingAbsenceController::class, 'destroy'])->name('training-absences.destroy');
 
     // Trainer routes
     Route::middleware('coach')->prefix('trainer')->group(function () {
