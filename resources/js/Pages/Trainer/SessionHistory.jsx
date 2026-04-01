@@ -89,8 +89,9 @@ export default function SessionHistory({ sessions }) {
                                                 <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-2">Afwezig ({s.absentees.length})</p>
                                                 <div className="grid gap-1">
                                                     {s.absentees.map((a, i) => (
-                                                        <div key={i} className="text-sm">
-                                                            <span className="text-red-400/70">{a.name}</span>
+                                                        <div key={i} className="flex items-center gap-2 text-sm">
+                                                            <span className={a.notified ? 'text-amber-400/80' : 'text-red-400/70'}>{a.name}</span>
+                                                            {a.notified && <span className="text-[10px] text-amber-600/70 bg-amber-900/20 px-1.5 py-0.5 rounded">gemeld</span>}
                                                         </div>
                                                     ))}
                                                 </div>

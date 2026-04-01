@@ -543,12 +543,16 @@ function CoachTrainingGroups({ groups }) {
                                                             </button>
                                                         </div>
                                                         {(() => {
-                                                            const absent = g.members.filter(m => !s.session.attendee_ids?.includes(m.id));
-                                                            return absent.length > 0 ? (
-                                                                <div className="mt-1.5">
-                                                                    <span className="text-[10px] text-red-400/70">
-                                                                        Afwezig: {absent.map(m => m.name).join(', ')}
-                                                                    </span>
+                                                            const notifiedAbsent = g.members.filter(m => !s.session.attendee_ids?.includes(m.id) && s.session.notified_absent_ids?.includes(m.id));
+                                                            const unnotifiedAbsent = g.members.filter(m => !s.session.attendee_ids?.includes(m.id) && !s.session.notified_absent_ids?.includes(m.id));
+                                                            return (notifiedAbsent.length > 0 || unnotifiedAbsent.length > 0) ? (
+                                                                <div className="mt-1.5 space-y-0.5">
+                                                                    {notifiedAbsent.length > 0 && (
+                                                                        <div><span className="text-[10px] text-amber-400/80">⚠ Gemeld afwezig: {notifiedAbsent.map(m => m.name).join(', ')}</span></div>
+                                                                    )}
+                                                                    {unnotifiedAbsent.length > 0 && (
+                                                                        <div><span className="text-[10px] text-red-400/70">Afwezig: {unnotifiedAbsent.map(m => m.name).join(', ')}</span></div>
+                                                                    )}
                                                                 </div>
                                                             ) : null;
                                                         })()}

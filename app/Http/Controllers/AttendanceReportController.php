@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ClubSettings;
+use App\Models\TrainingAbsence;
 use App\Models\TrainingGroup;
 use App\Models\TrainingSession;
 use Illuminate\Http\Request;
@@ -54,9 +55,23 @@ class AttendanceReportController extends Controller
 
             $totalSessions = $sessions->count();
 
-            $members = $group->members->map(function ($member) use ($sessions, $totalSessions) {
+            $absences = TrainingAbsence::whereIn('training_schedule_id', $scheduleIds)
+                ->whereIn('date', $sessions->pluck('date')->map(fn ($d) => $d->toDateString())->unique())
+                ->get();
+
+            $members = $group->members->map(function ($member) use ($sessions, $totalSessions, $absences) {
                 $attendedSessionIds = $sessions
                     ->filter(fn (TrainingSession $s) => $s->attendances->contains('member_id', $member->id))
+                    ->pluck('id')
+                    ->all();
+
+                $notifiedAbsentSessionIds = $sessions
+                    ->filter(fn (TrainingSession $s) => ! $s->attendances->contains('member_id', $member->id)
+                        && $absences->filter(fn ($a) => $a->member_id === $member->id
+                            && $a->training_schedule_id === $s->training_schedule_id
+                            && $a->date->toDateString() === $s->date->toDateString()
+                        )->isNotEmpty()
+                    )
                     ->pluck('id')
                     ->all();
 
@@ -67,6 +82,7 @@ class AttendanceReportController extends Controller
                     'id' => $member->id,
                     'name' => $member->fullName(),
                     'attended_session_ids' => $attendedSessionIds,
+                    'notified_absent_session_ids' => $notifiedAbsentSessionIds,
                     'attended_count' => $attendedCount,
                     'percentage' => $percentage,
                 ];

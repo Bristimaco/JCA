@@ -166,6 +166,9 @@ class DashboardController extends Controller
                         ->where('date', now()->toDateString())
                         ->with('attendances')
                         ->get();
+                    $todayAbsences = TrainingAbsence::where('date', now()->toDateString())
+                        ->whereIn('training_schedule_id', $scheduleIds)
+                        ->get();
 
                     $todayDay = ucfirst(now()->locale('nl')->isoFormat('dddd'));
 
@@ -174,7 +177,7 @@ class DashboardController extends Controller
                         'name' => $g->name,
                         'description' => $g->description,
                         'membership_fee' => $g->membership_fee,
-                        'schedules' => $g->schedules->map(function ($s) use ($todaySessions, $todayDay) {
+                        'schedules' => $g->schedules->map(function ($s) use ($todaySessions, $todayDay, $todayAbsences) {
                             $session = $todaySessions->firstWhere('training_schedule_id', $s->id);
 
                             return [
@@ -190,6 +193,7 @@ class DashboardController extends Controller
                                     'is_open' => $session->isOpen(),
                                     'attendance_count' => $session->attendances->count(),
                                     'attendee_ids' => $session->attendances->pluck('member_id')->values()->all(),
+                                    'notified_absent_ids' => $todayAbsences->where('training_schedule_id', $s->id)->pluck('member_id')->values()->all(),
                                     'closed_at' => $session->closed_at?->toDateTimeString(),
                                 ] : null,
                             ];
