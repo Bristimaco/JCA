@@ -132,6 +132,7 @@ class CalendarController extends Controller
 
             return [
                 'type' => 'tournament',
+                'id' => $t->id,
                 'date' => $t->tournament_date instanceof Carbon ? $t->tournament_date->toDateString() : $t->tournament_date,
                 'name' => $t->name,
                 'city' => $t->address_city,
@@ -154,6 +155,7 @@ class CalendarController extends Controller
         return $events->map(function (Event $e) use ($registeredEventIds) {
             return [
                 'type' => 'event',
+                'id' => $e->id,
                 'date' => $e->event_date instanceof Carbon ? $e->event_date->toDateString() : $e->event_date,
                 'name' => $e->name,
                 'time' => $e->event_time,

@@ -1,4 +1,4 @@
-import { Head, router, usePage } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import { useMemo, useCallback, useState } from 'react';
 import AppLayout from '../Layouts/AppLayout';
 
@@ -176,6 +176,15 @@ export default function Calendar({ items, startDate, myMemberIds }) {
                                                         <span className={`text-[10px] font-semibold ${style.text} truncate flex-1`}>
                                                             {item.name}
                                                         </span>
+                                                        {(item.type === 'tournament' || item.type === 'event') && (
+                                                            <Link
+                                                                href={item.type === 'tournament' ? `/toernooien/${item.id}` : '/evenementen'}
+                                                                className="shrink-0 text-[10px] text-slate-400 hover:text-white"
+                                                                onClick={e => e.stopPropagation()}
+                                                            >
+                                                                ↗
+                                                            </Link>
+                                                        )}
                                                         {allAbsent && (
                                                             <span className="shrink-0 inline-flex items-center rounded bg-red-900/60 px-1 py-px text-[8px] font-bold text-red-400">
                                                                 ✗
