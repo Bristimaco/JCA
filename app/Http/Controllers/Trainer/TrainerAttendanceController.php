@@ -36,7 +36,7 @@ class TrainerAttendanceController extends Controller
                 : ($schedule->trainingGroup?->members ?? collect());
 
             $groupName = $isExtra
-                ? $schedule->trainingGroups->pluck('name')->join(', ')
+                ? $schedule->name.' ('.$schedule->trainingGroups->pluck('name')->join(', ').')'
                 : ($schedule->trainingGroup?->name ?? 'Onbekend');
 
             $attendeeIds = $s->attendances->pluck('member_id')->all();

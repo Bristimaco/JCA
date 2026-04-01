@@ -77,7 +77,7 @@ class AttendanceKioskController extends Controller
             ->map(fn (TrainingSession $s) => [
                 'id' => $s->id,
                 'group_name' => $s->trainingSchedule->is_extra
-                    ? $s->trainingSchedule->trainingGroups->pluck('name')->join(', ')
+                    ? $s->trainingSchedule->name.' ('.$s->trainingSchedule->trainingGroups->pluck('name')->join(', ').')'
                     : ($s->trainingSchedule->trainingGroup?->name ?? 'Onbekend'),
                 'is_extra' => $s->trainingSchedule->is_extra,
                 'day' => $s->trainingSchedule->day,
@@ -117,7 +117,7 @@ class AttendanceKioskController extends Controller
             : ($schedule->trainingGroup?->members ?? collect());
 
         $groupName = $isExtra
-            ? $schedule->trainingGroups->pluck('name')->join(', ')
+            ? $schedule->name.' ('.$schedule->trainingGroups->pluck('name')->join(', ').')'
             : ($schedule->trainingGroup?->name ?? 'Onbekend');
 
         // Fetch absences for this schedule/date

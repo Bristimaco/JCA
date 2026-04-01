@@ -3,6 +3,7 @@ import AppLayout from '../../Layouts/AppLayout';
 
 export default function Create({ groups, trainers }) {
     const { data, setData, post, processing, errors } = useForm({
+        name: '',
         date: '',
         start_time: '',
         end_time: '',
@@ -34,6 +35,19 @@ export default function Create({ groups, trainers }) {
                 <h1 className="text-2xl font-bold text-white mb-6">Extra Training Aanmaken</h1>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
+                    {/* Name */}
+                    <div>
+                        <label className="block text-sm font-medium text-slate-300 mb-1">Naam</label>
+                        <input
+                            type="text"
+                            value={data.name}
+                            onChange={e => setData('name', e.target.value)}
+                            placeholder="bijv. Techniektraining"
+                            className="w-full rounded-lg bg-slate-800 border border-slate-700 text-white px-3 py-2 focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                        />
+                        {errors.name && <p className="text-sm text-red-400 mt-1">{errors.name}</p>}
+                    </div>
+
                     {/* Date */}
                     <div>
                         <label className="block text-sm font-medium text-slate-300 mb-1">Datum</label>

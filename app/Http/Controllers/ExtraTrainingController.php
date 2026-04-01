@@ -30,6 +30,7 @@ class ExtraTrainingController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
+            'name' => ['required', 'string', 'max:255'],
             'date' => ['required', 'date', 'after_or_equal:today'],
             'start_time' => ['required', 'date_format:H:i'],
             'end_time' => ['nullable', 'date_format:H:i', 'after:start_time'],
@@ -40,6 +41,7 @@ class ExtraTrainingController extends Controller
 
         $schedule = TrainingSchedule::create([
             'is_extra' => true,
+            'name' => $request->input('name'),
             'date' => $request->input('date'),
             'start_time' => $request->input('start_time'),
             'end_time' => $request->input('end_time'),

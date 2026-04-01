@@ -144,7 +144,7 @@ class CalendarController extends Controller
             $items[] = [
                 'type' => 'extra_training',
                 'date' => $schedule->date->toDateString(),
-                'name' => 'Extra: '.$schedule->trainingGroups->pluck('name')->join(', '),
+                'name' => $schedule->name.' ('.$schedule->trainingGroups->pluck('name')->join(', ').')',
                 'start_time' => $schedule->start_time,
                 'end_time' => $schedule->end_time,
                 'location' => $schedule->trainingGroups->first()?->location,

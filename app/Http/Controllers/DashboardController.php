@@ -223,6 +223,7 @@ class DashboardController extends Controller
 
                     return [
                         'id' => $s->id,
+                        'name' => $s->name,
                         'date' => $s->date->toDateString(),
                         'start_time' => $s->start_time,
                         'end_time' => $s->end_time,

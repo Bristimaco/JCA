@@ -684,11 +684,12 @@ function ExtraTrainings({ trainings }) {
                     <div key={t.id} className="bg-slate-900 rounded-xl shadow-sm ring-1 ring-slate-800 border-t-2 border-t-orange-600/60 overflow-hidden">
                         <div className="p-4">
                             <div className="flex items-center justify-between mb-1">
-                                <p className="font-semibold text-white">{t.group_names}</p>
+                                <p className="font-semibold text-white">{t.name}</p>
                                 <span className="inline-flex items-center rounded-full bg-orange-900/40 px-2 py-0.5 text-[10px] font-semibold text-orange-400">
                                     Extra
                                 </span>
                             </div>
+                            <p className="text-sm text-slate-400">{t.group_names}</p>
                             <p className="text-sm text-slate-400">{t.start_time}{t.end_time ? `–${t.end_time}` : ''}</p>
                             {t.trainer_name && <p className="text-xs text-slate-500 mt-1">Trainer: {t.trainer_name}</p>}
                             <p className="text-xs text-slate-500 mt-1">{t.member_count} {t.member_count === 1 ? 'lid' : 'leden'}</p>
