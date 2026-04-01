@@ -13,7 +13,6 @@ use App\Models\Announcement;
 use App\Models\BarProduct;
 use App\Models\BeltHistory;
 use App\Models\Event;
-use App\Models\EventRegistration;
 use App\Models\Member;
 use App\Models\MembershipInvoice;
 use App\Models\Sponsor;
@@ -94,8 +93,9 @@ class DashboardController extends Controller
                 ->all();
         }
 
-        $props['myEventCount'] = EventRegistration::where('user_id', $request->user()->id)
-            ->whereHas('event', fn ($q) => $q->notArchived())
+        $props['myEventCount'] = Event::where('status', '!=', EventStatus::Draft)
+            ->where('status', '!=', EventStatus::Archived)
+            ->where('event_date', '>=', now()->toDateString())
             ->count();
 
         $props['archivedTournamentCount'] = Tournament::where('status', TournamentStatus::Archived)->count();
