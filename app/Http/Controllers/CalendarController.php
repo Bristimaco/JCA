@@ -60,7 +60,7 @@ class CalendarController extends Controller
         $absences = TrainingAbsence::whereIn('member_id', $memberIds)
             ->whereBetween('date', [$start->toDateString(), $end->toDateString()])
             ->get()
-            ->groupBy(fn ($a) => $a->training_schedule_id.'|'.$a->date);
+            ->groupBy(fn ($a) => $a->training_schedule_id.'|'.$a->date->toDateString());
 
         foreach ($schedules as $schedule) {
             $dayNumber = self::DAY_MAP[$schedule->day] ?? null;
