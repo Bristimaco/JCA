@@ -479,6 +479,17 @@
                     <a href="#gordelsysteem" class="nav-link">Gordelsysteem</a>
                 </div>
                 <div class="nav-group">
+                    <div class="nav-group-title">Kalender</div>
+                    <a href="#kalender" class="nav-link">Kalenderweergave</a>
+                    <a href="#kalender-afwezigheid" class="nav-link">Afwezigheid melden</a>
+                </div>
+                <div class="nav-group">
+                    <div class="nav-group-title">Evenementen</div>
+                    <a href="#evenementen" class="nav-link">Evenementen bekijken</a>
+                    <a href="#evenementen-inschrijven" class="nav-link">Inschrijven &amp; Betalen</a>
+                    <a href="#evenementen-beheer" class="nav-link">Evenementen beheer</a>
+                </div>
+                <div class="nav-group">
                     <div class="nav-group-title">Toernooien</div>
                     <a href="#toernooi-overzicht" class="nav-link">Toernooi-overzicht</a>
                     <a href="#toernooi-flow" class="nav-link">Toernooi-workflow</a>
@@ -509,6 +520,8 @@
                     <a href="#admin-trainingsgroepen" class="nav-link">Trainingsgroepen</a>
                     <a href="#admin-facturen" class="nav-link">Facturen &amp; Betalingen</a>
                     <a href="#admin-vouchers" class="nav-link">Vouchers</a>
+                    <a href="#admin-sponsors" class="nav-link">Sponsors</a>
+                    <a href="#admin-mededelingen" class="nav-link">Mededelingen</a>
                     <a href="#admin-bar-producten" class="nav-link">Bar Producten</a>
                     <a href="#admin-aan-te-vullen" class="nav-link">Aan te vullen</a>
                 </div>
@@ -522,6 +535,7 @@
                     <a href="#aanwezigheid-registreren" class="nav-link">Aanwezigheid registreren</a>
                     <a href="#sessiegeschiedenis" class="nav-link">Sessiegeschiedenis</a>
                     <a href="#aanwezigheidsrapport" class="nav-link">Aanwezigheidsrapport</a>
+                    <a href="#kiosk-resultaten" class="nav-link">Kiosk Resultaten</a>
                 </div>
                 <div class="nav-group">
                     <div class="nav-group-title">Referentie</div>
@@ -699,6 +713,22 @@
                         <td class="check">&#10003;</td>
                     </tr>
                     <tr>
+                        <td><strong>Evenementen</strong> &#8212; Clubevenementen</td>
+                        <td class="check">&#10003;</td>
+                        <td class="check">&#10003;</td>
+                        <td class="check">&#10003;</td>
+                        <td class="check">&#10003;</td>
+                        <td class="check">&#10003;</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Kalender</strong> &#8212; 4-weken overzicht</td>
+                        <td class="check">&#10003;</td>
+                        <td class="check">&#10003;</td>
+                        <td class="check">&#10003;</td>
+                        <td class="check">&#10003;</td>
+                        <td class="check">&#10003;</td>
+                    </tr>
+                    <tr>
                         <td><strong>Kassa</strong> &#8212; POS kassasysteem voor de bar</td>
                         <td class="check">&#10003;</td>
                         <td class="cross">&#8212;</td>
@@ -735,6 +765,13 @@
                     &#8220;Gestart&#8221;)</li>
                 <li><strong>Actieve vouchers</strong> &#8212; het aantal actieve, niet-verlopen vouchers. Klik om naar
                     de vouchersectie in het beheerderspaneel te navigeren.</li>
+                <li><strong>Actieve sponsors</strong> &#8212; het aantal actieve sponsors met een lopend contract</li>
+                <li><strong>Actieve mededelingen</strong> &#8212; het aantal mededelingen dat momenteel wordt getoond
+                    op het kiosk-resultaatscherm</li>
+                <li><strong>Actieve evenementen</strong> &#8212; het aantal gepubliceerde evenementen waarvoor
+                    inschrijvingen openstaan</li>
+                <li><strong>Aan te vullen</strong> &#8212; het aantal barproducten dat als &#8220;bijna op&#8221;
+                    is gemarkeerd. Klik om naar de sectie &#8220;Aan te vullen&#8221; te navigeren.</li>
             </ul>
             <p>
                 Onder de tellingen worden de meest recente openstaande gebruikersaanvragen getoond met naam, e-mail en
@@ -787,10 +824,15 @@
             <h4>Actieve Trainingen</h4>
             <p>
                 Wanneer er een trainingssessie geopend is voor de trainingsgroep van jouw lid(leden), verschijnt hier
-                een
-                melding met een <strong>groen pulserend bolletje</strong> (live-indicator). Klik op
-                <strong>&#8220;Aanwezig melden&#8221;</strong> om de aanwezigheid van je kind (of jezelf als lid) te
-                registreren. Als je al aanwezig gemeld bent, kun je dit ongedaan maken door opnieuw te klikken.
+                een melding met een <strong>groen pulserend bolletje</strong> (live-indicator). Er wordt
+                <strong>&#233;&#233;n tegel per lid</strong> getoond, zodat je voor elk lid apart de aanwezigheid
+                kunt registreren. Elke tegel toont de <strong>groepsnaam</strong> en de <strong>naam van het lid</strong>,
+                plus de dag en het tijdstip van de training.
+            </p>
+            <p>
+                Klik op <strong>&#8220;Aanwezig melden&#8221;</strong> om de aanwezigheid van dat specifieke lid te
+                registreren. De knop wordt groen met &#8220;&#10003; Aanwezig&#8221;. Klik opnieuw om de aanwezigheid
+                ongedaan te maken.
             </p>
             <div class="box box-info">
                 <strong>Wanneer verschijnt dit?</strong>
@@ -1016,6 +1058,175 @@
                 ledenlijst van de beheerder, en op de moduletegel &#8220;Leden&#8221; op het dashboard (als
                 verdeling per gordelgraad).
             </div>
+
+            <h2 id="kalender">Kalender</h2>
+            <p><span class="role-badge role-all">Alle rollen</span></p>
+            <p>
+                De <strong>Kalender</strong> biedt een overzichtelijke weergave van alle trainingen, toernooien en
+                evenementen in een rollend <strong>4-weken rooster</strong>. De kalender is bereikbaar via de
+                <strong>&#8220;Kalender&#8221;</strong>-tegel op het dashboard.
+            </p>
+
+            <h3>Kalenderweergave</h3>
+            <p>
+                De kalender toont 4 weken (28 dagen) als een raster met dagen als kolommen. Elk item wordt
+                weergegeven als een compact blokje met kleurcodering:
+            </p>
+            <ul>
+                <li><strong style="color:#f59e0b;">&#9632; Amber</strong> &#8212; <strong>Training</strong>: toont de
+                    groepsnaam, het tijdstip en de deelnemende leden</li>
+                <li><strong style="color:#f43f5e;">&#9632; Rood</strong> &#8212; <strong>Toernooi</strong>: toont de
+                    toernooiaam en het tijdstip. Klik op het pijltje (&#8599;) om naar de toernooidetails te gaan</li>
+                <li><strong style="color:#3b82f6;">&#9632; Blauw</strong> &#8212; <strong>Evenement</strong>: toont de
+                    evenementnaam en het tijdstip. Klik op het pijltje (&#8599;) om naar de evenementenpagina te gaan</li>
+            </ul>
+            <p>
+                De <strong>huidige dag</strong> wordt gemarkeerd met een gekleurde rand zodat je altijd ziet waar
+                je bent in de kalender.
+            </p>
+
+            <h4>Navigatie</h4>
+            <p>
+                Bovenaan de kalender staan navigatieknoppen:
+            </p>
+            <ul>
+                <li><strong>&#8220;&#9664;&#8221;</strong> en <strong>&#8220;&#9654;&#8221;</strong> &#8212; verschuif
+                    de kalender &#233;&#233;n week naar voren of achteren</li>
+                <li><strong>&#8220;Vandaag&#8221;</strong> &#8212; spring terug naar de huidige week</li>
+            </ul>
+
+            <h4>Legenda</h4>
+            <p>
+                In de kopbalk van de kalender staat een legenda die de drie kleuren uitlegt. Naast elk type staat
+                het aantal items in de huidige 4-weken periode.
+            </p>
+
+            <h3 id="kalender-afwezigheid">Afwezigheid melden via de kalender</h3>
+            <p><span class="role-badge role-parent">Ouder</span> <span class="role-badge role-member">Lid</span></p>
+            <p>
+                Ouders en leden kunnen via de kalender <strong>afwezigheid melden</strong> voor trainingen. Dit werkt
+                als volgt:
+            </p>
+            <ol class="steps">
+                <li>
+                    <strong>Klik op een trainingsblokje</strong> in de kalender (alleen toekomstige of van vandaag).
+                    Er opent een modal met de details van de training.
+                </li>
+                <li>
+                    <strong>Bekijk de ledenlijst</strong>. Elk lid dat deelneemt aan deze trainingsgroep wordt getoond
+                    met een groene badge (&#8220;&#10003; Aanwezig&#8221;) of rode badge (&#8220;&#10007; Afwezig&#8221;)
+                    als het lid eerder als afwezig is gemeld.
+                </li>
+                <li>
+                    <strong>Meld afwezigheid</strong>. Klik op <strong>&#8220;Afwezig&#8221;</strong> naast een lid.
+                    Vul optioneel een reden in (bijv. &#8220;ziek&#8221;, &#8220;vakantie&#8221;).
+                </li>
+                <li>
+                    <strong>Heractiveren</strong>. Als een lid al als afwezig is gemeld, kun je op
+                    <strong>&#8220;Heractiveren&#8221;</strong> klikken om de afwezigheid ongedaan te maken.
+                </li>
+            </ol>
+            <p>
+                Bij meerdere gekoppelde leden kun je per lid apart afwezigheid aan- of uitzetten.
+                De <strong>reden</strong> van afwezigheid is optioneel en wordt getoond in de modal.
+            </p>
+            <div class="box box-info">
+                <strong>Aanwezigheidsindicatoren op de kalender</strong>
+                Op de kalender zelf kun je aan de trainingsblokjes zien hoeveel leden aanwezig of afwezig zijn.
+                Een &#10003; geeft aan dat alle leden deelnemen; een &#10007; of een fractie (bijv. &#8220;1/2&#8221;)
+                toont dat er afwezigen zijn gemeld.
+            </div>
+
+            <h2 id="evenementen">Evenementen</h2>
+            <p><span class="role-badge role-all">Alle rollen</span></p>
+            <p>
+                De <strong>Evenementen</strong>-pagina toont alle actieve clubevenementen waar je je voor kunt
+                inschrijven. Evenementen zijn bijvoorbeeld: clubfeesten, demonstraties, stages, of uitstappen.
+                De pagina is bereikbaar via de <strong>&#8220;Evenementen&#8221;</strong>-tegel op het dashboard.
+            </p>
+
+            <h3>Evenementen bekijken</h3>
+            <p>
+                Elk evenement wordt weergegeven als een kaart met:
+            </p>
+            <ul>
+                <li><strong>Naam</strong> van het evenement</li>
+                <li><strong>Datum en tijdstip</strong></li>
+                <li><strong>Locatie</strong> (adres)</li>
+                <li><strong>Beschrijving</strong></li>
+                <li><strong>Prijs</strong> per volwassene en per kind</li>
+                <li><strong>Afbeelding</strong> (indien beschikbaar)</li>
+            </ul>
+
+            <h3 id="evenementen-inschrijven">Inschrijven &amp; Betalen</h3>
+            <p>
+                Klik op <strong>&#8220;Inschrijven&#8221;</strong> bij een evenement om je in te schrijven.
+                Op het inschrijfformulier vul je het aantal volwassenen en kinderen in. Het totaalbedrag
+                wordt automatisch berekend.
+            </p>
+            <ul>
+                <li><strong>Gratis evenement</strong> &#8212; als de prijs &#8364;0 is, wordt je inschrijving direct
+                    bevestigd.</li>
+                <li><strong>Betaald evenement</strong> &#8212; er wordt een <strong>Mollie betaallink</strong> aangemaakt.
+                    Je kunt direct betalen via de knop <strong>&#8220;Nu betalen&#8221;</strong> of later betalen via
+                    de link op de bevestigingspagina.</li>
+            </ul>
+            <p>
+                Na inschrijving kom je op een <strong>bevestigingspagina</strong> met je inschrijvingsgegevens,
+                het bedrag en de betalingsstatus. Als de betaling nog openstaat, kun je via deze pagina alsnog
+                betalen.
+            </p>
+            <div class="box box-info">
+                <strong>E-mailbevestiging</strong>
+                Bij de publicatie van een evenement ontvangen alle actieve leden automatisch een uitnodiging per
+                e-mail met de details en een link om zich in te schrijven.
+            </div>
+
+            <h3 id="evenementen-beheer">Evenementen beheer</h3>
+            <p><span class="role-badge role-admin">Beheerder</span></p>
+            <p>
+                Beheerders kunnen evenementen aanmaken en beheren via het <strong>beheerderspaneel</strong>.
+            </p>
+
+            <h4>Evenement aanmaken</h4>
+            <p>
+                Klik op <strong>&#8220;Evenement toevoegen&#8221;</strong> en vul het formulier in:
+            </p>
+            <ul>
+                <li><strong>Naam</strong> (verplicht)</li>
+                <li><strong>Beschrijving</strong> &#8212; optionele omschrijving</li>
+                <li><strong>Datum en tijdstip</strong></li>
+                <li><strong>Adres</strong> &#8212; straat, postcode, stad</li>
+                <li><strong>Prijs per volwassene</strong> en <strong>prijs per kind</strong> (&#8364;)</li>
+                <li><strong>Afbeelding</strong> &#8212; upload een afbeelding voor het evenement</li>
+            </ul>
+
+            <h4>Evenement publiceren</h4>
+            <p>
+                Nadat een evenement is aangemaakt (status <strong>&#8220;Concept&#8221;</strong>), kun je het
+                publiceren door op <strong>&#8220;Publiceren&#8221;</strong> te klikken. Er wordt dan automatisch
+                een <strong>uitnodigingsmail</strong> verstuurd naar alle actieve leden.
+            </p>
+
+            <h4>Inschrijvingen beheren</h4>
+            <p>
+                Bij elk gepubliceerd evenement kun je de inschrijvingen bekijken: naam, e-mail, aantal
+                volwassenen/kinderen, bedrag en betalingsstatus. De beheerder kan:
+            </p>
+            <ul>
+                <li><strong>Heruitnodiging versturen</strong> &#8212; stuur een herinnering naar leden die zich nog
+                    niet hebben ingeschreven</li>
+                <li><strong>Inschrijvingen sluiten</strong> &#8212; sluit de inschrijvingsperiode en genereer
+                    automatisch Mollie betaallinks voor openstaande inschrijvingen</li>
+                <li><strong>Handmatig als betaald markeren</strong> &#8212; markeer een inschrijving als betaald
+                    (bijv. bij contante betaling)</li>
+            </ul>
+
+            <h4>Evenement archiveren</h4>
+            <p>
+                Klik op <strong>&#8220;Archiveren&#8221;</strong> om een evenement te archiveren. Gearchiveerde
+                evenementen verschijnen niet meer in de actieve lijst.
+            </p>
 
             <h2 id="toernooi-overzicht">Toernooi-overzicht</h2>
             <p><span class="role-badge role-admin">Beheerder</span> <span class="role-badge role-coach">Trainer</span>
@@ -1742,6 +1953,29 @@
                 <li><strong>Clubnaam</strong> (verplicht)</li>
                 <li><strong>Adres</strong> &#8212; straat, postcode, stad</li>
                 <li><strong>Logo</strong> &#8212; upload het clublogo (wordt gebruikt in de applicatie en e-mails)</li>
+                <li><strong>Standaard lidgeld (&#8364;)</strong> &#8212; het standaard jaarlijkse lidgeld</li>
+                <li><strong>Aanwezigheid PIN-code</strong> &#8212; de PIN-code voor het kiosk-scherm bij de
+                    ingang van de dojo (4 tot 8 cijfers)</li>
+                <li><strong>Minimum aanwezigheid (%)</strong> &#8212; drempelwaarde voor het aanwezigheidsrapport.
+                    Leden onder dit percentage worden rood gemarkeerd (standaard 70%)</li>
+                <li><strong>Vervaldagen betaallinks (dagen)</strong> &#8212; het aantal dagen waarna Mollie
+                    betaallinks automatisch verlopen. Standaard 14 dagen. Betaallinks voor lidgeld, toernooien
+                    en evenementen krijgen allemaal deze vervaldatum.</li>
+                <li><strong>Sponsor weergavefrequentie</strong> &#8212; hoe vaak sponsorlogo&#8217;s worden getoond
+                    op het kiosk-resultaatscherm, per sponsorniveau:
+                    <ul>
+                        <li>&#129351; <strong>Goud</strong>: standaard elke 15 seconden</li>
+                        <li>&#129352; <strong>Zilver</strong>: standaard elke 30 seconden</li>
+                        <li>&#129353; <strong>Brons</strong>: standaard elke 60 seconden</li>
+                    </ul>
+                </li>
+                <li><strong>Slidetijd resultaten scherm</strong> &#8212; de duur van elke slide in het
+                    kiosk-resultaatscherm:
+                    <ul>
+                        <li>&#127942; <strong>Resultaten</strong>: standaard 15 seconden</li>
+                        <li>&#128226; <strong>Mededelingen</strong>: standaard 15 seconden</li>
+                    </ul>
+                </li>
             </ul>
 
             <h3 id="admin-trainingsgroepen">Trainingsgroepen</h3>
@@ -1947,6 +2181,83 @@
                 <strong>Tip:</strong> Vouchers verlopen automatisch wanneer de geldigheidsdatum is bereikt.
                 Het systeem controleert dit dagelijks en markeert verlopen vouchers automatisch.
             </div>
+
+            <!-- Sponsors -->
+            <h3 id="admin-sponsors">Sponsors</h3>
+            <p><span class="role-badge role-admin">Beheerder</span></p>
+            <p>
+                In de sectie <strong>&#8220;Sponsors&#8221;</strong> op het beheerderspaneel beheer je de sponsors
+                van de club. Sponsorlogo&#8217;s worden automatisch getoond op het <strong>kiosk-resultaatscherm</strong>
+                met een frequentie die afhangt van het sponsorniveau.
+            </p>
+
+            <h4>Sponsor toevoegen</h4>
+            <p>
+                Klik op <strong>&#8220;Toevoegen&#8221;</strong> en vul het formulier in:
+            </p>
+            <ul>
+                <li><strong>Naam</strong> (verplicht) &#8212; bedrijfsnaam van de sponsor</li>
+                <li><strong>Adres</strong> &#8212; straat, postcode, stad (optioneel)</li>
+                <li><strong>Niveau</strong> &#8212; kies uit <strong>Brons</strong>, <strong>Zilver</strong> of
+                    <strong>Goud</strong>. Het niveau bepaalt hoe vaak het logo wordt getoond op het resultaatscherm.
+                </li>
+                <li><strong>Contractdatum</strong> &#8212; start- en einddatum van het sponsorcontract</li>
+                <li><strong>Logo</strong> &#8212; upload het logo van de sponsor</li>
+            </ul>
+
+            <h4>Sponsorstatus</h4>
+            <ul>
+                <li><strong>&#10003; Actief</strong> &#8212; sponsor is actief en binnen de contractperiode</li>
+                <li><strong>&#10060; Verlopen</strong> &#8212; contractdatum is voorbij</li>
+                <li><strong>&#9208; Inactief</strong> &#8212; handmatig gedeactiveerd</li>
+            </ul>
+            <p>
+                Klik op <strong>&#8220;+1 jaar&#8221;</strong> om het contract met een jaar te verlengen.
+            </p>
+
+            <h4>Kiosk-weergave</h4>
+            <p>
+                Actieve sponsors worden automatisch getoond bovenaan het kiosk-resultaatscherm. De frequentie
+                wordt bepaald door het sponsorniveau (instelbaar via <a href="#admin-club">Clubinstellingen</a>):
+            </p>
+            <ul>
+                <li>&#129351; <strong>Goud</strong>: logo verschijnt het vaakst (standaard elke 15 sec)</li>
+                <li>&#129352; <strong>Zilver</strong>: gemiddelde frequentie (standaard elke 30 sec)</li>
+                <li>&#129353; <strong>Brons</strong>: laagste frequentie (standaard elke 60 sec)</li>
+            </ul>
+
+            <!-- Mededelingen -->
+            <h3 id="admin-mededelingen">Mededelingen</h3>
+            <p><span class="role-badge role-admin">Beheerder</span></p>
+            <p>
+                In de sectie <strong>&#8220;Mededelingen&#8221;</strong> op het beheerderspaneel beheer je
+                <strong>clubmededelingen</strong> die worden getoond op het kiosk-resultaatscherm. Mededelingen
+                verschijnen als fullscreen slides tussen de toernooiresultaten.
+            </p>
+
+            <h4>Mededeling aanmaken</h4>
+            <p>
+                Klik op <strong>&#8220;Toevoegen&#8221;</strong> en vul in:
+            </p>
+            <ul>
+                <li><strong>Titel</strong> (verplicht) &#8212; de kop van de mededeling</li>
+                <li><strong>Inhoud</strong> &#8212; de tekst van de mededeling (meerdere regels mogelijk)</li>
+                <li><strong>Startdatum en einddatum</strong> &#8212; de periode waarin de mededeling actief is</li>
+                <li><strong>Volgorde</strong> &#8212; bepaalt de volgorde bij meerdere mededelingen (lager = eerder)</li>
+                <li><strong>Foto</strong> &#8212; optioneel, wordt getoond naast de tekst op het resultaatscherm</li>
+            </ul>
+
+            <h4>Status</h4>
+            <ul>
+                <li><strong>Gepland</strong> &#8212; mededeling is aangemaakt maar de startdatum is nog niet bereikt</li>
+                <li><strong>Actief</strong> &#8212; de mededeling is zichtbaar op het kiosk-resultaatscherm</li>
+                <li><strong>Verlopen</strong> &#8212; de einddatum is voorbij</li>
+                <li><strong>Gearchiveerd</strong> &#8212; handmatig gearchiveerd</li>
+            </ul>
+            <p>
+                Gebruik de knop <strong>&#8220;Archiveren&#8221;</strong> of <strong>&#8220;Activeren&#8221;</strong>
+                om de status te wisselen.
+            </p>
 
             <!-- Bar Producten -->
             <h3 id="admin-bar-producten">Bar Producten</h3>
@@ -2265,6 +2576,47 @@
                     trainingen</strong> waar het lid aanwezig was, met vermelding van de trainingsgroep en de datum.
                 Zo heb je altijd een overzicht van de trainingsfrequentie van elk lid.
             </p>
+
+            <h3 id="kiosk-resultaten">Kiosk Resultaten &amp; Mededelingen</h3>
+            <p><span class="role-badge role-coach">Trainer</span> <span class="role-badge role-admin">Beheerder</span></p>
+            <p>
+                Het <strong>resultaatscherm</strong> is een fullscreen weergave die toernooiresultaten en
+                clubmededelingen toont in een automatisch doorlopende slideshow. Dit scherm is bedoeld om te
+                draaien op een TV of groot scherm in de dojo of bij een toernooi.
+            </p>
+            <p>
+                Het resultaatscherm is bereikbaar via het kiosk-scherm: na het invoeren van de PIN-code kies je
+                <strong>&#8220;Resultaten&#8221;</strong> (in plaats van &#8220;Vandaag&#8221; voor aanwezigheid).
+            </p>
+
+            <h4>Wat wordt getoond?</h4>
+            <ul>
+                <li><strong>Toernooiresultaten</strong> &#8212; voor alle afgelopen en gestarte toernooien worden de
+                    resultaten per leeftijds- en gewichtscategorie getoond. Per lid zie je het resultaat met
+                    medaille-badge (goud, zilver, brons).</li>
+                <li><strong>Podiumfoto&#8217;s</strong> &#8212; als er podiumfoto&#8217;s zijn ge&#252;pload bij een
+                    gewichtscategorie, worden deze als achtergrond getoond bij de resultaten.</li>
+                <li><strong>Mededelingen</strong> &#8212; actieve clubmededelingen verschijnen als fullscreen slides
+                    met titel, tekst en optionele foto.</li>
+                <li><strong>Sponsors</strong> &#8212; sponsorlogo&#8217;s roteren bovenaan het scherm, met een
+                    frequentie die afhangt van het sponsorniveau.</li>
+            </ul>
+
+            <h4>Bediening</h4>
+            <ul>
+                <li>De slides wisselen automatisch (duur instelbaar via <a href="#admin-club">Clubinstellingen</a>)</li>
+                <li>Klik op de <strong>navigatiepuntjes</strong> onderaan om handmatig naar een specifieke slide te
+                    springen</li>
+                <li>Een <strong>voortgangsbalk</strong> toont de resterende tijd tot de volgende slide</li>
+                <li>Druk op <strong>Esc</strong> of klik op <strong>&#8220;&#8592; Terug&#8221;</strong> om het scherm
+                    te verlaten. Er verschijnt een PIN-invoerscherm als beveiliging.</li>
+            </ul>
+            <div class="box box-info">
+                <strong>Beveiligde afsluiting</strong>
+                Net als bij het kiosk-aanwezigheidsscherm is het verlaten van het resultaatscherm beveiligd met
+                de PIN-code. Er verschijnt een afteltimer van 15 seconden &#8212; als de PIN niet wordt ingevoerd,
+                keert het scherm automatisch terug naar de slideshow.
+            </div>
 
             <h2 id="rechten-tabel">Overzicht rechten per rol</h2>
             <p>
@@ -3075,6 +3427,44 @@
                 kassa-scherm.
             </p>
 
+            <h4>Hoe meld ik afwezigheid voor een training?</h4>
+            <p>
+                Ga naar de <strong>Kalender</strong> en klik op het trainingsblokje waarvoor je afwezigheid wilt
+                melden. In de modal die verschijnt, klik je op <strong>&#8220;Afwezig&#8221;</strong> naast het
+                betreffende lid. Je kunt optioneel een reden opgeven (bijv. &#8220;ziek&#8221;, &#8220;vakantie&#8221;).
+                Eerder gemelde afwezigheid is direct zichtbaar bij het heropenen van de modal.
+            </p>
+
+            <h4>Hoe schrijf ik me in voor een evenement?</h4>
+            <p>
+                Ga naar de <strong>Evenementen</strong>-pagina via de tegel op het dashboard. Klik op
+                <strong>&#8220;Inschrijven&#8221;</strong> bij het gewenste evenement, vul het aantal volwassenen
+                en kinderen in, en bevestig. Bij betaalde evenementen word je doorgestuurd naar een Mollie
+                betaalpagina.
+            </p>
+
+            <h4>Wat zijn de kleuren in de kalender?</h4>
+            <p>
+                Amber (geel/bruin) = <strong>training</strong>, rood = <strong>toernooi</strong>,
+                blauw = <strong>evenement</strong>. De legenda bovenaan de kalender toont de drie kleuren
+                met het aantal items per type.
+            </p>
+
+            <h4>Hoe stel ik de vervaldatum van betaallinks in?</h4>
+            <p>
+                Ga als beheerder naar <strong>Beheerderspaneel</strong> &#8594; <strong>Clubinstellingen</strong>
+                en vul het veld <strong>&#8220;Vervaldagen betaallinks&#8221;</strong> in (standaard 14 dagen).
+                Alle Mollie betaallinks (voor lidgeld, toernooien en evenementen) verlopen automatisch na dit
+                aantal dagen.
+            </p>
+
+            <h4>Wat is het kiosk-resultaatscherm?</h4>
+            <p>
+                Het resultaatscherm is een fullscreen slideshow die toernooiresultaten, clubmededelingen en
+                sponsorlogo&#8217;s toont. Het is bedoeld voor een TV of groot scherm in de dojo.
+                Bereikbaar via het kiosk-scherm &#8594; PIN invoeren &#8594; <strong>&#8220;Resultaten&#8221;</strong>.
+            </p>
+
             <h4>Hoe werkt de kassa (POS)?</h4>
             <p>
                 De kassa is een rekenmachine voor de bar van de club. Tik op producten om ze aan de bestelling toe
@@ -3107,7 +3497,7 @@
             <div
                 style="margin-top: 80px; padding-top: 24px; border-top: 1px solid var(--slate-200); text-align: center;">
                 <p style="font-size: 12px; color: var(--slate-400);">
-                    JCA Handleiding &#8212; Laatst bijgewerkt: 29 maart 2026
+                    JCA Handleiding &#8212; Laatst bijgewerkt: 1 april 2026
                 </p>
             </div>
 
