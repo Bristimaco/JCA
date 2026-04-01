@@ -47,7 +47,7 @@ class Tournament extends Model
 
     public function isPaid(): bool
     {
-        return $this->ageCategories->contains(fn ($cat) => $cat->pivot->entry_fee > 0);
+        return $this->ageCategories->contains(fn($cat) => $cat->pivot->entry_fee > 0);
     }
 
     public function feeForAgeCategory(AgeCategory $category): ?float

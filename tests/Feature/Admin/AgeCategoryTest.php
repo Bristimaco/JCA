@@ -163,9 +163,10 @@ class AgeCategoryTest extends TestCase
         $response = $this->actingAs($this->admin())->get('/admin');
 
         $response->assertStatus(200);
-        $response->assertInertia(fn ($page) => $page
-            ->component('Admin/Dashboard')
-            ->has('ageCategories', 1)
+        $response->assertInertia(
+            fn($page) => $page
+                ->component('Admin/Dashboard')
+                ->has('ageCategories', 1)
         );
     }
 }

@@ -178,33 +178,29 @@ export default function Session({ session, members, clubs }) {
                             key={m.id}
                             onClick={() => !m.absent && handleToggle(m.id)}
                             disabled={m.absent}
-                            className={`rounded-xl p-4 text-center transition-all active:scale-95 ${
-                                m.absent
+                            className={`rounded-xl p-4 text-center transition-all active:scale-95 ${m.absent
                                     ? 'bg-slate-900/50 ring-1 ring-slate-800 opacity-50 cursor-not-allowed'
                                     : m.attending
-                                    ? 'bg-emerald-900/40 ring-2 ring-emerald-500/60 shadow-lg shadow-emerald-900/20'
-                                    : 'bg-slate-900 ring-1 ring-slate-700 hover:ring-slate-600'
-                            }`}
+                                        ? 'bg-emerald-900/40 ring-2 ring-emerald-500/60 shadow-lg shadow-emerald-900/20'
+                                        : 'bg-slate-900 ring-1 ring-slate-700 hover:ring-slate-600'
+                                }`}
                         >
-                            <div className={`w-12 h-12 rounded-full mx-auto mb-2 flex items-center justify-center text-lg font-bold relative ${
-                                m.absent
+                            <div className={`w-12 h-12 rounded-full mx-auto mb-2 flex items-center justify-center text-lg font-bold relative ${m.absent
                                     ? 'bg-red-900/40 text-red-400'
                                     : m.attending
-                                    ? 'bg-emerald-600 text-white'
-                                    : m.is_external
-                                    ? 'bg-purple-600 text-white'
-                                    : 'bg-slate-700 text-slate-400'
-                            }`}>
+                                        ? 'bg-emerald-600 text-white'
+                                        : m.is_external
+                                            ? 'bg-purple-600 text-white'
+                                            : 'bg-slate-700 text-slate-400'
+                                }`}>
                                 {m.absent ? '✗' : m.attending ? '✓' : m.name.charAt(0)}
                                 {m.is_external && (
-                                    <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border border-slate-950 flex items-center justify-center text-xs ${
-                                        BELT_COLORS.find((bc) => bc.value === m.belt_color)?.bg || 'bg-gray-400'
-                                    }`} />
+                                    <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border border-slate-950 flex items-center justify-center text-xs ${BELT_COLORS.find((bc) => bc.value === m.belt_color)?.bg || 'bg-gray-400'
+                                        }`} />
                                 )}
                             </div>
-                            <p className={`text-sm font-medium truncate ${
-                                m.absent ? 'text-red-400' : m.attending ? 'text-emerald-300' : 'text-slate-300'
-                            }`}>
+                            <p className={`text-sm font-medium truncate ${m.absent ? 'text-red-400' : m.attending ? 'text-emerald-300' : 'text-slate-300'
+                                }`}>
                                 {m.name}
                             </p>
                             {m.is_external && (

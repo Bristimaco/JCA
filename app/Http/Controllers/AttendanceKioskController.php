@@ -40,7 +40,7 @@ class AttendanceKioskController extends Controller
 
         $settings = ClubSettings::current();
 
-        if (! $settings->attendance_pin || ! hash_equals($settings->attendance_pin, $request->input('pin'))) {
+        if (!$settings->attendance_pin || !hash_equals($settings->attendance_pin, $request->input('pin'))) {
             return back()->withErrors(['pin' => 'Ongeldige PIN-code.']);
         }
 
@@ -51,7 +51,7 @@ class AttendanceKioskController extends Controller
 
     public function choose(): Response|RedirectResponse
     {
-        if (! session('kiosk_authenticated')) {
+        if (!session('kiosk_authenticated')) {
             return redirect()->route('attendance.pin');
         }
 
@@ -60,7 +60,7 @@ class AttendanceKioskController extends Controller
 
     public function today(): Response|RedirectResponse
     {
-        if (! session('kiosk_authenticated')) {
+        if (!session('kiosk_authenticated')) {
             return redirect()->route('attendance.pin');
         }
 
@@ -73,7 +73,7 @@ class AttendanceKioskController extends Controller
             ->whereNull('closed_at')
             ->whereNotNull('opened_at')
             ->get()
-            ->map(fn (TrainingSession $s) => [
+            ->map(fn(TrainingSession $s) => [
                 'id' => $s->id,
                 'group_name' => $s->trainingSchedule->trainingGroup->name,
                 'day' => $s->trainingSchedule->day,
@@ -88,11 +88,11 @@ class AttendanceKioskController extends Controller
 
     public function session(TrainingSession $session): Response|RedirectResponse
     {
-        if (! session('kiosk_authenticated')) {
+        if (!session('kiosk_authenticated')) {
             return redirect()->route('attendance.pin');
         }
 
-        if (! $session->isOpen()) {
+        if (!$session->isOpen()) {
             return redirect()->route('attendance.today');
         }
 
@@ -109,7 +109,7 @@ class AttendanceKioskController extends Controller
             ->pluck('member_id')
             ->all();
 
-        $members = $session->trainingSchedule->trainingGroup->members->map(fn ($m) => [
+        $members = $session->trainingSchedule->trainingGroup->members->map(fn($m) => [
             'id' => $m->id,
             'name' => $m->fullName(),
             'attending' => $session->attendances->contains('member_id', $m->id),
@@ -118,8 +118,8 @@ class AttendanceKioskController extends Controller
         ])->sortBy('name')->values()->all();
 
         // Add external attendances
-        $externalMembers = $session->externalAttendances->map(fn ($ext) => [
-            'id' => 'ext_'.$ext->id,
+        $externalMembers = $session->externalAttendances->map(fn($ext) => [
+            'id' => 'ext_' . $ext->id,
             'name' => $ext->name,
             'belt_color' => $ext->belt_color,
             'club_name' => $ext->club->name,
@@ -149,11 +149,11 @@ class AttendanceKioskController extends Controller
 
     public function toggle(Request $request, TrainingSession $session, $member): RedirectResponse
     {
-        if (! session('kiosk_authenticated')) {
+        if (!session('kiosk_authenticated')) {
             return redirect()->route('attendance.pin');
         }
 
-        if (! $session->isOpen()) {
+        if (!$session->isOpen()) {
             return back()->withErrors(['session' => 'Trainingsmoment is niet meer open.']);
         }
 
@@ -196,7 +196,7 @@ class AttendanceKioskController extends Controller
 
     public function results(): Response|RedirectResponse
     {
-        if (! session('kiosk_authenticated')) {
+        if (!session('kiosk_authenticated')) {
             return redirect()->route('attendance.pin');
         }
 
@@ -211,7 +211,7 @@ class AttendanceKioskController extends Controller
 
         foreach ($tournaments as $tournament) {
             $participants = $tournament->members->filter(
-                fn (Member $m) => $m->pivot->invitation_status === InvitationStatus::Accepted->value
+                fn(Member $m) => $m->pivot->invitation_status === InvitationStatus::Accepted->value
                 && $m->pivot->registration_status === 'registered'
             );
 
@@ -229,7 +229,7 @@ class AttendanceKioskController extends Controller
                 $weightName = $weightCat ? $weightCat->name : 'Geen gewichtscategorie';
                 $weightOrder = $weightCat?->display_order ?? 999;
 
-                if (! isset($grouped[$ageName])) {
+                if (!isset($grouped[$ageName])) {
                     $grouped[$ageName] = [
                         'name' => $ageName,
                         'order' => $ageOrder,
@@ -237,7 +237,7 @@ class AttendanceKioskController extends Controller
                     ];
                 }
 
-                if (! isset($grouped[$ageName]['weights'][$weightName])) {
+                if (!isset($grouped[$ageName]['weights'][$weightName])) {
                     $grouped[$ageName]['weights'][$weightName] = [
                         'name' => $weightName,
                         'order' => $weightOrder,
@@ -256,12 +256,12 @@ class AttendanceKioskController extends Controller
 
             $resultRank = ['1e plaats' => 1, '2e plaats' => 2, '3e plaats' => 3, '5e plaats' => 5, '7e plaats' => 7];
 
-            usort($grouped, fn ($a, $b) => $a['order'] <=> $b['order']);
+            usort($grouped, fn($a, $b) => $a['order'] <=> $b['order']);
             foreach ($grouped as &$ageGroup) {
                 $weights = array_values($ageGroup['weights']);
-                usort($weights, fn ($a, $b) => $a['order'] <=> $b['order']);
+                usort($weights, fn($a, $b) => $a['order'] <=> $b['order']);
                 foreach ($weights as &$weight) {
-                    usort($weight['members'], fn ($a, $b) => ($resultRank[$a['result']] ?? 99) <=> ($resultRank[$b['result']] ?? 99));
+                    usort($weight['members'], fn($a, $b) => ($resultRank[$a['result']] ?? 99) <=> ($resultRank[$b['result']] ?? 99));
                 }
                 unset($weight);
                 $ageGroup['weights'] = $weights;
@@ -271,8 +271,8 @@ class AttendanceKioskController extends Controller
             // Load podium photos as inline data URIs (avoids separate HTTP requests from kiosk)
             $podiumPhotos = PodiumPhoto::where('tournament_id', $tournament->id)
                 ->get(['id', 'tournament_id', 'age_category_name', 'weight_category_name', 'photo_data', 'photo_mime'])
-                ->mapWithKeys(fn (PodiumPhoto $p) => [
-                    $p->age_category_name.'|'.$p->weight_category_name => 'data:'.$p->photo_mime.';base64,'.$p->photo_data,
+                ->mapWithKeys(fn(PodiumPhoto $p) => [
+                    $p->age_category_name . '|' . $p->weight_category_name => 'data:' . $p->photo_mime . ';base64,' . $p->photo_data,
                 ])
                 ->all();
 
@@ -289,26 +289,26 @@ class AttendanceKioskController extends Controller
         }
 
         $activeAnnouncements = Announcement::active()->ordered()->get()
-            ->map(fn (Announcement $a) => [
+            ->map(fn(Announcement $a) => [
                 'id' => $a->id,
                 'title' => $a->title,
                 'content' => $a->content,
                 'start_date' => $a->start_date->toDateString(),
                 'end_date' => $a->end_date->toDateString(),
-                'photo' => $a->photo_data ? 'data:'.$a->photo_mime.';base64,'.$a->photo_data : null,
+                'photo' => $a->photo_data ? 'data:' . $a->photo_mime . ';base64,' . $a->photo_data : null,
             ])
             ->all();
 
         $settings = ClubSettings::current();
 
         $activeSponsors = Sponsor::active()->get()
-            ->map(fn (Sponsor $s) => [
+            ->map(fn(Sponsor $s) => [
                 'id' => $s->id,
                 'name' => $s->name,
                 'tier' => $s->tier->value,
                 'logo' => $s->logoDataUri(),
             ])
-            ->filter(fn ($s) => $s['logo'] !== null)
+            ->filter(fn($s) => $s['logo'] !== null)
             ->values()
             ->all();
 
@@ -332,7 +332,7 @@ class AttendanceKioskController extends Controller
     {
         $settings = ClubSettings::current();
 
-        if (! $settings->attendance_pin || ! hash_equals($settings->attendance_pin, $request->input('pin', ''))) {
+        if (!$settings->attendance_pin || !hash_equals($settings->attendance_pin, $request->input('pin', ''))) {
             return back()->withErrors(['pin' => 'Ongeldige PIN-code.']);
         }
 
@@ -343,7 +343,7 @@ class AttendanceKioskController extends Controller
     {
         $settings = ClubSettings::current();
 
-        if (! $settings->attendance_pin || ! hash_equals($settings->attendance_pin, $request->input('pin', ''))) {
+        if (!$settings->attendance_pin || !hash_equals($settings->attendance_pin, $request->input('pin', ''))) {
             return back()->withErrors(['pin' => 'Ongeldige PIN-code.']);
         }
 
@@ -354,15 +354,15 @@ class AttendanceKioskController extends Controller
 
     public function registerExternalMember(Request $request, TrainingSession $session): RedirectResponse
     {
-        if (! session('kiosk_authenticated')) {
+        if (!session('kiosk_authenticated')) {
             return redirect()->route('attendance.pin');
         }
 
-        if (! $session->isOpen()) {
+        if (!$session->isOpen()) {
             return back()->withErrors(['session' => 'Trainingsmoment is niet meer open.']);
         }
 
-        if (! $session->trainingSchedule->trainingGroup->allow_external_members) {
+        if (!$session->trainingSchedule->trainingGroup->allow_external_members) {
             return back()->withErrors(['external' => 'Externe leden zijn niet toegelaten voor deze groep.']);
         }
 

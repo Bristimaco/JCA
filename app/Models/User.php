@@ -113,7 +113,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function sendPasswordResetNotification($token): void
     {
-        $url = url('/wachtwoord-reset/'.$token.'?email='.urlencode($this->email));
+        $url = url('/wachtwoord-reset/' . $token . '?email=' . urlencode($this->email));
 
         Mail::to($this->email)->send(new PasswordResetMail($this, $url));
     }
