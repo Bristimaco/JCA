@@ -452,7 +452,7 @@ function ActiveTrainingSessions({ sessions }) {
                             <p className="text-sm text-emerald-400 mt-0.5">{s.member_name}</p>
                             <p className="text-sm text-slate-400 mt-1">{s.day} {s.start_time}{s.end_time ? `–${s.end_time}` : ''}</p>
                             {s.trainer_name && <p className="text-xs text-slate-500 mt-1">Trainer: {s.trainer_name}</p>}
-                            {s.absent && !s.attending && (
+                            {s.absent && (
                                 <p className="mt-2 text-xs text-amber-400 font-medium">⚠ Afwezig gemeld via kalender</p>
                             )}
                             <button

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\TrainingAbsence;
+use App\Models\TrainingAttendance;
+use App\Models\TrainingSession;
 use Illuminate\Http\Request;
 
 class TrainingAbsenceController extends Controller
@@ -28,6 +30,16 @@ class TrainingAbsenceController extends Controller
         ], [
             'reason' => $validated['reason'] ?? null,
         ]);
+
+        $session = TrainingSession::where('training_schedule_id', $validated['training_schedule_id'])
+            ->where('date', $validated['date'])
+            ->first();
+
+        if ($session) {
+            TrainingAttendance::where('training_session_id', $session->id)
+                ->where('member_id', $validated['member_id'])
+                ->delete();
+        }
 
         return response()->json(['success' => true, 'absence' => $absence]);
     }
