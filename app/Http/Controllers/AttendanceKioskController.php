@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Enums\InvitationStatus;
 use App\Enums\TournamentStatus;
 use App\Models\Announcement;
+use App\Models\Club;
 use App\Models\ClubSettings;
+use App\Models\ExternalTrainingAttendance;
 use App\Models\Member;
 use App\Models\PodiumPhoto;
 use App\Models\Sponsor;
@@ -98,6 +100,7 @@ class AttendanceKioskController extends Controller
             'trainingSchedule.trainingGroup.members:id,first_name,last_name',
             'trainingSchedule.trainer:id,name',
             'attendances',
+            'externalAttendances.club',
         ]);
 
         // Fetch absences for this schedule/date
@@ -111,7 +114,23 @@ class AttendanceKioskController extends Controller
             'name' => $m->fullName(),
             'attending' => $session->attendances->contains('member_id', $m->id),
             'absent' => in_array($m->id, $absentMemberIds),
+            'is_external' => false,
         ])->sortBy('name')->values()->all();
+
+        // Add external attendances
+        $externalMembers = $session->externalAttendances->map(fn ($ext) => [
+            'id' => 'ext_'.$ext->id,
+            'name' => $ext->name,
+            'belt_color' => $ext->belt_color,
+            'club_name' => $ext->club->name,
+            'attending' => true,
+            'is_external' => true,
+        ])->sortBy('name')->values()->all();
+
+        $allMembers = array_merge($members, $externalMembers);
+
+        $clubs = Club::orderBy('name')->get(['id', 'name', 'club_number']);
+        $allowExternal = $session->trainingSchedule->trainingGroup->allow_external_members;
 
         return Inertia::render('Attendance/Session', [
             'session' => [
@@ -121,12 +140,14 @@ class AttendanceKioskController extends Controller
                 'start_time' => $session->trainingSchedule->start_time,
                 'end_time' => $session->trainingSchedule->end_time,
                 'trainer_name' => $session->trainingSchedule->trainer?->name,
+                'allow_external_members' => $allowExternal,
             ],
-            'members' => $members,
+            'members' => $allMembers,
+            'clubs' => $clubs,
         ]);
     }
 
-    public function toggle(Request $request, TrainingSession $session, int $memberId): RedirectResponse
+    public function toggle(Request $request, TrainingSession $session, $memberId): RedirectResponse
     {
         if (! session('kiosk_authenticated')) {
             return redirect()->route('attendance.pin');
@@ -136,6 +157,17 @@ class AttendanceKioskController extends Controller
             return back()->withErrors(['session' => 'Trainingsmoment is niet meer open.']);
         }
 
+        // Handle external member (ID prefixed with 'ext_')
+        if (str_starts_with($memberId, 'ext_')) {
+            $extId = (int) str_replace('ext_', '', $memberId);
+            $external = ExternalTrainingAttendance::findOrFail($extId);
+
+            // For external members, we only delete (they're always "checked in")
+            // No toggle needed - they stay in attendances
+            return back();
+        }
+
+        // Regular member toggle
         $isAbsent = TrainingAbsence::where('training_schedule_id', $session->training_schedule_id)
             ->where('date', $session->date->toDateString())
             ->where('member_id', $memberId)
@@ -318,5 +350,56 @@ class AttendanceKioskController extends Controller
         session()->forget('kiosk_authenticated');
 
         return redirect()->route('login');
+    }
+
+    public function registerExternalMember(Request $request, TrainingSession $session): RedirectResponse
+    {
+        if (! session('kiosk_authenticated')) {
+            return redirect()->route('attendance.pin');
+        }
+
+        if (! $session->isOpen()) {
+            return back()->withErrors(['session' => 'Trainingsmoment is niet meer open.']);
+        }
+
+        if (! $session->trainingSchedule->trainingGroup->allow_external_members) {
+            return back()->withErrors(['external' => 'Externe leden zijn niet toegelaten voor deze groep.']);
+        }
+
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'belt_color' => ['required', 'in:wit,geel,oranje,groen,blauw,bruin,zwart'],
+            'club_id' => ['required', 'exists:clubs,id'],
+        ]);
+
+        ExternalTrainingAttendance::firstOrCreate([
+            'training_session_id' => $session->id,
+            'name' => $request->input('name'),
+            'club_id' => $request->input('club_id'),
+        ], [
+            'belt_color' => $request->input('belt_color'),
+            'confirmed_at' => now(),
+        ]);
+
+        return back();
+    }
+
+    public function listClubs(): Response
+    {
+        $clubs = Club::orderBy('name')->get();
+
+        return response()->json(['clubs' => $clubs]);
+    }
+
+    public function createClub(Request $request)
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'club_number' => ['required', 'string', 'unique:clubs'],
+        ]);
+
+        $club = Club::create($request->only(['name', 'club_number']));
+
+        return response()->json(['club' => $club], 201);
     }
 }

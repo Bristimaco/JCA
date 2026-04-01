@@ -14,6 +14,7 @@ use Illuminate\Support\Carbon;
  * @property float $membership_fee
  * @property float $membership_fee_discount
  * @property string|null $location
+ * @property bool $allow_external_members
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */

@@ -40,6 +40,11 @@ class TrainingSession extends Model
         return $this->hasMany(TrainingAttendance::class);
     }
 
+    public function externalAttendances(): HasMany
+    {
+        return $this->hasMany(ExternalTrainingAttendance::class);
+    }
+
     public function isOpen(): bool
     {
         return $this->opened_at !== null && $this->closed_at === null;
