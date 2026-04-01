@@ -86,7 +86,7 @@ class AttendanceReportController extends Controller
                     'attended_count' => $attendedCount,
                     'percentage' => $percentage,
                 ];
-            })->sortBy('name')->values()->all();
+            })->sortByDesc('percentage')->values()->all();
 
             return [
                 'id' => $group->id,
