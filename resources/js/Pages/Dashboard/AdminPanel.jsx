@@ -114,6 +114,7 @@ function ClubSettingsSection({ clubSettings }) {
         sponsor_frequency_gold: clubSettings.sponsor_frequency_gold ?? 15,
         slide_duration_results: clubSettings.slide_duration_results ?? 15,
         slide_duration_announcements: clubSettings.slide_duration_announcements ?? 15,
+        mollie_expiry_days: clubSettings.mollie_expiry_days ?? 14,
         logo: null,
     });
 
@@ -299,6 +300,20 @@ function ClubSettingsSection({ clubSettings }) {
                     </div>
                 </div>
                 <p className="text-xs text-slate-500 mt-1">Hoe lang elke slide wordt getoond op het kiosk resultaten scherm</p>
+            </div>
+
+            <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1">Vervaldagen betaallinks (dagen)</label>
+                <input
+                    type="number"
+                    min="1"
+                    max="365"
+                    value={form.data.mollie_expiry_days}
+                    onChange={(e) => form.setData('mollie_expiry_days', parseInt(e.target.value) || 14)}
+                    className="w-full max-w-xs rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-rose-500 focus:ring-rose-500 text-sm"
+                />
+                <p className="text-xs text-slate-500 mt-1">Aantal dagen waarna een Mollie betaallink automatisch vervalt</p>
+                {form.errors.mollie_expiry_days && <p className="text-sm text-red-400 mt-1">{form.errors.mollie_expiry_days}</p>}
             </div>
 
             <div className="flex justify-end">

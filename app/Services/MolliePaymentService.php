@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Enums\InvitationStatus;
 use App\Enums\InvoiceStatus;
 use App\Enums\VoucherStatus;
+use App\Models\ClubSettings;
 use App\Models\EventRegistration;
 use App\Models\MembershipInvoice;
 use App\Models\Voucher;
@@ -19,6 +20,8 @@ class MolliePaymentService
     public function createPaymentLink(MembershipInvoice $invoice, string $description): MembershipInvoice
     {
         try {
+            $expiryDays = ClubSettings::current()->mollie_expiry_days ?? 14;
+
             $payment = Mollie::api()->paymentLinks->create([
                 'amount' => [
                     'currency' => 'EUR',
@@ -27,6 +30,7 @@ class MolliePaymentService
                 'description' => $description,
                 'redirectUrl' => url('/'),
                 'webhookUrl' => url('/webhooks/mollie'),
+                'expiresAt' => now()->addDays($expiryDays)->toIso8601String(),
             ]);
 
             $invoice->update([
@@ -126,6 +130,8 @@ class MolliePaymentService
     public function createTournamentPaymentLink(int $pivotId, float $amount, string $description, string $redirectUrl): void
     {
         try {
+            $expiryDays = ClubSettings::current()->mollie_expiry_days ?? 14;
+
             $payment = Mollie::api()->paymentLinks->create([
                 'amount' => [
                     'currency' => 'EUR',
@@ -134,6 +140,7 @@ class MolliePaymentService
                 'description' => $description,
                 'redirectUrl' => $redirectUrl,
                 'webhookUrl' => url('/webhooks/mollie/tournament'),
+                'expiresAt' => now()->addDays($expiryDays)->toIso8601String(),
             ]);
 
             DB::table('member_tournament')
@@ -202,6 +209,8 @@ class MolliePaymentService
     public function createEventPaymentLink(EventRegistration $registration, string $description, string $redirectUrl): void
     {
         try {
+            $expiryDays = ClubSettings::current()->mollie_expiry_days ?? 14;
+
             $payment = Mollie::api()->paymentLinks->create([
                 'amount' => [
                     'currency' => 'EUR',
@@ -210,6 +219,7 @@ class MolliePaymentService
                 'description' => $description,
                 'redirectUrl' => $redirectUrl,
                 'webhookUrl' => url('/webhooks/mollie/event'),
+                'expiresAt' => now()->addDays($expiryDays)->toIso8601String(),
             ]);
 
             $registration->update([
