@@ -31,6 +31,9 @@ const moduleIcons = {
     'Aan te vullen': (
         <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5m6 4.125l2.25 2.25m0 0l2.25 2.25M12 11.625l2.25-2.25M12 11.625l-2.25 2.25M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" /></svg>
     ),
+    'Kassa Producten': (
+        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z" /></svg>
+    ),
     'Sponsors': (
         <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" /></svg>
     ),
@@ -61,6 +64,7 @@ const moduleColors = {
     'Facturen': 'from-blue-600 to-indigo-700',
     'Vouchers': 'from-purple-600 to-violet-700',
     'Aan te vullen': 'from-amber-600 to-yellow-700',
+    'Kassa Producten': 'from-emerald-700 to-teal-800',
     'Sponsors': 'from-pink-600 to-rose-700',
     'Mededelingen': 'from-cyan-600 to-teal-700',
     'Evenementen': 'from-orange-600 to-amber-700',
@@ -79,6 +83,7 @@ const modules = [
     { name: 'Facturen', href: '/admin/facturen', roles: ['admin'] },
     { name: 'Vouchers', href: '/admin/vouchers', roles: ['admin'] },
     { name: 'Aan te vullen', href: '/admin/aan-te-vullen', roles: ['admin'] },
+    { name: 'Kassa Producten', href: '/admin/bar-products', roles: ['admin'] },
     { name: 'Sponsors', href: '/admin/sponsors', roles: ['admin'] },
     { name: 'Mededelingen', href: '/admin/mededelingen', roles: ['admin'] },
     { name: 'Evenementen Beheer', href: '/admin/evenementen', roles: ['admin'] },

@@ -291,6 +291,7 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::post('/evenementen/{event}/registrations/{registration}/mark-paid', [AdminEventController::class, 'markPaid'])->name('admin.events.mark-paid');
 
         // Bar products
+        Route::get('/bar-products', [BarProductController::class, 'index'])->name('admin.bar-products.index');
         Route::get('/aan-te-vullen', [BarProductController::class, 'refillIndex'])->name('admin.refill-products.index');
         Route::post('/bar-products', [BarProductController::class, 'store'])->name('admin.bar-products.store');
         Route::patch('/bar-products/{barProduct}', [BarProductController::class, 'update'])->name('admin.bar-products.update');

@@ -11,6 +11,15 @@ use Inertia\Response;
 
 class BarProductController extends Controller
 {
+    public function index(): Response
+    {
+        $products = BarProduct::ordered()->get(['id', 'name', 'price', 'is_active', 'display_order']);
+
+        return Inertia::render('Admin/BarProducts', [
+            'products' => $products,
+        ]);
+    }
+
     public function refillIndex(): Response
     {
         $refillProducts = BarProduct::needsRefill()
