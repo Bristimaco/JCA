@@ -20,6 +20,7 @@ use App\Models\Tournament;
 use App\Models\TournamentResult;
 use App\Models\TrainingAbsence;
 use App\Models\TrainingGroup;
+use App\Models\TrainingSchedule;
 use App\Models\TrainingSession;
 use App\Models\User;
 use App\Models\Voucher;
@@ -207,6 +208,38 @@ class DashboardController extends Controller
                         'member_count' => $g->members->count(),
                     ];
                 });
+
+            // Extra trainings for today (coach)
+            $props['extraTrainings'] = TrainingSchedule::where('is_extra', true)
+                ->where('date', now()->toDateString())
+                ->where('trainer_id', $request->user()->id)
+                ->with(['trainingGroups.members:id,first_name,last_name', 'trainer:id,name', 'sessions.attendances'])
+                ->get()
+                ->map(function (TrainingSchedule $s) {
+                    $session = $s->sessions->where('date', now()->toDateString())->first();
+                    $groupNames = $s->trainingGroups->pluck('name')->join(', ');
+                    $allMembers = $s->trainingGroups->flatMap->members->unique('id');
+
+                    return [
+                        'id' => $s->id,
+                        'date' => $s->date->toDateString(),
+                        'start_time' => $s->start_time,
+                        'end_time' => $s->end_time,
+                        'trainer_name' => $s->trainer?->name,
+                        'trainer_id' => $s->trainer_id,
+                        'group_names' => $groupNames,
+                        'groups' => $s->trainingGroups->map(fn ($g) => ['id' => $g->id, 'name' => $g->name])->values()->all(),
+                        'member_count' => $allMembers->count(),
+                        'members' => $allMembers->map(fn ($m) => ['id' => $m->id, 'name' => $m->fullName()])->values()->all(),
+                        'session' => $session ? [
+                            'id' => $session->id,
+                            'is_open' => $session->isOpen(),
+                            'attendance_count' => $session->attendances->count(),
+                            'attendee_ids' => $session->attendances->pluck('member_id')->values()->all(),
+                            'closed_at' => $session->closed_at?->toDateTimeString(),
+                        ] : null,
+                    ];
+                })->values()->all();
         }
 
         // Load tournaments for the user's linked members

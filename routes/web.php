@@ -38,6 +38,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\EventImageController;
 use App\Http\Controllers\EventPaymentWebhookController;
 use App\Http\Controllers\EventRsvpController;
+use App\Http\Controllers\ExtraTrainingController;
 use App\Http\Controllers\MemberAttendanceController;
 use App\Http\Controllers\MemberPhotoController;
 use App\Http\Controllers\MollieWebhookController;
@@ -189,6 +190,11 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::get('/attendance-report', AttendanceReportController::class)->name('trainer.attendance-report');
         Route::post('/sessions/open', [TrainerAttendanceController::class, 'open'])->name('trainer.sessions.open');
         Route::patch('/sessions/{session}/close', [TrainerAttendanceController::class, 'close'])->name('trainer.sessions.close');
+
+        // Extra trainingen
+        Route::get('/extra-training', [ExtraTrainingController::class, 'create'])->name('trainer.extra-training.create');
+        Route::post('/extra-training', [ExtraTrainingController::class, 'store'])->name('trainer.extra-training.store');
+        Route::delete('/extra-training/{schedule}', [ExtraTrainingController::class, 'destroy'])->name('trainer.extra-training.destroy');
     });
 
     // Personal attendance toggle
@@ -235,6 +241,11 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::patch('/training-groups/{trainingGroup}', [TrainingGroupController::class, 'update'])->name('admin.training-groups.update');
         Route::delete('/training-groups/{trainingGroup}', [TrainingGroupController::class, 'destroy'])->name('admin.training-groups.destroy');
         Route::put('/training-groups/{trainingGroup}/members', [TrainingGroupMemberController::class, 'update'])->name('admin.training-groups.members');
+
+        // Extra trainingen
+        Route::get('/extra-training', [ExtraTrainingController::class, 'create'])->name('admin.extra-training.create');
+        Route::post('/extra-training', [ExtraTrainingController::class, 'store'])->name('admin.extra-training.store');
+        Route::delete('/extra-training/{schedule}', [ExtraTrainingController::class, 'destroy'])->name('admin.extra-training.destroy');
 
         // Members
         Route::get('/members', MemberIndexController::class)->name('admin.members.index');

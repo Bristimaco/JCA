@@ -98,10 +98,23 @@ class AttendanceKioskController extends Controller
 
         $session->load([
             'trainingSchedule.trainingGroup.members:id,first_name,last_name',
+            'trainingSchedule.trainingGroups.members:id,first_name,last_name',
             'trainingSchedule.trainer:id,name',
             'attendances',
             'externalAttendances.club',
         ]);
+
+        $schedule = $session->trainingSchedule;
+        $isExtra = $schedule->is_extra;
+
+        // For extra trainings, members come from the pivot groups
+        $groupMembers = $isExtra
+            ? $schedule->trainingGroups->flatMap->members->unique('id')
+            : ($schedule->trainingGroup?->members ?? collect());
+
+        $groupName = $isExtra
+            ? $schedule->trainingGroups->pluck('name')->join(', ')
+            : ($schedule->trainingGroup?->name ?? 'Onbekend');
 
         // Fetch absences for this schedule/date
         $absentMemberIds = TrainingAbsence::where('training_schedule_id', $session->training_schedule_id)
@@ -109,7 +122,7 @@ class AttendanceKioskController extends Controller
             ->pluck('member_id')
             ->all();
 
-        $members = $session->trainingSchedule->trainingGroup->members->map(fn ($m) => [
+        $members = $groupMembers->map(fn ($m) => [
             'id' => $m->id,
             'name' => $m->fullName(),
             'attending' => $session->attendances->contains('member_id', $m->id),
@@ -130,16 +143,19 @@ class AttendanceKioskController extends Controller
         $allMembers = array_merge($members, $externalMembers);
 
         $clubs = Club::orderBy('name')->get(['id', 'name', 'club_number']);
-        $allowExternal = $session->trainingSchedule->trainingGroup->allow_external_members;
+        $allowExternal = $isExtra
+            ? $schedule->trainingGroups->contains('allow_external_members', true)
+            : ($schedule->trainingGroup?->allow_external_members ?? false);
 
         return Inertia::render('Attendance/Session', [
             'session' => [
                 'id' => $session->id,
-                'group_name' => $session->trainingSchedule->trainingGroup->name,
-                'day' => $session->trainingSchedule->day,
-                'start_time' => $session->trainingSchedule->start_time,
-                'end_time' => $session->trainingSchedule->end_time,
-                'trainer_name' => $session->trainingSchedule->trainer?->name,
+                'group_name' => $groupName,
+                'is_extra' => $isExtra,
+                'day' => $schedule->day,
+                'start_time' => $schedule->start_time,
+                'end_time' => $schedule->end_time,
+                'trainer_name' => $schedule->trainer?->name,
                 'allow_external_members' => $allowExternal,
             ],
             'members' => $allMembers,
@@ -362,7 +378,12 @@ class AttendanceKioskController extends Controller
             return back()->withErrors(['session' => 'Trainingsmoment is niet meer open.']);
         }
 
-        if (! $session->trainingSchedule->trainingGroup->allow_external_members) {
+        $schedule = $session->trainingSchedule;
+        $allowExternal = $schedule->is_extra
+            ? $schedule->trainingGroups()->where('allow_external_members', true)->exists()
+            : ($schedule->trainingGroup?->allow_external_members ?? false);
+
+        if (! $allowExternal) {
             return back()->withErrors(['external' => 'Externe leden zijn niet toegelaten voor deze groep.']);
         }
 

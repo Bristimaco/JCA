@@ -12,13 +12,24 @@ class AdminSessionHistoryController extends Controller
     public function __invoke(): Response
     {
         $sessions = TrainingSession::whereNotNull('closed_at')
-            ->with(['trainingSchedule.trainingGroup.members', 'trainingSchedule.trainer:id,name', 'attendances.member', 'externalAttendances.club'])
+            ->with(['trainingSchedule.trainingGroup.members', 'trainingSchedule.trainingGroups.members', 'trainingSchedule.trainer:id,name', 'attendances.member', 'externalAttendances.club'])
             ->orderByDesc('date')
             ->orderByDesc('closed_at')
             ->get()
             ->map(function (TrainingSession $s) {
+                $schedule = $s->trainingSchedule;
+                $isExtra = $schedule->is_extra;
+
+                $groupMembers = $isExtra
+                    ? $schedule->trainingGroups->flatMap->members->unique('id')
+                    : ($schedule->trainingGroup?->members ?? collect());
+
+                $groupName = $isExtra
+                    ? $schedule->trainingGroups->pluck('name')->join(', ')
+                    : ($schedule->trainingGroup?->name ?? 'Onbekend');
+
                 $attendeeIds = $s->attendances->pluck('member_id')->all();
-                $absentees = $s->trainingSchedule->trainingGroup->members
+                $absentees = $groupMembers
                     ->filter(fn ($m) => ! in_array($m->id, $attendeeIds))
                     ->map(fn ($m) => ['name' => $m->fullName()])
                     ->values()->all();
@@ -26,8 +37,9 @@ class AdminSessionHistoryController extends Controller
                 return [
                     'id' => $s->id,
                     'date' => $s->date->toDateString(),
-                    'group_name' => $s->trainingSchedule->trainingGroup->name,
-                    'day' => $s->trainingSchedule->day,
+                    'group_name' => $groupName,
+                    'is_extra' => $isExtra,
+                    'day' => $schedule->day,
                     'start_time' => $s->trainingSchedule->start_time,
                     'end_time' => $s->trainingSchedule->end_time,
                     'trainer_name' => $s->trainingSchedule->trainer?->name,

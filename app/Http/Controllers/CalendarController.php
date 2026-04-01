@@ -39,6 +39,7 @@ class CalendarController extends Controller
 
         $items = collect()
             ->merge($this->trainingItems($start, $end, $memberIds))
+            ->merge($this->extraTrainingItems($start, $end, $memberIds))
             ->merge($this->tournamentItems($start, $end, $memberIds))
             ->merge($this->eventItems($start, $end, $userId))
             ->sortBy('date')
@@ -53,7 +54,9 @@ class CalendarController extends Controller
 
     private function trainingItems(Carbon $start, Carbon $end, $memberIds): array
     {
-        $schedules = TrainingSchedule::with('trainingGroup.members:id,first_name,last_name')->get();
+        $schedules = TrainingSchedule::where('is_extra', false)
+            ->with('trainingGroup.members:id,first_name,last_name')
+            ->get();
         $items = [];
 
         // Fetch absences for all relevant members and dates in this range
@@ -113,6 +116,43 @@ class CalendarController extends Controller
 
                 $date = $date->copy()->addWeek();
             }
+        }
+
+        return $items;
+    }
+
+    private function extraTrainingItems(Carbon $start, Carbon $end, $memberIds): array
+    {
+        $schedules = TrainingSchedule::where('is_extra', true)
+            ->whereBetween('date', [$start->toDateString(), $end->toDateString()])
+            ->with('trainingGroups.members:id,first_name,last_name')
+            ->get();
+
+        $items = [];
+
+        foreach ($schedules as $schedule) {
+            $allMembers = $schedule->trainingGroups->flatMap->members->unique('id');
+            $groupMemberIds = $allMembers->pluck('id');
+            $participatingMemberIds = $memberIds->intersect($groupMemberIds);
+
+            $participatingMembers = $allMembers
+                ->whereIn('id', $participatingMemberIds)
+                ->map(fn ($m) => ['id' => $m->id, 'first_name' => $m->first_name])
+                ->values()
+                ->all();
+
+            $items[] = [
+                'type' => 'extra_training',
+                'date' => $schedule->date->toDateString(),
+                'name' => 'Extra: '.$schedule->trainingGroups->pluck('name')->join(', '),
+                'start_time' => $schedule->start_time,
+                'end_time' => $schedule->end_time,
+                'location' => $schedule->trainingGroups->first()?->location,
+                'participating' => $participatingMemberIds->isNotEmpty(),
+                'participating_members' => $participatingMembers,
+                'training_schedule_id' => $schedule->id,
+                'absent_members' => [],
+            ];
         }
 
         return $items;

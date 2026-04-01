@@ -17,7 +17,7 @@ class TrainerAttendanceController extends Controller
     {
         $sessionModels = TrainingSession::whereNotNull('closed_at')
             ->whereHas('trainingSchedule', fn ($q) => $q->where('trainer_id', $request->user()->id))
-            ->with(['trainingSchedule.trainingGroup.members', 'trainingSchedule.trainer:id,name', 'attendances.member', 'externalAttendances.club'])
+            ->with(['trainingSchedule.trainingGroup.members', 'trainingSchedule.trainingGroups.members', 'trainingSchedule.trainer:id,name', 'attendances.member', 'externalAttendances.club'])
             ->orderByDesc('date')
             ->orderByDesc('closed_at')
             ->get();
@@ -27,12 +27,24 @@ class TrainerAttendanceController extends Controller
             ->get();
 
         $sessions = $sessionModels->map(function (TrainingSession $s) use ($absences) {
+            $schedule = $s->trainingSchedule;
+            $isExtra = $schedule->is_extra;
+
+            // For extra trainings, members come from the pivot groups
+            $groupMembers = $isExtra
+                ? $schedule->trainingGroups->flatMap->members->unique('id')
+                : ($schedule->trainingGroup?->members ?? collect());
+
+            $groupName = $isExtra
+                ? $schedule->trainingGroups->pluck('name')->join(', ')
+                : ($schedule->trainingGroup?->name ?? 'Onbekend');
+
             $attendeeIds = $s->attendances->pluck('member_id')->all();
             $notifiedIds = $absences
                 ->filter(fn ($a) => $a->training_schedule_id === $s->training_schedule_id && $a->date->toDateString() === $s->date->toDateString())
                 ->pluck('member_id')
                 ->all();
-            $absentees = $s->trainingSchedule->trainingGroup->members
+            $absentees = $groupMembers
                 ->filter(fn ($m) => ! in_array($m->id, $attendeeIds))
                 ->map(fn ($m) => [
                     'name' => $m->fullName(),
@@ -43,8 +55,9 @@ class TrainerAttendanceController extends Controller
             return [
                 'id' => $s->id,
                 'date' => $s->date->toDateString(),
-                'group_name' => $s->trainingSchedule->trainingGroup->name,
-                'day' => $s->trainingSchedule->day,
+                'group_name' => $groupName,
+                'is_extra' => $isExtra,
+                'day' => $schedule->day,
                 'start_time' => $s->trainingSchedule->start_time,
                 'end_time' => $s->trainingSchedule->end_time,
                 'trainer_name' => $s->trainingSchedule->trainer?->name,
@@ -83,12 +96,18 @@ class TrainerAttendanceController extends Controller
             abort(403, 'Je bent niet de trainer van dit trainingsmoment.');
         }
 
-        $todayDay = ucfirst(now()->locale('nl')->isoFormat('dddd'));
-        if ($schedule->day !== $todayDay) {
-            return back()->withErrors(['session' => 'Je kan enkel trainingen starten op de juiste dag ('.$schedule->day.').']);
-        }
-
         $today = now()->toDateString();
+
+        if ($schedule->is_extra) {
+            if ($schedule->date->toDateString() !== $today) {
+                return back()->withErrors(['session' => 'Je kan deze extra training enkel starten op '.$schedule->date->format('d/m/Y').'.']);
+            }
+        } else {
+            $todayDay = ucfirst(now()->locale('nl')->isoFormat('dddd'));
+            if ($schedule->day !== $todayDay) {
+                return back()->withErrors(['session' => 'Je kan enkel trainingen starten op de juiste dag ('.$schedule->day.').']);
+            }
+        }
 
         $existing = TrainingSession::where('training_schedule_id', $schedule->id)
             ->where('date', $today)

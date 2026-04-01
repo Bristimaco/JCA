@@ -82,7 +82,7 @@ const modules = [
     { name: 'Archief', href: '/archief', roles: ['parent', 'member', 'admin', 'coach', 'barmedewerker'] },
 ];
 
-export default function Dashboard({ pendingCount, pendingUsers, adminCounters, memberStats, myMemberCount, myEventCount, archivedTournamentCount, myTournaments, activeTournaments, coachTournaments, coachTrainingGroups, upcomingTournaments, coachTournamentCount, recentArchived, activeTrainingSessions }) {
+export default function Dashboard({ pendingCount, pendingUsers, adminCounters, memberStats, myMemberCount, myEventCount, archivedTournamentCount, myTournaments, activeTournaments, coachTournaments, coachTrainingGroups, upcomingTournaments, coachTournamentCount, recentArchived, activeTrainingSessions, extraTrainings }) {
     const { auth } = usePage().props;
     const role = auth.user.role;
 
@@ -150,6 +150,10 @@ export default function Dashboard({ pendingCount, pendingUsers, adminCounters, m
 
             {coachTrainingGroups && coachTrainingGroups.length > 0 && (
                 <CoachTrainingGroups groups={coachTrainingGroups} />
+            )}
+
+            {extraTrainings && extraTrainings.length > 0 && (
+                <ExtraTrainings trainings={extraTrainings} />
             )}
 
             {activeTrainingSessions && activeTrainingSessions.length > 0 && (
@@ -508,9 +512,14 @@ function CoachTrainingGroups({ groups }) {
                         {todayGroups.length}
                     </span>
                 </h2>
-                <Link href="/trainer/sessions" className="text-sm font-medium text-rose-400 hover:text-rose-300">
-                    Historiek →
-                </Link>
+                <div className="flex items-center gap-3">
+                    <Link href="/trainer/extra-training" className="rounded-lg bg-orange-900/30 px-3 py-1.5 text-sm font-medium text-orange-400 hover:bg-orange-900/50 ring-1 ring-orange-700/30">
+                        + Extra training
+                    </Link>
+                    <Link href="/trainer/sessions" className="text-sm font-medium text-rose-400 hover:text-rose-300">
+                        Historiek →
+                    </Link>
+                </div>
             </div>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {todayGroups.map(g => (
@@ -613,6 +622,134 @@ function CoachTrainingGroups({ groups }) {
                                 rows={3}
                                 className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-rose-500 focus:ring-rose-500 text-sm"
                                 placeholder="Eventuele opmerkingen over de training..."
+                            />
+                        </div>
+                        <div className="flex justify-end gap-3">
+                            <button
+                                onClick={() => setClosingSession(null)}
+                                className="rounded-md bg-slate-700 px-4 py-2 text-sm font-medium text-slate-300 hover:bg-slate-600"
+                            >
+                                Annuleren
+                            </button>
+                            <button
+                                onClick={handleCloseSession}
+                                className="rounded-md bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-700"
+                            >
+                                Afsluiten
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}
+
+function ExtraTrainings({ trainings }) {
+    const { auth } = usePage().props;
+    const [closingSession, setClosingSession] = useState(null);
+    const [remarks, setRemarks] = useState('');
+
+    const handleOpenSession = (scheduleId) => {
+        router.post('/trainer/sessions/open', { training_schedule_id: scheduleId }, { preserveScroll: true });
+    };
+
+    const handleCloseSession = () => {
+        if (!closingSession) return;
+        router.patch(`/trainer/sessions/${closingSession}/close`, { remarks: remarks || null }, {
+            preserveScroll: true,
+            onSuccess: () => {
+                setClosingSession(null);
+                setRemarks('');
+            },
+        });
+    };
+
+    const handleDelete = (id) => {
+        if (!confirm('Weet je zeker dat je deze extra training wilt verwijderen?')) return;
+        const isAdmin = auth.user.role === 'admin';
+        router.delete(isAdmin ? `/admin/extra-training/${id}` : `/trainer/extra-training/${id}`, { preserveScroll: true });
+    };
+
+    return (
+        <div className="mt-10">
+            <h2 className="text-lg font-semibold text-white mb-4">
+                Extra Trainingen Vandaag
+                <span className="ml-2 inline-flex items-center rounded-full bg-orange-900/40 px-2.5 py-0.5 text-xs font-medium text-orange-400">
+                    {trainings.length}
+                </span>
+            </h2>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {trainings.map(t => (
+                    <div key={t.id} className="bg-slate-900 rounded-xl shadow-sm ring-1 ring-slate-800 border-t-2 border-t-orange-600/60 overflow-hidden">
+                        <div className="p-4">
+                            <div className="flex items-center justify-between mb-1">
+                                <p className="font-semibold text-white">{t.group_names}</p>
+                                <span className="inline-flex items-center rounded-full bg-orange-900/40 px-2 py-0.5 text-[10px] font-semibold text-orange-400">
+                                    Extra
+                                </span>
+                            </div>
+                            <p className="text-sm text-slate-400">{t.start_time}{t.end_time ? `–${t.end_time}` : ''}</p>
+                            {t.trainer_name && <p className="text-xs text-slate-500 mt-1">Trainer: {t.trainer_name}</p>}
+                            <p className="text-xs text-slate-500 mt-1">{t.member_count} {t.member_count === 1 ? 'lid' : 'leden'}</p>
+
+                            <div className="mt-3">
+                                {t.trainer_id === auth.user.id && (
+                                    <>
+                                        {t.session?.is_open ? (
+                                            <div className="flex items-center gap-2">
+                                                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-900/40 px-2 py-0.5 text-[10px] font-semibold text-emerald-400">
+                                                    <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span></span>
+                                                    {t.session.attendance_count} aanwezig
+                                                </span>
+                                                <button
+                                                    onClick={() => { setClosingSession(t.session.id); setRemarks(''); }}
+                                                    className="rounded-md bg-red-900/30 px-2 py-1 text-[10px] font-semibold text-red-400 hover:bg-red-900/50 ring-1 ring-red-700/30"
+                                                >
+                                                    Sluiten
+                                                </button>
+                                            </div>
+                                        ) : t.session?.closed_at ? (
+                                            <span className="inline-flex items-center rounded-full bg-slate-700 px-2 py-0.5 text-[10px] font-medium text-slate-400">
+                                                Afgesloten ({t.session.attendance_count})
+                                            </span>
+                                        ) : (
+                                            <div className="flex items-center gap-2">
+                                                <button
+                                                    onClick={() => handleOpenSession(t.id)}
+                                                    className="rounded-md bg-emerald-900/30 px-2 py-1 text-[10px] font-semibold text-emerald-400 hover:bg-emerald-900/50 ring-1 ring-emerald-700/30"
+                                                >
+                                                    Start training
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDelete(t.id)}
+                                                    className="rounded-md bg-red-900/30 px-2 py-1 text-[10px] font-semibold text-red-400 hover:bg-red-900/50 ring-1 ring-red-700/30"
+                                                >
+                                                    Verwijderen
+                                                </button>
+                                            </div>
+                                        )}
+                                    </>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            {closingSession && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+                    <div className="bg-slate-900 rounded-xl shadow-xl ring-1 ring-slate-700 w-full max-w-md p-6">
+                        <h3 className="text-lg font-semibold text-white mb-4">Extra training afsluiten</h3>
+                        <div className="mb-4">
+                            <label className="block text-sm font-medium text-slate-300 mb-1">Opmerking (optioneel)</label>
+                            <textarea
+                                value={remarks}
+                                onChange={e => setRemarks(e.target.value)}
+                                rows={3}
+                                maxLength={1000}
+                                className="w-full rounded-lg bg-slate-800 border border-slate-700 text-white px-3 py-2 text-sm focus:ring-2 focus:ring-rose-500 focus:border-transparent resize-none"
+                                placeholder="Optionele opmerking..."
                             />
                         </div>
                         <div className="flex justify-end gap-3">

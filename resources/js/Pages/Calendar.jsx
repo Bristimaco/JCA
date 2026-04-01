@@ -7,6 +7,7 @@ const MONTH_NAMES = ['januari', 'februari', 'maart', 'april', 'mei', 'juni', 'ju
 
 const TYPE_STYLES = {
     training: { bg: 'bg-amber-900/40', border: 'border-l-amber-500', text: 'text-amber-300', label: 'Training' },
+    extra_training: { bg: 'bg-orange-900/40', border: 'border-l-orange-500', text: 'text-orange-300', label: 'Extra Training' },
     tournament: { bg: 'bg-rose-900/40', border: 'border-l-rose-500', text: 'text-rose-300', label: 'Toernooi' },
     event: { bg: 'bg-blue-900/40', border: 'border-l-blue-500', text: 'text-blue-300', label: 'Evenement' },
 };
