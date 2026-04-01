@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\BarOrder;
+use App\Models\BarOrderItem;
 use App\Models\BarProduct;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -78,5 +81,51 @@ class BarProductController extends Controller
         ]);
 
         return back()->with('status', "Product '{$barProduct->name}' is aangevuld.");
+    }
+
+    public function salesStats(Request $request): Response
+    {
+        $period = $request->query('period', 'month');
+
+        $from = match ($period) {
+            'half_year' => Carbon::now()->subMonths(6)->startOfDay(),
+            'year' => Carbon::now()->subYear()->startOfDay(),
+            'all' => null,
+            default => Carbon::now()->subMonth()->startOfDay(),
+        };
+
+        $query = BarOrderItem::query()
+            ->selectRaw('bar_product_id, SUM(quantity) as total_quantity, SUM(quantity * unit_price) as total_revenue')
+            ->groupBy('bar_product_id');
+
+        if ($from) {
+            $query->where('created_at', '>=', $from);
+        }
+
+        $stats = $query->orderByDesc('total_quantity')->get();
+
+        $productIds = $stats->pluck('bar_product_id');
+        $products = BarProduct::whereIn('id', $productIds)->get()->keyBy('id');
+
+        $rankings = $stats->map(fn ($s) => [
+            'product_name' => $products[$s->bar_product_id]?->name ?? 'Verwijderd product',
+            'total_quantity' => (int) $s->total_quantity,
+            'total_revenue' => number_format($s->total_revenue, 2, '.', ''),
+        ])->values()->all();
+
+        $totalOrders = BarOrder::query()
+            ->when($from, fn ($q) => $q->where('created_at', '>=', $from))
+            ->count();
+
+        $totalRevenue = BarOrder::query()
+            ->when($from, fn ($q) => $q->where('created_at', '>=', $from))
+            ->sum('total');
+
+        return Inertia::render('Admin/SalesStats', [
+            'rankings' => $rankings,
+            'period' => $period,
+            'totalOrders' => $totalOrders,
+            'totalRevenue' => number_format($totalRevenue, 2, '.', ''),
+        ]);
     }
 }

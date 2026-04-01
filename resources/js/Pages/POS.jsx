@@ -7,6 +7,8 @@ export default function POS({ products: initialProducts }) {
     const [products, setProducts] = useState(initialProducts);
     const [showVoucher, setShowVoucher] = useState(false);
     const [gridCols, setGridCols] = useState(5);
+    const [saving, setSaving] = useState(false);
+    const [orderSaved, setOrderSaved] = useState(false);
     const gridRef = useRef(null);
 
     // Voucher state
@@ -40,6 +42,27 @@ export default function POS({ products: initialProducts }) {
     const itemCount = Object.values(quantities).reduce((sum, q) => sum + q, 0);
 
     const reset = () => setQuantities({});
+
+    const saveAndReset = async () => {
+        if (itemCount === 0) return;
+        setSaving(true);
+        try {
+            const items = Object.entries(quantities)
+                .filter(([, qty]) => qty > 0)
+                .map(([id, qty]) => ({ product_id: Number(id), quantity: qty }));
+
+            await fetch('/pos/order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken(), Accept: 'application/json' },
+                body: JSON.stringify({ items }),
+            });
+
+            reset();
+            setOrderSaved(true);
+            setTimeout(() => setOrderSaved(false), 2000);
+        } catch { /* network error — still reset */ reset(); }
+        setSaving(false);
+    };
 
     const toggleRefill = async (productId) => {
         try {
@@ -424,13 +447,16 @@ export default function POS({ products: initialProducts }) {
                                 <p className="text-sm text-slate-400">
                                     {itemCount} {itemCount === 1 ? 'item' : 'items'}
                                 </p>
+                                {orderSaved && (
+                                    <span className="text-sm font-medium text-emerald-400">✓ Opgeslagen</span>
+                                )}
                             </div>
                             <button
-                                onClick={reset}
-                                disabled={itemCount === 0}
+                                onClick={saveAndReset}
+                                disabled={itemCount === 0 || saving}
                                 className="rounded-lg bg-slate-700 ring-1 ring-slate-600 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                             >
-                                Nieuwe bestelling
+                                {saving ? 'Opslaan...' : 'Nieuwe bestelling'}
                             </button>
                         </div>
                     </div>

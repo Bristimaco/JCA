@@ -212,6 +212,7 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
     // POS (barmedewerker + admin)
     Route::middleware('barmedewerker')->group(function () {
         Route::get('/pos', POSController::class)->name('pos');
+        Route::post('/pos/order', [POSController::class, 'store'])->name('pos.order.store');
         Route::post('/pos/products/{barProduct}/toggle-refill', [POSController::class, 'toggleRefill'])->name('pos.toggle-refill');
     });
 
@@ -293,6 +294,7 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         // Bar products
         Route::get('/bar-products', [BarProductController::class, 'index'])->name('admin.bar-products.index');
         Route::get('/aan-te-vullen', [BarProductController::class, 'refillIndex'])->name('admin.refill-products.index');
+        Route::get('/verkoop-statistieken', [BarProductController::class, 'salesStats'])->name('admin.sales-stats');
         Route::post('/bar-products', [BarProductController::class, 'store'])->name('admin.bar-products.store');
         Route::patch('/bar-products/{barProduct}', [BarProductController::class, 'update'])->name('admin.bar-products.update');
         Route::delete('/bar-products/{barProduct}', [BarProductController::class, 'destroy'])->name('admin.bar-products.destroy');
