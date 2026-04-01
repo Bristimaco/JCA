@@ -451,16 +451,17 @@ export default function Session({ session, members, clubs }) {
                                             type="button"
                                             onClick={() => {
                                                 if (clubForm.data.name) {
+                                                    const submittedName = clubForm.data.name;
                                                     router.post(
                                                         route('clubs.store'),
                                                         clubForm.data,
                                                         {
                                                             preserveScroll: true,
                                                             onSuccess: (page) => {
-                                                                const newClub = page.props.clubs[page.props.clubs.length - 1];
+                                                                const newClub = (page.props.clubs || []).find((c) => c.name === submittedName);
                                                                 if (newClub) {
-                                                                    setAvailableClubs([...availableClubs, newClub]);
-                                                                    externalForm.setData('club_id', newClub.id);
+                                                                    setAvailableClubs(page.props.clubs || [...availableClubs, newClub]);
+                                                                    externalForm.setData('club_id', String(newClub.id));
                                                                     clubForm.reset();
                                                                     setShowNewClubForm(false);
                                                                 }

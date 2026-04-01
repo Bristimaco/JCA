@@ -88,8 +88,8 @@ Route::post('/attendance/exit-to-choice', [AttendanceKioskController::class, 'ex
 Route::post('/attendance/logout', [AttendanceKioskController::class, 'logout'])->name('attendance.logout');
 
 // Clubs API
-Route::get('/clubs', [AttendanceKioskController::class, 'listClubs']);
-Route::post('/clubs', [AttendanceKioskController::class, 'createClub']);
+Route::get('/clubs', [AttendanceKioskController::class, 'listClubs'])->name('clubs.index');
+Route::post('/clubs', [AttendanceKioskController::class, 'createClub'])->name('clubs.store');
 
 // Podium photo display (no auth — used by kiosk mode)
 Route::get('/podium-foto/{podiumPhoto}', PodiumPhotoController::class)->name('podium-photo.show');

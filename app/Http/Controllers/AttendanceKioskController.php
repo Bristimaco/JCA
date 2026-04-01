@@ -400,6 +400,6 @@ class AttendanceKioskController extends Controller
 
         $club = Club::create($request->only(['name', 'club_number']));
 
-        return response()->json(['club' => $club], 201);
+        return back();
     }
 }
