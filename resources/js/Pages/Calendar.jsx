@@ -169,6 +169,11 @@ export default function Calendar({ items, startDate, myMemberIds }) {
                                                     className={`${style.bg} border-l-2 ${style.border} rounded-r px-1.5 py-0.5 ${canReportAbsence ? 'cursor-pointer hover:ring-1 hover:ring-slate-500' : ''}`}
                                                     onClick={canReportAbsence ? () => {
                                                         setAbsenceModal(item);
+                                                        const map = {};
+                                                        if (item.absent_members) {
+                                                            item.absent_members.forEach(m => { map[m.id] = m.reason || null; });
+                                                        }
+                                                        setLocalAbsentMap(map);
                                                         setAbsenceReason('');
                                                     } : undefined}
                                                 >
