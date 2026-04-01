@@ -82,7 +82,7 @@ const modules = [
     { name: 'Archief', href: '/archief', roles: ['parent', 'member', 'admin', 'coach', 'barmedewerker'] },
 ];
 
-export default function Dashboard({ pendingCount, pendingUsers, adminCounters, memberStats, myMemberCount, myEventCount, archivedTournamentCount, myTournaments, activeTournaments, coachTournaments, coachTrainingGroups, upcomingTournaments, recentArchived, activeTrainingSessions }) {
+export default function Dashboard({ pendingCount, pendingUsers, adminCounters, memberStats, myMemberCount, myEventCount, archivedTournamentCount, myTournaments, activeTournaments, coachTournaments, coachTrainingGroups, upcomingTournaments, coachTournamentCount, recentArchived, activeTrainingSessions }) {
     const { auth } = usePage().props;
     const role = auth.user.role;
 
@@ -116,7 +116,7 @@ export default function Dashboard({ pendingCount, pendingUsers, adminCounters, m
                                     const count = {
                                         'Leden': memberStats?.total,
                                         'Mijn Leden': myMemberCount,
-                                        'Toernooien': adminCounters?.activeTournamentCount,
+                                        'Toernooien': adminCounters?.activeTournamentCount ?? coachTournamentCount,
                                         'Facturen': adminCounters?.pendingInvoiceCount,
                                         'Vouchers': adminCounters?.activeVoucherCount,
                                         'Aan te vullen': adminCounters?.refillProductCount,

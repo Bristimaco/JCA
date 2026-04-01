@@ -78,6 +78,8 @@ class DashboardController extends Controller
                 $upcomingQuery->whereHas('coaches', fn ($q) => $q->whereIn('members.id', $coachMemberIds));
             }
 
+            $props['coachTournamentCount'] = $upcomingQuery->count();
+
             $props['upcomingTournaments'] = $upcomingQuery
                 ->orderBy('tournament_date')
                 ->take(3)
