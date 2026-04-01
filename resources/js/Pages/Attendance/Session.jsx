@@ -68,8 +68,8 @@ export default function Session({ session, members, clubs }) {
 
     const handleToggle = (memberId) => {
         router.post(
-            route('attendance.session.toggle', { session: session.id }),
-            { id: memberId },
+            route('attendance.session.toggle', { session: session.id, member: memberId }),
+            {},
             { preserveScroll: true }
         );
     };

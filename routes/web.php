@@ -82,7 +82,7 @@ Route::get('/attendance/choose', [AttendanceKioskController::class, 'choose'])->
 Route::get('/attendance/today', [AttendanceKioskController::class, 'today'])->name('attendance.today');
 Route::get('/attendance/results', [AttendanceKioskController::class, 'results'])->name('attendance.results');
 Route::get('/attendance/session/{session}', [AttendanceKioskController::class, 'session'])->name('attendance.session');
-Route::post('/attendance/session/{session}/toggle/{member}', [AttendanceKioskController::class, 'toggle'])->name('attendance.toggle');
+Route::post('/attendance/session/{session}/toggle/{member}', [AttendanceKioskController::class, 'toggle'])->name('attendance.session.toggle');
 Route::post('/attendance/session/{session}/external-member', [AttendanceKioskController::class, 'registerExternalMember'])->name('attendance.register-external');
 Route::post('/attendance/exit-to-choice', [AttendanceKioskController::class, 'exitToChoice'])->name('attendance.exit-to-choice');
 Route::post('/attendance/logout', [AttendanceKioskController::class, 'logout'])->name('attendance.logout');
