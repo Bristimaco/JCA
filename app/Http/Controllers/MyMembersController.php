@@ -21,12 +21,14 @@ class MyMembersController extends Controller
                     ->whereHas('trainingSession', fn ($q) => $q->whereNotNull('closed_at'));
                 $attendanceCount = $attendanceQuery->count();
                 $attendanceHistory = $attendanceQuery
-                    ->with(['trainingSession.trainingSchedule.trainingGroup'])
+                    ->with(['trainingSession.trainingSchedule.trainingGroup', 'trainingSession.trainingSchedule.trainingGroups'])
                     ->latest('confirmed_at')
                     ->get()
                     ->map(fn ($a) => [
                         'date' => $a->trainingSession->date->toDateString(),
-                        'group_name' => $a->trainingSession->trainingSchedule->trainingGroup->name,
+                        'group_name' => $a->trainingSession->trainingSchedule->is_extra
+                            ? $a->trainingSession->trainingSchedule->name.' ('.$a->trainingSession->trainingSchedule->trainingGroups->pluck('name')->join(', ').')'
+                            : ($a->trainingSession->trainingSchedule->trainingGroup?->name ?? 'Onbekend'),
                         'day' => $a->trainingSession->trainingSchedule->day,
                     ]);
 
