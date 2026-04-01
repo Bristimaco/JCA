@@ -147,7 +147,7 @@ class AttendanceKioskController extends Controller
         ]);
     }
 
-    public function toggle(Request $request, TrainingSession $session, $memberId): RedirectResponse
+    public function toggle(Request $request, TrainingSession $session, $member): RedirectResponse
     {
         if (! session('kiosk_authenticated')) {
             return redirect()->route('attendance.pin');
@@ -158,8 +158,8 @@ class AttendanceKioskController extends Controller
         }
 
         // Handle external member (ID prefixed with 'ext_')
-        if (str_starts_with($memberId, 'ext_')) {
-            $extId = (int) str_replace('ext_', '', $memberId);
+        if (str_starts_with($member, 'ext_')) {
+            $extId = (int) str_replace('ext_', '', $member);
             $external = ExternalTrainingAttendance::findOrFail($extId);
 
             // For external members, we only delete (they're always "checked in")
@@ -170,7 +170,7 @@ class AttendanceKioskController extends Controller
         // Regular member toggle
         $isAbsent = TrainingAbsence::where('training_schedule_id', $session->training_schedule_id)
             ->where('date', $session->date->toDateString())
-            ->where('member_id', $memberId)
+            ->where('member_id', $member)
             ->exists();
 
         if ($isAbsent) {
@@ -178,7 +178,7 @@ class AttendanceKioskController extends Controller
         }
 
         $existing = TrainingAttendance::where('training_session_id', $session->id)
-            ->where('member_id', $memberId)
+            ->where('member_id', $member)
             ->first();
 
         if ($existing) {
