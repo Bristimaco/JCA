@@ -182,7 +182,7 @@ function TrainingGroupForm({ group, trainers, onCancel }) {
                         className="rounded border border-slate-600 bg-slate-700/50 text-rose-600 focus:ring-2 focus:ring-rose-500"
                     />
                     <label htmlFor="allow_external" className="text-xs font-medium text-slate-400">
-                        Gastten van andere clubs toestaan
+                        Gasten van andere clubs toestaan
                     </label>
                 </div>
             </div>

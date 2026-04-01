@@ -78,6 +78,7 @@ class AdminDashboardController extends Controller
                     'trainer_name' => $s->trainer?->name,
                 ])->values()->all(),
                 'location' => $g->location,
+                'allow_external_members' => $g->allow_external_members,
                 'member_ids' => $g->members->pluck('id')->values()->all(),
                 'member_count' => $g->members->count(),
             ]);
