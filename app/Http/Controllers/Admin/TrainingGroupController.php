@@ -17,6 +17,7 @@ class TrainingGroupController extends Controller
             'membership_fee' => ['required', 'numeric', 'min:0'],
             'membership_fee_discount' => ['nullable', 'numeric', 'min:0'],
             'location' => ['nullable', 'string', 'max:255'],
+            'allow_external_members' => ['nullable', 'boolean'],
             'schedules' => ['nullable', 'array'],
             'schedules.*.day' => ['required', 'string', 'max:255'],
             'schedules.*.start_time' => ['required', 'string', 'max:255'],
@@ -25,6 +26,7 @@ class TrainingGroupController extends Controller
         ]);
 
         $validated['membership_fee_discount'] = $validated['membership_fee_discount'] ?? 0;
+        $validated['allow_external_members'] = $validated['allow_external_members'] ?? false;
 
         $schedules = $validated['schedules'] ?? [];
         unset($validated['schedules']);
@@ -45,6 +47,7 @@ class TrainingGroupController extends Controller
             'membership_fee' => ['required', 'numeric', 'min:0'],
             'membership_fee_discount' => ['nullable', 'numeric', 'min:0'],
             'location' => ['nullable', 'string', 'max:255'],
+            'allow_external_members' => ['nullable', 'boolean'],
             'schedules' => ['nullable', 'array'],
             'schedules.*.day' => ['required', 'string', 'max:255'],
             'schedules.*.start_time' => ['required', 'string', 'max:255'],
@@ -53,6 +56,7 @@ class TrainingGroupController extends Controller
         ]);
 
         $validated['membership_fee_discount'] = $validated['membership_fee_discount'] ?? 0;
+        $validated['allow_external_members'] = $validated['allow_external_members'] ?? false;
 
         $schedules = $validated['schedules'] ?? [];
         unset($validated['schedules']);

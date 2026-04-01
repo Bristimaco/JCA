@@ -70,6 +70,7 @@ function TrainingGroupForm({ group, trainers, onCancel }) {
         membership_fee_discount: group?.membership_fee_discount || '0',
         schedules: group?.schedules?.length ? group.schedules.map(s => ({ day: s.day, start_time: s.start_time, end_time: s.end_time || '', trainer_id: s.trainer_id || '' })) : [{ day: '', start_time: '', end_time: '', trainer_id: '' }],
         location: group?.location || '',
+        allow_external_members: group?.allow_external_members || false,
     });
 
     const handleSubmit = (e) => {
@@ -171,6 +172,18 @@ function TrainingGroupForm({ group, trainers, onCancel }) {
                         className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
                         placeholder="Optionele beschrijving..."
                     />
+                </div>
+                <div className="flex items-center gap-3">
+                    <input
+                        type="checkbox"
+                        id="allow_external"
+                        checked={form.data.allow_external_members}
+                        onChange={(e) => form.setData('allow_external_members', e.target.checked)}
+                        className="rounded border border-slate-600 bg-slate-700/50 text-rose-600 focus:ring-2 focus:ring-rose-500"
+                    />
+                    <label htmlFor="allow_external" className="text-xs font-medium text-slate-400">
+                        Gastten van andere clubs toestaan
+                    </label>
                 </div>
             </div>
 
