@@ -18,6 +18,7 @@ use App\Models\MembershipInvoice;
 use App\Models\Sponsor;
 use App\Models\Tournament;
 use App\Models\TournamentResult;
+use App\Models\TrainingAbsence;
 use App\Models\TrainingGroup;
 use App\Models\TrainingSession;
 use App\Models\User;
@@ -210,13 +211,16 @@ class DashboardController extends Controller
         // Active training sessions for the user's members (one tile per member per session)
         if ($memberIds->isNotEmpty()) {
             $members = $request->user()->members()->get(['members.id', 'members.first_name']);
+            $todayAbsences = TrainingAbsence::where('date', now()->toDateString())
+                ->whereIn('member_id', $memberIds)
+                ->get();
             $props['activeTrainingSessions'] = TrainingSession::whereNull('closed_at')
                 ->whereNotNull('opened_at')
                 ->where('date', now()->toDateString())
                 ->whereHas('trainingSchedule.trainingGroup.members', fn ($q) => $q->whereIn('members.id', $memberIds))
                 ->with(['trainingSchedule.trainingGroup.members', 'trainingSchedule.trainer:id,name', 'attendances'])
                 ->get()
-                ->flatMap(function (TrainingSession $s) use ($members) {
+                ->flatMap(function (TrainingSession $s) use ($members, $todayAbsences) {
                     $groupMemberIds = $s->trainingSchedule->trainingGroup->members->pluck('id');
                     $myMembers = $members->filter(fn ($m) => $groupMemberIds->contains($m->id));
 
@@ -230,6 +234,9 @@ class DashboardController extends Controller
                         'end_time' => $s->trainingSchedule->end_time,
                         'trainer_name' => $s->trainingSchedule->trainer?->name,
                         'attending' => $s->attendances->where('member_id', $m->id)->isNotEmpty(),
+                        'absent' => $todayAbsences->where('member_id', $m->id)
+                            ->where('training_schedule_id', $s->training_schedule_id)
+                            ->isNotEmpty(),
                     ]);
                 })->values();
         }

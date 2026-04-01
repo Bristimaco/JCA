@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\TrainingAbsence;
 use App\Models\TrainingAttendance;
 use App\Models\TrainingSession;
 use Illuminate\Http\RedirectResponse;
@@ -39,6 +40,11 @@ class MemberAttendanceController extends Controller
                 'member_id' => $myMemberId,
                 'confirmed_at' => now(),
             ]);
+
+            TrainingAbsence::where('member_id', $myMemberId)
+                ->where('training_schedule_id', $session->training_schedule_id)
+                ->where('date', $session->date)
+                ->delete();
         }
 
         return back();

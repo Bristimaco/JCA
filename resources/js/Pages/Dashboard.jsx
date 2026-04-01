@@ -452,11 +452,16 @@ function ActiveTrainingSessions({ sessions }) {
                             <p className="text-sm text-emerald-400 mt-0.5">{s.member_name}</p>
                             <p className="text-sm text-slate-400 mt-1">{s.day} {s.start_time}{s.end_time ? `–${s.end_time}` : ''}</p>
                             {s.trainer_name && <p className="text-xs text-slate-500 mt-1">Trainer: {s.trainer_name}</p>}
+                            {s.absent && !s.attending && (
+                                <p className="mt-2 text-xs text-amber-400 font-medium">⚠ Afwezig gemeld via kalender</p>
+                            )}
                             <button
                                 onClick={() => handleToggle(s.session_id, s.member_id)}
                                 className={`mt-3 w-full rounded-lg px-4 py-2.5 text-sm font-semibold transition-all ${s.attending
                                     ? 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-md'
-                                    : 'bg-slate-800 text-slate-300 hover:bg-slate-700 ring-1 ring-slate-700'
+                                    : s.absent
+                                        ? 'bg-amber-900/40 text-amber-300 hover:bg-amber-900/60 ring-1 ring-amber-700/50'
+                                        : 'bg-slate-800 text-slate-300 hover:bg-slate-700 ring-1 ring-slate-700'
                                     }`}
                             >
                                 {s.attending ? '✓ Aanwezig' : 'Aanwezig melden'}
