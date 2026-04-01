@@ -216,7 +216,8 @@ class DashboardController extends Controller
                 ->with(['trainingGroups.members:id,first_name,last_name', 'trainer:id,name', 'sessions.attendances'])
                 ->get()
                 ->map(function (TrainingSchedule $s) {
-                    $session = $s->sessions->where('date', now()->toDateString())->first();
+                    $today = now()->toDateString();
+                    $session = $s->sessions->first(fn ($sess) => $sess->date->toDateString() === $today);
                     $groupNames = $s->trainingGroups->pluck('name')->join(', ');
                     $allMembers = $s->trainingGroups->flatMap->members->unique('id');
 
