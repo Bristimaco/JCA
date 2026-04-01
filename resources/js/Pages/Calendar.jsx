@@ -88,6 +88,29 @@ export default function Calendar({ items, startDate, myMemberIds }) {
                         <h1 className="text-2xl font-bold text-white">Kalender</h1>
                         <p className="text-sm text-slate-400">{formatDateRange(startDate)}</p>
                     </div>
+
+                    {/* Legend */}
+                    <div className="flex items-center gap-4">
+                        {Object.entries(TYPE_STYLES).map(([type, style]) => (
+                            <div key={type} className="flex items-center gap-1.5">
+                                <div className={`w-2.5 h-2.5 rounded-sm ${style.bg} border-l-2 ${style.border}`} />
+                                <span className="text-xs text-slate-400">{style.label}</span>
+                            </div>
+                        ))}
+                        <div className="flex items-center gap-1.5">
+                            <span className="inline-flex items-center rounded bg-emerald-900/60 px-1 py-px text-[8px] font-bold text-emerald-400">✓</span>
+                            <span className="text-xs text-slate-400">Deelname</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                            <span className="inline-flex items-center rounded bg-amber-900/60 px-1 py-px text-[8px] font-bold text-amber-400">1/2</span>
+                            <span className="text-xs text-slate-400">Deels afwezig</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                            <span className="inline-flex items-center rounded bg-red-900/60 px-1 py-px text-[8px] font-bold text-red-400">✗</span>
+                            <span className="text-xs text-slate-400">Afwezig gemeld</span>
+                        </div>
+                    </div>
+
                     <div className="flex items-center gap-2">
                         <button
                             onClick={() => navigate(-1)}
@@ -192,27 +215,7 @@ export default function Calendar({ items, startDate, myMemberIds }) {
                     ))}
                 </div>
 
-                {/* Legend */}
-                <div className="flex items-center gap-4 mt-2 shrink-0">
-                    {Object.entries(TYPE_STYLES).map(([type, style]) => (
-                        <div key={type} className="flex items-center gap-1.5">
-                            <div className={`w-2.5 h-2.5 rounded-sm ${style.bg} border-l-2 ${style.border}`} />
-                            <span className="text-xs text-slate-400">{style.label}</span>
-                        </div>
-                    ))}
-                    <div className="flex items-center gap-1.5">
-                        <span className="inline-flex items-center rounded bg-emerald-900/60 px-1 py-px text-[8px] font-bold text-emerald-400">✓</span>
-                        <span className="text-xs text-slate-400">Deelname</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                        <span className="inline-flex items-center rounded bg-amber-900/60 px-1 py-px text-[8px] font-bold text-amber-400">1/2</span>
-                        <span className="text-xs text-slate-400">Deels afwezig</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                        <span className="inline-flex items-center rounded bg-red-900/60 px-1 py-px text-[8px] font-bold text-red-400">✗</span>
-                        <span className="text-xs text-slate-400">Afwezig gemeld</span>
-                    </div>
-                </div>
+
             </div>
 
             {/* Absence modal */}
