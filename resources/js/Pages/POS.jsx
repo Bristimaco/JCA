@@ -1,11 +1,13 @@
 import { Head, Link } from '@inertiajs/react';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import AppLayout from '../Layouts/AppLayout';
 
 export default function POS({ products: initialProducts }) {
     const [quantities, setQuantities] = useState({});
     const [products, setProducts] = useState(initialProducts);
     const [showVoucher, setShowVoucher] = useState(false);
+    const [gridCols, setGridCols] = useState(5);
+    const gridRef = useRef(null);
 
     // Voucher state
     const [voucherCode, setVoucherCode] = useState('');
@@ -165,27 +167,54 @@ export default function POS({ products: initialProducts }) {
         };
     }, []);
 
+    // Dynamic grid calculation — fit all products on one screen
+    const tileCount = products.length + 1; // +1 for voucher tile
+    const calcGrid = useCallback(() => {
+        const el = gridRef.current;
+        if (!el) return;
+        const w = el.clientWidth;
+        const h = el.clientHeight;
+        if (w === 0 || h === 0) return;
+        const ratio = w / h;
+        let cols = Math.ceil(Math.sqrt(tileCount * ratio));
+        const rows = Math.ceil(tileCount / cols);
+        // If rows * cols wastes too much, try reducing cols
+        if (cols > 1 && (cols - 1) * rows >= tileCount) cols--;
+        setGridCols(cols);
+    }, [tileCount]);
+
+    useEffect(() => {
+        calcGrid();
+        const el = gridRef.current;
+        if (!el) return;
+        const ro = new ResizeObserver(calcGrid);
+        ro.observe(el);
+        return () => ro.disconnect();
+    }, [calcGrid]);
+
     const statusColors = {
         active: 'bg-emerald-900/30 text-emerald-400 ring-emerald-700/30',
         redeemed: 'bg-slate-700/50 text-slate-400 ring-slate-600/30',
         expired: 'bg-red-900/30 text-red-400 ring-red-700/30',
     };
 
+    const gridRows = Math.ceil(tileCount / gridCols);
+
     return (
-        <AppLayout>
+        <AppLayout fullWidth>
             <Head title="Kassa" />
 
-            <div className="mb-6 flex items-center gap-4">
+            <div className="shrink-0 flex items-center gap-4 mb-1">
                 <Link href="/" className="text-sm font-medium text-slate-500 hover:text-slate-300">
                     &larr; Dashboard
                 </Link>
-                <h1 className="text-2xl font-bold text-white tracking-tight">Kassa</h1>
+                <h1 className="text-xl font-bold text-white tracking-tight">Kassa</h1>
             </div>
 
             {showVoucher ? (
                 /* Voucher activation panel */
-                <div className="pb-28">
-                    <div className="mx-auto max-w-lg space-y-4">
+                <div className="flex-1 min-h-0 overflow-auto">
+                    <div className="mx-auto max-w-lg space-y-4 pb-4">
                         <button
                             onClick={closeVoucherPanel}
                             className="flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-slate-200 transition-colors"
@@ -315,14 +344,20 @@ export default function POS({ products: initialProducts }) {
                             Geen producten beschikbaar.
                         </div>
                     ) : (
-                        <div className="pb-28">
-                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+                        <div ref={gridRef} className="flex-1 min-h-0">
+                            <div
+                                className="grid gap-1.5 h-full"
+                                style={{
+                                    gridTemplateColumns: `repeat(${gridCols}, 1fr)`,
+                                    gridTemplateRows: `repeat(${gridRows}, 1fr)`,
+                                }}
+                            >
                                 {products.map((product) => {
                                     const qty = getQty(product.id);
                                     return (
                                         <div
                                             key={product.id}
-                                            className={`relative rounded-xl ring-1 p-4 flex flex-col items-center select-none transition-all ${product.needs_refill
+                                            className={`relative rounded-lg ring-1 p-1.5 flex flex-col items-center justify-center select-none transition-all overflow-hidden ${product.needs_refill
                                                 ? 'bg-amber-900/20 ring-amber-500/60 shadow-md shadow-amber-900/20'
                                                 : qty > 0
                                                     ? 'bg-rose-900/20 ring-rose-700/40 shadow-md'
@@ -332,7 +367,7 @@ export default function POS({ products: initialProducts }) {
                                             {/* Refill toggle button */}
                                             <button
                                                 onClick={() => toggleRefill(product.id)}
-                                                className={`absolute top-1.5 left-1.5 w-7 h-7 rounded-full flex items-center justify-center text-sm transition-all ${product.needs_refill
+                                                className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full flex items-center justify-center text-[10px] transition-all ${product.needs_refill
                                                     ? 'bg-amber-600 text-white shadow-lg'
                                                     : 'bg-slate-700/60 text-slate-500 hover:bg-slate-600 hover:text-slate-300'
                                                     }`}
@@ -341,26 +376,26 @@ export default function POS({ products: initialProducts }) {
                                                 ⚠️
                                             </button>
                                             {qty > 0 && (
-                                                <div className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-rose-600 flex items-center justify-center text-white text-xs font-bold shadow-lg">
+                                                <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-rose-600 flex items-center justify-center text-white text-[10px] font-bold shadow-lg">
                                                     {qty}
                                                 </div>
                                             )}
 
-                                            <p className="text-base font-semibold text-white text-center mb-1 leading-tight">{product.name}</p>
-                                            <p className="text-lg font-bold text-emerald-400 mb-4">€{Number(product.price).toFixed(2)}</p>
+                                            <p className="text-xs font-semibold text-white text-center leading-tight truncate w-full px-1">{product.name}</p>
+                                            <p className="text-sm font-bold text-emerald-400">€{Number(product.price).toFixed(2)}</p>
 
-                                            <div className="flex items-center gap-3">
+                                            <div className="flex items-center gap-1.5 mt-0.5">
                                                 <button
                                                     onClick={() => decrement(product.id)}
                                                     disabled={qty <= 0}
-                                                    className="w-10 h-10 rounded-lg bg-slate-700 ring-1 ring-slate-600 text-white text-xl font-bold flex items-center justify-center hover:bg-slate-600 disabled:opacity-30 disabled:cursor-not-allowed active:scale-95 transition-transform"
+                                                    className="w-7 h-7 rounded-md bg-slate-700 ring-1 ring-slate-600 text-white text-sm font-bold flex items-center justify-center hover:bg-slate-600 disabled:opacity-30 disabled:cursor-not-allowed active:scale-95 transition-transform"
                                                 >
                                                     −
                                                 </button>
-                                                <span className="w-8 text-center text-lg font-bold text-white tabular-nums">{qty}</span>
+                                                <span className="w-5 text-center text-sm font-bold text-white tabular-nums">{qty}</span>
                                                 <button
                                                     onClick={() => increment(product.id)}
-                                                    className="w-10 h-10 rounded-lg bg-rose-600 text-white text-xl font-bold flex items-center justify-center hover:bg-rose-700 active:scale-95 transition-transform"
+                                                    className="w-7 h-7 rounded-md bg-rose-600 text-white text-sm font-bold flex items-center justify-center hover:bg-rose-700 active:scale-95 transition-transform"
                                                 >
                                                     +
                                                 </button>
@@ -372,37 +407,34 @@ export default function POS({ products: initialProducts }) {
                                 {/* Voucher tile — always last */}
                                 <button
                                     onClick={openVoucherPanel}
-                                    className="rounded-xl ring-1 ring-purple-700/40 bg-purple-900/20 p-4 flex flex-col items-center justify-center select-none hover:ring-purple-600/60 hover:bg-purple-900/30 active:scale-95 transition-all min-h-[120px]"
+                                    className="rounded-lg ring-1 ring-purple-700/40 bg-purple-900/20 p-1.5 flex flex-col items-center justify-center select-none hover:ring-purple-600/60 hover:bg-purple-900/30 active:scale-95 transition-all"
                                 >
-                                    <span className="text-3xl mb-2">🎟️</span>
-                                    <p className="text-base font-semibold text-white text-center leading-tight">Voucher</p>
-                                    <p className="text-xs text-purple-400 mt-1">Scannen / Activeren</p>
+                                    <span className="text-xl">🎟️</span>
+                                    <p className="text-xs font-semibold text-white text-center leading-tight">Voucher</p>
                                 </button>
                             </div>
                         </div>
                     )}
-                </>
-            )}
 
-            {/* Sticky total bar */}
-            {!showVoucher && (
-                <div className="fixed bottom-0 left-0 right-0 bg-slate-900/95 backdrop-blur-sm border-t border-slate-700 px-4 py-4 z-50">
-                    <div className="max-w-5xl mx-auto flex items-center justify-between gap-4">
-                        <div>
-                            <p className="text-sm text-slate-400">
-                                {itemCount} {itemCount === 1 ? 'item' : 'items'}
-                            </p>
-                            <p className="text-3xl font-bold text-white tabular-nums">€{total.toFixed(2)}</p>
+                    {/* Total bar — inline at bottom */}
+                    <div className="shrink-0 bg-slate-900/95 border-t border-slate-700 px-4 py-2 mt-1">
+                        <div className="flex items-center justify-between gap-4">
+                            <div className="flex items-center gap-4">
+                                <p className="text-2xl font-bold text-white tabular-nums">€{total.toFixed(2)}</p>
+                                <p className="text-sm text-slate-400">
+                                    {itemCount} {itemCount === 1 ? 'item' : 'items'}
+                                </p>
+                            </div>
+                            <button
+                                onClick={reset}
+                                disabled={itemCount === 0}
+                                className="rounded-lg bg-slate-700 ring-1 ring-slate-600 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                            >
+                                Nieuwe bestelling
+                            </button>
                         </div>
-                        <button
-                            onClick={reset}
-                            disabled={itemCount === 0}
-                            className="rounded-lg bg-slate-700 ring-1 ring-slate-600 px-5 py-3 text-sm font-semibold text-white hover:bg-slate-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                        >
-                            Nieuwe bestelling
-                        </button>
                     </div>
-                </div>
+                </>
             )}
         </AppLayout>
     );
