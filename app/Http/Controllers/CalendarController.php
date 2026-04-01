@@ -53,7 +53,7 @@ class CalendarController extends Controller
 
     private function trainingItems(Carbon $start, Carbon $end, $memberIds): array
     {
-        $schedules = TrainingSchedule::with('trainingGroup.members')->get();
+        $schedules = TrainingSchedule::with('trainingGroup.members:id,first_name,last_name')->get();
         $items = [];
 
         // Fetch absences for all relevant members and dates in this range
@@ -80,13 +80,25 @@ class CalendarController extends Controller
 
             while ($date->lte($end)) {
                 $groupMemberIds = $schedule->trainingGroup->members->pluck('id');
-                $participating = $memberIds->intersect($groupMemberIds)->isNotEmpty();
+                $participatingMemberIds = $memberIds->intersect($groupMemberIds);
+
+                $participatingMembers = $schedule->trainingGroup->members
+                    ->whereIn('id', $participatingMemberIds)
+                    ->map(fn ($m) => ['id' => $m->id, 'first_name' => $m->first_name])
+                    ->values()
+                    ->all();
 
                 // Find absentees for this schedule/date
                 $absenceKey = $schedule->id.'|'.$date->toDateString();
-                $absentMemberIds = isset($absences[$absenceKey])
+                $absentIds = isset($absences[$absenceKey])
                     ? collect($absences[$absenceKey])->pluck('member_id')->all()
                     : [];
+
+                $absentMembers = $schedule->trainingGroup->members
+                    ->whereIn('id', $absentIds)
+                    ->map(fn ($m) => ['id' => $m->id, 'first_name' => $m->first_name])
+                    ->values()
+                    ->all();
 
                 $items[] = [
                     'type' => 'training',
@@ -95,9 +107,10 @@ class CalendarController extends Controller
                     'start_time' => $schedule->start_time,
                     'end_time' => $schedule->end_time,
                     'location' => $schedule->trainingGroup->location,
-                    'participating' => $participating,
+                    'participating' => $participatingMemberIds->isNotEmpty(),
+                    'participating_members' => $participatingMembers,
                     'training_schedule_id' => $schedule->id,
-                    'absent_member_ids' => $absentMemberIds,
+                    'absent_members' => $absentMembers,
                 ];
 
                 $date = $date->copy()->addWeek();

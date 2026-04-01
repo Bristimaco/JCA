@@ -133,7 +133,11 @@ export default function Calendar({ items, startDate, myMemberIds }) {
                                     <div className="flex-1 overflow-y-auto space-y-0.5 min-h-0 scrollbar-thin">
                                         {day.items.map((item, i) => {
                                             const style = TYPE_STYLES[item.type];
-                                            const isAbsent = item.type === 'training' && item.absent_member_ids && myMemberIds.some(id => item.absent_member_ids.includes(id));
+                                            const absentIds = item.absent_members ? item.absent_members.map(m => m.id) : [];
+                                            const participatingMembers = item.participating_members || [];
+                                            const absentCount = participatingMembers.filter(m => absentIds.includes(m.id)).length;
+                                            const allAbsent = participatingMembers.length > 0 && absentCount === participatingMembers.length;
+                                            const someAbsent = absentCount > 0 && !allAbsent;
                                             const canReportAbsence = item.type === 'training' && item.participating && item.date >= todayStr;
                                             return (
                                                 <div
@@ -148,17 +152,27 @@ export default function Calendar({ items, startDate, myMemberIds }) {
                                                         <span className={`text-[10px] font-semibold ${style.text} truncate flex-1`}>
                                                             {item.name}
                                                         </span>
-                                                        {isAbsent && (
+                                                        {allAbsent && (
                                                             <span className="shrink-0 inline-flex items-center rounded bg-red-900/60 px-1 py-px text-[8px] font-bold text-red-400">
                                                                 ✗
                                                             </span>
                                                         )}
-                                                        {!isAbsent && item.participating && (
+                                                        {someAbsent && (
+                                                            <span className="shrink-0 inline-flex items-center rounded bg-amber-900/60 px-1 py-px text-[8px] font-bold text-amber-400">
+                                                                {absentCount}/{participatingMembers.length}
+                                                            </span>
+                                                        )}
+                                                        {!allAbsent && !someAbsent && item.participating && (
                                                             <span className="shrink-0 inline-flex items-center rounded bg-emerald-900/60 px-1 py-px text-[8px] font-bold text-emerald-400">
                                                                 ✓
                                                             </span>
                                                         )}
                                                     </div>
+                                                    {participatingMembers.length > 0 && (
+                                                        <span className="text-[9px] text-slate-400 truncate block">
+                                                            {participatingMembers.map(m => m.first_name).join(', ')}
+                                                        </span>
+                                                    )}
                                                     {item.start_time && (
                                                         <span className="text-[9px] text-slate-500">
                                                             {item.start_time}{item.end_time ? `–${item.end_time}` : ''}
@@ -190,6 +204,10 @@ export default function Calendar({ items, startDate, myMemberIds }) {
                         <span className="text-xs text-slate-400">Deelname</span>
                     </div>
                     <div className="flex items-center gap-1.5">
+                        <span className="inline-flex items-center rounded bg-amber-900/60 px-1 py-px text-[8px] font-bold text-amber-400">1/2</span>
+                        <span className="text-xs text-slate-400">Deels afwezig</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
                         <span className="inline-flex items-center rounded bg-red-900/60 px-1 py-px text-[8px] font-bold text-red-400">✗</span>
                         <span className="text-xs text-slate-400">Afwezig gemeld</span>
                     </div>
@@ -197,87 +215,122 @@ export default function Calendar({ items, startDate, myMemberIds }) {
             </div>
 
             {/* Absence modal */}
-            {absenceModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={() => setAbsenceModal(null)}>
-                    <div className="bg-slate-900 rounded-xl ring-1 ring-slate-700 p-6 w-full max-w-sm shadow-2xl" onClick={e => e.stopPropagation()}>
-                        {(() => {
-                            const isAlreadyAbsent = absenceModal.absent_member_ids && myMemberIds.some(id => absenceModal.absent_member_ids.includes(id));
-                            return (
-                                <>
-                                    <h3 className="text-lg font-bold text-white mb-1">{absenceModal.name}</h3>
-                                    <p className="text-sm text-slate-400 mb-4">
-                                        {absenceModal.date} · {absenceModal.start_time}{absenceModal.end_time ? `–${absenceModal.end_time}` : ''}
-                                    </p>
+            {absenceModal && (() => {
+                const participatingMembers = absenceModal.participating_members || [];
+                const absentIds = (absenceModal.absent_members || []).map(m => m.id);
+                const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
 
-                                    {isAlreadyAbsent ? (
-                                        <>
-                                            <p className="text-sm text-red-400 mb-4">Je hebt je afwezig gemeld voor deze training.</p>
-                                            <div className="flex gap-3">
-                                                <button
-                                                    disabled={absenceSubmitting}
-                                                    onClick={() => {
-                                                        setAbsenceSubmitting(true);
-                                                        fetch('/training-absences', {
-                                                            method: 'DELETE',
-                                                            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content },
-                                                            body: JSON.stringify({ training_schedule_id: absenceModal.training_schedule_id, date: absenceModal.date }),
-                                                        }).then(() => {
-                                                            setAbsenceSubmitting(false);
-                                                            setAbsenceModal(null);
-                                                            router.reload();
-                                                        }).catch(() => setAbsenceSubmitting(false));
-                                                    }}
-                                                    className="flex-1 rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600 disabled:opacity-50"
-                                                >
-                                                    Afwezigheid annuleren
-                                                </button>
-                                                <button onClick={() => setAbsenceModal(null)} className="rounded-lg bg-slate-800 px-4 py-2 text-sm font-medium text-slate-300 hover:bg-slate-700">
-                                                    Sluiten
-                                                </button>
-                                            </div>
-                                        </>
-                                    ) : (
+                const submitAbsence = (memberId) => {
+                    setAbsenceSubmitting(true);
+                    fetch('/training-absences', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken },
+                        body: JSON.stringify({ member_id: memberId, training_schedule_id: absenceModal.training_schedule_id, date: absenceModal.date, reason: absenceReason || null }),
+                    }).then(() => {
+                        setAbsenceSubmitting(false);
+                        router.reload();
+                    }).catch(() => setAbsenceSubmitting(false));
+                };
+
+                const cancelAbsence = (memberId) => {
+                    setAbsenceSubmitting(true);
+                    fetch('/training-absences', {
+                        method: 'DELETE',
+                        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken },
+                        body: JSON.stringify({ member_id: memberId, training_schedule_id: absenceModal.training_schedule_id, date: absenceModal.date }),
+                    }).then(() => {
+                        setAbsenceSubmitting(false);
+                        router.reload();
+                    }).catch(() => setAbsenceSubmitting(false));
+                };
+
+                return (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={() => setAbsenceModal(null)}>
+                        <div className="bg-slate-900 rounded-xl ring-1 ring-slate-700 p-6 w-full max-w-sm shadow-2xl" onClick={e => e.stopPropagation()}>
+                            <h3 className="text-lg font-bold text-white mb-1">{absenceModal.name}</h3>
+                            <p className="text-sm text-slate-400 mb-4">
+                                {absenceModal.date} · {absenceModal.start_time}{absenceModal.end_time ? `–${absenceModal.end_time}` : ''}
+                            </p>
+
+                            {participatingMembers.length === 0 && (
+                                <p className="text-sm text-slate-500 mb-4">Geen van je leden neemt deel aan deze training.</p>
+                            )}
+
+                            {participatingMembers.length === 1 && (() => {
+                                const member = participatingMembers[0];
+                                const isAbsent = absentIds.includes(member.id);
+                                return isAbsent ? (
+                                    <>
+                                        <p className="text-sm text-red-400 mb-4">{member.first_name} is afwezig gemeld voor deze training.</p>
+                                        <div className="flex gap-3">
+                                            <button disabled={absenceSubmitting} onClick={() => cancelAbsence(member.id)}
+                                                className="flex-1 rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600 disabled:opacity-50"
+                                            >Afwezigheid annuleren</button>
+                                            <button onClick={() => setAbsenceModal(null)} className="rounded-lg bg-slate-800 px-4 py-2 text-sm font-medium text-slate-300 hover:bg-slate-700">Sluiten</button>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        <label className="block text-sm font-medium text-slate-300 mb-1">Reden (optioneel)</label>
+                                        <input type="text" value={absenceReason} onChange={e => setAbsenceReason(e.target.value)} maxLength={255}
+                                            placeholder="Bijv. ziek, vakantie..." className="w-full rounded-md border border-slate-600 bg-slate-800 text-white text-sm py-2 px-3 mb-4 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500" />
+                                        <div className="flex gap-3">
+                                            <button disabled={absenceSubmitting} onClick={() => submitAbsence(member.id)}
+                                                className="flex-1 rounded-lg bg-red-700 px-4 py-2 text-sm font-semibold text-white hover:bg-red-600 disabled:opacity-50"
+                                            >Afwezig melden</button>
+                                            <button onClick={() => setAbsenceModal(null)} className="rounded-lg bg-slate-800 px-4 py-2 text-sm font-medium text-slate-300 hover:bg-slate-700">Annuleren</button>
+                                        </div>
+                                    </>
+                                );
+                            })()}
+
+                            {participatingMembers.length > 1 && (
+                                <>
+                                    <div className="space-y-2 mb-4">
+                                        {participatingMembers.map(member => {
+                                            const isAbsent = absentIds.includes(member.id);
+                                            return (
+                                                <div key={member.id} className={`flex items-center justify-between rounded-lg p-3 ${isAbsent ? 'bg-red-900/20 ring-1 ring-red-800/40' : 'bg-slate-800/50 ring-1 ring-slate-700/40'}`}>
+                                                    <div className="flex items-center gap-2">
+                                                        <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${isAbsent ? 'bg-red-900/40 text-red-400' : 'bg-emerald-900/40 text-emerald-400'}`}>
+                                                            {isAbsent ? '✗' : '✓'}
+                                                        </div>
+                                                        <span className="text-sm font-medium text-white">{member.first_name}</span>
+                                                        {isAbsent && <span className="text-[10px] text-red-400 font-semibold">Afwezig</span>}
+                                                    </div>
+                                                    <button
+                                                        disabled={absenceSubmitting}
+                                                        onClick={() => isAbsent ? cancelAbsence(member.id) : submitAbsence(member.id)}
+                                                        className={`rounded-lg px-3 py-1.5 text-xs font-semibold disabled:opacity-50 ${
+                                                            isAbsent
+                                                                ? 'bg-emerald-700 text-white hover:bg-emerald-600'
+                                                                : 'bg-red-700 text-white hover:bg-red-600'
+                                                        }`}
+                                                    >
+                                                        {isAbsent ? 'Heractiveren' : 'Afwezig'}
+                                                    </button>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+
+                                    {participatingMembers.some(m => !absentIds.includes(m.id)) && (
                                         <>
                                             <label className="block text-sm font-medium text-slate-300 mb-1">Reden (optioneel)</label>
-                                            <input
-                                                type="text"
-                                                value={absenceReason}
-                                                onChange={e => setAbsenceReason(e.target.value)}
-                                                maxLength={255}
-                                                placeholder="Bijv. ziek, vakantie..."
-                                                className="w-full rounded-md border border-slate-600 bg-slate-800 text-white text-sm py-2 px-3 mb-4 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
-                                            />
-                                            <div className="flex gap-3">
-                                                <button
-                                                    disabled={absenceSubmitting}
-                                                    onClick={() => {
-                                                        setAbsenceSubmitting(true);
-                                                        fetch('/training-absences', {
-                                                            method: 'POST',
-                                                            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content },
-                                                            body: JSON.stringify({ training_schedule_id: absenceModal.training_schedule_id, date: absenceModal.date, reason: absenceReason || null }),
-                                                        }).then(() => {
-                                                            setAbsenceSubmitting(false);
-                                                            setAbsenceModal(null);
-                                                            router.reload();
-                                                        }).catch(() => setAbsenceSubmitting(false));
-                                                    }}
-                                                    className="flex-1 rounded-lg bg-red-700 px-4 py-2 text-sm font-semibold text-white hover:bg-red-600 disabled:opacity-50"
-                                                >
-                                                    Afwezig melden
-                                                </button>
-                                                <button onClick={() => setAbsenceModal(null)} className="rounded-lg bg-slate-800 px-4 py-2 text-sm font-medium text-slate-300 hover:bg-slate-700">
-                                                    Annuleren
-                                                </button>
-                                            </div>
+                                            <input type="text" value={absenceReason} onChange={e => setAbsenceReason(e.target.value)} maxLength={255}
+                                                placeholder="Bijv. ziek, vakantie..." className="w-full rounded-md border border-slate-600 bg-slate-800 text-white text-sm py-2 px-3 mb-3 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500" />
                                         </>
                                     )}
+
+                                    <button onClick={() => setAbsenceModal(null)} className="w-full rounded-lg bg-slate-800 px-4 py-2 text-sm font-medium text-slate-300 hover:bg-slate-700">
+                                        Sluiten
+                                    </button>
                                 </>
-                            );
-                        })()}
+                            )}
+                        </div>
                     </div>
-                </div>
-            )}
+                );
+            })()}
         </AppLayout>
     );
 }
