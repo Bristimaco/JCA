@@ -66,6 +66,7 @@ class AttendanceKioskController extends Controller
 
         $sessions = TrainingSession::with([
             'trainingSchedule.trainingGroup',
+            'trainingSchedule.trainingGroups',
             'trainingSchedule.trainer:id,name',
             'attendances.member:id,first_name,last_name',
         ])
@@ -75,7 +76,10 @@ class AttendanceKioskController extends Controller
             ->get()
             ->map(fn (TrainingSession $s) => [
                 'id' => $s->id,
-                'group_name' => $s->trainingSchedule->trainingGroup->name,
+                'group_name' => $s->trainingSchedule->is_extra
+                    ? $s->trainingSchedule->trainingGroups->pluck('name')->join(', ')
+                    : ($s->trainingSchedule->trainingGroup?->name ?? 'Onbekend'),
+                'is_extra' => $s->trainingSchedule->is_extra,
                 'day' => $s->trainingSchedule->day,
                 'start_time' => $s->trainingSchedule->start_time,
                 'end_time' => $s->trainingSchedule->end_time,
