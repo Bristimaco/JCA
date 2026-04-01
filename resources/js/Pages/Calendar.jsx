@@ -78,7 +78,7 @@ export default function Calendar({ items, startDate, myMemberIds }) {
     }, []);
 
     return (
-        <AppLayout>
+        <AppLayout fullWidth>
             <Head title="Kalender" />
 
             <div className="flex flex-col h-[calc(100vh-5rem)]">

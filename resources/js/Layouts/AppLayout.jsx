@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from 'react';
 import NotificationDropdown from '../Components/NotificationDropdown';
 import usePushSubscription from '../hooks/usePushSubscription';
 
-export default function AppLayout({ children }) {
+export default function AppLayout({ children, fullWidth = false }) {
     const { auth, club } = usePage().props;
     const logoutForm = useForm();
     const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -143,7 +143,7 @@ export default function AppLayout({ children }) {
                     </div>
                 </div>
             </nav>
-            <main className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+            <main className={`py-8 px-4 sm:px-6 lg:px-8 ${fullWidth ? '' : 'max-w-7xl mx-auto'}`}>
                 {children}
             </main>
         </div>
