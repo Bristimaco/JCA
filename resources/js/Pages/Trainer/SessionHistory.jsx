@@ -84,6 +84,23 @@ export default function SessionHistory({ sessions }) {
                                             )}
                                         </div>
 
+                                        {s.external_attendees && s.external_attendees.length > 0 && (
+                                            <div className="mt-3">
+                                                <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-2">Andere clubs ({s.external_attendees.length})</p>
+                                                <div className="grid gap-1">
+                                                    {s.external_attendees.map((a, i) => (
+                                                        <div key={i} className="flex items-center justify-between text-sm">
+                                                            <div className="flex items-center gap-2">
+                                                                <span className="text-purple-400">{a.name}</span>
+                                                                <span className="text-[10px] text-purple-600/70 bg-purple-900/20 px-1.5 py-0.5 rounded">{a.club_name}</span>
+                                                            </div>
+                                                            <span className="text-xs text-slate-500">{a.confirmed_at}</span>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+
                                         {s.absentees && s.absentees.length > 0 && (
                                             <div className="mt-3">
                                                 <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-2">Afwezig ({s.absentees.length})</p>

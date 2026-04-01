@@ -12,7 +12,7 @@ class AdminSessionHistoryController extends Controller
     public function __invoke(): Response
     {
         $sessions = TrainingSession::whereNotNull('closed_at')
-            ->with(['trainingSchedule.trainingGroup.members', 'trainingSchedule.trainer:id,name', 'attendances.member'])
+            ->with(['trainingSchedule.trainingGroup.members', 'trainingSchedule.trainer:id,name', 'attendances.member', 'externalAttendances.club'])
             ->orderByDesc('date')
             ->orderByDesc('closed_at')
             ->get()
@@ -38,8 +38,14 @@ class AdminSessionHistoryController extends Controller
                         'name' => $a->member?->fullName() ?? 'Verwijderd lid',
                         'confirmed_at' => $a->confirmed_at?->format('H:i'),
                     ])->values()->all(),
-                    'attendance_count' => $s->attendances->count(),
+                    'attendance_count' => $s->attendances->count() + $s->externalAttendances->count(),
                     'absentees' => $absentees,
+                    'external_attendees' => $s->externalAttendances->map(fn ($e) => [
+                        'name' => $e->name,
+                        'belt_color' => $e->belt_color,
+                        'club_name' => $e->club?->name ?? 'Onbekend',
+                        'confirmed_at' => $e->confirmed_at?->format('H:i'),
+                    ])->values()->all(),
                 ];
             });
 
