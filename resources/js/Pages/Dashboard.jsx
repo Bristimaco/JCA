@@ -46,6 +46,9 @@ const moduleIcons = {
     'Kalender': (
         <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5m-9-6h.008v.008H12v-.008zM12 15h.008v.008H12V15zm0 2.25h.008v.008H12v-.008zM9.75 15h.008v.008H9.75V15zm0 2.25h.008v.008H9.75v-.008zM7.5 15h.008v.008H7.5V15zm0 2.25h.008v.008H7.5v-.008zm6.75-4.5h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V15zm0 2.25h.008v.008h-.008v-.008zm2.25-4.5h.008v.008H16.5v-.008zm0 2.25h.008v.008H16.5V15z" /></svg>
     ),
+    'Extra Training': (
+        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4.5v15m7.5-7.5h-15" /></svg>
+    ),
 };
 
 const moduleColors = {
@@ -63,11 +66,13 @@ const moduleColors = {
     'Evenementen': 'from-orange-600 to-amber-700',
     'Evenementen Beheer': 'from-orange-700 to-red-700',
     'Kalender': 'from-sky-600 to-blue-700',
+    'Extra Training': 'from-orange-600 to-orange-700',
 };
 
 const modules = [
     { name: 'Mijn Leden', href: '/mijn-leden', roles: ['parent', 'member', 'admin', 'coach', 'barmedewerker'] },
     { name: 'Trainingsgroepen', href: '/trainer/training-groups', roles: ['coach'] },
+    { name: 'Extra Training', href: '/trainer/extra-training', roles: ['coach', 'admin'] },
     { name: 'Leden', href: '/admin/members', roles: ['admin'] },
     { name: 'Toernooien', href: '/admin/tournaments', roles: ['admin', 'coach'] },
     { name: 'Kassa', href: '/pos', roles: ['barmedewerker', 'admin'] },
@@ -512,14 +517,9 @@ function CoachTrainingGroups({ groups }) {
                         {todayGroups.length}
                     </span>
                 </h2>
-                <div className="flex items-center gap-3">
-                    <Link href="/trainer/extra-training" className="rounded-lg bg-orange-900/30 px-3 py-1.5 text-sm font-medium text-orange-400 hover:bg-orange-900/50 ring-1 ring-orange-700/30">
-                        + Extra training
-                    </Link>
-                    <Link href="/trainer/sessions" className="text-sm font-medium text-rose-400 hover:text-rose-300">
-                        Historiek →
-                    </Link>
-                </div>
+                <Link href="/trainer/sessions" className="text-sm font-medium text-rose-400 hover:text-rose-300">
+                    Historiek →
+                </Link>
             </div>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {todayGroups.map(g => (
