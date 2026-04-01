@@ -81,9 +81,9 @@ export default function Calendar({ items, startDate, myMemberIds }) {
         <AppLayout fullWidth>
             <Head title="Kalender" />
 
-            <div className="flex flex-col h-[calc(100vh-5rem)]">
+            <div className="flex flex-col flex-1 min-h-0">
                 {/* Header */}
-                <div className="flex items-center justify-between mb-3 shrink-0">
+                <div className="flex items-center justify-between mb-1 shrink-0">
                     <div>
                         <h1 className="text-2xl font-bold text-white">Kalender</h1>
                         <p className="text-sm text-slate-400">{formatDateRange(startDate)}</p>
@@ -136,7 +136,7 @@ export default function Calendar({ items, startDate, myMemberIds }) {
                 {/* Day headers */}
                 <div className="grid grid-cols-7 gap-px bg-slate-800 rounded-t-xl overflow-hidden shrink-0">
                     {DAY_LABELS.map((d) => (
-                        <div key={d} className="bg-slate-900 py-2 text-center text-xs font-semibold text-slate-400 uppercase tracking-wide">
+                        <div key={d} className="bg-slate-900 py-1 text-center text-xs font-semibold text-slate-400 uppercase tracking-wide">
                             {d}
                         </div>
                     ))}
@@ -154,7 +154,7 @@ export default function Calendar({ items, startDate, myMemberIds }) {
                                     <span className={`text-xs font-medium mb-1 shrink-0 ${isToday(day.date) ? 'text-rose-400 font-bold' : 'text-slate-500'}`}>
                                         {parseInt(day.date.slice(8))}
                                     </span>
-                                    <div className="flex-1 overflow-y-auto space-y-0.5 min-h-0 scrollbar-thin">
+                                    <div className="flex-1 overflow-y-auto space-y-px min-h-0 scrollbar-thin">
                                         {day.items.map((item, i) => {
                                             const style = TYPE_STYLES[item.type];
                                             const absentIds = item.absent_members ? item.absent_members.map(m => m.id) : [];
@@ -201,19 +201,17 @@ export default function Calendar({ items, startDate, myMemberIds }) {
                                                             </span>
                                                         )}
                                                     </div>
-                                                    {participatingMembers.length > 0 && (
-                                                        <span className="text-[9px] text-slate-400 truncate block">
-                                                            {participatingMembers.map(m => m.first_name).join(', ')}
-                                                        </span>
-                                                    )}
-                                                    {item.start_time && (
-                                                        <span className="text-[9px] text-slate-500">
-                                                            {item.start_time}{item.end_time ? `–${item.end_time}` : ''}
-                                                        </span>
-                                                    )}
-                                                    {item.time && !item.start_time && (
-                                                        <span className="text-[9px] text-slate-500">{item.time}</span>
-                                                    )}
+                                                    <div className="flex items-center gap-1 text-[9px] text-slate-500">
+                                                        {item.start_time && (
+                                                            <span>{item.start_time}{item.end_time ? `–${item.end_time}` : ''}</span>
+                                                        )}
+                                                        {item.time && !item.start_time && (
+                                                            <span>{item.time}</span>
+                                                        )}
+                                                        {participatingMembers.length > 0 && (
+                                                            <span className="text-slate-400 truncate">{participatingMembers.map(m => m.first_name).join(', ')}</span>
+                                                        )}
+                                                    </div>
                                                 </div>
                                             );
                                         })}

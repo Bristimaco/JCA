@@ -28,8 +28,8 @@ export default function AppLayout({ children, fullWidth = false }) {
     }, []);
 
     return (
-        <div className="min-h-screen bg-slate-950">
-            <nav className="sticky top-0 z-50 bg-slate-950/95 backdrop-blur-xl border-b border-slate-800/60 shadow-lg shadow-black/30">
+        <div className={`bg-slate-950 ${fullWidth ? 'h-screen overflow-hidden flex flex-col' : 'min-h-screen'}`}>
+            <nav className={`${fullWidth ? 'shrink-0' : 'sticky top-0'} z-50 bg-slate-950/95 backdrop-blur-xl border-b border-slate-800/60 shadow-lg shadow-black/30`}>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
                         <div className="flex items-center">
@@ -143,7 +143,7 @@ export default function AppLayout({ children, fullWidth = false }) {
                     </div>
                 </div>
             </nav>
-            <main className={`py-8 px-4 sm:px-6 lg:px-8 ${fullWidth ? '' : 'max-w-7xl mx-auto'}`}>
+            <main className={`px-4 sm:px-6 lg:px-8 ${fullWidth ? 'py-2 flex-1 min-h-0 flex flex-col' : 'py-8 max-w-7xl mx-auto'}`}>
                 {children}
             </main>
         </div>
