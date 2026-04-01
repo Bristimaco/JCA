@@ -31,6 +31,14 @@ export default function Session({ session, members }) {
         return () => clearTimeout(timer);
     }, [showExitModal, exitTimeLeft]);
 
+    // Auto-refresh every 10s to pick up new absences
+    useEffect(() => {
+        const interval = setInterval(() => {
+            router.reload({ only: ['members'], preserveScroll: true });
+        }, 10000);
+        return () => clearInterval(interval);
+    }, []);
+
     const handleExitSubmit = (e) => {
         e.preventDefault();
         exitForm.post('/attendance/exit-to-choice');

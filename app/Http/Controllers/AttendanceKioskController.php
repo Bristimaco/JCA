@@ -136,6 +136,15 @@ class AttendanceKioskController extends Controller
             return back()->withErrors(['session' => 'Trainingsmoment is niet meer open.']);
         }
 
+        $isAbsent = TrainingAbsence::where('training_schedule_id', $session->training_schedule_id)
+            ->where('date', $session->date->toDateString())
+            ->where('member_id', $memberId)
+            ->exists();
+
+        if ($isAbsent) {
+            return back()->withErrors(['member' => 'Dit lid heeft zich afwezig gemeld.']);
+        }
+
         $existing = TrainingAttendance::where('training_session_id', $session->id)
             ->where('member_id', $memberId)
             ->first();
