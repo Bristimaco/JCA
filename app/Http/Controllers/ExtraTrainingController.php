@@ -16,7 +16,7 @@ class ExtraTrainingController extends Controller
     {
         $groups = TrainingGroup::orderBy('name')->get(['id', 'name']);
 
-        $trainers = User::whereIn('role', ['admin', 'coach'])
+        $trainers = User::where('role', 'coach')
             ->where('is_active', true)
             ->orderBy('name')
             ->get(['id', 'name']);
