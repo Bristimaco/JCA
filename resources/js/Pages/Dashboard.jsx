@@ -431,8 +431,8 @@ function CoachTournaments({ tournaments }) {
 }
 
 function ActiveTrainingSessions({ sessions }) {
-    const handleToggle = (sessionId) => {
-        router.post(`/attendance/session/${sessionId}/toggle`, {}, { preserveScroll: true });
+    const handleToggle = (sessionId, memberId) => {
+        router.post(`/attendance/session/${sessionId}/toggle`, { member_id: memberId }, { preserveScroll: true });
     };
 
     return (
@@ -446,13 +446,14 @@ function ActiveTrainingSessions({ sessions }) {
             </div>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {sessions.map(s => (
-                    <div key={s.id} className="bg-slate-900 rounded-xl shadow-sm ring-1 ring-slate-800 border-t-2 border-t-emerald-600/60 overflow-hidden">
+                    <div key={`${s.session_id}-${s.member_id}`} className="bg-slate-900 rounded-xl shadow-sm ring-1 ring-slate-800 border-t-2 border-t-emerald-600/60 overflow-hidden">
                         <div className="p-4">
                             <p className="font-semibold text-white">{s.group_name}</p>
+                            <p className="text-sm text-emerald-400 mt-0.5">{s.member_name}</p>
                             <p className="text-sm text-slate-400 mt-1">{s.day} {s.start_time}{s.end_time ? `–${s.end_time}` : ''}</p>
                             {s.trainer_name && <p className="text-xs text-slate-500 mt-1">Trainer: {s.trainer_name}</p>}
                             <button
-                                onClick={() => handleToggle(s.id)}
+                                onClick={() => handleToggle(s.session_id, s.member_id)}
                                 className={`mt-3 w-full rounded-lg px-4 py-2.5 text-sm font-semibold transition-all ${s.attending
                                     ? 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-md'
                                     : 'bg-slate-800 text-slate-300 hover:bg-slate-700 ring-1 ring-slate-700'

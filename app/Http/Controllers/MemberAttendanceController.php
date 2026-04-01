@@ -19,7 +19,9 @@ class MemberAttendanceController extends Controller
 
         $groupMemberIds = $session->trainingSchedule->trainingGroup->members()->pluck('members.id');
 
-        $myMemberId = $memberIds->intersect($groupMemberIds)->first();
+        $myMemberId = $request->input('member_id')
+            ? $memberIds->intersect($groupMemberIds)->first(fn ($id) => $id == $request->input('member_id'))
+            : $memberIds->intersect($groupMemberIds)->first();
 
         if (! $myMemberId) {
             return back()->withErrors(['session' => 'Je bent geen lid van deze trainingsgroep.']);

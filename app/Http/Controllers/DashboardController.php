@@ -205,27 +205,31 @@ class DashboardController extends Controller
         // Load tournaments for the user's linked members
         $memberIds = $request->user()->members()->pluck('members.id');
 
-        // Active training sessions for the user's members
+        // Active training sessions for the user's members (one tile per member per session)
         if ($memberIds->isNotEmpty()) {
+            $members = $request->user()->members()->get(['members.id', 'members.first_name']);
             $props['activeTrainingSessions'] = TrainingSession::whereNull('closed_at')
                 ->whereNotNull('opened_at')
                 ->where('date', now()->toDateString())
                 ->whereHas('trainingSchedule.trainingGroup.members', fn ($q) => $q->whereIn('members.id', $memberIds))
-                ->with(['trainingSchedule.trainingGroup', 'trainingSchedule.trainer:id,name', 'attendances'])
+                ->with(['trainingSchedule.trainingGroup.members', 'trainingSchedule.trainer:id,name', 'attendances'])
                 ->get()
-                ->map(function (TrainingSession $s) use ($memberIds) {
-                    $attending = $s->attendances->whereIn('member_id', $memberIds)->isNotEmpty();
+                ->flatMap(function (TrainingSession $s) use ($members) {
+                    $groupMemberIds = $s->trainingSchedule->trainingGroup->members->pluck('id');
+                    $myMembers = $members->filter(fn ($m) => $groupMemberIds->contains($m->id));
 
-                    return [
-                        'id' => $s->id,
+                    return $myMembers->map(fn ($m) => [
+                        'session_id' => $s->id,
+                        'member_id' => $m->id,
+                        'member_name' => $m->first_name,
                         'group_name' => $s->trainingSchedule->trainingGroup->name,
                         'day' => $s->trainingSchedule->day,
                         'start_time' => $s->trainingSchedule->start_time,
                         'end_time' => $s->trainingSchedule->end_time,
                         'trainer_name' => $s->trainingSchedule->trainer?->name,
-                        'attending' => $attending,
-                    ];
-                });
+                        'attending' => $s->attendances->where('member_id', $m->id)->isNotEmpty(),
+                    ]);
+                })->values();
         }
 
         if ($memberIds->isNotEmpty()) {
