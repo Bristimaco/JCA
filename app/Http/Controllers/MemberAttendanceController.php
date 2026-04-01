@@ -12,7 +12,7 @@ class MemberAttendanceController extends Controller
 {
     public function toggle(Request $request, TrainingSession $session): RedirectResponse
     {
-        if (!$session->isOpen()) {
+        if (! $session->isOpen()) {
             return back()->withErrors(['session' => 'Dit trainingsmoment is niet meer open.']);
         }
 
@@ -21,10 +21,10 @@ class MemberAttendanceController extends Controller
         $groupMemberIds = $session->trainingSchedule->trainingGroup->members()->pluck('members.id');
 
         $myMemberId = $request->input('member_id')
-            ? $memberIds->intersect($groupMemberIds)->first(fn($id) => $id == $request->input('member_id'))
+            ? $memberIds->intersect($groupMemberIds)->first(fn ($id) => $id == $request->input('member_id'))
             : $memberIds->intersect($groupMemberIds)->first();
 
-        if (!$myMemberId) {
+        if (! $myMemberId) {
             return back()->withErrors(['session' => 'Je bent geen lid van deze trainingsgroep.']);
         }
 

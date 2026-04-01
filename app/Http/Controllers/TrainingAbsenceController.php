@@ -19,7 +19,7 @@ class TrainingAbsenceController extends Controller
         ]);
 
         $userMemberIds = $request->user()->members()->pluck('members.id');
-        if (!$userMemberIds->contains($validated['member_id'])) {
+        if (! $userMemberIds->contains($validated['member_id'])) {
             abort(403, 'Je hebt geen toegang tot dit lid.');
         }
 
@@ -53,7 +53,7 @@ class TrainingAbsenceController extends Controller
         ]);
 
         $userMemberIds = $request->user()->members()->pluck('members.id');
-        if (!$userMemberIds->contains($validated['member_id'])) {
+        if (! $userMemberIds->contains($validated['member_id'])) {
             abort(403, 'Je hebt geen toegang tot dit lid.');
         }
 

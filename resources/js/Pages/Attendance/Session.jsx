@@ -447,23 +447,24 @@ export default function Session({ session, members, clubs }) {
                                             type="button"
                                             onClick={() => {
                                                 if (clubForm.data.name) {
-                                                    const submittedName = clubForm.data.name;
-                                                    router.post(
-                                                        route('clubs.store'),
-                                                        clubForm.data,
-                                                        {
-                                                            preserveScroll: true,
-                                                            onSuccess: (page) => {
-                                                                const newClub = (page.props.clubs || []).find((c) => c.name === submittedName);
-                                                                if (newClub) {
-                                                                    setAvailableClubs(page.props.clubs || [...availableClubs, newClub]);
-                                                                    externalForm.setData('club_id', String(newClub.id));
+                                                    clubForm.post(route('clubs.store'), {
+                                                        preserveScroll: true,
+                                                        onSuccess: () => {
+                                                            router.reload({
+                                                                only: ['clubs'],
+                                                                preserveScroll: true,
+                                                                onSuccess: (page) => {
+                                                                    setAvailableClubs(page.props.clubs || []);
+                                                                    const created = (page.props.clubs || []).find((c) => c.name === clubForm.data.name);
+                                                                    if (created) {
+                                                                        externalForm.setData('club_id', String(created.id));
+                                                                    }
                                                                     clubForm.reset();
                                                                     setShowNewClubForm(false);
-                                                                }
-                                                            },
-                                                        }
-                                                    );
+                                                                },
+                                                            });
+                                                        },
+                                                    });
                                                 }
                                             }}
                                             disabled={clubForm.processing || !clubForm.data.name}

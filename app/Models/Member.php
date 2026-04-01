@@ -113,7 +113,7 @@ class Member extends Model
 
     public function fullName(): string
     {
-        return $this->first_name . ' ' . $this->last_name;
+        return $this->first_name.' '.$this->last_name;
     }
 
     public function isActive(): bool
