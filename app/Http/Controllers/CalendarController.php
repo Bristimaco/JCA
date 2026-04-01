@@ -90,15 +90,13 @@ class CalendarController extends Controller
 
                 // Find absentees for this schedule/date
                 $absenceKey = $schedule->id.'|'.$date->toDateString();
-                $absentIds = isset($absences[$absenceKey])
-                    ? collect($absences[$absenceKey])->pluck('member_id')->all()
+                $absentMembers = isset($absences[$absenceKey])
+                    ? collect($absences[$absenceKey])->map(fn ($a) => [
+                        'id' => $a->member_id,
+                        'first_name' => $schedule->trainingGroup->members->firstWhere('id', $a->member_id)?->first_name,
+                        'reason' => $a->reason,
+                    ])->values()->all()
                     : [];
-
-                $absentMembers = $schedule->trainingGroup->members
-                    ->whereIn('id', $absentIds)
-                    ->map(fn ($m) => ['id' => $m->id, 'first_name' => $m->first_name])
-                    ->values()
-                    ->all();
 
                 $items[] = [
                     'type' => 'training',

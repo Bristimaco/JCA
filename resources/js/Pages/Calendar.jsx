@@ -46,6 +46,7 @@ export default function Calendar({ items, startDate, myMemberIds }) {
     const [absenceModal, setAbsenceModal] = useState(null);
     const [absenceReason, setAbsenceReason] = useState('');
     const [absenceSubmitting, setAbsenceSubmitting] = useState(false);
+    const [localAbsentMap, setLocalAbsentMap] = useState({});
 
     const todayStr = toDateString(new Date());
 
@@ -217,22 +218,32 @@ export default function Calendar({ items, startDate, myMemberIds }) {
             {/* Absence modal */}
             {absenceModal && (() => {
                 const participatingMembers = absenceModal.participating_members || [];
-                const absentIds = (absenceModal.absent_members || []).map(m => m.id);
                 const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
 
+                const closeModal = () => {
+                    setAbsenceModal(null);
+                    router.reload();
+                };
+
                 const submitAbsence = (memberId) => {
+                    const reason = absenceReason || null;
+                    setLocalAbsentMap(prev => ({ ...prev, [memberId]: reason }));
                     setAbsenceSubmitting(true);
                     fetch('/training-absences', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken },
-                        body: JSON.stringify({ member_id: memberId, training_schedule_id: absenceModal.training_schedule_id, date: absenceModal.date, reason: absenceReason || null }),
+                        body: JSON.stringify({ member_id: memberId, training_schedule_id: absenceModal.training_schedule_id, date: absenceModal.date, reason }),
                     }).then(() => {
                         setAbsenceSubmitting(false);
-                        router.reload();
                     }).catch(() => setAbsenceSubmitting(false));
                 };
 
                 const cancelAbsence = (memberId) => {
+                    setLocalAbsentMap(prev => {
+                        const next = { ...prev };
+                        delete next[memberId];
+                        return next;
+                    });
                     setAbsenceSubmitting(true);
                     fetch('/training-absences', {
                         method: 'DELETE',
@@ -240,12 +251,11 @@ export default function Calendar({ items, startDate, myMemberIds }) {
                         body: JSON.stringify({ member_id: memberId, training_schedule_id: absenceModal.training_schedule_id, date: absenceModal.date }),
                     }).then(() => {
                         setAbsenceSubmitting(false);
-                        router.reload();
                     }).catch(() => setAbsenceSubmitting(false));
                 };
 
                 return (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={() => setAbsenceModal(null)}>
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={closeModal}>
                         <div className="bg-slate-900 rounded-xl ring-1 ring-slate-700 p-6 w-full max-w-sm shadow-2xl" onClick={e => e.stopPropagation()}>
                             <h3 className="text-lg font-bold text-white mb-1">{absenceModal.name}</h3>
                             <p className="text-sm text-slate-400 mb-4">
@@ -258,15 +268,18 @@ export default function Calendar({ items, startDate, myMemberIds }) {
 
                             {participatingMembers.length === 1 && (() => {
                                 const member = participatingMembers[0];
-                                const isAbsent = absentIds.includes(member.id);
+                                const isAbsent = member.id in localAbsentMap;
                                 return isAbsent ? (
                                     <>
-                                        <p className="text-sm text-red-400 mb-4">{member.first_name} is afwezig gemeld voor deze training.</p>
+                                        <p className="text-sm text-red-400 mb-4">
+                                            {member.first_name} is afwezig gemeld voor deze training.
+                                            {localAbsentMap[member.id] && <span className="block text-slate-400 italic mt-1">Reden: {localAbsentMap[member.id]}</span>}
+                                        </p>
                                         <div className="flex gap-3">
                                             <button disabled={absenceSubmitting} onClick={() => cancelAbsence(member.id)}
                                                 className="flex-1 rounded-lg bg-emerald-700 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600 disabled:opacity-50"
                                             >Afwezigheid annuleren</button>
-                                            <button onClick={() => setAbsenceModal(null)} className="rounded-lg bg-slate-800 px-4 py-2 text-sm font-medium text-slate-300 hover:bg-slate-700">Sluiten</button>
+                                            <button onClick={closeModal} className="rounded-lg bg-slate-800 px-4 py-2 text-sm font-medium text-slate-300 hover:bg-slate-700">Sluiten</button>
                                         </div>
                                     </>
                                 ) : (
@@ -278,7 +291,7 @@ export default function Calendar({ items, startDate, myMemberIds }) {
                                             <button disabled={absenceSubmitting} onClick={() => submitAbsence(member.id)}
                                                 className="flex-1 rounded-lg bg-red-700 px-4 py-2 text-sm font-semibold text-white hover:bg-red-600 disabled:opacity-50"
                                             >Afwezig melden</button>
-                                            <button onClick={() => setAbsenceModal(null)} className="rounded-lg bg-slate-800 px-4 py-2 text-sm font-medium text-slate-300 hover:bg-slate-700">Annuleren</button>
+                                            <button onClick={closeModal} className="rounded-lg bg-slate-800 px-4 py-2 text-sm font-medium text-slate-300 hover:bg-slate-700">Annuleren</button>
                                         </div>
                                     </>
                                 );
@@ -288,7 +301,7 @@ export default function Calendar({ items, startDate, myMemberIds }) {
                                 <>
                                     <div className="space-y-2 mb-4">
                                         {participatingMembers.map(member => {
-                                            const isAbsent = absentIds.includes(member.id);
+                                            const isAbsent = member.id in localAbsentMap;
                                             return (
                                                 <div key={member.id} className={`flex items-center justify-between rounded-lg p-3 ${isAbsent ? 'bg-red-900/20 ring-1 ring-red-800/40' : 'bg-slate-800/50 ring-1 ring-slate-700/40'}`}>
                                                     <div className="flex items-center gap-2">
@@ -296,6 +309,9 @@ export default function Calendar({ items, startDate, myMemberIds }) {
                                                             {isAbsent ? '✗' : '✓'}
                                                         </div>
                                                         <span className="text-sm font-medium text-white">{member.first_name}</span>
+                                                        {isAbsent && localAbsentMap[member.id] && (
+                                                            <span className="text-[10px] text-slate-400 italic">({localAbsentMap[member.id]})</span>
+                                                        )}
                                                         {isAbsent && <span className="text-[10px] text-red-400 font-semibold">Afwezig</span>}
                                                     </div>
                                                     <button
@@ -314,7 +330,7 @@ export default function Calendar({ items, startDate, myMemberIds }) {
                                         })}
                                     </div>
 
-                                    {participatingMembers.some(m => !absentIds.includes(m.id)) && (
+                                    {participatingMembers.some(m => !(m.id in localAbsentMap)) && (
                                         <>
                                             <label className="block text-sm font-medium text-slate-300 mb-1">Reden (optioneel)</label>
                                             <input type="text" value={absenceReason} onChange={e => setAbsenceReason(e.target.value)} maxLength={255}
@@ -322,7 +338,7 @@ export default function Calendar({ items, startDate, myMemberIds }) {
                                         </>
                                     )}
 
-                                    <button onClick={() => setAbsenceModal(null)} className="w-full rounded-lg bg-slate-800 px-4 py-2 text-sm font-medium text-slate-300 hover:bg-slate-700">
+                                    <button onClick={closeModal} className="w-full rounded-lg bg-slate-800 px-4 py-2 text-sm font-medium text-slate-300 hover:bg-slate-700">
                                         Sluiten
                                     </button>
                                 </>
