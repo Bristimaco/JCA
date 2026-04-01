@@ -68,7 +68,7 @@ export default function Session({ session, members, clubs }) {
 
     const handleToggle = (memberId) => {
         router.post(
-            route('attendance.session.toggle', { session: session.id, member: memberId }),
+            `/attendance/session/${session.id}/toggle/${memberId}`,
             {},
             { preserveScroll: true }
         );
@@ -80,7 +80,7 @@ export default function Session({ session, members, clubs }) {
         if (showNewClubForm && clubForm.data.name) {
             // Create new club first, then register external member
             router.post(
-                route('clubs.store'),
+                '/clubs',
                 clubForm.data,
                 {
                     preserveScroll: true,
@@ -92,7 +92,7 @@ export default function Session({ session, members, clubs }) {
                                 if (newClub) {
                                     // Register with the newly created club
                                     router.post(
-                                        route('attendance.session.external-member', { session: session.id }),
+                                        `/attendance/session/${session.id}/external-member`,
                                         {
                                             name: externalForm.data.name,
                                             belt_color: externalForm.data.belt_color,
@@ -114,7 +114,7 @@ export default function Session({ session, members, clubs }) {
         } else if (externalForm.data.club_id) {
             // Register with existing club
             router.post(
-                route('attendance.session.external-member', { session: session.id }),
+                `/attendance/session/${session.id}/external-member`,
                 {
                     name: externalForm.data.name,
                     belt_color: externalForm.data.belt_color,
@@ -447,7 +447,7 @@ export default function Session({ session, members, clubs }) {
                                             type="button"
                                             onClick={() => {
                                                 if (clubForm.data.name) {
-                                                    clubForm.post(route('clubs.store'), {
+                                                    clubForm.post('/clubs', {
                                                         preserveScroll: true,
                                                         onSuccess: () => {
                                                             router.reload({
