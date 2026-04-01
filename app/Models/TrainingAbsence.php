@@ -16,6 +16,10 @@ class TrainingAbsence extends Model
         'reason',
     ];
 
+    protected $casts = [
+        'date' => 'date',
+    ];
+
     public function member()
     {
         return $this->belongsTo(Member::class);
