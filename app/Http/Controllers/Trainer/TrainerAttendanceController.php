@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Trainer;
 
 use App\Http\Controllers\Controller;
+use App\Models\TrainingAbsence;
 use App\Models\TrainingSchedule;
 use App\Models\TrainingSession;
 use Illuminate\Http\RedirectResponse;
@@ -14,38 +15,50 @@ class TrainerAttendanceController extends Controller
 {
     public function history(Request $request): Response
     {
-        $sessions = TrainingSession::whereNotNull('closed_at')
+        $sessionModels = TrainingSession::whereNotNull('closed_at')
             ->whereHas('trainingSchedule', fn ($q) => $q->where('trainer_id', $request->user()->id))
             ->with(['trainingSchedule.trainingGroup.members', 'trainingSchedule.trainer:id,name', 'attendances.member'])
             ->orderByDesc('date')
             ->orderByDesc('closed_at')
-            ->get()
-            ->map(function (TrainingSession $s) {
-                $attendeeIds = $s->attendances->pluck('member_id')->all();
-                $absentees = $s->trainingSchedule->trainingGroup->members
-                    ->filter(fn ($m) => ! in_array($m->id, $attendeeIds))
-                    ->map(fn ($m) => ['name' => $m->fullName()])
-                    ->values()->all();
+            ->get();
 
-                return [
-                    'id' => $s->id,
-                    'date' => $s->date->toDateString(),
-                    'group_name' => $s->trainingSchedule->trainingGroup->name,
-                    'day' => $s->trainingSchedule->day,
-                    'start_time' => $s->trainingSchedule->start_time,
-                    'end_time' => $s->trainingSchedule->end_time,
-                    'trainer_name' => $s->trainingSchedule->trainer?->name,
-                    'remarks' => $s->remarks,
-                    'opened_at' => $s->opened_at?->format('H:i'),
-                    'closed_at' => $s->closed_at?->format('H:i'),
-                    'attendees' => $s->attendances->map(fn ($a) => [
-                        'name' => $a->member?->fullName() ?? 'Verwijderd lid',
-                        'confirmed_at' => $a->confirmed_at->format('H:i'),
-                    ])->values()->all(),
-                    'attendance_count' => $s->attendances->count(),
-                    'absentees' => $absentees,
-                ];
-            });
+        $absences = TrainingAbsence::whereIn('training_schedule_id', $sessionModels->pluck('training_schedule_id')->unique())
+            ->whereIn('date', $sessionModels->pluck('date')->map(fn ($d) => $d->toDateString())->unique())
+            ->get();
+
+        $sessions = $sessionModels->map(function (TrainingSession $s) use ($absences) {
+            $attendeeIds = $s->attendances->pluck('member_id')->all();
+            $notifiedIds = $absences
+                ->filter(fn ($a) => $a->training_schedule_id === $s->training_schedule_id && $a->date->toDateString() === $s->date->toDateString())
+                ->pluck('member_id')
+                ->all();
+            $absentees = $s->trainingSchedule->trainingGroup->members
+                ->filter(fn ($m) => ! in_array($m->id, $attendeeIds))
+                ->map(fn ($m) => [
+                    'name' => $m->fullName(),
+                    'notified' => in_array($m->id, $notifiedIds),
+                ])
+                ->values()->all();
+
+            return [
+                'id' => $s->id,
+                'date' => $s->date->toDateString(),
+                'group_name' => $s->trainingSchedule->trainingGroup->name,
+                'day' => $s->trainingSchedule->day,
+                'start_time' => $s->trainingSchedule->start_time,
+                'end_time' => $s->trainingSchedule->end_time,
+                'trainer_name' => $s->trainingSchedule->trainer?->name,
+                'remarks' => $s->remarks,
+                'opened_at' => $s->opened_at?->format('H:i'),
+                'closed_at' => $s->closed_at?->format('H:i'),
+                'attendees' => $s->attendances->map(fn ($a) => [
+                    'name' => $a->member?->fullName() ?? 'Verwijderd lid',
+                    'confirmed_at' => $a->confirmed_at->format('H:i'),
+                ])->values()->all(),
+                'attendance_count' => $s->attendances->count(),
+                'absentees' => $absentees,
+            ];
+        });
 
         return Inertia::render('Trainer/SessionHistory', [
             'sessions' => $sessions,

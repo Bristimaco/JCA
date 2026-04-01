@@ -93,10 +93,13 @@ function GroupTable({ group, threshold }) {
                                     </td>
                                     {group.sessions.map(s => {
                                         const attended = member.attended_session_ids.includes(s.id);
+                                        const notifiedAbsent = !attended && member.notified_absent_session_ids?.includes(s.id);
                                         return (
                                             <td key={s.id} className="px-1.5 py-2 text-center">
                                                 {attended ? (
                                                     <span className="text-emerald-400">✓</span>
+                                                ) : notifiedAbsent ? (
+                                                    <span className="text-amber-400/70" title="Afwezig (gemeld)">✕</span>
                                                 ) : (
                                                     <span className="text-red-400/50">✗</span>
                                                 )}

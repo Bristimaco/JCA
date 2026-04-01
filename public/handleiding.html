@@ -2433,6 +2433,15 @@
                 Wanneer je op &#8220;Start training&#8221; klikt, wordt er een <strong>trainingssessie</strong>
                 geopend. Vanaf dat moment kunnen leden hun aanwezigheid registreren via het kiosk-scherm, het
                 trainerdashboard of hun persoonlijk dashboard.
+                Tijdens een actieve sessie ziet de trainer op het dashboard ook een overzicht van afwezigen,
+                opgesplitst in twee categorie&#235;n:
+            </p>
+            <ul>
+                <li><span style="color:#f59e0b"><strong>⚠ Gemeld afwezig</strong></span> &#8212; leden die zich op
+                    voorhand hebben afgemeld via de kalender.</li>
+                <li><span style="color:#f87171"><strong>Afwezig</strong></span> &#8212; leden die nog niet zijn
+                    aangemeld en zich ook niet gemeld hebben (no-show).</li>
+            </ul>
             </p>
             <p>
                 Wanneer de training voorbij is, klik je op <strong>&#8220;Sluiten&#8221;</strong>. Er verschijnt een
@@ -2529,7 +2538,13 @@
                 <li><strong>Opmerkingen</strong> &#8212; eventuele notities die bij het sluiten zijn toegevoegd</li>
                 <li><strong>Aanwezigen</strong> &#8212; lijst van alle leden die aanwezig waren, met het tijdstip van
                     aanmelding</li>
-                <li><strong>Afwezigen</strong> &#8212; lijst van leden die niet aanwezig waren (rood gemarkeerd)</li>
+                <li><strong>Afwezigen</strong> &#8212; lijst van leden die niet aanwezig waren. Er wordt een
+                    onderscheid gemaakt:
+                    <ul>
+                        <li><span style="color:#f59e0b"><strong>Oranje (gemeld)</strong></span> &#8212; lid meldde zich op voorhand afwezig via de kalender.</li>
+                        <li><span style="color:#f87171"><strong>Rood</strong></span> &#8212; lid was afwezig zonder voorafgaande melding (no-show).</li>
+                    </ul>
+                </li>
             </ul>
 
             <h3 id="aanwezigheidsrapport">Aanwezigheidsrapport</h3>
@@ -2558,7 +2573,13 @@
             <ul>
                 <li><strong>Linkse kolom (vast)</strong> &#8212; de namen van alle leden in de groep</li>
                 <li><strong>Datumkolommen</strong> &#8212; elke kolom is een trainingssessie (datum in dd/mm formaat).
-                    Per cel zie je een &#10003; (aanwezig, groen) of &#10007; (afwezig, rood).</li>
+                    Per cel zie je:
+                    <ul>
+                        <li>&#10003; <span style="color:#34d399">groen</span> &#8212; aanwezig</li>
+                        <li>&#10007; <span style="color:#fbbf24">oranje</span> &#8212; afwezig (vooraf gemeld via kalender)</li>
+                        <li>&#10007; <span style="color:#f87171">rood</span> &#8212; afwezig zonder melding (no-show)</li>
+                    </ul>
+                </li>
                 <li><strong>Rechtse kolom (vast)</strong> &#8212; het <strong>aanwezigheidspercentage</strong> van elk
                     lid over de geselecteerde periode</li>
             </ul>
