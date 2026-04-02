@@ -29,6 +29,7 @@ use Illuminate\Support\Facades\Mail;
  * @property Carbon|null $email_verified_at
  * @property string $password
  * @property string|null $remember_token
+ * @property Carbon|null $last_active_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
@@ -53,6 +54,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'is_active' => 'boolean',
             'results_interest' => 'boolean',
             'notification_preference' => NotificationPreference::class,
+            'last_active_at' => 'datetime',
         ];
     }
 
@@ -109,6 +111,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function eventRegistrations(): HasMany
     {
         return $this->hasMany(EventRegistration::class);
+    }
+
+    public function loginLogs(): HasMany
+    {
+        return $this->hasMany(LoginLog::class);
     }
 
     public function sendPasswordResetNotification($token): void
