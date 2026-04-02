@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Trainer;
 
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Models\Member;
 use App\Models\TrainingGroup;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -13,9 +15,14 @@ class TrainerTrainingGroupController extends Controller
 {
     public function index(Request $request): Response
     {
-        $userId = $request->user()->id;
+        $user = $request->user();
+        $isAdmin = $user->isAdmin();
 
-        $groups = TrainingGroup::whereHas('schedules', fn ($q) => $q->where('trainer_id', $userId))
+        $query = $isAdmin
+            ? TrainingGroup::query()
+            : TrainingGroup::whereHas('schedules', fn ($q) => $q->where('trainer_id', $user->id));
+
+        $groups = $query
             ->with(['members:id,first_name,last_name', 'schedules.trainer:id,name'])
             ->orderBy('name')
             ->get()
@@ -24,11 +31,14 @@ class TrainerTrainingGroupController extends Controller
                 'name' => $g->name,
                 'description' => $g->description,
                 'membership_fee' => $g->membership_fee,
+                'membership_fee_discount' => $g->membership_fee_discount,
                 'location' => $g->location,
+                'allow_external_members' => $g->allow_external_members,
                 'schedules' => $g->schedules->map(fn ($s) => [
                     'day' => $s->day,
                     'start_time' => $s->start_time,
                     'end_time' => $s->end_time,
+                    'trainer_id' => $s->trainer_id,
                     'trainer_name' => $s->trainer?->name,
                 ])->values()->all(),
                 'member_ids' => $g->members->pluck('id')->values()->all(),
@@ -45,9 +55,23 @@ class TrainerTrainingGroupController extends Controller
                 'name' => $m->fullName(),
             ]);
 
-        return Inertia::render('Trainer/TrainingGroups', [
+        $props = [
             'groups' => $groups,
             'allMembers' => $allMembers,
-        ]);
+            'isAdmin' => $isAdmin,
+        ];
+
+        if ($isAdmin) {
+            $props['trainers'] = User::where('role', UserRole::Coach)
+                ->where('is_active', true)
+                ->orderBy('name')
+                ->get(['id', 'name'])
+                ->map(fn (User $u) => [
+                    'id' => $u->id,
+                    'name' => $u->name,
+                ]);
+        }
+
+        return Inertia::render('Trainer/TrainingGroups', $props);
     }
 }

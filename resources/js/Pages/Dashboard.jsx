@@ -98,7 +98,7 @@ const moduleGroups = [
     {
         title: 'Trainingen',
         modules: [
-            { name: 'Trainingsgroepen', href: '/trainer/training-groups', roles: ['coach'] },
+            { name: 'Trainingsgroepen', href: '/trainer/training-groups', roles: ['coach', 'admin'] },
             { name: 'Extra Training', href: '/trainer/extra-training', roles: ['coach', 'admin'] },
         ],
     },

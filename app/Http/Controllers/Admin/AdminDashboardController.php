@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Models\AgeCategory;
 use App\Models\ClubSettings;
 use App\Models\Member;
-use App\Models\TrainingGroup;
 use App\Models\User;
 use App\Models\WeightCategory;
 use Illuminate\Http\Request;
@@ -61,37 +60,6 @@ class AdminDashboardController extends Controller
                 'membership_renewal_date' => $m->membership_renewal_date->toDateString(),
             ]);
 
-        $trainingGroups = TrainingGroup::with(['members:id,first_name,last_name', 'schedules.trainer:id,name'])
-            ->orderBy('name')
-            ->get()
-            ->map(fn (TrainingGroup $g) => [
-                'id' => $g->id,
-                'name' => $g->name,
-                'description' => $g->description,
-                'membership_fee' => $g->membership_fee,
-                'membership_fee_discount' => $g->membership_fee_discount,
-                'schedules' => $g->schedules->map(fn ($s) => [
-                    'day' => $s->day,
-                    'start_time' => $s->start_time,
-                    'end_time' => $s->end_time,
-                    'trainer_id' => $s->trainer_id,
-                    'trainer_name' => $s->trainer?->name,
-                ])->values()->all(),
-                'location' => $g->location,
-                'allow_external_members' => $g->allow_external_members,
-                'member_ids' => $g->members->pluck('id')->values()->all(),
-                'member_count' => $g->members->count(),
-            ]);
-
-        $trainers = User::where('role', UserRole::Coach)
-            ->where('is_active', true)
-            ->orderBy('name')
-            ->get(['id', 'name'])
-            ->map(fn (User $u) => [
-                'id' => $u->id,
-                'name' => $u->name,
-            ]);
-
         return Inertia::render('Admin/Dashboard', [
             'pendingUsers' => $pendingUsers,
             'users' => $users,
@@ -102,8 +70,6 @@ class AdminDashboardController extends Controller
             'clubSettings' => ClubSettings::current(),
             'renewalDueCount' => $renewalDueCount,
             'renewalDueMembers' => $renewalDueMembers,
-            'trainingGroups' => $trainingGroups,
-            'trainers' => $trainers,
         ]);
     }
 }

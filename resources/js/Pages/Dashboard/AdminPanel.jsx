@@ -3,10 +3,9 @@ import { useState } from 'react';
 import { Link } from '@inertiajs/react';
 import CollapsibleSection from '../../Components/CollapsibleSection';
 import AgeCategoriesSection from './AgeCategoriesSection';
-import TrainingGroupsSection from './TrainingGroupsSection';
 import WeightCategoriesSection from './WeightCategoriesSection';
 
-export default function AdminPanel({ pendingUsers, users, roles, ageCategories, weightCategories, allMembers, clubSettings, renewalDueCount, renewalDueMembers, trainingGroups, trainers }) {
+export default function AdminPanel({ pendingUsers, users, roles, ageCategories, weightCategories, allMembers, clubSettings, renewalDueCount, renewalDueMembers }) {
     const urlParams = new URLSearchParams(window.location.search);
     const [renewalListOpen, setRenewalListOpen] = useState(urlParams.get('renewal') === 'open');
 
@@ -77,10 +76,6 @@ export default function AdminPanel({ pendingUsers, users, roles, ageCategories, 
 
             <CollapsibleSection title="Gewichtscategorieën" count={weightCategories.length}>
                 <WeightCategoriesSection ageCategories={ageCategories} weightCategories={weightCategories} />
-            </CollapsibleSection>
-
-            <CollapsibleSection title="Trainingsgroepen" count={trainingGroups.length}>
-                <TrainingGroupsSection trainingGroups={trainingGroups} trainers={trainers} allMembers={allMembers} />
             </CollapsibleSection>
 
             <CollapsibleSection title="Trainingshistoriek">
