@@ -86,9 +86,9 @@ class ProspectController extends Controller
                 'website' => $prospect->website,
                 'cbe_data' => $prospect->cbe_data,
                 'cbe_fetched_at' => $prospect->cbe_fetched_at?->toDateTimeString(),
-                'notes_field' => $prospect->notes,
+                'notes_field' => $prospect->getAttributeValue('notes'),
                 'created_at' => $prospect->created_at->toDateString(),
-                'notes' => $prospect->notes->map(fn ($n) => [
+                'notes' => $prospect->getRelation('notes')->map(fn ($n) => [
                     'id' => $n->id,
                     'content' => $n->content,
                     'creator_name' => $n->creator?->name ?? 'Onbekend',
