@@ -2293,13 +2293,13 @@
                 en selecteer een .xlsx-bestand. Het bestand moet BTW-nummers bevatten in de eerste kolom (één per rij).
             </p>
             <p>
-                Het systeem verwerkt elke rij automatisch:
+                Het systeem verwerkt elke rij automatisch <strong>op de achtergrond</strong>:
             </p>
             <ul>
                 <li>Niet-cijfer tekens (letters, punten, spaties) worden verwijderd om het ondernemingsnummer te bepalen</li>
                 <li>Per nummer wordt de KBO opgezocht via de CBE API</li>
                 <li>Bestaande prospecten (zelfde ondernemingsnummer) worden automatisch bijgewerkt met de nieuwste KBO-gegevens</li>
-                <li>Na afloop krijg je een samenvatting: hoeveel prospecten geïmporteerd, bijgewerkt of mislukt</li>
+                <li>Na het uploaden krijg je meteen een melding hoeveel prospecten worden verwerkt. Vernieuw de pagina na enkele ogenblikken om de resultaten te zien.</li>
             </ul>
 
             <h4>Prospect detailpagina</h4>

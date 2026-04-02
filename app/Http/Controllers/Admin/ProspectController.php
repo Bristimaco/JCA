@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\ImportProspect;
 use App\Models\Prospect;
 use App\Models\Sponsor;
 use App\Services\CbeApiService;
@@ -133,16 +134,14 @@ class ProspectController extends Controller
         return back()->with('status', 'KBO gegevens bijgewerkt.');
     }
 
-    public function import(Request $request, CbeApiService $service): RedirectResponse
+    public function import(Request $request): RedirectResponse
     {
         $request->validate([
             'file' => ['required', 'file', 'mimes:xlsx'],
         ]);
 
         $rows = Excel::toArray(null, $request->file('file'));
-        $imported = 0;
-        $updated = 0;
-        $failed = 0;
+        $dispatched = 0;
 
         foreach ($rows[0] ?? [] as $row) {
             $raw = $row[0] ?? null;
@@ -152,50 +151,16 @@ class ProspectController extends Controller
 
             $digits = preg_replace('/\D/', '', (string) $raw);
             if (strlen($digits) < 9 || strlen($digits) > 10) {
-                $failed++;
-
                 continue;
             }
 
             $digits = str_pad($digits, 10, '0', STR_PAD_LEFT);
 
-            $result = $service->lookupByNumber($digits);
-
-            if (! $result['success']) {
-                $failed++;
-
-                continue;
-            }
-
-            $data = $result['data'];
-
-            $fields = [
-                'company_name' => $data['company_name'] ?? 'Onbekend',
-                'address_street' => $data['address_street'] ?? null,
-                'address_city' => $data['address_city'] ?? null,
-                'address_postal_code' => $data['address_postal_code'] ?? null,
-                'legal_form' => $data['legal_form'] ?? null,
-                'phone' => $data['phone'] ?? null,
-                'email' => $data['email'] ?? null,
-                'website' => $data['website'] ?? null,
-                'latitude' => $data['latitude'] ?? null,
-                'longitude' => $data['longitude'] ?? null,
-                'cbe_data' => $data,
-                'cbe_fetched_at' => now(),
-            ];
-
-            $existing = Prospect::where('vat_number', $digits)->first();
-
-            if ($existing) {
-                $existing->update($fields);
-                $updated++;
-            } else {
-                Prospect::create(array_merge(['vat_number' => $data['vat_number'] ?? $digits], $fields));
-                $imported++;
-            }
+            ImportProspect::dispatch($digits);
+            $dispatched++;
         }
 
-        return back()->with('status', "{$imported} prospecten geïmporteerd, {$updated} bijgewerkt, {$failed} mislukt.");
+        return back()->with('status', "{$dispatched} prospecten worden op de achtergrond verwerkt.");
     }
 
     public function destroy(Prospect $prospect): RedirectResponse
