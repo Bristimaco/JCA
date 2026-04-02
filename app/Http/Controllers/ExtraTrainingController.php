@@ -17,7 +17,7 @@ class ExtraTrainingController extends Controller
     public function index(Request $request): Response
     {
         $user = Auth::user();
-        $isAdmin = $user->role === UserRole::ADMIN;
+        $isAdmin = $user->role === UserRole::Admin;
 
         $query = TrainingSchedule::where('is_extra', true)
             ->with(['trainingGroups:id,name', 'trainer:id,name']);
