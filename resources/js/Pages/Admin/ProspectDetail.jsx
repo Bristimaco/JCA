@@ -88,18 +88,33 @@ export default function ProspectDetail({ prospect }) {
             {/* Company Info */}
             <div className="bg-slate-900 rounded-xl ring-1 ring-slate-800 p-6 mb-6">
                 <h2 className="text-lg font-semibold text-white mb-4">Bedrijfsgegevens</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <InfoItem label="Bedrijfsnaam" value={prospect.company_name} />
-                    <InfoItem label="Ondernemingsnummer" value={cbe?.cbe_number_formatted || formatVat(prospect.vat_number)} />
-                    <InfoItem label="Rechtsvorm" value={prospect.legal_form} />
-                    <InfoItem label="Adres" value={cbe?.full_address || [prospect.address_street, prospect.address_postal_code, prospect.address_city].filter(Boolean).join(', ')} />
-                    <InfoItem label="Telefoon" value={prospect.phone} />
-                    <InfoItem label="E-mail" value={prospect.email} />
-                    <InfoItem label="Website" value={prospect.website} link />
-                    {cbe?.status && <InfoItem label="Status" value={cbe.status} />}
-                    {cbe?.juridical_situation && <InfoItem label="Juridische situatie" value={cbe.juridical_situation} />}
-                    {cbe?.type && <InfoItem label="Type" value={cbe.type} />}
-                    {cbe?.start_date && <InfoItem label="Oprichtingsdatum" value={cbe.start_date} />}
+                <div className="flex flex-col lg:flex-row gap-6">
+                    <div className="flex-1">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <InfoItem label="Bedrijfsnaam" value={prospect.company_name} />
+                            <InfoItem label="Ondernemingsnummer" value={cbe?.cbe_number_formatted || formatVat(prospect.vat_number)} />
+                            <InfoItem label="Rechtsvorm" value={prospect.legal_form} />
+                            <InfoItem label="Adres" value={cbe?.full_address || [prospect.address_street, prospect.address_postal_code, prospect.address_city].filter(Boolean).join(', ')} />
+                            <InfoItem label="Telefoon" value={prospect.phone} />
+                            <InfoItem label="E-mail" value={prospect.email} />
+                            <InfoItem label="Website" value={prospect.website} link />
+                            {cbe?.status && <InfoItem label="Status" value={cbe.status} />}
+                            {cbe?.juridical_situation && <InfoItem label="Juridische situatie" value={cbe.juridical_situation} />}
+                            {cbe?.type && <InfoItem label="Type" value={cbe.type} />}
+                            {cbe?.start_date && <InfoItem label="Oprichtingsdatum" value={cbe.start_date} />}
+                        </div>
+                    </div>
+                    {prospect.latitude && prospect.longitude && (
+                        <div className="lg:w-80 shrink-0 rounded-lg overflow-hidden ring-1 ring-slate-700">
+                            <iframe
+                                title="Locatie"
+                                width="100%"
+                                height="100%"
+                                style={{ minHeight: '220px' }}
+                                src={`https://www.openstreetmap.org/export/embed.html?bbox=${prospect.longitude - 0.01},${prospect.latitude - 0.01},${parseFloat(prospect.longitude) + 0.01},${parseFloat(prospect.latitude) + 0.01}&layer=mapnik&marker=${prospect.latitude},${prospect.longitude}`}
+                            />
+                        </div>
+                    )}
                 </div>
 
                 {cbe?.nace_activities && cbe.nace_activities.length > 0 && (
@@ -130,18 +145,6 @@ export default function ProspectDetail({ prospect }) {
                     </div>
                 )}
             </div>
-
-            {/* Map */}
-            {prospect.latitude && prospect.longitude && (
-                <div className="bg-slate-900 rounded-xl ring-1 ring-slate-800 overflow-hidden mb-6">
-                    <iframe
-                        title="Locatie"
-                        width="100%"
-                        height="220"
-                        src={`https://www.openstreetmap.org/export/embed.html?bbox=${prospect.longitude - 0.01},${prospect.latitude - 0.01},${parseFloat(prospect.longitude) + 0.01},${parseFloat(prospect.latitude) + 0.01}&layer=mapnik&marker=${prospect.latitude},${prospect.longitude}`}
-                    />
-                </div>
-            )}
 
             {/* Communication Log */}
             <div className="bg-slate-900 rounded-xl ring-1 ring-slate-800 p-6">

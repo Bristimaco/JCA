@@ -6,10 +6,15 @@ use App\Models\Prospect;
 use App\Services\CbeApiService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\Log;
 
 class ImportProspect implements ShouldQueue
 {
     use Queueable;
+
+    public int $tries = 3;
+
+    public int $backoff = 30;
 
     public function __construct(
         public string $vatNumber,
@@ -47,5 +52,13 @@ class ImportProspect implements ShouldQueue
         } else {
             Prospect::create(array_merge(['vat_number' => $data['vat_number'] ?? $this->vatNumber], $fields));
         }
+    }
+
+    public function failed(\Throwable $exception): void
+    {
+        Log::error('ImportProspect failed', [
+            'vat_number' => $this->vatNumber,
+            'message' => $exception->getMessage(),
+        ]);
     }
 }

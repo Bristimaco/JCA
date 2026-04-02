@@ -1,8 +1,9 @@
-import { Head, Link, useForm, router } from '@inertiajs/react';
+import { Head, Link, useForm, router, usePage } from '@inertiajs/react';
 import { useState, useRef } from 'react';
 import AppLayout from '../../Layouts/AppLayout';
 
 export default function Prospectie({ prospects }) {
+    const { flash } = usePage().props;
     const [lookupResult, setLookupResult] = useState(null);
     const [lookupError, setLookupError] = useState(null);
     const [lookupLoading, setLookupLoading] = useState(false);
@@ -102,6 +103,12 @@ export default function Prospectie({ prospects }) {
     return (
         <AppLayout>
             <Head title="Prospectie" />
+
+            {flash.status && (
+                <div className="mb-4 rounded-md bg-emerald-900/30 ring-1 ring-emerald-700/30 p-3">
+                    <p className="text-sm text-emerald-400">{flash.status}</p>
+                </div>
+            )}
 
             <div className="mb-6">
                 <div className="flex items-center justify-between">
