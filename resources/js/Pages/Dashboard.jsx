@@ -155,51 +155,74 @@ export default function Dashboard({ pendingCount, pendingUsers, adminCounters, m
                 <p className="text-slate-400 text-xs">Welkom terug, {auth.user.name}</p>
             </div>
 
-            {moduleGroups.map((group) => {
-                const visibleModules = group.modules.filter((m) => m.roles.includes(role));
-                if (visibleModules.length === 0) return null;
-                return (
-                    <div key={group.title} className="mb-2">
-                        <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">{group.title}</h2>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
-                            {visibleModules.map((m) => (
-                                <Link
-                                    key={m.name}
-                                    href={m.href}
-                                    className="group bg-slate-900 rounded-xl shadow-sm ring-1 ring-slate-800 border-t-2 border-t-rose-700/40 p-2 hover:shadow-md hover:ring-rose-500/40 hover:-translate-y-0.5"
-                                >
-                                    <div className="flex flex-col items-center text-center">
-                                        <div className={`w-7 h-7 rounded-lg bg-gradient-to-br ${moduleColors[m.name]} flex items-center justify-center text-white mb-1 shadow-sm group-hover:scale-105 [&_svg]:w-3.5 [&_svg]:h-3.5`}>
-                                            {moduleIcons[m.name]}
+            {(() => {
+                const pairedTitles = ['Trainingen', 'Toernooien'];
+                const rendered = [];
+                let i = 0;
+                const filtered = moduleGroups.map((group) => ({
+                    ...group,
+                    visibleModules: group.modules.filter((m) => m.roles.includes(role)),
+                })).filter((g) => g.visibleModules.length > 0);
+
+                while (i < filtered.length) {
+                    const g = filtered[i];
+                    const next = filtered[i + 1];
+                    if (pairedTitles.includes(g.title) && next && pairedTitles.includes(next.title)) {
+                        rendered.push(
+                            <div key={g.title + '+' + next.title} className="grid grid-cols-1 lg:grid-cols-2 gap-x-4 mb-2">
+                                {[g, next].map((pg) => (
+                                    <div key={pg.title}>
+                                        <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">{pg.title}</h2>
+                                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                                            {pg.visibleModules.map((m) => (
+                                                <ModuleTile key={m.name} m={m} moduleColors={moduleColors} moduleIcons={moduleIcons} counts={{
+                                                    'Leden': memberStats?.total,
+                                                    'Mijn Leden': myMemberCount,
+                                                    'Toernooien': adminCounters?.activeTournamentCount ?? coachTournamentCount,
+                                                    'Facturen': adminCounters?.pendingInvoiceCount,
+                                                    'Vouchers': adminCounters?.activeVoucherCount,
+                                                    'Aan te vullen': adminCounters?.refillProductCount,
+                                                    'Sponsors': adminCounters?.activeSponsorCount,
+                                                    'Mededelingen': adminCounters?.activeAnnouncementCount,
+                                                    'Evenementen Beheer': adminCounters?.activeEventCount,
+                                                    'Evenementen': myEventCount,
+                                                    'Archief': archivedTournamentCount,
+                                                }} />
+                                            ))}
                                         </div>
-                                        <span className="text-sm font-semibold text-white">{m.name}</span>
-                                        {(() => {
-                                            const count = {
-                                                'Leden': memberStats?.total,
-                                                'Mijn Leden': myMemberCount,
-                                                'Toernooien': adminCounters?.activeTournamentCount ?? coachTournamentCount,
-                                                'Facturen': adminCounters?.pendingInvoiceCount,
-                                                'Vouchers': adminCounters?.activeVoucherCount,
-                                                'Aan te vullen': adminCounters?.refillProductCount,
-                                                'Sponsors': adminCounters?.activeSponsorCount,
-                                                'Mededelingen': adminCounters?.activeAnnouncementCount,
-                                                'Evenementen Beheer': adminCounters?.activeEventCount,
-                                                'Evenementen': myEventCount,
-                                                'Archief': archivedTournamentCount,
-                                            }[m.name];
-                                            return count !== undefined && count !== null ? (
-                                                <span className="mt-0.5 inline-flex items-center rounded-full bg-slate-800 px-1.5 py-0 text-xs font-medium text-slate-300">
-                                                    {count}
-                                                </span>
-                                            ) : null;
-                                        })()}
                                     </div>
-                                </Link>
-                            ))}
-                        </div>
-                    </div>
-                );
-            })}
+                                ))}
+                            </div>
+                        );
+                        i += 2;
+                    } else {
+                        rendered.push(
+                            <div key={g.title} className="mb-2">
+                                <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">{g.title}</h2>
+                                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+                                    {g.visibleModules.map((m) => (
+                                        <ModuleTile key={m.name} m={m} moduleColors={moduleColors} moduleIcons={moduleIcons} counts={{
+                                            'Leden': memberStats?.total,
+                                            'Mijn Leden': myMemberCount,
+                                            'Toernooien': adminCounters?.activeTournamentCount ?? coachTournamentCount,
+                                            'Facturen': adminCounters?.pendingInvoiceCount,
+                                            'Vouchers': adminCounters?.activeVoucherCount,
+                                            'Aan te vullen': adminCounters?.refillProductCount,
+                                            'Sponsors': adminCounters?.activeSponsorCount,
+                                            'Mededelingen': adminCounters?.activeAnnouncementCount,
+                                            'Evenementen Beheer': adminCounters?.activeEventCount,
+                                            'Evenementen': myEventCount,
+                                            'Archief': archivedTournamentCount,
+                                        }} />
+                                    ))}
+                                </div>
+                            </div>
+                        );
+                        i += 1;
+                    }
+                }
+                return rendered;
+            })()}
 
             {activeTournaments && activeTournaments.length > 0 && (
                 <ActiveTournaments tournaments={activeTournaments} />
@@ -229,6 +252,28 @@ export default function Dashboard({ pendingCount, pendingUsers, adminCounters, m
                 <AdminTile pendingCount={pendingCount} adminCounters={adminCounters} />
             )}
         </AppLayout>
+    );
+}
+
+function ModuleTile({ m, moduleColors, moduleIcons, counts }) {
+    const count = counts[m.name];
+    return (
+        <Link
+            href={m.href}
+            className="group bg-slate-900 rounded-xl shadow-sm ring-1 ring-slate-800 border-t-2 border-t-rose-700/40 p-2 hover:shadow-md hover:ring-rose-500/40 hover:-translate-y-0.5"
+        >
+            <div className="flex flex-col items-center text-center">
+                <div className={`w-7 h-7 rounded-lg bg-gradient-to-br ${moduleColors[m.name]} flex items-center justify-center text-white mb-1 shadow-sm group-hover:scale-105 [&_svg]:w-3.5 [&_svg]:h-3.5`}>
+                    {moduleIcons[m.name]}
+                </div>
+                <span className="text-sm font-semibold text-white">{m.name}</span>
+                {count !== undefined && count !== null && (
+                    <span className="mt-0.5 inline-flex items-center rounded-full bg-slate-800 px-1.5 py-0 text-xs font-medium text-slate-300">
+                        {count}
+                    </span>
+                )}
+            </div>
+        </Link>
     );
 }
 
