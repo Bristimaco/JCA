@@ -183,7 +183,7 @@ export default function ProspectDetail({ prospect }) {
                     </button>
                 </div>
                 {prospect.cbe_fetched_at && (
-                    <p className="text-xs text-slate-500 mt-2">KBO gegevens opgehaald: {prospect.cbe_fetched_at}</p>
+                    <p className="text-xs text-slate-500 mt-2">KBO gegevens opgehaald: {(() => { const [d, t] = prospect.cbe_fetched_at.split(' '); return formatDate(d) + ' ' + (t || ''); })()}</p>
                 )}
             </div>
 
@@ -203,7 +203,7 @@ export default function ProspectDetail({ prospect }) {
                             {cbe?.status && <InfoItem label="Status" value={cbe.status} />}
                             {cbe?.juridical_situation && <InfoItem label="Juridische situatie" value={cbe.juridical_situation} />}
                             {cbe?.type && <InfoItem label="Type" value={cbe.type} />}
-                            {cbe?.start_date && <InfoItem label="Oprichtingsdatum" value={cbe.start_date} />}
+                            {cbe?.start_date && <InfoItem label="Oprichtingsdatum" value={formatDate(cbe.start_date)} />}
                         </div>
                     </div>
                     {prospect.latitude && prospect.longitude && (
