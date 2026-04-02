@@ -16,6 +16,7 @@ use Illuminate\Support\Carbon;
  * @property int $attendance_threshold
  * @property string|null $attendance_pin
  * @property float|null $default_membership_fee
+ * @property bool $test_mode
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
@@ -32,6 +33,7 @@ class ClubSettings extends Model
         'slide_duration_results' => 'integer',
         'slide_duration_announcements' => 'integer',
         'mollie_expiry_days' => 'integer',
+        'test_mode' => 'boolean',
     ];
 
     public static function current(): self

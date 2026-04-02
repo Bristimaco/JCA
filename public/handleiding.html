@@ -525,6 +525,7 @@
                     <a href="#admin-bar-producten" class="nav-link">Bar Producten</a>
                     <a href="#admin-aan-te-vullen" class="nav-link">Aan te vullen</a>
                     <a href="#admin-activiteit" class="nav-link">Activiteit</a>
+                    <a href="#admin-test-mode" class="nav-link">Test Modus</a>
                 </div>
                 <div class="nav-group">
                     <div class="nav-group-title">Bar &amp; Kassa</div>
@@ -2396,6 +2397,57 @@
             <div class="box box-info">
                 <strong>Tip:</strong> Gebruik deze pagina om als club op te volgen wie de app actief gebruikt.
                 Zo kan je leden die de app niet gebruiken persoonlijk aanspreken of ondersteunen.
+            </div>
+
+            <!-- Test Modus -->
+            <h3 id="admin-test-mode">Test Modus</h3>
+            <p><span class="role-badge role-admin">Beheerder</span></p>
+            <p>
+                Met de <strong>test modus</strong> kan je de volledige applicatie gebruiken en testen zonder dat
+                er daadwerkelijk notificaties, e-mails of Mollie betaallinks worden verstuurd naar gebruikers.
+                Alle geblokkeerde acties worden gelogd zodat je achteraf kan controleren wat er zou zijn verstuurd.
+            </p>
+
+            <h4>Test modus activeren</h4>
+            <p>
+                Ga naar het <strong>beheerderspaneel</strong> (Dashboard) en open de sectie
+                <strong>&ldquo;Club Instellingen&rdquo;</strong>. Onderaan de instellingen vind je de
+                <strong>Test modus</strong> schakelaar. Vink deze aan en klik op <strong>Opslaan</strong>.
+            </p>
+            <p>
+                Wanneer de test modus actief is:
+            </p>
+            <ul>
+                <li>Er verschijnt een <strong>gele banner</strong> bovenaan elke pagina met
+                    &ldquo;TEST MODUS ACTIEF&rdquo;</li>
+                <li>Alle <strong>notificaties</strong> (in-app, e-mail, push) worden geblokkeerd en gelogd</li>
+                <li>Alle <strong>e-mails</strong> worden geblokkeerd en gelogd (behalve wachtwoord-reset mails)</li>
+                <li>Alle <strong>Mollie betaallinks</strong> worden niet aangemaakt maar gelogd met een nep-link</li>
+            </ul>
+
+            <div class="box box-warning">
+                <strong>Let op:</strong> Wachtwoord-reset e-mails worden altijd verstuurd, ook in test modus.
+                Dit is nodig zodat beheerders en gebruikers hun wachtwoord kunnen resetten tijdens het testen.
+            </div>
+
+            <h4>Test Mode Log</h4>
+            <p>
+                Op het dashboard verschijnt een <strong>&ldquo;Test Log&rdquo;</strong> tegel in de groep
+                <strong>Log</strong>. Klik hierop om een overzicht te zien van alle geblokkeerde acties:
+            </p>
+            <ul>
+                <li><strong>Type:</strong> Notificatie, E-mail of Betaallink</li>
+                <li><strong>Ontvanger:</strong> Het e-mailadres of de naam van de gebruiker</li>
+                <li><strong>Onderwerp:</strong> Het onderwerp van de notificatie of e-mail</li>
+                <li><strong>Tijdstip:</strong> Wanneer de actie werd geblokkeerd</li>
+            </ul>
+            <p>
+                Met de knop <strong>&ldquo;Log wissen&rdquo;</strong> rechtsboven kan je de volledige log leegmaken.
+            </p>
+
+            <div class="box box-info">
+                <strong>Tip:</strong> Vergeet niet de test modus uit te schakelen wanneer je klaar bent met
+                testen. Zolang de test modus actief is, ontvangen je leden geen enkele notificatie of betaalverzoek.
             </div>
 
             <!-- POS Kassa -->

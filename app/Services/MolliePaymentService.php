@@ -8,6 +8,7 @@ use App\Enums\VoucherStatus;
 use App\Models\ClubSettings;
 use App\Models\EventRegistration;
 use App\Models\MembershipInvoice;
+use App\Models\TestModeLog;
 use App\Models\Voucher;
 use App\Notifications\PaymentConfirmationNotification;
 use App\Notifications\VoucherNotification;
@@ -19,6 +20,23 @@ class MolliePaymentService
 {
     public function createPaymentLink(MembershipInvoice $invoice, string $description): MembershipInvoice
     {
+        if (ClubSettings::current()->test_mode) {
+            TestModeLog::create([
+                'type' => 'mollie_payment',
+                'recipient' => $invoice->user->email ?? 'Onbekend',
+                'subject' => $description,
+                'body' => json_encode(['amount' => $invoice->total_amount, 'type' => 'membership_invoice', 'invoice_id' => $invoice->id], JSON_UNESCAPED_UNICODE),
+                'created_at' => now(),
+            ]);
+
+            $invoice->update([
+                'mollie_payment_id' => 'test_mode_'.uniqid(),
+                'mollie_payment_url' => '#test-mode',
+            ]);
+
+            return $invoice;
+        }
+
         try {
             $expiryDays = ClubSettings::current()->mollie_expiry_days ?? 14;
 
@@ -129,6 +147,26 @@ class MolliePaymentService
 
     public function createTournamentPaymentLink(int $pivotId, float $amount, string $description, string $redirectUrl): void
     {
+        if (ClubSettings::current()->test_mode) {
+            TestModeLog::create([
+                'type' => 'mollie_payment',
+                'recipient' => 'Pivot #'.$pivotId,
+                'subject' => $description,
+                'body' => json_encode(['amount' => $amount, 'type' => 'tournament', 'pivot_id' => $pivotId], JSON_UNESCAPED_UNICODE),
+                'created_at' => now(),
+            ]);
+
+            DB::table('member_tournament')
+                ->where('id', $pivotId)
+                ->update([
+                    'mollie_payment_id' => 'test_mode_'.uniqid(),
+                    'mollie_payment_url' => '#test-mode',
+                    'payment_status' => 'pending',
+                ]);
+
+            return;
+        }
+
         try {
             $expiryDays = ClubSettings::current()->mollie_expiry_days ?? 14;
 
@@ -208,6 +246,24 @@ class MolliePaymentService
 
     public function createEventPaymentLink(EventRegistration $registration, string $description, string $redirectUrl): void
     {
+        if (ClubSettings::current()->test_mode) {
+            TestModeLog::create([
+                'type' => 'mollie_payment',
+                'recipient' => 'Registratie #'.$registration->id,
+                'subject' => $description,
+                'body' => json_encode(['amount' => $registration->total_amount, 'type' => 'event', 'registration_id' => $registration->id], JSON_UNESCAPED_UNICODE),
+                'created_at' => now(),
+            ]);
+
+            $registration->update([
+                'mollie_payment_id' => 'test_mode_'.uniqid(),
+                'mollie_payment_url' => '#test-mode',
+                'payment_status' => 'pending',
+            ]);
+
+            return;
+        }
+
         try {
             $expiryDays = ClubSettings::current()->mollie_expiry_days ?? 14;
 

@@ -115,6 +115,7 @@ function ClubSettingsSection({ clubSettings }) {
         slide_duration_results: clubSettings.slide_duration_results ?? 15,
         slide_duration_announcements: clubSettings.slide_duration_announcements ?? 15,
         mollie_expiry_days: clubSettings.mollie_expiry_days ?? 14,
+        test_mode: clubSettings.test_mode ?? false,
         logo: null,
     });
 
@@ -314,6 +315,24 @@ function ClubSettingsSection({ clubSettings }) {
                 />
                 <p className="text-xs text-slate-500 mt-1">Aantal dagen waarna een Mollie betaallink automatisch vervalt</p>
                 {form.errors.mollie_expiry_days && <p className="text-sm text-red-400 mt-1">{form.errors.mollie_expiry_days}</p>}
+            </div>
+
+            <div className={`rounded-lg p-4 ring-1 ${form.data.test_mode ? 'bg-amber-900/20 ring-amber-600/40' : 'bg-slate-800/30 ring-slate-700/40'}`}>
+                <label className="flex items-center gap-3 cursor-pointer">
+                    <input
+                        type="checkbox"
+                        checked={form.data.test_mode}
+                        onChange={(e) => form.setData('test_mode', e.target.checked)}
+                        className="h-5 w-5 rounded border-slate-600 bg-slate-700 text-amber-500 focus:ring-amber-500"
+                    />
+                    <div>
+                        <span className="text-sm font-medium text-white">Test modus</span>
+                        <p className="text-xs text-slate-400 mt-0.5">Wanneer actief worden notificaties, e-mails en Mollie betaallinks niet verstuurd maar gelogd.</p>
+                    </div>
+                </label>
+                {form.data.test_mode && (
+                    <p className="mt-2 text-xs font-medium text-amber-400">⚠️ Test modus is actief — notificaties en betalingen worden geblokkeerd!</p>
+                )}
             </div>
 
             <div className="flex justify-end">

@@ -59,6 +59,7 @@ class HandleInertiaRequests extends Middleware
                 'name' => ClubSettings::current()->name,
                 'has_logo' => (bool) ClubSettings::current()->logo_data,
             ],
+            'testMode' => fn () => (bool) ClubSettings::current()->test_mode,
         ];
     }
 }

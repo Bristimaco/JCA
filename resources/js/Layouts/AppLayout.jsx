@@ -4,7 +4,7 @@ import NotificationDropdown from '../Components/NotificationDropdown';
 import usePushSubscription from '../hooks/usePushSubscription';
 
 export default function AppLayout({ children, fullWidth = false }) {
-    const { auth, club } = usePage().props;
+    const { auth, club, testMode } = usePage().props;
     const logoutForm = useForm();
     const [userMenuOpen, setUserMenuOpen] = useState(false);
     const [notifPref, setNotifPref] = useState(auth.user?.notification_preference || 'both');
@@ -143,6 +143,14 @@ export default function AppLayout({ children, fullWidth = false }) {
                     </div>
                 </div>
             </nav>
+            {testMode && (
+                <div className="bg-amber-600/20 border-b border-amber-600/40">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex items-center justify-center gap-2">
+                        <span className="text-xs font-semibold text-amber-400">⚠️ TEST MODUS ACTIEF</span>
+                        <span className="text-xs text-amber-400/80">— notificaties en betalingen worden niet verstuurd</span>
+                    </div>
+                </div>
+            )}
             <main className={`px-4 sm:px-6 lg:px-8 ${fullWidth ? 'py-2 flex-1 min-h-0 flex flex-col' : 'py-8 max-w-7xl mx-auto'}`}>
                 {children}
             </main>

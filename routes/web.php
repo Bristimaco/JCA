@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminActivityController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminSessionHistoryController;
+use App\Http\Controllers\Admin\AdminTestModeLogController;
 use App\Http\Controllers\Admin\AgeCategoryController;
 use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\Admin\ApproveUserController;
@@ -221,6 +222,8 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
     Route::middleware('admin')->prefix('admin')->group(function () {
         Route::get('/', AdminDashboardController::class)->name('admin.dashboard');
         Route::get('/activiteit', [AdminActivityController::class, 'index'])->name('admin.activity');
+        Route::get('/test-mode-log', [AdminTestModeLogController::class, 'index'])->name('admin.test-mode-log');
+        Route::delete('/test-mode-log', [AdminTestModeLogController::class, 'clear'])->name('admin.test-mode-log.clear');
         Route::get('/sessions', AdminSessionHistoryController::class)->name('admin.sessions.history');
         Route::get('/attendance-report', AttendanceReportController::class)->name('admin.attendance-report');
         Route::patch('/club-settings', [ClubSettingsController::class, 'update'])->name('admin.club-settings.update');

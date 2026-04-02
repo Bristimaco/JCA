@@ -27,6 +27,7 @@ class ClubSettingsController extends Controller
             'slide_duration_results' => ['nullable', 'integer', 'min:5'],
             'slide_duration_announcements' => ['nullable', 'integer', 'min:5'],
             'mollie_expiry_days' => ['nullable', 'integer', 'min:1', 'max:365'],
+            'test_mode' => ['boolean'],
         ]);
 
         $settings = ClubSettings::first();
@@ -45,6 +46,7 @@ class ClubSettingsController extends Controller
             'slide_duration_results' => $validated['slide_duration_results'] ?? 15,
             'slide_duration_announcements' => $validated['slide_duration_announcements'] ?? 15,
             'mollie_expiry_days' => $validated['mollie_expiry_days'] ?? 14,
+            'test_mode' => $validated['test_mode'] ?? false,
         ];
 
         if ($request->hasFile('logo')) {
