@@ -163,7 +163,7 @@ export default function Calendar({ items, startDate, myMemberIds }) {
                                             const absentCount = participatingMembers.filter(m => absentIds.includes(m.id)).length;
                                             const allAbsent = participatingMembers.length > 0 && absentCount === participatingMembers.length;
                                             const someAbsent = absentCount > 0 && !allAbsent;
-                                            const canReportAbsence = item.type === 'training' && item.participating && item.date >= todayStr;
+                                            const canReportAbsence = (item.type === 'training' || item.type === 'extra_training') && item.participating && item.date >= todayStr;
                                             return (
                                                 <div
                                                     key={`${item.type}-${i}`}

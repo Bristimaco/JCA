@@ -130,6 +130,11 @@ class CalendarController extends Controller
 
         $items = [];
 
+        $absences = TrainingAbsence::whereIn('member_id', $memberIds)
+            ->whereIn('training_schedule_id', $schedules->pluck('id'))
+            ->get()
+            ->groupBy(fn ($a) => $a->training_schedule_id.'|'.$a->date->toDateString());
+
         foreach ($schedules as $schedule) {
             $allMembers = $schedule->trainingGroups->flatMap->members->unique('id');
             $groupMemberIds = $allMembers->pluck('id');
@@ -141,6 +146,15 @@ class CalendarController extends Controller
                 ->values()
                 ->all();
 
+            $absenceKey = $schedule->id.'|'.$schedule->date->toDateString();
+            $absentMembers = isset($absences[$absenceKey])
+                ? collect($absences[$absenceKey])->map(fn ($a) => [
+                    'id' => $a->member_id,
+                    'first_name' => $allMembers->firstWhere('id', $a->member_id)?->first_name,
+                    'reason' => $a->reason,
+                ])->values()->all()
+                : [];
+
             $items[] = [
                 'type' => 'extra_training',
                 'date' => $schedule->date->toDateString(),
@@ -151,7 +165,7 @@ class CalendarController extends Controller
                 'participating' => $participatingMemberIds->isNotEmpty(),
                 'participating_members' => $participatingMembers,
                 'training_schedule_id' => $schedule->id,
-                'absent_members' => [],
+                'absent_members' => $absentMembers,
             ];
         }
 
