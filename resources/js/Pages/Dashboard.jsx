@@ -173,7 +173,7 @@ export default function Dashboard({ pendingCount, pendingUsers, adminCounters, m
                                 {[g, next].map((pg) => (
                                     <div key={pg.title}>
                                         <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">{pg.title}</h2>
-                                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                                        <div className={`grid gap-2 ${pg.visibleModules.length === 1 ? 'grid-cols-1' : pg.visibleModules.length === 2 ? 'grid-cols-2' : 'grid-cols-2 sm:grid-cols-3'}`}>
                                             {pg.visibleModules.map((m) => (
                                                 <ModuleTile key={m.name} m={m} moduleColors={moduleColors} moduleIcons={moduleIcons} counts={{
                                                     'Leden': memberStats?.total,
