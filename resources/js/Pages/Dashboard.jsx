@@ -156,7 +156,7 @@ export default function Dashboard({ pendingCount, pendingUsers, adminCounters, m
             </div>
 
             {(() => {
-                const pairedTitles = ['Trainingen', 'Toernooien'];
+                const pairedTitles = ['Trainingen', 'Toernooien', 'Sponsoring', 'Log'];
                 const rendered = [];
                 let i = 0;
                 const filtered = moduleGroups.map((group) => ({
