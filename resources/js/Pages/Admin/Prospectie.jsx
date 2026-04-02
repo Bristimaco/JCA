@@ -279,13 +279,22 @@ export default function Prospectie({ prospects }) {
                                         </td>
                                         <td className="px-6 py-3 text-sm text-slate-400">{p.created_at}</td>
                                         <td className="px-6 py-3">
-                                            <button
-                                                onClick={(e) => { e.stopPropagation(); router.post(`/admin/prospectie/${p.id}/refresh`, {}, { preserveScroll: true }); }}
-                                                className="rounded-md bg-slate-700 p-1.5 text-slate-400 hover:bg-slate-600 hover:text-white transition-colors"
-                                                title="Vernieuwen"
-                                            >
-                                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-                                            </button>
+                                            <div className="flex items-center gap-1">
+                                                <button
+                                                    onClick={(e) => { e.stopPropagation(); router.post(`/admin/prospectie/${p.id}/refresh`, {}, { preserveScroll: true }); }}
+                                                    className="rounded-md bg-slate-700 p-1.5 text-slate-400 hover:bg-slate-600 hover:text-white transition-colors"
+                                                    title="Vernieuwen"
+                                                >
+                                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                                                </button>
+                                                <button
+                                                    onClick={(e) => { e.stopPropagation(); if (confirm(`'${p.company_name}' verwijderen?`)) router.delete(`/admin/prospectie/${p.id}`, { preserveScroll: true }); }}
+                                                    className="rounded-md bg-slate-700 p-1.5 text-slate-400 hover:bg-red-600 hover:text-white transition-colors"
+                                                    title="Verwijderen"
+                                                >
+                                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 ))}
