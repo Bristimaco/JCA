@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\UserRole;
 use App\Models\TrainingGroup;
 use App\Models\TrainingSchedule;
 use App\Models\User;
@@ -16,7 +17,7 @@ class ExtraTrainingController extends Controller
     public function index(Request $request): Response
     {
         $user = Auth::user();
-        $isAdmin = $user->role === 'admin';
+        $isAdmin = $user->role === UserRole::ADMIN;
 
         $query = TrainingSchedule::where('is_extra', true)
             ->with(['trainingGroups:id,name', 'trainer:id,name']);
