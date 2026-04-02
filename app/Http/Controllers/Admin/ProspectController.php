@@ -25,8 +25,10 @@ class ProspectController extends Controller
                 'company_name' => $p->company_name,
                 'address_city' => $p->address_city,
                 'legal_form' => $p->legal_form,
+                'phone' => $p->phone,
                 'email' => $p->email,
                 'website' => $p->website,
+                'status' => $p->cbe_data['status'] ?? null,
                 'notes_count' => $p->notes()->count(),
                 'created_at' => $p->created_at->toDateString(),
             ]);

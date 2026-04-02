@@ -251,10 +251,13 @@ export default function Prospectie({ prospects }) {
                                 <tr className="border-b border-slate-800">
                                     <th className="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Bedrijf</th>
                                     <th className="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Ondernemingsnr.</th>
+                                    <th className="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Status</th>
                                     <th className="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Stad</th>
+                                    <th className="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Telefoon</th>
                                     <th className="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">E-mail</th>
                                     <th className="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Notities</th>
                                     <th className="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Toegevoegd</th>
+                                    <th className="px-6 py-3"></th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-800">
@@ -265,7 +268,9 @@ export default function Prospectie({ prospects }) {
                                             {p.legal_form && <p className="text-xs text-slate-500">{p.legal_form}</p>}
                                         </td>
                                         <td className="px-6 py-3 text-sm text-slate-300">{formatVat(p.vat_number)}</td>
+                                        <td className="px-6 py-3 text-sm text-slate-300">{p.status || '-'}</td>
                                         <td className="px-6 py-3 text-sm text-slate-300">{p.address_city || '-'}</td>
+                                        <td className="px-6 py-3 text-sm text-slate-300">{p.phone || '-'}</td>
                                         <td className="px-6 py-3 text-sm text-slate-300">{p.email || '-'}</td>
                                         <td className="px-6 py-3">
                                             {p.notes_count > 0 && (
@@ -273,6 +278,15 @@ export default function Prospectie({ prospects }) {
                                             )}
                                         </td>
                                         <td className="px-6 py-3 text-sm text-slate-400">{p.created_at}</td>
+                                        <td className="px-6 py-3">
+                                            <button
+                                                onClick={(e) => { e.stopPropagation(); router.post(`/admin/prospectie/${p.id}/refresh`, {}, { preserveScroll: true }); }}
+                                                className="rounded-md bg-slate-700 p-1.5 text-slate-400 hover:bg-slate-600 hover:text-white transition-colors"
+                                                title="Vernieuwen"
+                                            >
+                                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                                            </button>
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>
