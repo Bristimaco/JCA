@@ -118,11 +118,19 @@ workers:
     instance_count: 1
     instance_size_slug: apps-s-1vcpu-0.5gb
     envs:
+      - key: APP_NAME
+        value: JCA
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
       - key: APP_KEY
         type: SECRET
         value: "${APP_KEY}"
       - key: APP_URL
         value: "${APP_URL}"
+      - key: LOG_CHANNEL
+        value: stderr
       - key: DB_CONNECTION
         value: pgsql
       - key: DB_HOST
@@ -135,6 +143,8 @@ workers:
         value: "${db.USERNAME}"
       - key: DB_PASSWORD
         value: "${db.PASSWORD}"
+      - key: CACHE_STORE
+        value: database
       - key: QUEUE_CONNECTION
         value: database
       - key: CBE_API_TOKEN

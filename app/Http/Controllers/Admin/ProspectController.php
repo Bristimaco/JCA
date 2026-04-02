@@ -21,7 +21,7 @@ class ProspectController extends Controller
         $showArchived = $request->boolean('archived');
 
         $prospects = Prospect::when($showArchived, fn ($q) => $q->archived(), fn ($q) => $q->active())
-            ->orderByDesc('created_at')
+            ->orderBy('company_name')
             ->get()
             ->map(fn (Prospect $p) => [
                 'id' => $p->id,
