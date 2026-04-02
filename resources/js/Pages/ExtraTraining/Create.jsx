@@ -1,4 +1,4 @@
-import { Head, router, useForm } from '@inertiajs/react';
+import { Head, router, useForm, Link } from '@inertiajs/react';
 import AppLayout from '../../Layouts/AppLayout';
 
 export default function Create({ groups, trainers }) {
@@ -21,6 +21,7 @@ export default function Create({ groups, trainers }) {
 
     const isAdmin = window.location.pathname.startsWith('/admin');
     const submitUrl = isAdmin ? '/admin/extra-training' : '/trainer/extra-training';
+    const backUrl = isAdmin ? '/admin/extra-training' : '/trainer/extra-training';
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -134,13 +135,12 @@ export default function Create({ groups, trainers }) {
                         >
                             {processing ? 'Bezig...' : 'Aanmaken'}
                         </button>
-                        <button
-                            type="button"
-                            onClick={() => window.history.back()}
+                        <Link
+                            href={backUrl}
                             className="rounded-lg bg-slate-800 px-6 py-2.5 text-sm font-semibold text-slate-300 hover:bg-slate-700 ring-1 ring-slate-700"
                         >
                             Annuleren
-                        </button>
+                        </Link>
                     </div>
                 </form>
             </div>

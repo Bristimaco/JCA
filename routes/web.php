@@ -194,8 +194,10 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::patch('/sessions/{session}/close', [TrainerAttendanceController::class, 'close'])->name('trainer.sessions.close');
 
         // Extra trainingen
-        Route::get('/extra-training', [ExtraTrainingController::class, 'create'])->name('trainer.extra-training.create');
+        Route::get('/extra-training', [ExtraTrainingController::class, 'index'])->name('trainer.extra-training.index');
+        Route::get('/extra-training/create', [ExtraTrainingController::class, 'create'])->name('trainer.extra-training.create');
         Route::post('/extra-training', [ExtraTrainingController::class, 'store'])->name('trainer.extra-training.store');
+        Route::patch('/extra-training/{schedule}', [ExtraTrainingController::class, 'update'])->name('trainer.extra-training.update');
         Route::delete('/extra-training/{schedule}', [ExtraTrainingController::class, 'destroy'])->name('trainer.extra-training.destroy');
     });
 
@@ -249,8 +251,10 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::put('/training-groups/{trainingGroup}/members', [TrainingGroupMemberController::class, 'update'])->name('admin.training-groups.members');
 
         // Extra trainingen
-        Route::get('/extra-training', [ExtraTrainingController::class, 'create'])->name('admin.extra-training.create');
+        Route::get('/extra-training', [ExtraTrainingController::class, 'index'])->name('admin.extra-training.index');
+        Route::get('/extra-training/create', [ExtraTrainingController::class, 'create'])->name('admin.extra-training.create');
         Route::post('/extra-training', [ExtraTrainingController::class, 'store'])->name('admin.extra-training.store');
+        Route::patch('/extra-training/{schedule}', [ExtraTrainingController::class, 'update'])->name('admin.extra-training.update');
         Route::delete('/extra-training/{schedule}', [ExtraTrainingController::class, 'destroy'])->name('admin.extra-training.destroy');
 
         // Members
