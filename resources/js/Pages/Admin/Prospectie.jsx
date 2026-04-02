@@ -2,7 +2,7 @@ import { Head, Link, useForm, router, usePage } from '@inertiajs/react';
 import { useState, useRef } from 'react';
 import AppLayout from '../../Layouts/AppLayout';
 
-export default function Prospectie({ prospects }) {
+export default function Prospectie({ prospects, showArchived }) {
     const { flash } = usePage().props;
     const [lookupResult, setLookupResult] = useState(null);
     const [lookupError, setLookupError] = useState(null);
@@ -244,8 +244,22 @@ export default function Prospectie({ prospects }) {
 
             {/* Prospect List */}
             <div className="bg-slate-900 rounded-xl ring-1 ring-slate-800 overflow-hidden">
-                <div className="px-6 py-4 border-b border-slate-800">
+                <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
                     <h2 className="text-lg font-semibold text-white">Prospecten ({prospects.length})</h2>
+                    <div className="flex rounded-lg bg-slate-800 p-0.5 ring-1 ring-slate-700">
+                        <button
+                            onClick={() => router.get('/admin/prospectie', {}, { preserveState: true })}
+                            className={`rounded-md px-3 py-1 text-sm font-medium transition-colors ${!showArchived ? 'bg-slate-700 text-white' : 'text-slate-400 hover:text-white'}`}
+                        >
+                            Actief
+                        </button>
+                        <button
+                            onClick={() => router.get('/admin/prospectie', { archived: 1 }, { preserveState: true })}
+                            className={`rounded-md px-3 py-1 text-sm font-medium transition-colors ${showArchived ? 'bg-slate-700 text-white' : 'text-slate-400 hover:text-white'}`}
+                        >
+                            Gearchiveerd
+                        </button>
+                    </div>
                 </div>
                 {prospects.length === 0 ? (
                     <div className="px-6 py-12 text-center">
@@ -271,8 +285,17 @@ export default function Prospectie({ prospects }) {
                                 {prospects.map((p) => (
                                     <tr key={p.id} className="hover:bg-slate-800/50 cursor-pointer" onClick={() => router.visit(`/admin/prospectie/${p.id}`)}>
                                         <td className="px-6 py-3">
-                                            <p className="text-sm font-medium text-white">{p.company_name}</p>
-                                            {p.legal_form && <p className="text-xs text-slate-500">{p.legal_form}</p>}
+                                            <div className="flex items-center gap-2">
+                                                <div>
+                                                    <p className="text-sm font-medium text-white">{p.company_name}</p>
+                                                    {p.legal_form && <p className="text-xs text-slate-500">{p.legal_form}</p>}
+                                                </div>
+                                                {p.archived_reason && (
+                                                    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${p.archived_reason === 'converted' ? 'bg-emerald-900/50 text-emerald-400' : 'bg-slate-700 text-slate-400'}`}>
+                                                        {p.archived_reason === 'converted' ? 'Omgezet' : 'Geen sponsor'}
+                                                    </span>
+                                                )}
+                                            </div>
                                         </td>
                                         <td className="px-6 py-3 text-sm text-slate-300">{formatVat(p.vat_number)}</td>
                                         <td className="px-6 py-3 text-sm text-slate-300">{p.status || '-'}</td>

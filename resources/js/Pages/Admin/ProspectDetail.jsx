@@ -1,13 +1,49 @@
-import { Head, Link, useForm, router } from '@inertiajs/react';
+import { Head, Link, useForm, router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import AppLayout from '../../Layouts/AppLayout';
 
+function resizeImage(file, maxSize = 1920, quality = 0.85) {
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let { width, height } = img;
+                if (width > maxSize || height > maxSize) {
+                    const ratio = Math.min(maxSize / width, maxSize / height);
+                    width *= ratio;
+                    height *= ratio;
+                }
+                canvas.width = width;
+                canvas.height = height;
+                canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+                resolve(canvas.toDataURL('image/jpeg', quality));
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
 export default function ProspectDetail({ prospect }) {
+    const { flash } = usePage().props;
     const [showConvertModal, setShowConvertModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [showArchiveModal, setShowArchiveModal] = useState(false);
+    const [logoPreview, setLogoPreview] = useState(null);
     const noteForm = useForm({ content: '' });
+    const sponsorForm = useForm({
+        sponsor_amount: prospect.sponsor_amount || '',
+        sponsor_start_date: prospect.sponsor_start_date || '',
+        sponsor_renewal_months: prospect.sponsor_renewal_months || '',
+        sponsor_tier: prospect.sponsor_tier || '',
+        logo: '',
+        remove_logo: false,
+    });
 
     const cbe = prospect.cbe_data;
+    const isArchived = !!prospect.archived_at;
 
     const handleAddNote = (e) => {
         e.preventDefault();
@@ -27,11 +63,32 @@ export default function ProspectDetail({ prospect }) {
     };
 
     const handleConvert = () => {
-        router.post(`/admin/prospectie/${prospect.id}/convert`);
+        router.post(`/admin/prospectie/${prospect.id}/convert`, {}, { preserveScroll: true });
     };
 
     const handleDelete = () => {
         router.delete(`/admin/prospectie/${prospect.id}`);
+    };
+
+    const handleArchive = () => {
+        router.post(`/admin/prospectie/${prospect.id}/archive`, {}, { preserveScroll: true });
+    };
+
+    const handleUnarchive = () => {
+        router.post(`/admin/prospectie/${prospect.id}/unarchive`, {}, { preserveScroll: true });
+    };
+
+    const handleSaveSponsor = (e) => {
+        e.preventDefault();
+        sponsorForm.put(`/admin/prospectie/${prospect.id}`, { preserveScroll: true });
+    };
+
+    const handleLogo = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const dataUrl = await resizeImage(file);
+        sponsorForm.setData('logo', dataUrl);
+        setLogoPreview(dataUrl);
     };
 
     const formatVat = (vat) => {
@@ -46,13 +103,31 @@ export default function ProspectDetail({ prospect }) {
         <AppLayout>
             <Head title={prospect.company_name} />
 
+            {flash?.success && (
+                <div className="mb-4 rounded-lg bg-emerald-900/50 border border-emerald-700/50 p-4">
+                    <p className="text-sm text-emerald-300">{flash.success}</p>
+                </div>
+            )}
+            {flash?.error && (
+                <div className="mb-4 rounded-lg bg-red-900/50 border border-red-700/50 p-4">
+                    <p className="text-sm text-red-300">{flash.error}</p>
+                </div>
+            )}
+
             <div className="mb-6">
                 <div className="flex items-center gap-3 mb-4">
                     <Link href="/admin/prospectie" className="text-slate-400 hover:text-white">
                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                     </Link>
                     <div className="flex-1">
-                        <h1 className="text-2xl font-bold text-white">{prospect.company_name}</h1>
+                        <div className="flex items-center gap-3">
+                            <h1 className="text-2xl font-bold text-white">{prospect.company_name}</h1>
+                            {isArchived && (
+                                <span className="inline-flex items-center rounded-full bg-slate-700 px-2.5 py-0.5 text-xs font-medium text-slate-300">
+                                    Gearchiveerd{prospect.archived_reason === 'converted' ? ' — Omgezet' : prospect.archived_reason === 'no_sponsor' ? ' — Geen sponsor' : ''}
+                                </span>
+                            )}
+                        </div>
                         <p className="text-sm text-slate-400">{formatVat(prospect.vat_number)} · {prospect.legal_form || 'Onbekende rechtsvorm'}</p>
                     </div>
                 </div>
@@ -65,13 +140,33 @@ export default function ProspectDetail({ prospect }) {
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
                         Vernieuwen
                     </button>
-                    <button
-                        onClick={() => setShowConvertModal(true)}
-                        className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 flex items-center gap-2"
-                    >
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" /></svg>
-                        Omzetten naar sponsor
-                    </button>
+                    {!isArchived && (
+                        <>
+                            <button
+                                onClick={() => setShowConvertModal(true)}
+                                className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 flex items-center gap-2"
+                            >
+                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" /></svg>
+                                Omzetten naar sponsor
+                            </button>
+                            <button
+                                onClick={() => setShowArchiveModal(true)}
+                                className="rounded-lg bg-slate-800 px-4 py-2 text-sm font-medium text-amber-400 hover:bg-slate-700 ring-1 ring-slate-700 flex items-center gap-2"
+                            >
+                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>
+                                Archiveren
+                            </button>
+                        </>
+                    )}
+                    {isArchived && (
+                        <button
+                            onClick={handleUnarchive}
+                            className="rounded-lg bg-slate-800 px-4 py-2 text-sm font-medium text-emerald-400 hover:bg-slate-700 ring-1 ring-slate-700 flex items-center gap-2"
+                        >
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" /></svg>
+                            Heractiveren
+                        </button>
+                    )}
                     <button
                         onClick={() => setShowDeleteModal(true)}
                         className="rounded-lg bg-red-900/30 px-4 py-2 text-sm font-medium text-red-400 hover:bg-red-900/50 ring-1 ring-red-700/30 flex items-center gap-2"
@@ -146,6 +241,112 @@ export default function ProspectDetail({ prospect }) {
                 )}
             </div>
 
+            {/* Sponsor Fields */}
+            {!isArchived && (
+                <div className="bg-slate-900 rounded-xl ring-1 ring-slate-800 p-6 mb-6">
+                    <h2 className="text-lg font-semibold text-white mb-4">Sponsorgegevens</h2>
+                    <form onSubmit={handleSaveSponsor}>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                            <div>
+                                <label className="block text-xs font-medium text-slate-400 mb-1">Sponsorbedrag (€)</label>
+                                <input
+                                    type="number"
+                                    step="0.01"
+                                    min="0"
+                                    value={sponsorForm.data.sponsor_amount}
+                                    onChange={(e) => sponsorForm.setData('sponsor_amount', e.target.value)}
+                                    className="w-full rounded-lg bg-slate-800 border border-slate-700 text-white px-3 py-2 text-sm focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                                    placeholder="0.00"
+                                />
+                                {sponsorForm.errors.sponsor_amount && <p className="text-xs text-red-400 mt-1">{sponsorForm.errors.sponsor_amount}</p>}
+                            </div>
+                            <div>
+                                <label className="block text-xs font-medium text-slate-400 mb-1">Startdatum</label>
+                                <input
+                                    type="date"
+                                    value={sponsorForm.data.sponsor_start_date}
+                                    onChange={(e) => sponsorForm.setData('sponsor_start_date', e.target.value)}
+                                    className="w-full rounded-lg bg-slate-800 border border-slate-700 text-white px-3 py-2 text-sm focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                                />
+                                {sponsorForm.errors.sponsor_start_date && <p className="text-xs text-red-400 mt-1">{sponsorForm.errors.sponsor_start_date}</p>}
+                            </div>
+                            <div>
+                                <label className="block text-xs font-medium text-slate-400 mb-1">Hernieuwingstermijn</label>
+                                <select
+                                    value={sponsorForm.data.sponsor_renewal_months}
+                                    onChange={(e) => sponsorForm.setData('sponsor_renewal_months', e.target.value)}
+                                    className="w-full rounded-lg bg-slate-800 border border-slate-700 text-white px-3 py-2 text-sm focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                                >
+                                    <option value="">— Kies —</option>
+                                    <option value="6">6 maanden</option>
+                                    <option value="12">12 maanden</option>
+                                    <option value="24">24 maanden</option>
+                                    <option value="36">36 maanden</option>
+                                </select>
+                                {sponsorForm.errors.sponsor_renewal_months && <p className="text-xs text-red-400 mt-1">{sponsorForm.errors.sponsor_renewal_months}</p>}
+                            </div>
+                            <div>
+                                <label className="block text-xs font-medium text-slate-400 mb-1">Sponsorformule</label>
+                                <select
+                                    value={sponsorForm.data.sponsor_tier}
+                                    onChange={(e) => sponsorForm.setData('sponsor_tier', e.target.value)}
+                                    className="w-full rounded-lg bg-slate-800 border border-slate-700 text-white px-3 py-2 text-sm focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                                >
+                                    <option value="">— Kies —</option>
+                                    <option value="bronze">Brons</option>
+                                    <option value="silver">Zilver</option>
+                                    <option value="gold">Goud</option>
+                                </select>
+                                {sponsorForm.errors.sponsor_tier && <p className="text-xs text-red-400 mt-1">{sponsorForm.errors.sponsor_tier}</p>}
+                            </div>
+                        </div>
+
+                        {/* Logo upload */}
+                        <div className="mb-4">
+                            <label className="block text-xs font-medium text-slate-400 mb-2">Logo</label>
+                            <div className="flex items-center gap-4">
+                                {(logoPreview || prospect.logo_url) && (
+                                    <div className="w-20 h-20 rounded-lg bg-white/5 ring-1 ring-slate-700 flex items-center justify-center overflow-hidden">
+                                        <img src={logoPreview || prospect.logo_url} alt="Logo" className="max-w-full max-h-full object-contain" />
+                                    </div>
+                                )}
+                                <div className="flex flex-col gap-2">
+                                    <label className="cursor-pointer rounded-lg bg-slate-800 px-4 py-2 text-sm font-medium text-slate-300 hover:bg-slate-700 ring-1 ring-slate-700 inline-flex items-center gap-2 w-fit">
+                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                        Logo uploaden
+                                        <input type="file" accept="image/*" onChange={handleLogo} className="hidden" />
+                                    </label>
+                                    {(logoPreview || prospect.has_logo) && (
+                                        <label className="flex items-center gap-2 text-sm text-slate-400 cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                checked={sponsorForm.data.remove_logo}
+                                                onChange={(e) => {
+                                                    sponsorForm.setData('remove_logo', e.target.checked);
+                                                    if (e.target.checked) setLogoPreview(null);
+                                                }}
+                                                className="rounded border-slate-600 bg-slate-800 text-rose-500 focus:ring-rose-500"
+                                            />
+                                            Logo verwijderen
+                                        </label>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="flex justify-end">
+                            <button
+                                type="submit"
+                                disabled={sponsorForm.processing}
+                                className="rounded-lg bg-rose-600 px-4 py-2 text-sm font-semibold text-white hover:bg-rose-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                Opslaan
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            )}
+
             {/* Communication Log */}
             <div className="bg-slate-900 rounded-xl ring-1 ring-slate-800 p-6">
                 <h2 className="text-lg font-semibold text-white mb-4">Communicatie log</h2>
@@ -203,9 +404,28 @@ export default function ProspectDetail({ prospect }) {
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
                     <div className="bg-slate-900 rounded-xl shadow-xl ring-1 ring-slate-700 w-full max-w-md p-6">
                         <h3 className="text-lg font-semibold text-white mb-2">Omzetten naar sponsor</h3>
-                        <p className="text-sm text-slate-400 mb-4">
-                            <strong>{prospect.company_name}</strong> wordt als nieuwe sponsor aangemaakt met een Brons-contract van 1 jaar. Je wordt doorgestuurd naar de sponsors pagina.
+                        <p className="text-sm text-slate-400 mb-3">
+                            <strong>{prospect.company_name}</strong> wordt als nieuwe sponsor aangemaakt.
                         </p>
+                        {(sponsorForm.data.sponsor_tier || sponsorForm.data.sponsor_amount || sponsorForm.data.sponsor_start_date) ? (
+                            <div className="rounded-lg bg-slate-800/50 border border-slate-700/50 p-3 mb-4 space-y-1">
+                                {sponsorForm.data.sponsor_tier && (
+                                    <p className="text-sm text-slate-300">Formule: <span className="text-white font-medium">{{ bronze: 'Brons', silver: 'Zilver', gold: 'Goud' }[sponsorForm.data.sponsor_tier]}</span></p>
+                                )}
+                                {sponsorForm.data.sponsor_amount && (
+                                    <p className="text-sm text-slate-300">Bedrag: <span className="text-white font-medium">€{sponsorForm.data.sponsor_amount}</span></p>
+                                )}
+                                {sponsorForm.data.sponsor_start_date && (
+                                    <p className="text-sm text-slate-300">Startdatum: <span className="text-white font-medium">{sponsorForm.data.sponsor_start_date}</span></p>
+                                )}
+                                {sponsorForm.data.sponsor_renewal_months && (
+                                    <p className="text-sm text-slate-300">Hernieuwing: <span className="text-white font-medium">{sponsorForm.data.sponsor_renewal_months} maanden</span></p>
+                                )}
+                            </div>
+                        ) : (
+                            <p className="text-sm text-amber-400 mb-4">Let op: er zijn geen sponsorgegevens ingevuld. Sla eerst de sponsorgegevens op voordat je omzet.</p>
+                        )}
+                        <p className="text-sm text-slate-500 mb-4">Na het omzetten wordt het prospect automatisch gearchiveerd.</p>
                         <div className="flex justify-end gap-3">
                             <button
                                 onClick={() => setShowConvertModal(false)}
@@ -244,6 +464,32 @@ export default function ProspectDetail({ prospect }) {
                                 className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
                             >
                                 Verwijderen
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Archive Modal */}
+            {showArchiveModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+                    <div className="bg-slate-900 rounded-xl shadow-xl ring-1 ring-slate-700 w-full max-w-md p-6">
+                        <h3 className="text-lg font-semibold text-white mb-2">Prospect archiveren</h3>
+                        <p className="text-sm text-slate-400 mb-4">
+                            <strong>{prospect.company_name}</strong> wordt gearchiveerd met de status &quot;Geen sponsor&quot;. Je kunt dit later ongedaan maken.
+                        </p>
+                        <div className="flex justify-end gap-3">
+                            <button
+                                onClick={() => setShowArchiveModal(false)}
+                                className="rounded-md bg-slate-700 px-4 py-2 text-sm font-medium text-slate-300 hover:bg-slate-600"
+                            >
+                                Annuleren
+                            </button>
+                            <button
+                                onClick={() => { handleArchive(); setShowArchiveModal(false); }}
+                                className="rounded-md bg-amber-600 px-4 py-2 text-sm font-medium text-white hover:bg-amber-700"
+                            >
+                                Archiveren
                             </button>
                         </div>
                     </div>

@@ -19,6 +19,8 @@ class Sponsor extends Model
             'contract_start_date' => 'date',
             'contract_end_date' => 'date',
             'is_active' => 'boolean',
+            'sponsor_amount' => 'float',
+            'renewal_months' => 'integer',
         ];
     }
 

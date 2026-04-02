@@ -296,7 +296,10 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::post('/prospectie/import', [ProspectController::class, 'import'])->name('admin.prospects.import');
         Route::post('/prospectie', [ProspectController::class, 'store'])->name('admin.prospects.store');
         Route::get('/prospectie/{prospect}', [ProspectController::class, 'show'])->name('admin.prospects.show');
+        Route::put('/prospectie/{prospect}', [ProspectController::class, 'update'])->name('admin.prospects.update');
         Route::post('/prospectie/{prospect}/refresh', [ProspectController::class, 'refresh'])->name('admin.prospects.refresh');
+        Route::post('/prospectie/{prospect}/archive', [ProspectController::class, 'archive'])->name('admin.prospects.archive');
+        Route::post('/prospectie/{prospect}/unarchive', [ProspectController::class, 'unarchive'])->name('admin.prospects.unarchive');
         Route::delete('/prospectie/{prospect}', [ProspectController::class, 'destroy'])->name('admin.prospects.destroy');
         Route::post('/prospectie/{prospect}/convert', [ProspectController::class, 'convertToSponsor'])->name('admin.prospects.convert');
         Route::post('/prospectie/{prospect}/notes', [ProspectNoteController::class, 'store'])->name('admin.prospect-notes.store');

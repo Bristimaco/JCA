@@ -16,9 +16,12 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class ProspectController extends Controller
 {
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $prospects = Prospect::orderByDesc('created_at')
+        $showArchived = $request->boolean('archived');
+
+        $prospects = Prospect::when($showArchived, fn ($q) => $q->archived(), fn ($q) => $q->active())
+            ->orderByDesc('created_at')
             ->get()
             ->map(fn (Prospect $p) => [
                 'id' => $p->id,
@@ -31,11 +34,13 @@ class ProspectController extends Controller
                 'website' => $p->website,
                 'status' => $p->cbe_data['status'] ?? null,
                 'notes_count' => $p->notes()->count(),
+                'archived_reason' => $p->archived_reason,
                 'created_at' => $p->created_at->toDateString(),
             ]);
 
         return Inertia::render('Admin/Prospectie', [
             'prospects' => $prospects,
+            'showArchived' => $showArchived,
         ]);
     }
 
@@ -92,6 +97,14 @@ class ProspectController extends Controller
                 'website' => $prospect->website,
                 'latitude' => $prospect->latitude,
                 'longitude' => $prospect->longitude,
+                'sponsor_amount' => $prospect->sponsor_amount,
+                'sponsor_start_date' => $prospect->sponsor_start_date?->toDateString(),
+                'sponsor_renewal_months' => $prospect->sponsor_renewal_months,
+                'sponsor_tier' => $prospect->sponsor_tier,
+                'has_logo' => (bool) $prospect->logo_mime,
+                'logo_url' => $prospect->logoDataUri(),
+                'archived_at' => $prospect->archived_at?->toDateTimeString(),
+                'archived_reason' => $prospect->archived_reason,
                 'cbe_data' => $prospect->cbe_data,
                 'cbe_fetched_at' => $prospect->cbe_fetched_at?->toDateTimeString(),
                 'notes_field' => $prospect->getAttributeValue('notes'),
@@ -171,19 +184,92 @@ class ProspectController extends Controller
         return redirect()->route('admin.prospects.index')->with('status', "Prospect '{$name}' verwijderd.");
     }
 
+    public function update(Request $request, Prospect $prospect): RedirectResponse
+    {
+        $validated = $request->validate([
+            'sponsor_amount' => ['nullable', 'numeric', 'min:0'],
+            'sponsor_start_date' => ['nullable', 'date'],
+            'sponsor_renewal_months' => ['nullable', 'integer', 'in:6,12,24,36'],
+            'sponsor_tier' => ['nullable', 'string', 'in:bronze,silver,gold'],
+            'logo' => ['nullable', 'string'],
+            'remove_logo' => ['nullable', 'boolean'],
+        ]);
+
+        $prospect->sponsor_amount = $validated['sponsor_amount'] ?? null;
+        $prospect->sponsor_start_date = $validated['sponsor_start_date'] ?? null;
+        $prospect->sponsor_renewal_months = $validated['sponsor_renewal_months'] ?? null;
+        $prospect->sponsor_tier = $validated['sponsor_tier'] ?? null;
+
+        if (! empty($validated['remove_logo'])) {
+            $prospect->logo_data = null;
+            $prospect->logo_mime = null;
+        } elseif (! empty($validated['logo'])) {
+            $this->applyLogo($prospect, $validated['logo']);
+        }
+
+        $prospect->save();
+
+        return back()->with('status', 'Sponsorgegevens bijgewerkt.');
+    }
+
     public function convertToSponsor(Prospect $prospect): RedirectResponse
     {
-        Sponsor::create([
+        $startDate = $prospect->sponsor_start_date ?? now();
+        $renewalMonths = $prospect->sponsor_renewal_months ?? 12;
+
+        $sponsorData = [
             'name' => $prospect->company_name,
             'address_street' => $prospect->address_street,
             'address_city' => $prospect->address_city,
             'address_postal_code' => $prospect->address_postal_code,
-            'tier' => 'bronze',
-            'contract_start_date' => now()->toDateString(),
-            'contract_end_date' => now()->addYear()->toDateString(),
+            'tier' => $prospect->sponsor_tier ?? 'bronze',
+            'contract_start_date' => $startDate->toDateString(),
+            'contract_end_date' => $startDate->copy()->addMonths($renewalMonths)->toDateString(),
             'is_active' => true,
+            'sponsor_amount' => $prospect->sponsor_amount,
+            'renewal_months' => $renewalMonths,
+        ];
+
+        if ($prospect->logo_data) {
+            $sponsorData['logo_data'] = $prospect->logo_data;
+            $sponsorData['logo_mime'] = $prospect->logo_mime;
+        }
+
+        Sponsor::create($sponsorData);
+
+        $prospect->update([
+            'archived_at' => now(),
+            'archived_reason' => 'converted',
         ]);
 
-        return redirect('/admin/sponsors')->with('status', "'{$prospect->company_name}' omgezet naar sponsor.");
+        return back()->with('status', "'{$prospect->company_name}' omgezet naar sponsor en gearchiveerd.");
+    }
+
+    public function archive(Prospect $prospect): RedirectResponse
+    {
+        $prospect->update([
+            'archived_at' => now(),
+            'archived_reason' => 'no_sponsor',
+        ]);
+
+        return back()->with('status', "'{$prospect->company_name}' gearchiveerd als 'Geen sponsor'.");
+    }
+
+    public function unarchive(Prospect $prospect): RedirectResponse
+    {
+        $prospect->update([
+            'archived_at' => null,
+            'archived_reason' => null,
+        ]);
+
+        return back()->with('status', "'{$prospect->company_name}' opnieuw geactiveerd.");
+    }
+
+    private function applyLogo(Prospect $prospect, string $dataUrl): void
+    {
+        if (preg_match('/^data:(image\/[a-zA-Z+]+);base64,(.+)$/', $dataUrl, $matches)) {
+            $prospect->logo_mime = $matches[1];
+            $prospect->logo_data = $matches[2];
+        }
     }
 }
