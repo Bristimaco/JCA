@@ -1,5 +1,5 @@
 import { Head, Link, useForm, router } from '@inertiajs/react';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import AppLayout from '../../Layouts/AppLayout';
 
 export default function Prospectie({ prospects }) {
@@ -7,6 +7,8 @@ export default function Prospectie({ prospects }) {
     const [lookupError, setLookupError] = useState(null);
     const [lookupLoading, setLookupLoading] = useState(false);
     const [vatInput, setVatInput] = useState('');
+    const [importing, setImporting] = useState(false);
+    const fileInputRef = useRef(null);
 
     const saveForm = useForm({
         vat_number: '',
@@ -83,18 +85,54 @@ export default function Prospectie({ prospects }) {
         return `BE ${str}`;
     };
 
+    const handleImport = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        setImporting(true);
+        router.post('/admin/prospectie/import', { file }, {
+            forceFormData: true,
+            preserveScroll: true,
+            onFinish: () => {
+                setImporting(false);
+                if (fileInputRef.current) fileInputRef.current.value = '';
+            },
+        });
+    };
+
     return (
         <AppLayout>
             <Head title="Prospectie" />
 
             <div className="mb-6">
-                <div className="flex items-center gap-3">
-                    <Link href="/" className="text-slate-400 hover:text-white">
-                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-                    </Link>
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <Link href="/" className="text-slate-400 hover:text-white">
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                        </Link>
+                        <div>
+                            <h1 className="text-2xl font-bold text-white">Prospectie</h1>
+                            <p className="text-sm text-slate-400 mt-1">Zoek bedrijven op via de KBO en beheer prospecten</p>
+                        </div>
+                    </div>
                     <div>
-                        <h1 className="text-2xl font-bold text-white">Prospectie</h1>
-                        <p className="text-sm text-slate-400 mt-1">Zoek bedrijven op via de KBO en beheer prospecten</p>
+                        <input type="file" ref={fileInputRef} accept=".xlsx" onChange={handleImport} className="hidden" />
+                        <button
+                            onClick={() => fileInputRef.current?.click()}
+                            disabled={importing}
+                            className="rounded-lg bg-slate-700 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-600 disabled:opacity-50 flex items-center gap-2"
+                        >
+                            {importing ? (
+                                <>
+                                    <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
+                                    Importeren...
+                                </>
+                            ) : (
+                                <>
+                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                                    Import Excel
+                                </>
+                            )}
+                        </button>
                     </div>
                 </div>
             </div>

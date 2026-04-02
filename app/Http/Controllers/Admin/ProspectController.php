@@ -11,6 +11,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ProspectController extends Controller
 {
@@ -128,6 +129,70 @@ class ProspectController extends Controller
         ]);
 
         return back()->with('status', 'KBO gegevens bijgewerkt.');
+    }
+
+    public function import(Request $request, CbeApiService $service): RedirectResponse
+    {
+        $request->validate([
+            'file' => ['required', 'file', 'mimes:xlsx'],
+        ]);
+
+        $rows = Excel::toArray(null, $request->file('file'));
+        $imported = 0;
+        $skipped = 0;
+        $failed = 0;
+
+        foreach ($rows[0] ?? [] as $row) {
+            $raw = $row[0] ?? null;
+            if (! $raw) {
+                continue;
+            }
+
+            $digits = preg_replace('/\D/', '', (string) $raw);
+            if (strlen($digits) < 9 || strlen($digits) > 10) {
+                $failed++;
+
+                continue;
+            }
+
+            $digits = str_pad($digits, 10, '0', STR_PAD_LEFT);
+
+            if (Prospect::where('vat_number', $digits)->exists()) {
+                $skipped++;
+
+                continue;
+            }
+
+            $result = $service->lookupByNumber($digits);
+
+            if (! $result['success']) {
+                $failed++;
+
+                continue;
+            }
+
+            $data = $result['data'];
+
+            Prospect::create([
+                'vat_number' => $data['vat_number'] ?? $digits,
+                'company_name' => $data['company_name'] ?? 'Onbekend',
+                'address_street' => $data['address_street'] ?? null,
+                'address_city' => $data['address_city'] ?? null,
+                'address_postal_code' => $data['address_postal_code'] ?? null,
+                'legal_form' => $data['legal_form'] ?? null,
+                'phone' => $data['phone'] ?? null,
+                'email' => $data['email'] ?? null,
+                'website' => $data['website'] ?? null,
+                'latitude' => $data['latitude'] ?? null,
+                'longitude' => $data['longitude'] ?? null,
+                'cbe_data' => $data,
+                'cbe_fetched_at' => now(),
+            ]);
+
+            $imported++;
+        }
+
+        return back()->with('status', "{$imported} prospecten geïmporteerd, {$skipped} overgeslagen (duplicaat), {$failed} mislukt.");
     }
 
     public function destroy(Prospect $prospect): RedirectResponse

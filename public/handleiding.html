@@ -2284,6 +2284,22 @@
                 Klik op een rij om de detailpagina te openen.
             </p>
 
+            <h4>Excel import</h4>
+            <p>
+                Je kan ook prospecten in bulk importeren via een <strong>Excel-bestand (.xlsx)</strong>.
+                Klik op de knop <strong>&#8220;Import Excel&#8221;</strong> rechtsboven op de prospectie-pagina
+                en selecteer een .xlsx-bestand. Het bestand moet BTW-nummers bevatten in de eerste kolom (één per rij).
+            </p>
+            <p>
+                Het systeem verwerkt elke rij automatisch:
+            </p>
+            <ul>
+                <li>Niet-cijfer tekens (letters, punten, spaties) worden verwijderd om het ondernemingsnummer te bepalen</li>
+                <li>Per nummer wordt de KBO opgezocht via de CBE API</li>
+                <li>Duplicaten (reeds opgeslagen prospecten) worden automatisch overgeslagen</li>
+                <li>Na afloop krijg je een samenvatting: hoeveel prospecten geïmporteerd, overgeslagen of mislukt</li>
+            </ul>
+
             <h4>Prospect detailpagina</h4>
             <p>
                 Op de detailpagina van een prospect vind je:

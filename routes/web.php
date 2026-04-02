@@ -293,6 +293,7 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         // Prospects
         Route::get('/prospectie', [ProspectController::class, 'index'])->name('admin.prospects.index');
         Route::post('/prospectie/lookup', [ProspectController::class, 'lookup'])->name('admin.prospects.lookup');
+        Route::post('/prospectie/import', [ProspectController::class, 'import'])->name('admin.prospects.import');
         Route::post('/prospectie', [ProspectController::class, 'store'])->name('admin.prospects.store');
         Route::get('/prospectie/{prospect}', [ProspectController::class, 'show'])->name('admin.prospects.show');
         Route::post('/prospectie/{prospect}/refresh', [ProspectController::class, 'refresh'])->name('admin.prospects.refresh');
