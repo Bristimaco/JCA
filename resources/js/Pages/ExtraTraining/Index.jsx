@@ -8,7 +8,7 @@ export default function Index({ extraTrainings, groups, trainers, isAdmin }) {
 
     const today = new Date().toISOString().split('T')[0];
 
-    const isFuture = (dateStr) => dateStr >= today;
+    const isFuture = (dateStr) => (dateStr ? dateStr.substring(0, 10) : '') >= today;
 
     const { data, setData, patch, processing, errors, reset } = useForm({
         name: '',
@@ -23,7 +23,7 @@ export default function Index({ extraTrainings, groups, trainers, isAdmin }) {
         setEditingId(training.id);
         setData({
             name: training.name || '',
-            date: training.date || '',
+            date: training.date ? training.date.substring(0, 10) : '',
             start_time: training.start_time ? training.start_time.substring(0, 5) : '',
             end_time: training.end_time ? training.end_time.substring(0, 5) : '',
             trainer_id: training.trainer_id || '',
@@ -58,7 +58,7 @@ export default function Index({ extraTrainings, groups, trainers, isAdmin }) {
 
     const formatDate = (dateStr) => {
         if (!dateStr) return '—';
-        const d = new Date(dateStr + 'T00:00:00');
+        const d = new Date(dateStr);
         return d.toLocaleDateString('nl-BE', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' });
     };
 

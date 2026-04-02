@@ -75,7 +75,7 @@ class ExtraTrainingController extends Controller
             'date' => $request->input('date'),
             'start_time' => $request->input('start_time'),
             'end_time' => $request->input('end_time'),
-            'trainer_id' => $request->input('trainer_id'),
+            'trainer_id' => $request->input('trainer_id') ?: Auth::id(),
             'day' => null,
             'training_group_id' => null,
         ]);
