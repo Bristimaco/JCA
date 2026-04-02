@@ -150,26 +150,26 @@ export default function Dashboard({ pendingCount, pendingUsers, adminCounters, m
         <AppLayout>
             <Head title="Dashboard" />
 
-            <div className="mb-3">
-                <h1 className="text-2xl font-bold text-stone-100 tracking-tight">Dashboard</h1>
-                <p className="text-slate-400 text-sm">Welkom terug, {auth.user.name}</p>
+            <div className="mb-2">
+                <h1 className="text-xl font-bold text-stone-100 tracking-tight">Dashboard</h1>
+                <p className="text-slate-400 text-xs">Welkom terug, {auth.user.name}</p>
             </div>
 
             {moduleGroups.map((group) => {
                 const visibleModules = group.modules.filter((m) => m.roles.includes(role));
                 if (visibleModules.length === 0) return null;
                 return (
-                    <div key={group.title} className="mb-4">
-                        <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">{group.title}</h2>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
+                    <div key={group.title} className="mb-2">
+                        <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">{group.title}</h2>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
                             {visibleModules.map((m) => (
                                 <Link
                                     key={m.name}
                                     href={m.href}
-                                    className="group bg-slate-900 rounded-xl shadow-sm ring-1 ring-slate-800 border-t-2 border-t-rose-700/40 p-3 hover:shadow-md hover:ring-rose-500/40 hover:-translate-y-0.5"
+                                    className="group bg-slate-900 rounded-xl shadow-sm ring-1 ring-slate-800 border-t-2 border-t-rose-700/40 p-2 hover:shadow-md hover:ring-rose-500/40 hover:-translate-y-0.5"
                                 >
                                     <div className="flex flex-col items-center text-center">
-                                        <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${moduleColors[m.name]} flex items-center justify-center text-white mb-1.5 shadow-sm group-hover:scale-105 [&_svg]:w-4 [&_svg]:h-4`}>
+                                        <div className={`w-7 h-7 rounded-lg bg-gradient-to-br ${moduleColors[m.name]} flex items-center justify-center text-white mb-1 shadow-sm group-hover:scale-105 [&_svg]:w-3.5 [&_svg]:h-3.5`}>
                                             {moduleIcons[m.name]}
                                         </div>
                                         <span className="text-sm font-semibold text-white">{m.name}</span>
@@ -188,7 +188,7 @@ export default function Dashboard({ pendingCount, pendingUsers, adminCounters, m
                                                 'Archief': archivedTournamentCount,
                                             }[m.name];
                                             return count !== undefined && count !== null ? (
-                                                <span className="mt-1 inline-flex items-center rounded-full bg-slate-800 px-2 py-0.5 text-xs font-medium text-slate-300">
+                                                <span className="mt-0.5 inline-flex items-center rounded-full bg-slate-800 px-1.5 py-0 text-xs font-medium text-slate-300">
                                                     {count}
                                                 </span>
                                             ) : null;
