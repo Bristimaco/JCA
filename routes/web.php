@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminActivityController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminSessionHistoryController;
 use App\Http\Controllers\Admin\AgeCategoryController;
@@ -219,6 +220,7 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
     // Admin routes
     Route::middleware('admin')->prefix('admin')->group(function () {
         Route::get('/', AdminDashboardController::class)->name('admin.dashboard');
+        Route::get('/activiteit', [AdminActivityController::class, 'index'])->name('admin.activity');
         Route::get('/sessions', AdminSessionHistoryController::class)->name('admin.sessions.history');
         Route::get('/attendance-report', AttendanceReportController::class)->name('admin.attendance-report');
         Route::patch('/club-settings', [ClubSettingsController::class, 'update'])->name('admin.club-settings.update');
