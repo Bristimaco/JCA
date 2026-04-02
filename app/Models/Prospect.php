@@ -14,6 +14,8 @@ class Prospect extends Model
         return [
             'cbe_data' => 'array',
             'cbe_fetched_at' => 'datetime',
+            'latitude' => 'float',
+            'longitude' => 'float',
         ];
     }
 

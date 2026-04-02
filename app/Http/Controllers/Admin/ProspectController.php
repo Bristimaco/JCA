@@ -58,6 +58,8 @@ class ProspectController extends Controller
             'phone' => ['nullable', 'string', 'max:50'],
             'email' => ['nullable', 'string', 'max:255'],
             'website' => ['nullable', 'string', 'max:255'],
+            'latitude' => ['nullable', 'numeric'],
+            'longitude' => ['nullable', 'numeric'],
             'cbe_data' => ['nullable', 'array'],
         ]);
 
@@ -84,6 +86,8 @@ class ProspectController extends Controller
                 'phone' => $prospect->phone,
                 'email' => $prospect->email,
                 'website' => $prospect->website,
+                'latitude' => $prospect->latitude,
+                'longitude' => $prospect->longitude,
                 'cbe_data' => $prospect->cbe_data,
                 'cbe_fetched_at' => $prospect->cbe_fetched_at?->toDateTimeString(),
                 'notes_field' => $prospect->getAttributeValue('notes'),
@@ -117,6 +121,8 @@ class ProspectController extends Controller
             'phone' => $data['phone'],
             'email' => $data['email'],
             'website' => $data['website'],
+            'latitude' => $data['latitude'] ?? null,
+            'longitude' => $data['longitude'] ?? null,
             'cbe_data' => $data,
             'cbe_fetched_at' => now(),
         ]);

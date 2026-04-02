@@ -63,6 +63,8 @@ export default function Prospectie({ prospects }) {
             phone: lookupResult.phone || '',
             email: lookupResult.email || '',
             website: lookupResult.website || '',
+            latitude: lookupResult.latitude || null,
+            longitude: lookupResult.longitude || null,
             cbe_data: lookupResult,
         }, {
             preserveScroll: true,
@@ -174,6 +176,17 @@ export default function Prospectie({ prospects }) {
                                         <p className="text-xs text-slate-500">+ {lookupResult.nace_activities.length - 5} meer</p>
                                     )}
                                 </div>
+                            </div>
+                        )}
+
+                        {lookupResult.latitude && lookupResult.longitude && (
+                            <div className="mt-4 rounded-lg overflow-hidden ring-1 ring-slate-700">
+                                <iframe
+                                    title="Locatie"
+                                    width="100%"
+                                    height="220"
+                                    src={`https://www.openstreetmap.org/export/embed.html?bbox=${lookupResult.longitude - 0.01},${lookupResult.latitude - 0.01},${parseFloat(lookupResult.longitude) + 0.01},${parseFloat(lookupResult.latitude) + 0.01}&layer=mapnik&marker=${lookupResult.latitude},${lookupResult.longitude}`}
+                                />
                             </div>
                         )}
 

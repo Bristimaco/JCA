@@ -131,6 +131,18 @@ export default function ProspectDetail({ prospect }) {
                 )}
             </div>
 
+            {/* Map */}
+            {prospect.latitude && prospect.longitude && (
+                <div className="bg-slate-900 rounded-xl ring-1 ring-slate-800 overflow-hidden mb-6">
+                    <iframe
+                        title="Locatie"
+                        width="100%"
+                        height="220"
+                        src={`https://www.openstreetmap.org/export/embed.html?bbox=${prospect.longitude - 0.01},${prospect.latitude - 0.01},${parseFloat(prospect.longitude) + 0.01},${parseFloat(prospect.latitude) + 0.01}&layer=mapnik&marker=${prospect.latitude},${prospect.longitude}`}
+                    />
+                </div>
+            )}
+
             {/* Communication Log */}
             <div className="bg-slate-900 rounded-xl ring-1 ring-slate-800 p-6">
                 <h2 className="text-lg font-semibold text-white mb-4">Communicatie log</h2>

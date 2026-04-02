@@ -116,6 +116,39 @@ class CbeApiService
             'start_date' => $company['start_date'] ?? null,
             'nace_activities' => $naceActivities,
             'establishments' => $establishments,
+            ...$this->geocodeAddress($address['full_address'] ?? null),
         ];
+    }
+
+    private function geocodeAddress(?string $fullAddress): array
+    {
+        if (! $fullAddress) {
+            return ['latitude' => null, 'longitude' => null];
+        }
+
+        try {
+            $response = Http::withHeaders([
+                'User-Agent' => 'JudoClubApp/1.0 (prospect-lookup)',
+            ])
+                ->timeout(5)
+                ->get('https://nominatim.openstreetmap.org/search', [
+                    'q' => $fullAddress,
+                    'format' => 'json',
+                    'limit' => 1,
+                ]);
+
+            $results = $response->json();
+
+            if (! empty($results[0]['lat']) && ! empty($results[0]['lon'])) {
+                return [
+                    'latitude' => (float) $results[0]['lat'],
+                    'longitude' => (float) $results[0]['lon'],
+                ];
+            }
+        } catch (\Exception $e) {
+            Log::warning('Nominatim geocoding failed', ['address' => $fullAddress, 'error' => $e->getMessage()]);
+        }
+
+        return ['latitude' => null, 'longitude' => null];
     }
 }
