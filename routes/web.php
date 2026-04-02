@@ -285,7 +285,6 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
 
         // Sponsors
         Route::get('/sponsors', [SponsorController::class, 'index'])->name('admin.sponsors.index');
-        Route::post('/sponsors', [SponsorController::class, 'store'])->name('admin.sponsors.store');
         Route::patch('/sponsors/{sponsor}', [SponsorController::class, 'update'])->name('admin.sponsors.update');
         Route::post('/sponsors/{sponsor}/renew', [SponsorController::class, 'renew'])->name('admin.sponsors.renew');
         Route::delete('/sponsors/{sponsor}', [SponsorController::class, 'destroy'])->name('admin.sponsors.destroy');
