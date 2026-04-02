@@ -164,32 +164,32 @@ export default function Dashboard({ pendingCount, pendingUsers, adminCounters, m
                     visibleModules: group.modules.filter((m) => m.roles.includes(role)),
                 })).filter((g) => g.visibleModules.length > 0);
 
+                const counts = {
+                    'Leden': memberStats?.total,
+                    'Mijn Leden': myMemberCount,
+                    'Toernooien': adminCounters?.activeTournamentCount ?? coachTournamentCount,
+                    'Facturen': adminCounters?.pendingInvoiceCount,
+                    'Vouchers': adminCounters?.activeVoucherCount,
+                    'Aan te vullen': adminCounters?.refillProductCount,
+                    'Sponsors': adminCounters?.activeSponsorCount,
+                    'Mededelingen': adminCounters?.activeAnnouncementCount,
+                    'Evenementen Beheer': adminCounters?.activeEventCount,
+                    'Evenementen': myEventCount,
+                    'Archief': archivedTournamentCount,
+                };
+
                 while (i < filtered.length) {
                     const g = filtered[i];
                     const next = filtered[i + 1];
                     if (pairedTitles.includes(g.title) && next && pairedTitles.includes(next.title)) {
                         rendered.push(
-                            <div key={g.title + '+' + next.title} className="grid grid-cols-1 lg:grid-cols-2 gap-x-4 mb-2">
+                            <div key={g.title + '+' + next.title} className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 mb-2">
                                 {[g, next].map((pg) => (
-                                    <div key={pg.title}>
-                                        <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">{pg.title}</h2>
-                                        <div className={`grid gap-2 ${pg.visibleModules.length === 1 ? 'grid-cols-1' : pg.visibleModules.length === 2 ? 'grid-cols-2' : 'grid-cols-2 sm:grid-cols-3'}`}>
-                                            {pg.visibleModules.map((m) => (
-                                                <ModuleTile key={m.name} m={m} moduleColors={moduleColors} moduleIcons={moduleIcons} counts={{
-                                                    'Leden': memberStats?.total,
-                                                    'Mijn Leden': myMemberCount,
-                                                    'Toernooien': adminCounters?.activeTournamentCount ?? coachTournamentCount,
-                                                    'Facturen': adminCounters?.pendingInvoiceCount,
-                                                    'Vouchers': adminCounters?.activeVoucherCount,
-                                                    'Aan te vullen': adminCounters?.refillProductCount,
-                                                    'Sponsors': adminCounters?.activeSponsorCount,
-                                                    'Mededelingen': adminCounters?.activeAnnouncementCount,
-                                                    'Evenementen Beheer': adminCounters?.activeEventCount,
-                                                    'Evenementen': myEventCount,
-                                                    'Archief': archivedTournamentCount,
-                                                }} />
-                                            ))}
-                                        </div>
+                                    <div key={pg.title} className="col-span-2 sm:col-span-3 grid grid-cols-2 sm:grid-cols-3 gap-2">
+                                        <h2 className="col-span-2 sm:col-span-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">{pg.title}</h2>
+                                        {pg.visibleModules.map((m) => (
+                                            <ModuleTile key={m.name} m={m} moduleColors={moduleColors} moduleIcons={moduleIcons} counts={counts} />
+                                        ))}
                                     </div>
                                 ))}
                             </div>
@@ -201,19 +201,7 @@ export default function Dashboard({ pendingCount, pendingUsers, adminCounters, m
                                 <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">{g.title}</h2>
                                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
                                     {g.visibleModules.map((m) => (
-                                        <ModuleTile key={m.name} m={m} moduleColors={moduleColors} moduleIcons={moduleIcons} counts={{
-                                            'Leden': memberStats?.total,
-                                            'Mijn Leden': myMemberCount,
-                                            'Toernooien': adminCounters?.activeTournamentCount ?? coachTournamentCount,
-                                            'Facturen': adminCounters?.pendingInvoiceCount,
-                                            'Vouchers': adminCounters?.activeVoucherCount,
-                                            'Aan te vullen': adminCounters?.refillProductCount,
-                                            'Sponsors': adminCounters?.activeSponsorCount,
-                                            'Mededelingen': adminCounters?.activeAnnouncementCount,
-                                            'Evenementen Beheer': adminCounters?.activeEventCount,
-                                            'Evenementen': myEventCount,
-                                            'Archief': archivedTournamentCount,
-                                        }} />
+                                        <ModuleTile key={m.name} m={m} moduleColors={moduleColors} moduleIcons={moduleIcons} counts={counts} />
                                     ))}
                                 </div>
                             </div>
