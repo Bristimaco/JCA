@@ -169,7 +169,7 @@ class ProspectController extends Controller
 
             $digits = str_pad($digits, 10, '0', STR_PAD_LEFT);
 
-            ImportProspect::dispatch($digits)->delay(now()->addSeconds($dispatched * 2));
+            ImportProspect::dispatch($digits)->delay(now()->addSeconds($dispatched * 3));
             $dispatched++;
         }
 

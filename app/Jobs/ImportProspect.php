@@ -7,6 +7,7 @@ use App\Services\CbeApiService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Log;
+use RuntimeException;
 
 class ImportProspect implements ShouldQueue
 {
@@ -25,7 +26,12 @@ class ImportProspect implements ShouldQueue
         $result = $service->lookupByNumber($this->vatNumber);
 
         if (! $result['success']) {
-            return;
+            Log::warning('ImportProspect API failed', [
+                'vat_number' => $this->vatNumber,
+                'error' => $result['error'] ?? 'Unknown error',
+            ]);
+
+            throw new RuntimeException('CBE API lookup failed for '.$this->vatNumber.': '.($result['error'] ?? 'Unknown error'));
         }
 
         $data = $result['data'];
