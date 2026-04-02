@@ -13,9 +13,9 @@ class ImportProspect implements ShouldQueue
 {
     use Queueable;
 
-    public int $tries = 3;
+    public int $tries = 5;
 
-    public int $backoff = 30;
+    public array $backoff = [60, 120, 300];
 
     public function __construct(
         public string $vatNumber,

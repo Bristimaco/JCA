@@ -63,7 +63,10 @@ export default function ProspectDetail({ prospect }) {
     };
 
     const handleConvert = () => {
-        router.post(`/admin/prospectie/${prospect.id}/convert`, {}, { preserveScroll: true });
+        router.post(`/admin/prospectie/${prospect.id}/convert`, {}, {
+            preserveScroll: true,
+            onSuccess: () => setShowConvertModal(false),
+        });
     };
 
     const handleDelete = () => {
@@ -71,7 +74,10 @@ export default function ProspectDetail({ prospect }) {
     };
 
     const handleArchive = () => {
-        router.post(`/admin/prospectie/${prospect.id}/archive`, {}, { preserveScroll: true });
+        router.post(`/admin/prospectie/${prospect.id}/archive`, {}, {
+            preserveScroll: true,
+            onSuccess: () => setShowArchiveModal(false),
+        });
     };
 
     const handleUnarchive = () => {
@@ -99,18 +105,19 @@ export default function ProspectDetail({ prospect }) {
         return `BE ${str}`;
     };
 
+    const formatDate = (dateStr) => {
+        if (!dateStr) return '-';
+        const [y, m, d] = dateStr.split('-');
+        return `${d}/${m}/${y}`;
+    };
+
     return (
         <AppLayout>
             <Head title={prospect.company_name} />
 
-            {flash?.success && (
+            {flash?.status && (
                 <div className="mb-4 rounded-lg bg-emerald-900/50 border border-emerald-700/50 p-4">
-                    <p className="text-sm text-emerald-300">{flash.success}</p>
-                </div>
-            )}
-            {flash?.error && (
-                <div className="mb-4 rounded-lg bg-red-900/50 border border-red-700/50 p-4">
-                    <p className="text-sm text-red-300">{flash.error}</p>
+                    <p className="text-sm text-emerald-300">{flash.status}</p>
                 </div>
             )}
 
@@ -416,7 +423,7 @@ export default function ProspectDetail({ prospect }) {
                                     <p className="text-sm text-slate-300">Bedrag: <span className="text-white font-medium">€{sponsorForm.data.sponsor_amount}</span></p>
                                 )}
                                 {sponsorForm.data.sponsor_start_date && (
-                                    <p className="text-sm text-slate-300">Startdatum: <span className="text-white font-medium">{sponsorForm.data.sponsor_start_date}</span></p>
+                                    <p className="text-sm text-slate-300">Startdatum: <span className="text-white font-medium">{formatDate(sponsorForm.data.sponsor_start_date)}</span></p>
                                 )}
                                 {sponsorForm.data.sponsor_renewal_months && (
                                     <p className="text-sm text-slate-300">Hernieuwing: <span className="text-white font-medium">{sponsorForm.data.sponsor_renewal_months} maanden</span></p>
@@ -486,7 +493,7 @@ export default function ProspectDetail({ prospect }) {
                                 Annuleren
                             </button>
                             <button
-                                onClick={() => { handleArchive(); setShowArchiveModal(false); }}
+                                onClick={handleArchive}
                                 className="rounded-md bg-amber-600 px-4 py-2 text-sm font-medium text-white hover:bg-amber-700"
                             >
                                 Archiveren
