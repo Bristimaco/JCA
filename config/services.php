@@ -40,4 +40,8 @@ return [
         'private_key' => env('VAPID_PRIVATE_KEY'),
     ],
 
+    'cbe' => [
+        'token' => env('CBE_API_TOKEN'),
+    ],
+
 ];

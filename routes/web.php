@@ -15,6 +15,8 @@ use App\Http\Controllers\Admin\InvoiceController;
 use App\Http\Controllers\Admin\MemberController;
 use App\Http\Controllers\Admin\MemberExcelController;
 use App\Http\Controllers\Admin\MemberIndexController;
+use App\Http\Controllers\Admin\ProspectController;
+use App\Http\Controllers\Admin\ProspectNoteController;
 use App\Http\Controllers\Admin\SponsorController;
 use App\Http\Controllers\Admin\ToggleUserActiveController;
 use App\Http\Controllers\Admin\TournamentController;
@@ -287,6 +289,17 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::patch('/sponsors/{sponsor}', [SponsorController::class, 'update'])->name('admin.sponsors.update');
         Route::post('/sponsors/{sponsor}/renew', [SponsorController::class, 'renew'])->name('admin.sponsors.renew');
         Route::delete('/sponsors/{sponsor}', [SponsorController::class, 'destroy'])->name('admin.sponsors.destroy');
+
+        // Prospects
+        Route::get('/prospectie', [ProspectController::class, 'index'])->name('admin.prospects.index');
+        Route::post('/prospectie/lookup', [ProspectController::class, 'lookup'])->name('admin.prospects.lookup');
+        Route::post('/prospectie', [ProspectController::class, 'store'])->name('admin.prospects.store');
+        Route::get('/prospectie/{prospect}', [ProspectController::class, 'show'])->name('admin.prospects.show');
+        Route::post('/prospectie/{prospect}/refresh', [ProspectController::class, 'refresh'])->name('admin.prospects.refresh');
+        Route::delete('/prospectie/{prospect}', [ProspectController::class, 'destroy'])->name('admin.prospects.destroy');
+        Route::post('/prospectie/{prospect}/convert', [ProspectController::class, 'convertToSponsor'])->name('admin.prospects.convert');
+        Route::post('/prospectie/{prospect}/notes', [ProspectNoteController::class, 'store'])->name('admin.prospect-notes.store');
+        Route::delete('/prospectie/{prospect}/notes/{note}', [ProspectNoteController::class, 'destroy'])->name('admin.prospect-notes.destroy');
 
         // Events
         Route::get('/evenementen', [AdminEventController::class, 'index'])->name('admin.events.index');

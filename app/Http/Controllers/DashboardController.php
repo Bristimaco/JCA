@@ -15,6 +15,7 @@ use App\Models\BeltHistory;
 use App\Models\Event;
 use App\Models\Member;
 use App\Models\MembershipInvoice;
+use App\Models\Prospect;
 use App\Models\Sponsor;
 use App\Models\Tournament;
 use App\Models\TournamentResult;
@@ -60,6 +61,7 @@ class DashboardController extends Controller
                 'activeSponsorCount' => Sponsor::active()->count(),
                 'activeAnnouncementCount' => Announcement::active()->count(),
                 'activeEventCount' => Event::notArchived()->where('status', '!=', EventStatus::Draft)->count(),
+                'prospectCount' => Prospect::count(),
             ];
 
             $props['memberStats'] = $this->memberStats();

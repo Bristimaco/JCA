@@ -40,6 +40,9 @@ const moduleIcons = {
     'Sponsors': (
         <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" /></svg>
     ),
+    'Prospectie': (
+        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m5.231 13.481L15 17.25m-4.5-15H5.625c-.621 0-1.125.504-1.125 1.125v16.5c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9zm3.75 11.625a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" /></svg>
+    ),
     'Mededelingen': (
         <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H7.5a4.5 4.5 0 110-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783.247.55.06 1.21-.463 1.511l-.657.38c-.551.318-1.26.117-1.527-.461a20.845 20.845 0 01-1.44-4.282m3.102.069a18.03 18.03 0 01-.59-4.59c0-1.586.205-3.124.59-4.59m0 9.18a23.848 23.848 0 018.835 2.535M10.34 6.66a23.847 23.847 0 008.835-2.535m0 0A23.74 23.74 0 0018.795 3m.38 1.125a23.91 23.91 0 011.014 5.395m-1.014 8.855c-.118.38-.245.754-.38 1.125m.38-1.125a23.91 23.91 0 001.014-5.395m0-3.46c.495.413.811 1.035.811 1.73 0 .695-.316 1.317-.811 1.73m0-3.46a24.347 24.347 0 010 3.46" /></svg>
     ),
@@ -76,6 +79,7 @@ const moduleColors = {
     'Kassa Producten': 'from-emerald-700 to-teal-800',
     'Verkoopstatistieken': 'from-indigo-600 to-purple-700',
     'Sponsors': 'from-pink-600 to-rose-700',
+    'Prospectie': 'from-teal-600 to-cyan-700',
     'Mededelingen': 'from-cyan-600 to-teal-700',
     'Evenementen': 'from-orange-600 to-amber-700',
     'Evenementen Beheer': 'from-orange-700 to-red-700',
@@ -131,6 +135,7 @@ const moduleGroups = [
         title: 'Sponsoring',
         modules: [
             { name: 'Sponsors', href: '/admin/sponsors', roles: ['admin'] },
+            { name: 'Prospectie', href: '/admin/prospectie', roles: ['admin'] },
         ],
     },
     {
@@ -172,6 +177,7 @@ export default function Dashboard({ pendingCount, pendingUsers, adminCounters, m
                     'Vouchers': adminCounters?.activeVoucherCount,
                     'Aan te vullen': adminCounters?.refillProductCount,
                     'Sponsors': adminCounters?.activeSponsorCount,
+                    'Prospectie': adminCounters?.prospectCount,
                     'Mededelingen': adminCounters?.activeAnnouncementCount,
                     'Evenementen Beheer': adminCounters?.activeEventCount,
                     'Evenementen': myEventCount,

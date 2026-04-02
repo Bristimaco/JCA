@@ -521,6 +521,7 @@
                     <a href="#admin-facturen" class="nav-link">Facturen &amp; Betalingen</a>
                     <a href="#admin-vouchers" class="nav-link">Vouchers</a>
                     <a href="#admin-sponsors" class="nav-link">Sponsors</a>
+                    <a href="#admin-prospectie" class="nav-link">Prospectie</a>
                     <a href="#admin-mededelingen" class="nav-link">Mededelingen</a>
                     <a href="#admin-bar-producten" class="nav-link">Bar Producten</a>
                     <a href="#admin-aan-te-vullen" class="nav-link">Aan te vullen</a>
@@ -2244,6 +2245,59 @@
                 <li>&#129351; <strong>Goud</strong>: logo verschijnt het vaakst (standaard elke 15 sec)</li>
                 <li>&#129352; <strong>Zilver</strong>: gemiddelde frequentie (standaard elke 30 sec)</li>
                 <li>&#129353; <strong>Brons</strong>: laagste frequentie (standaard elke 60 sec)</li>
+            </ul>
+
+            <!-- Prospectie -->
+            <h3 id="admin-prospectie">Prospectie</h3>
+            <p><span class="role-badge role-admin">Beheerder</span></p>
+            <p>
+                In de sectie <strong>&#8220;Prospectie&#8221;</strong> zoek je bedrijven op via de
+                <strong>KBO (Kruispuntbank van Ondernemingen)</strong> en beheer je een lijst van potenti&euml;le sponsors (prospecten).
+                De tegel is te vinden onder de groep <strong>Sponsoring</strong> op het dashboard.
+            </p>
+
+            <h4>Bedrijf opzoeken</h4>
+            <p>
+                Bovenaan de pagina vul je een <strong>ondernemingsnummer</strong> in en klik je op
+                <strong>&#8220;Opzoeken&#8221;</strong>. De app bevraagt de KBO API en toont de
+                bedrijfsgegevens:
+            </p>
+            <ul>
+                <li><strong>Bedrijfsnaam</strong> en commerci&euml;le naam</li>
+                <li><strong>Rechtsvorm</strong> (bv. BV, NV, VOF)</li>
+                <li><strong>Adres</strong>, telefoonnummer, e-mail, website</li>
+                <li><strong>Status</strong> en juridische situatie</li>
+                <li><strong>NACE-activiteiten</strong> &#8212; de activiteitscodes en beschrijvingen</li>
+                <li><strong>Type</strong> en oprichtingsdatum</li>
+            </ul>
+
+            <h4>Prospect opslaan</h4>
+            <p>
+                Na het opzoeken klik je op <strong>&#8220;Toevoegen als prospect&#8221;</strong> om het bedrijf
+                op te slaan in je prospectenlijst. Alle KBO-gegevens worden mee opgeslagen.
+            </p>
+
+            <h4>Prospectenlijst</h4>
+            <p>
+                Onder het opzoekformulier zie je een tabel met alle opgeslagen prospecten, met kolommen voor
+                bedrijfsnaam, ondernemingsnummer, stad, e-mail, aantal notities en datum van toevoegen.
+                Klik op een rij om de detailpagina te openen.
+            </p>
+
+            <h4>Prospect detailpagina</h4>
+            <p>
+                Op de detailpagina van een prospect vind je:
+            </p>
+            <ul>
+                <li><strong>Bedrijfsgegevens</strong> &#8212; volledig overzicht van alle KBO-data (naam, adres, contactgegevens, NACE-activiteiten, vestigingen)</li>
+                <li><strong>Vernieuwen</strong> &#8212; klik om de KBO-gegevens opnieuw op te halen
+                    (toont ook wanneer de data laatst is bijgewerkt)</li>
+                <li><strong>Communicatie log</strong> &#8212; voeg notities toe om contactmomenten bij te houden
+                    (telefoon, e-mail, vergadering, enz.). Elke notitie toont de auteur en het tijdstip.</li>
+                <li><strong>Omzetten naar sponsor</strong> &#8212; maakt een nieuwe sponsor aan met de
+                    bedrijfsgegevens van het prospect (Brons-contract, 1 jaar). Je wordt doorgestuurd naar de
+                    sponsorpagina.</li>
+                <li><strong>Verwijderen</strong> &#8212; verwijdert het prospect inclusief alle notities</li>
             </ul>
 
             <!-- Mededelingen -->
