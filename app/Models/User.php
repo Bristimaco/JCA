@@ -33,7 +33,7 @@ use Illuminate\Support\Facades\Mail;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['name', 'email', 'password', 'role', 'phone', 'is_active', 'results_interest', 'notification_preference'])]
+#[Fillable(['name', 'email', 'password', 'role', 'phone', 'is_active', 'results_interest', 'notification_preference', 'last_active_at'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements MustVerifyEmail
 {
