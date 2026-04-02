@@ -81,34 +81,65 @@ const moduleColors = {
     'Extra Training': 'from-orange-600 to-orange-700',
 };
 
-const modules = [
-    { name: 'Mijn Leden', href: '/mijn-leden', roles: ['parent', 'member', 'admin', 'coach', 'barmedewerker'] },
-    { name: 'Trainingsgroepen', href: '/trainer/training-groups', roles: ['coach'] },
-    { name: 'Extra Training', href: '/trainer/extra-training', roles: ['coach', 'admin'] },
-    { name: 'Leden', href: '/admin/members', roles: ['admin'] },
-    { name: 'Toernooien', href: '/admin/tournaments', roles: ['admin', 'coach'] },
-    { name: 'Kassa', href: '/pos', roles: ['barmedewerker', 'admin'] },
-    { name: 'Facturen', href: '/admin/facturen', roles: ['admin'] },
-    { name: 'Vouchers', href: '/admin/vouchers', roles: ['admin'] },
-    { name: 'Aan te vullen', href: '/admin/aan-te-vullen', roles: ['admin'] },
-    { name: 'Kassa Producten', href: '/admin/bar-products', roles: ['admin'] },
-    { name: 'Verkoopstatistieken', href: '/admin/verkoop-statistieken', roles: ['admin'] },
-    { name: 'Sponsors', href: '/admin/sponsors', roles: ['admin'] },
-    { name: 'Mededelingen', href: '/admin/mededelingen', roles: ['admin'] },
-    { name: 'Evenementen Beheer', href: '/admin/evenementen', roles: ['admin'] },
-    { name: 'Activiteit', href: '/admin/activiteit', roles: ['admin'] },
-    { name: 'Evenementen', href: '/evenementen', roles: ['parent', 'member', 'admin', 'coach', 'barmedewerker'] },
-    { name: 'Kalender', href: '/kalender', roles: ['parent', 'member', 'admin', 'coach', 'barmedewerker'] },
-    { name: 'Archief', href: '/archief', roles: ['parent', 'member', 'admin', 'coach', 'barmedewerker'] },
+const moduleGroups = [
+    {
+        title: 'Leden',
+        modules: [
+            { name: 'Mijn Leden', href: '/mijn-leden', roles: ['parent', 'member', 'admin', 'coach', 'barmedewerker'] },
+            { name: 'Leden', href: '/admin/members', roles: ['admin'] },
+            { name: 'Facturen', href: '/admin/facturen', roles: ['admin'] },
+            { name: 'Vouchers', href: '/admin/vouchers', roles: ['admin'] },
+        ],
+    },
+    {
+        title: 'Trainingen',
+        modules: [
+            { name: 'Trainingsgroepen', href: '/trainer/training-groups', roles: ['coach'] },
+            { name: 'Extra Training', href: '/trainer/extra-training', roles: ['coach', 'admin'] },
+        ],
+    },
+    {
+        title: 'Toernooien',
+        modules: [
+            { name: 'Toernooien', href: '/admin/tournaments', roles: ['admin', 'coach'] },
+            { name: 'Archief', href: '/archief', roles: ['parent', 'member', 'admin', 'coach', 'barmedewerker'] },
+        ],
+    },
+    {
+        title: 'Kantine',
+        modules: [
+            { name: 'Kassa', href: '/pos', roles: ['barmedewerker', 'admin'] },
+            { name: 'Kassa Producten', href: '/admin/bar-products', roles: ['admin'] },
+            { name: 'Aan te vullen', href: '/admin/aan-te-vullen', roles: ['admin'] },
+            { name: 'Verkoopstatistieken', href: '/admin/verkoop-statistieken', roles: ['admin'] },
+        ],
+    },
+    {
+        title: 'Evenementen',
+        modules: [
+            { name: 'Kalender', href: '/kalender', roles: ['parent', 'member', 'admin', 'coach', 'barmedewerker'] },
+            { name: 'Evenementen', href: '/evenementen', roles: ['parent', 'member', 'admin', 'coach', 'barmedewerker'] },
+            { name: 'Evenementen Beheer', href: '/admin/evenementen', roles: ['admin'] },
+            { name: 'Mededelingen', href: '/admin/mededelingen', roles: ['admin'] },
+        ],
+    },
+    {
+        title: 'Sponsoring',
+        modules: [
+            { name: 'Sponsors', href: '/admin/sponsors', roles: ['admin'] },
+        ],
+    },
+    {
+        title: 'Log',
+        modules: [
+            { name: 'Activiteit', href: '/admin/activiteit', roles: ['admin'] },
+        ],
+    },
 ];
 
 export default function Dashboard({ pendingCount, pendingUsers, adminCounters, memberStats, myMemberCount, myEventCount, archivedTournamentCount, myTournaments, activeTournaments, coachTournaments, coachTrainingGroups, upcomingTournaments, coachTournamentCount, recentArchived, activeTrainingSessions, extraTrainings }) {
     const { auth } = usePage().props;
     const role = auth.user.role;
-
-    const visibleModules = modules.filter(
-        (m) => m.roles.includes(role)
-    );
 
     return (
         <AppLayout>
@@ -119,46 +150,51 @@ export default function Dashboard({ pendingCount, pendingUsers, adminCounters, m
                 <p className="text-slate-400 text-sm">Welkom terug, {auth.user.name}</p>
             </div>
 
-            {visibleModules.length > 0 && (
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
-                    {visibleModules.map((m) => (
-                        <Link
-                            key={m.name}
-                            href={m.href}
-                            className="group bg-slate-900 rounded-xl shadow-sm ring-1 ring-slate-800 border-t-2 border-t-rose-700/40 p-3 hover:shadow-md hover:ring-rose-500/40 hover:-translate-y-0.5"
-                        >
-                            <div className="flex flex-col items-center text-center">
-                                <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${moduleColors[m.name]} flex items-center justify-center text-white mb-1.5 shadow-sm group-hover:scale-105 [&_svg]:w-4 [&_svg]:h-4`}>
-                                    {moduleIcons[m.name]}
-                                </div>
-                                <span className="text-sm font-semibold text-white">{m.name}</span>
-                                {(() => {
-                                    const count = {
-                                        'Leden': memberStats?.total,
-                                        'Mijn Leden': myMemberCount,
-                                        'Toernooien': adminCounters?.activeTournamentCount ?? coachTournamentCount,
-                                        'Facturen': adminCounters?.pendingInvoiceCount,
-                                        'Vouchers': adminCounters?.activeVoucherCount,
-                                        'Aan te vullen': adminCounters?.refillProductCount,
-                                        'Sponsors': adminCounters?.activeSponsorCount,
-                                        'Mededelingen': adminCounters?.activeAnnouncementCount,
-                                        'Evenementen Beheer': adminCounters?.activeEventCount,
-                                        'Evenementen': myEventCount,
-                                        'Archief': archivedTournamentCount,
-                                    }[m.name];
-                                    return count !== undefined && count !== null ? (
-                                        <span className="mt-1 inline-flex items-center rounded-full bg-slate-800 px-2 py-0.5 text-xs font-medium text-slate-300">
-                                            {count}
-                                        </span>
-                                    ) : null;
-                                })()}
-                            </div>
-
-
-                        </Link>
-                    ))}
-                </div>
-            )}
+            {moduleGroups.map((group) => {
+                const visibleModules = group.modules.filter((m) => m.roles.includes(role));
+                if (visibleModules.length === 0) return null;
+                return (
+                    <div key={group.title} className="mb-4">
+                        <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">{group.title}</h2>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
+                            {visibleModules.map((m) => (
+                                <Link
+                                    key={m.name}
+                                    href={m.href}
+                                    className="group bg-slate-900 rounded-xl shadow-sm ring-1 ring-slate-800 border-t-2 border-t-rose-700/40 p-3 hover:shadow-md hover:ring-rose-500/40 hover:-translate-y-0.5"
+                                >
+                                    <div className="flex flex-col items-center text-center">
+                                        <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${moduleColors[m.name]} flex items-center justify-center text-white mb-1.5 shadow-sm group-hover:scale-105 [&_svg]:w-4 [&_svg]:h-4`}>
+                                            {moduleIcons[m.name]}
+                                        </div>
+                                        <span className="text-sm font-semibold text-white">{m.name}</span>
+                                        {(() => {
+                                            const count = {
+                                                'Leden': memberStats?.total,
+                                                'Mijn Leden': myMemberCount,
+                                                'Toernooien': adminCounters?.activeTournamentCount ?? coachTournamentCount,
+                                                'Facturen': adminCounters?.pendingInvoiceCount,
+                                                'Vouchers': adminCounters?.activeVoucherCount,
+                                                'Aan te vullen': adminCounters?.refillProductCount,
+                                                'Sponsors': adminCounters?.activeSponsorCount,
+                                                'Mededelingen': adminCounters?.activeAnnouncementCount,
+                                                'Evenementen Beheer': adminCounters?.activeEventCount,
+                                                'Evenementen': myEventCount,
+                                                'Archief': archivedTournamentCount,
+                                            }[m.name];
+                                            return count !== undefined && count !== null ? (
+                                                <span className="mt-1 inline-flex items-center rounded-full bg-slate-800 px-2 py-0.5 text-xs font-medium text-slate-300">
+                                                    {count}
+                                                </span>
+                                            ) : null;
+                                        })()}
+                                    </div>
+                                </Link>
+                            ))}
+                        </div>
+                    </div>
+                );
+            })}
 
             {activeTournaments && activeTournaments.length > 0 && (
                 <ActiveTournaments tournaments={activeTournaments} />
