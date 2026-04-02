@@ -99,6 +99,8 @@ function SponsorRow({ sponsor: s, onEdit }) {
                 )}
                 <p className="text-xs text-slate-500 mt-1">
                     Contract: {new Date(s.contract_start_date).toLocaleDateString('nl-BE')} — {new Date(s.contract_end_date).toLocaleDateString('nl-BE')}
+                    {s.sponsor_amount != null && <> · €{Number(s.sponsor_amount).toFixed(2)}</>}
+                    {s.renewal_months && <> · {s.renewal_months} mnd</>}
                 </p>
             </div>
             <div className="flex gap-2 flex-shrink-0">
@@ -137,6 +139,8 @@ function AddSponsorForm() {
         tier: 'bronze',
         contract_start_date: new Date().toISOString().split('T')[0],
         contract_end_date: '',
+        sponsor_amount: '',
+        renewal_months: '',
         logo: '',
     });
     const fileRef = useRef(null);
@@ -243,6 +247,34 @@ function AddSponsorForm() {
                 </div>
             </div>
 
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                    <label className="block text-sm text-slate-300 mb-1">Bedrag (€)</label>
+                    <input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        value={form.data.sponsor_amount}
+                        onChange={(e) => form.setData('sponsor_amount', e.target.value)}
+                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-rose-500 focus:ring-rose-500 text-sm"
+                    />
+                </div>
+                <div>
+                    <label className="block text-sm text-slate-300 mb-1">Vernieuwingstermijn</label>
+                    <select
+                        value={form.data.renewal_months}
+                        onChange={(e) => form.setData('renewal_months', e.target.value)}
+                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-rose-500 focus:ring-rose-500 text-sm"
+                    >
+                        <option value="">Geen</option>
+                        <option value="6">6 maanden</option>
+                        <option value="12">12 maanden</option>
+                        <option value="24">24 maanden</option>
+                        <option value="36">36 maanden</option>
+                    </select>
+                </div>
+            </div>
+
             <div className="flex items-center gap-4">
                 <div>
                     <label className="block text-sm text-slate-300 mb-1">Logo (optioneel)</label>
@@ -279,6 +311,8 @@ function EditRow({ sponsor: s, onCancel, onSuccess }) {
         tier: s.tier,
         contract_start_date: s.contract_start_date,
         contract_end_date: s.contract_end_date,
+        sponsor_amount: s.sponsor_amount ?? '',
+        renewal_months: s.renewal_months ?? '',
         logo: '',
         remove_logo: false,
     });
@@ -376,6 +410,34 @@ function EditRow({ sponsor: s, onCancel, onSuccess }) {
                         onChange={(e) => form.setData('contract_end_date', e.target.value)}
                         className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-rose-500 focus:ring-rose-500 text-sm"
                     />
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                    <label className="block text-sm text-slate-300 mb-1">Bedrag (€)</label>
+                    <input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        value={form.data.sponsor_amount}
+                        onChange={(e) => form.setData('sponsor_amount', e.target.value)}
+                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-rose-500 focus:ring-rose-500 text-sm"
+                    />
+                </div>
+                <div>
+                    <label className="block text-sm text-slate-300 mb-1">Vernieuwingstermijn</label>
+                    <select
+                        value={form.data.renewal_months}
+                        onChange={(e) => form.setData('renewal_months', e.target.value)}
+                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-rose-500 focus:ring-rose-500 text-sm"
+                    >
+                        <option value="">Geen</option>
+                        <option value="6">6 maanden</option>
+                        <option value="12">12 maanden</option>
+                        <option value="24">24 maanden</option>
+                        <option value="36">36 maanden</option>
+                    </select>
                 </div>
             </div>
 

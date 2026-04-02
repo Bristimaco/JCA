@@ -16,7 +16,7 @@ class SponsorController extends Controller
     public function index(): Response
     {
         $sponsors = Sponsor::orderBy('name')
-            ->get(['id', 'name', 'address_street', 'address_city', 'address_postal_code', 'tier', 'contract_start_date', 'contract_end_date', 'is_active', 'logo_mime', 'created_at'])
+            ->get(['id', 'name', 'address_street', 'address_city', 'address_postal_code', 'tier', 'contract_start_date', 'contract_end_date', 'is_active', 'logo_mime', 'sponsor_amount', 'renewal_months', 'created_at'])
             ->map(fn (Sponsor $s) => [
                 ...$s->toArray(),
                 'has_logo' => (bool) $s->logo_mime,
@@ -37,6 +37,8 @@ class SponsorController extends Controller
             'tier' => ['required', Rule::enum(SponsorTier::class)],
             'contract_start_date' => ['required', 'date'],
             'contract_end_date' => ['required', 'date', 'after_or_equal:contract_start_date'],
+            'sponsor_amount' => ['nullable', 'numeric', 'min:0'],
+            'renewal_months' => ['nullable', 'integer', 'in:6,12,24,36'],
             'logo' => ['nullable', 'string'],
         ]);
 
@@ -48,6 +50,8 @@ class SponsorController extends Controller
             'tier' => $validated['tier'],
             'contract_start_date' => $validated['contract_start_date'],
             'contract_end_date' => $validated['contract_end_date'],
+            'sponsor_amount' => $validated['sponsor_amount'] ?? null,
+            'renewal_months' => $validated['renewal_months'] ?? null,
         ];
 
         if (! empty($validated['logo'])) {
@@ -69,6 +73,8 @@ class SponsorController extends Controller
             'tier' => ['required', Rule::enum(SponsorTier::class)],
             'contract_start_date' => ['required', 'date'],
             'contract_end_date' => ['required', 'date', 'after_or_equal:contract_start_date'],
+            'sponsor_amount' => ['nullable', 'numeric', 'min:0'],
+            'renewal_months' => ['nullable', 'integer', 'in:6,12,24,36'],
             'logo' => ['nullable', 'string'],
             'remove_logo' => ['nullable', 'boolean'],
         ]);
@@ -81,6 +87,8 @@ class SponsorController extends Controller
             'tier' => $validated['tier'],
             'contract_start_date' => $validated['contract_start_date'],
             'contract_end_date' => $validated['contract_end_date'],
+            'sponsor_amount' => $validated['sponsor_amount'] ?? null,
+            'renewal_months' => $validated['renewal_months'] ?? null,
         ];
 
         if (! empty($validated['remove_logo'])) {
