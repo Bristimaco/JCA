@@ -2225,6 +2225,7 @@
                 <li><strong>Contractdatum</strong> &#8212; start- en einddatum van het sponsorcontract</li>
                 <li><strong>Bedrag</strong> &#8212; het sponsorbedrag in euro (optioneel)</li>
                 <li><strong>Vernieuwingstermijn</strong> &#8212; kies uit 6, 12, 24 of 36 maanden (optioneel)</li>
+                <li><strong>Contactpersoon</strong> &#8212; naam en telefoonnummer van een contactpersoon (optioneel)</li>
                 <li><strong>Logo</strong> &#8212; upload het logo van de sponsor</li>
             </ul>
 
@@ -2314,7 +2315,11 @@
                 Op de detailpagina van een prospect vind je:
             </p>
             <ul>
-                <li><strong>Bedrijfsgegevens</strong> &#8212; volledig overzicht van alle KBO-data (naam, adres, contactgegevens, NACE-activiteiten, vestigingen)</li>
+                <li><strong>Bedrijfsgegevens</strong> &#8212; volledig overzicht van alle KBO-data (naam, adres, contactgegevens, NACE-activiteiten, vestigingen).
+                    De velden <strong>rechtsvorm</strong>, <strong>adres</strong>, <strong>telefoon</strong>, <strong>e-mail</strong> en <strong>website</strong>
+                    zijn direct bewerkbaar. Zo kun je ontbrekende gegevens aanvullen wanneer de KBO API ze niet levert.
+                    Onderaan de bedrijfsgegevens vind je ook de velden <strong>contactpersoon</strong> (naam + telefoonnummer).
+                    Klik op <strong>&#8220;Opslaan&#8221;</strong> om de wijzigingen te bewaren.</li>
                 <li><strong>Vernieuwen</strong> &#8212; klik om de KBO-gegevens opnieuw op te halen
                     (toont ook wanneer de data laatst is bijgewerkt)</li>
                 <li><strong>Sponsorgegevens</strong> &#8212; vul het sponsorbedrag, de startdatum,
@@ -2325,7 +2330,9 @@
                 <li><strong>Communicatie log</strong> &#8212; voeg notities toe om contactmomenten bij te houden
                     (telefoon, e-mail, vergadering, enz.). Elke notitie toont de auteur en het tijdstip.</li>
                 <li><strong>Omzetten naar sponsor</strong> &#8212; maakt een nieuwe sponsor aan met de
-                    bedrijfs- en sponsorgegevens van het prospect. Het prospect wordt na omzetting automatisch
+                    bedrijfs- en sponsorgegevens van het prospect, inclusief het <strong>logo</strong> en de <strong>contactpersoon</strong>.
+                    Alle openstaande wijzigingen worden automatisch opgeslagen bij het omzetten.
+                    Het prospect wordt na omzetting automatisch
                     gearchiveerd met de status &#8220;Omgezet&#8221;.</li>
                 <li><strong>Archiveren</strong> &#8212; archiveer een prospect zonder het om te zetten naar
                     sponsor. Het prospect krijgt de status &#8220;Geen sponsor&#8221;. Gearchiveerde prospecten

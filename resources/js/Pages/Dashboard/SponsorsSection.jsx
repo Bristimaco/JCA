@@ -102,6 +102,9 @@ function SponsorRow({ sponsor: s, onEdit }) {
                     {s.sponsor_amount != null && <> · €{Number(s.sponsor_amount).toFixed(2)}</>}
                     {s.renewal_months && <> · {s.renewal_months} mnd</>}
                 </p>
+                {(s.contact_name || s.contact_phone) && (
+                    <p className="text-xs text-slate-500 mt-1">Contact: {[s.contact_name, s.contact_phone].filter(Boolean).join(' · ')}</p>
+                )}
             </div>
             <div className="flex gap-2 flex-shrink-0">
                 <button
@@ -136,6 +139,8 @@ function AddSponsorForm() {
         address_street: '',
         address_city: '',
         address_postal_code: '',
+        contact_name: '',
+        contact_phone: '',
         tier: 'bronze',
         contract_start_date: new Date().toISOString().split('T')[0],
         contract_end_date: '',
@@ -226,6 +231,29 @@ function AddSponsorForm() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
+                    <label className="block text-sm text-slate-300 mb-1">Contactpersoon</label>
+                    <input
+                        type="text"
+                        value={form.data.contact_name}
+                        onChange={(e) => form.setData('contact_name', e.target.value)}
+                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-rose-500 focus:ring-rose-500 text-sm"
+                        placeholder="Naam"
+                    />
+                </div>
+                <div>
+                    <label className="block text-sm text-slate-300 mb-1">Tel. contactpersoon</label>
+                    <input
+                        type="text"
+                        value={form.data.contact_phone}
+                        onChange={(e) => form.setData('contact_phone', e.target.value)}
+                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-rose-500 focus:ring-rose-500 text-sm"
+                        placeholder="Telefoonnummer"
+                    />
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
                     <label className="block text-sm text-slate-300 mb-1">Contract startdatum *</label>
                     <input
                         type="date"
@@ -308,6 +336,8 @@ function EditRow({ sponsor: s, onCancel, onSuccess }) {
         address_street: s.address_street || '',
         address_city: s.address_city || '',
         address_postal_code: s.address_postal_code || '',
+        contact_name: s.contact_name || '',
+        contact_phone: s.contact_phone || '',
         tier: s.tier,
         contract_start_date: s.contract_start_date,
         contract_end_date: s.contract_end_date,
@@ -388,6 +418,29 @@ function EditRow({ sponsor: s, onCancel, onSuccess }) {
                         value={form.data.address_city}
                         onChange={(e) => form.setData('address_city', e.target.value)}
                         className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-rose-500 focus:ring-rose-500 text-sm"
+                    />
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                    <label className="block text-sm text-slate-300 mb-1">Contactpersoon</label>
+                    <input
+                        type="text"
+                        value={form.data.contact_name}
+                        onChange={(e) => form.setData('contact_name', e.target.value)}
+                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-rose-500 focus:ring-rose-500 text-sm"
+                        placeholder="Naam"
+                    />
+                </div>
+                <div>
+                    <label className="block text-sm text-slate-300 mb-1">Tel. contactpersoon</label>
+                    <input
+                        type="text"
+                        value={form.data.contact_phone}
+                        onChange={(e) => form.setData('contact_phone', e.target.value)}
+                        className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-rose-500 focus:ring-rose-500 text-sm"
+                        placeholder="Telefoonnummer"
                     />
                 </div>
             </div>

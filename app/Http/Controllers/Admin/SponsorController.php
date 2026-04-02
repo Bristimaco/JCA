@@ -16,7 +16,7 @@ class SponsorController extends Controller
     public function index(): Response
     {
         $sponsors = Sponsor::orderBy('name')
-            ->get(['id', 'name', 'address_street', 'address_city', 'address_postal_code', 'tier', 'contract_start_date', 'contract_end_date', 'is_active', 'logo_mime', 'sponsor_amount', 'renewal_months', 'created_at'])
+            ->get(['id', 'name', 'address_street', 'address_city', 'address_postal_code', 'contact_name', 'contact_phone', 'tier', 'contract_start_date', 'contract_end_date', 'is_active', 'logo_mime', 'sponsor_amount', 'renewal_months', 'created_at'])
             ->map(fn (Sponsor $s) => [
                 ...$s->toArray(),
                 'has_logo' => (bool) $s->logo_mime,
@@ -34,6 +34,8 @@ class SponsorController extends Controller
             'address_street' => ['nullable', 'string', 'max:255'],
             'address_city' => ['nullable', 'string', 'max:255'],
             'address_postal_code' => ['nullable', 'string', 'max:10'],
+            'contact_name' => ['nullable', 'string', 'max:255'],
+            'contact_phone' => ['nullable', 'string', 'max:50'],
             'tier' => ['required', Rule::enum(SponsorTier::class)],
             'contract_start_date' => ['required', 'date'],
             'contract_end_date' => ['required', 'date', 'after_or_equal:contract_start_date'],
@@ -47,6 +49,8 @@ class SponsorController extends Controller
             'address_street' => $validated['address_street'] ?? null,
             'address_city' => $validated['address_city'] ?? null,
             'address_postal_code' => $validated['address_postal_code'] ?? null,
+            'contact_name' => $validated['contact_name'] ?? null,
+            'contact_phone' => $validated['contact_phone'] ?? null,
             'tier' => $validated['tier'],
             'contract_start_date' => $validated['contract_start_date'],
             'contract_end_date' => $validated['contract_end_date'],
@@ -70,6 +74,8 @@ class SponsorController extends Controller
             'address_street' => ['nullable', 'string', 'max:255'],
             'address_city' => ['nullable', 'string', 'max:255'],
             'address_postal_code' => ['nullable', 'string', 'max:10'],
+            'contact_name' => ['nullable', 'string', 'max:255'],
+            'contact_phone' => ['nullable', 'string', 'max:50'],
             'tier' => ['required', Rule::enum(SponsorTier::class)],
             'contract_start_date' => ['required', 'date'],
             'contract_end_date' => ['required', 'date', 'after_or_equal:contract_start_date'],
@@ -84,6 +90,8 @@ class SponsorController extends Controller
             'address_street' => $validated['address_street'] ?? null,
             'address_city' => $validated['address_city'] ?? null,
             'address_postal_code' => $validated['address_postal_code'] ?? null,
+            'contact_name' => $validated['contact_name'] ?? null,
+            'contact_phone' => $validated['contact_phone'] ?? null,
             'tier' => $validated['tier'],
             'contract_start_date' => $validated['contract_start_date'],
             'contract_end_date' => $validated['contract_end_date'],

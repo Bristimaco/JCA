@@ -33,6 +33,17 @@ export default function ProspectDetail({ prospect }) {
     const [showArchiveModal, setShowArchiveModal] = useState(false);
     const [logoPreview, setLogoPreview] = useState(null);
     const noteForm = useForm({ content: '' });
+    const companyForm = useForm({
+        address_street: prospect.address_street || '',
+        address_city: prospect.address_city || '',
+        address_postal_code: prospect.address_postal_code || '',
+        legal_form: prospect.legal_form || '',
+        phone: prospect.phone || '',
+        email: prospect.email || '',
+        website: prospect.website || '',
+        contact_name: prospect.contact_name || '',
+        contact_phone: prospect.contact_phone || '',
+    });
     const sponsorForm = useForm({
         sponsor_amount: prospect.sponsor_amount || '',
         sponsor_start_date: prospect.sponsor_start_date || '',
@@ -63,9 +74,14 @@ export default function ProspectDetail({ prospect }) {
     };
 
     const handleConvert = () => {
-        router.post(`/admin/prospectie/${prospect.id}/convert`, {}, {
+        sponsorForm.put(`/admin/prospectie/${prospect.id}`, {
             preserveScroll: true,
-            onSuccess: () => setShowConvertModal(false),
+            onSuccess: () => {
+                router.post(`/admin/prospectie/${prospect.id}/convert`, {}, {
+                    preserveScroll: true,
+                    onSuccess: () => setShowConvertModal(false),
+                });
+            },
         });
     };
 
@@ -87,6 +103,11 @@ export default function ProspectDetail({ prospect }) {
     const handleSaveSponsor = (e) => {
         e.preventDefault();
         sponsorForm.put(`/admin/prospectie/${prospect.id}`, { preserveScroll: true });
+    };
+
+    const handleSaveCompany = (e) => {
+        e.preventDefault();
+        companyForm.put(`/admin/prospectie/${prospect.id}`, { preserveScroll: true });
     };
 
     const handleLogo = async (e) => {
@@ -192,19 +213,64 @@ export default function ProspectDetail({ prospect }) {
                 <h2 className="text-lg font-semibold text-white mb-4">Bedrijfsgegevens</h2>
                 <div className="flex flex-col lg:flex-row gap-6">
                     <div className="flex-1">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                            <InfoItem label="Bedrijfsnaam" value={prospect.company_name} />
-                            <InfoItem label="Ondernemingsnummer" value={cbe?.cbe_number_formatted || formatVat(prospect.vat_number)} />
-                            <InfoItem label="Rechtsvorm" value={prospect.legal_form} />
-                            <InfoItem label="Adres" value={cbe?.full_address || [prospect.address_street, prospect.address_postal_code, prospect.address_city].filter(Boolean).join(', ')} />
-                            <InfoItem label="Telefoon" value={prospect.phone} />
-                            <InfoItem label="E-mail" value={prospect.email} />
-                            <InfoItem label="Website" value={prospect.website} link />
-                            {cbe?.status && <InfoItem label="Status" value={cbe.status} />}
-                            {cbe?.juridical_situation && <InfoItem label="Juridische situatie" value={cbe.juridical_situation} />}
-                            {cbe?.type && <InfoItem label="Type" value={cbe.type} />}
-                            {cbe?.start_date && <InfoItem label="Oprichtingsdatum" value={formatDate(cbe.start_date)} />}
-                        </div>
+                        <form onSubmit={handleSaveCompany}>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <InfoItem label="Bedrijfsnaam" value={prospect.company_name} />
+                                <InfoItem label="Ondernemingsnummer" value={cbe?.cbe_number_formatted || formatVat(prospect.vat_number)} />
+                                <div>
+                                    <label className="block text-xs font-medium text-slate-500 mb-1">Rechtsvorm</label>
+                                    <input type="text" value={companyForm.data.legal_form} onChange={(e) => companyForm.setData('legal_form', e.target.value)} className="w-full rounded-lg bg-slate-800 border border-slate-700 text-white px-3 py-1.5 text-sm focus:ring-2 focus:ring-rose-500 focus:border-transparent" />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-medium text-slate-500 mb-1">Straat + nummer</label>
+                                    <input type="text" value={companyForm.data.address_street} onChange={(e) => companyForm.setData('address_street', e.target.value)} className="w-full rounded-lg bg-slate-800 border border-slate-700 text-white px-3 py-1.5 text-sm focus:ring-2 focus:ring-rose-500 focus:border-transparent" />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-medium text-slate-500 mb-1">Postcode</label>
+                                    <input type="text" value={companyForm.data.address_postal_code} onChange={(e) => companyForm.setData('address_postal_code', e.target.value)} className="w-full rounded-lg bg-slate-800 border border-slate-700 text-white px-3 py-1.5 text-sm focus:ring-2 focus:ring-rose-500 focus:border-transparent" />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-medium text-slate-500 mb-1">Gemeente</label>
+                                    <input type="text" value={companyForm.data.address_city} onChange={(e) => companyForm.setData('address_city', e.target.value)} className="w-full rounded-lg bg-slate-800 border border-slate-700 text-white px-3 py-1.5 text-sm focus:ring-2 focus:ring-rose-500 focus:border-transparent" />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-medium text-slate-500 mb-1">Telefoon</label>
+                                    <input type="text" value={companyForm.data.phone} onChange={(e) => companyForm.setData('phone', e.target.value)} className="w-full rounded-lg bg-slate-800 border border-slate-700 text-white px-3 py-1.5 text-sm focus:ring-2 focus:ring-rose-500 focus:border-transparent" />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-medium text-slate-500 mb-1">E-mail</label>
+                                    <input type="text" value={companyForm.data.email} onChange={(e) => companyForm.setData('email', e.target.value)} className="w-full rounded-lg bg-slate-800 border border-slate-700 text-white px-3 py-1.5 text-sm focus:ring-2 focus:ring-rose-500 focus:border-transparent" />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-medium text-slate-500 mb-1">Website</label>
+                                    <input type="text" value={companyForm.data.website} onChange={(e) => companyForm.setData('website', e.target.value)} className="w-full rounded-lg bg-slate-800 border border-slate-700 text-white px-3 py-1.5 text-sm focus:ring-2 focus:ring-rose-500 focus:border-transparent" />
+                                </div>
+                                {cbe?.status && <InfoItem label="Status" value={cbe.status} />}
+                                {cbe?.juridical_situation && <InfoItem label="Juridische situatie" value={cbe.juridical_situation} />}
+                                {cbe?.type && <InfoItem label="Type" value={cbe.type} />}
+                                {cbe?.start_date && <InfoItem label="Oprichtingsdatum" value={formatDate(cbe.start_date)} />}
+                            </div>
+
+                            <div className="mt-5 pt-4 border-t border-slate-800">
+                                <p className="text-xs font-semibold text-slate-400 mb-3 uppercase tracking-wider">Contactpersoon</p>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-xs font-medium text-slate-500 mb-1">Naam contactpersoon</label>
+                                        <input type="text" value={companyForm.data.contact_name} onChange={(e) => companyForm.setData('contact_name', e.target.value)} className="w-full rounded-lg bg-slate-800 border border-slate-700 text-white px-3 py-1.5 text-sm focus:ring-2 focus:ring-rose-500 focus:border-transparent" placeholder="Naam" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-medium text-slate-500 mb-1">Telefoon contactpersoon</label>
+                                        <input type="text" value={companyForm.data.contact_phone} onChange={(e) => companyForm.setData('contact_phone', e.target.value)} className="w-full rounded-lg bg-slate-800 border border-slate-700 text-white px-3 py-1.5 text-sm focus:ring-2 focus:ring-rose-500 focus:border-transparent" placeholder="Telefoonnummer" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="flex justify-end mt-4">
+                                <button type="submit" disabled={companyForm.processing} className="rounded-lg bg-rose-600 px-4 py-2 text-sm font-semibold text-white hover:bg-rose-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                                    Opslaan
+                                </button>
+                            </div>
+                        </form>
                     </div>
                     {prospect.latitude && prospect.longitude && (
                         <div className="lg:w-80 shrink-0 rounded-lg overflow-hidden ring-1 ring-slate-700">

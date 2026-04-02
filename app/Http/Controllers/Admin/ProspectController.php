@@ -95,6 +95,8 @@ class ProspectController extends Controller
                 'phone' => $prospect->phone,
                 'email' => $prospect->email,
                 'website' => $prospect->website,
+                'contact_name' => $prospect->contact_name,
+                'contact_phone' => $prospect->contact_phone,
                 'latitude' => $prospect->latitude,
                 'longitude' => $prospect->longitude,
                 'sponsor_amount' => $prospect->sponsor_amount,
@@ -187,6 +189,15 @@ class ProspectController extends Controller
     public function update(Request $request, Prospect $prospect): RedirectResponse
     {
         $validated = $request->validate([
+            'address_street' => ['nullable', 'string', 'max:255'],
+            'address_city' => ['nullable', 'string', 'max:255'],
+            'address_postal_code' => ['nullable', 'string', 'max:10'],
+            'legal_form' => ['nullable', 'string', 'max:100'],
+            'phone' => ['nullable', 'string', 'max:50'],
+            'email' => ['nullable', 'string', 'max:255'],
+            'website' => ['nullable', 'string', 'max:255'],
+            'contact_name' => ['nullable', 'string', 'max:255'],
+            'contact_phone' => ['nullable', 'string', 'max:50'],
             'sponsor_amount' => ['nullable', 'numeric', 'min:0'],
             'sponsor_start_date' => ['nullable', 'date'],
             'sponsor_renewal_months' => ['nullable', 'integer', 'in:6,12,24,36'],
@@ -195,6 +206,15 @@ class ProspectController extends Controller
             'remove_logo' => ['nullable', 'boolean'],
         ]);
 
+        $prospect->address_street = $validated['address_street'] ?? null;
+        $prospect->address_city = $validated['address_city'] ?? null;
+        $prospect->address_postal_code = $validated['address_postal_code'] ?? null;
+        $prospect->legal_form = $validated['legal_form'] ?? null;
+        $prospect->phone = $validated['phone'] ?? null;
+        $prospect->email = $validated['email'] ?? null;
+        $prospect->website = $validated['website'] ?? null;
+        $prospect->contact_name = $validated['contact_name'] ?? null;
+        $prospect->contact_phone = $validated['contact_phone'] ?? null;
         $prospect->sponsor_amount = $validated['sponsor_amount'] ?? null;
         $prospect->sponsor_start_date = $validated['sponsor_start_date'] ?? null;
         $prospect->sponsor_renewal_months = $validated['sponsor_renewal_months'] ?? null;
@@ -209,7 +229,7 @@ class ProspectController extends Controller
 
         $prospect->save();
 
-        return back()->with('status', 'Sponsorgegevens bijgewerkt.');
+        return back()->with('status', 'Gegevens bijgewerkt.');
     }
 
     public function convertToSponsor(Prospect $prospect): RedirectResponse
@@ -228,6 +248,8 @@ class ProspectController extends Controller
             'is_active' => true,
             'sponsor_amount' => $prospect->sponsor_amount,
             'renewal_months' => $renewalMonths,
+            'contact_name' => $prospect->contact_name,
+            'contact_phone' => $prospect->contact_phone,
         ];
 
         if ($prospect->logo_data) {
