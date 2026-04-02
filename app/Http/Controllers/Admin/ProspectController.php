@@ -139,7 +139,7 @@ class ProspectController extends Controller
 
         $rows = Excel::toArray(null, $request->file('file'));
         $imported = 0;
-        $skipped = 0;
+        $updated = 0;
         $failed = 0;
 
         foreach ($rows[0] ?? [] as $row) {
@@ -157,12 +157,6 @@ class ProspectController extends Controller
 
             $digits = str_pad($digits, 10, '0', STR_PAD_LEFT);
 
-            if (Prospect::where('vat_number', $digits)->exists()) {
-                $skipped++;
-
-                continue;
-            }
-
             $result = $service->lookupByNumber($digits);
 
             if (! $result['success']) {
@@ -173,8 +167,7 @@ class ProspectController extends Controller
 
             $data = $result['data'];
 
-            Prospect::create([
-                'vat_number' => $data['vat_number'] ?? $digits,
+            $fields = [
                 'company_name' => $data['company_name'] ?? 'Onbekend',
                 'address_street' => $data['address_street'] ?? null,
                 'address_city' => $data['address_city'] ?? null,
@@ -187,12 +180,20 @@ class ProspectController extends Controller
                 'longitude' => $data['longitude'] ?? null,
                 'cbe_data' => $data,
                 'cbe_fetched_at' => now(),
-            ]);
+            ];
 
-            $imported++;
+            $existing = Prospect::where('vat_number', $digits)->first();
+
+            if ($existing) {
+                $existing->update($fields);
+                $updated++;
+            } else {
+                Prospect::create(array_merge(['vat_number' => $data['vat_number'] ?? $digits], $fields));
+                $imported++;
+            }
         }
 
-        return back()->with('status', "{$imported} prospecten geïmporteerd, {$skipped} overgeslagen (duplicaat), {$failed} mislukt.");
+        return back()->with('status', "{$imported} prospecten geïmporteerd, {$updated} bijgewerkt, {$failed} mislukt.");
     }
 
     public function destroy(Prospect $prospect): RedirectResponse
