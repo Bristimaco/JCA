@@ -49,6 +49,7 @@ use App\Http\Controllers\EventImageController;
 use App\Http\Controllers\EventPaymentWebhookController;
 use App\Http\Controllers\EventRsvpController;
 use App\Http\Controllers\ExtraTrainingController;
+use App\Http\Controllers\ImpersonateController;
 use App\Http\Controllers\MemberAttendanceController;
 use App\Http\Controllers\MemberPhotoController;
 use App\Http\Controllers\MijnPoefController;
@@ -265,6 +266,9 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::get('/pos/users/search', [POSController::class, 'searchUsers'])->name('pos.users.search');
     });
 
+    // Impersonation stop (auth only — impersonated user may not be admin)
+    Route::post('/impersonate/stop', [ImpersonateController::class, 'stop'])->name('impersonate.stop');
+
     // Admin routes — Core (admin-only)
     Route::middleware('admin')->prefix('admin')->group(function () {
         Route::patch('/club-settings', [ClubSettingsController::class, 'update'])->name('admin.club-settings.update');
@@ -272,6 +276,7 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::patch('/users/{user}/toggle-active', ToggleUserActiveController::class)->name('admin.users.toggle-active');
         Route::patch('/users/{user}', UpdateUserController::class)->name('admin.users.update');
         Route::put('/users/{user}/members', [UserMembersController::class, 'update'])->name('admin.users.members');
+        Route::post('/users/{user}/impersonate', [ImpersonateController::class, 'start'])->name('admin.users.impersonate');
         Route::get('/sessions', AdminSessionHistoryController::class)->name('admin.sessions.history');
         Route::get('/attendance-report', AttendanceReportController::class)->name('admin.attendance-report');
 

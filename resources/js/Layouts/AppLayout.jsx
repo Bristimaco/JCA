@@ -4,7 +4,7 @@ import NotificationDropdown from '../Components/NotificationDropdown';
 import usePushSubscription from '../hooks/usePushSubscription';
 
 export default function AppLayout({ children, fullWidth = false }) {
-    const { auth, club, testMode } = usePage().props;
+    const { auth, club, testMode, impersonating } = usePage().props;
     const logoutForm = useForm();
     const [userMenuOpen, setUserMenuOpen] = useState(false);
     const [notifPref, setNotifPref] = useState(auth.user?.notification_preference || 'both');
@@ -143,6 +143,19 @@ export default function AppLayout({ children, fullWidth = false }) {
                     </div>
                 </div>
             </nav>
+            {impersonating && (
+                <div className="bg-rose-600/30 border-b border-rose-500/50">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex items-center justify-center gap-2">
+                        <span className="text-xs font-semibold text-rose-300">👤 Je bekijkt de app als <strong>{auth.user?.name}</strong></span>
+                        <form method="post" action="/impersonate/stop" className="inline">
+                            <input type="hidden" name="_token" value={document.querySelector('meta[name=csrf-token]')?.content} />
+                            <button type="submit" className="ml-2 rounded-md bg-rose-600 px-3 py-0.5 text-xs font-semibold text-white hover:bg-rose-700">
+                                Stop Impersonatie
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            )}
             {testMode && (
                 <div className="bg-amber-600/20 border-b border-amber-600/40">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex items-center justify-center gap-2">

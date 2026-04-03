@@ -118,6 +118,7 @@ export function UsersSection({ users, roles, extraModules, allMembers }) {
 }
 
 function UserRow({ user, roles, extraModules, allMembers }) {
+    const { auth } = usePage().props;
     const [editing, setEditing] = useState(false);
     const [managingMembers, setManagingMembers] = useState(false);
     const form = useForm({
@@ -291,6 +292,14 @@ function UserRow({ user, roles, extraModules, allMembers }) {
                     >
                         Bewerken
                     </button>
+                    {auth.user?.role === 'admin' && user.id !== auth.user.id && (
+                        <form method="post" action={`/admin/users/${user.id}/impersonate`} className="inline">
+                            <input type="hidden" name="_token" value={document.querySelector('meta[name=csrf-token]')?.content} />
+                            <button type="submit" className="text-sm text-amber-400 hover:text-amber-300">
+                                Impersonate
+                            </button>
+                        </form>
+                    )}
                     <button
                         onClick={handleToggleActive}
                         disabled={toggleForm.processing}

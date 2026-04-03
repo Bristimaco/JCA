@@ -63,6 +63,7 @@ class HandleInertiaRequests extends Middleware
                 'has_logo' => (bool) ClubSettings::current()->logo_data,
             ],
             'testMode' => fn () => (bool) ClubSettings::current()->test_mode,
+            'impersonating' => fn () => (bool) $request->session()->get('impersonate_original_id'),
             'pendingBarOrderCount' => fn () => $request->user() && (in_array($request->user()->role, [UserRole::Admin, UserRole::Barmedewerker]) || $request->user()->hasExtraModule('bar'))
                 ? BarOrder::pending()->count()
                 : 0,
