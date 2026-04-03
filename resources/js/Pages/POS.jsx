@@ -259,7 +259,7 @@ export default function POS({ products: initialProducts, categories, pendingOrde
                     setPendingCount(data.count);
                 }
             } catch { /* network error */ }
-        }, 10000);
+        }, 3000);
         return () => clearInterval(interval);
     }, []);
 
