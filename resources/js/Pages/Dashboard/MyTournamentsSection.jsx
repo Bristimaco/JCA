@@ -26,7 +26,7 @@ export default function MyTournamentsSection({ tournaments }) {
     };
 
     const respond = (tournamentId, memberId, response) => {
-        const key = `${tournamentId}-${response}`;
+        const key = `${tournamentId}-${memberId}-${response}`;
         setProcessing(prev => ({ ...prev, [key]: true }));
         router.post(`/mijn-toernooien/${tournamentId}/respond/${memberId}`, { response }, {
             preserveScroll: true,
@@ -52,8 +52,10 @@ export default function MyTournamentsSection({ tournaments }) {
                             </span>
                         </button>
                         {!collapsedGroups.has(group.key) && <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                            {items.map(t => (
-                                <div key={t.id} className="bg-slate-900 rounded-xl shadow-sm ring-1 ring-slate-800 overflow-hidden hover:shadow-md hover:-translate-y-0.5">
+                            {items.map(t => {
+                                const cardKey = `${t.id}-${t.member_id}`;
+                                return (
+                                <div key={cardKey} className="bg-slate-900 rounded-xl shadow-sm ring-1 ring-slate-800 overflow-hidden hover:shadow-md hover:-translate-y-0.5">
                                     {t.latitude && t.longitude && (
                                         <iframe
                                             title={`Locatie ${t.name}`}
@@ -68,6 +70,7 @@ export default function MyTournamentsSection({ tournaments }) {
                                             <TournamentStepper status={t.status} compact />
                                         </div>
                                         <p className="font-semibold text-white">{t.name}</p>
+                                        <p className="text-sm text-rose-400 mt-0.5">{t.member_name}</p>
                                         <p className="text-sm text-slate-400 mt-1">{formatDate(t.tournament_date)}</p>
                                         <p className="text-xs text-slate-500 mt-1">
                                             {[t.address_street, t.address_postal_code, t.address_city].filter(Boolean).join(', ') || 'Geen adres'}
@@ -83,12 +86,12 @@ export default function MyTournamentsSection({ tournaments }) {
                                             </div>
                                         )}
                                         <button
-                                            onClick={() => setExpandedId(expandedId === t.id ? null : t.id)}
+                                            onClick={() => setExpandedId(expandedId === cardKey ? null : cardKey)}
                                             className="mt-2 text-xs font-medium text-rose-400 hover:text-rose-300"
                                         >
-                                            Deelnemers ({t.participants.length}) {expandedId === t.id ? '▲' : '▼'}
+                                            Deelnemers ({t.participants.length}) {expandedId === cardKey ? '▲' : '▼'}
                                         </button>
-                                        {expandedId === t.id && (
+                                        {expandedId === cardKey && (
                                             <div className="mt-2 pt-2 border-t border-slate-800">
                                                 {t.participants.length === 0 ? (
                                                     <p className="text-xs text-slate-500">Nog geen bevestigde deelnemers.</p>
@@ -130,18 +133,18 @@ export default function MyTournamentsSection({ tournaments }) {
                                                         ) : (
                                                             <button
                                                                 onClick={() => respond(t.id, t.member_id, 'accept')}
-                                                                disabled={processing[`${t.id}-accept`]}
+                                                                disabled={processing[`${t.id}-${t.member_id}-accept`]}
                                                                 className="flex-1 rounded-lg px-3 py-1.5 text-xs font-medium bg-emerald-900/40 text-emerald-400 hover:bg-emerald-900/60 transition-colors disabled:opacity-50"
                                                             >
-                                                                {processing[`${t.id}-accept`] ? 'Bezig...' : 'Accepteren'}
+                                                                {processing[`${t.id}-${t.member_id}-accept`] ? 'Bezig...' : 'Accepteren'}
                                                             </button>
                                                         )}
                                                         <button
                                                             onClick={() => respond(t.id, t.member_id, 'decline')}
-                                                            disabled={processing[`${t.id}-decline`]}
+                                                            disabled={processing[`${t.id}-${t.member_id}-decline`]}
                                                             className="flex-1 rounded-lg px-3 py-1.5 text-xs font-medium bg-red-900/40 text-red-400 hover:bg-red-900/60 transition-colors disabled:opacity-50"
                                                         >
-                                                            {processing[`${t.id}-decline`] ? 'Bezig...' : 'Afslaan'}
+                                                            {processing[`${t.id}-${t.member_id}-decline`] ? 'Bezig...' : 'Afslaan'}
                                                         </button>
                                                     </div>
                                                 )}
@@ -149,7 +152,8 @@ export default function MyTournamentsSection({ tournaments }) {
                                         )}
                                     </div>
                                 </div>
-                            ))}
+                            );
+                            })}
                         </div>}
                     </div>
                 );

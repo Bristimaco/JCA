@@ -319,7 +319,7 @@ class DashboardController extends Controller
         }
 
         if ($memberIds->isNotEmpty()) {
-            $props['myTournamentCount'] = Tournament::whereHas('members', fn ($q) => $q->whereIn('members.id', $memberIds))->count();
+            $props['myTournamentCount'] = DB::table('member_tournament')->whereIn('member_id', $memberIds)->count();
         }
 
         return Inertia::render('Dashboard', $props);
