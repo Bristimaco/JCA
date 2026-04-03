@@ -4,6 +4,7 @@ import AppLayout from '../Layouts/AppLayout';
 
 const DAY_LABELS = ['Ma', 'Di', 'Wo', 'Do', 'Vr', 'Za', 'Zo'];
 const MONTH_NAMES = ['januari', 'februari', 'maart', 'april', 'mei', 'juni', 'juli', 'augustus', 'september', 'oktober', 'november', 'december'];
+const DAY_NAMES_FULL = ['zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag'];
 
 const TYPE_STYLES = {
     training: { bg: 'bg-amber-900/40', border: 'border-l-amber-500', text: 'text-amber-300', label: 'Training' },
@@ -44,6 +45,12 @@ function isToday(dateStr) {
     return dateStr === toDateString(new Date());
 }
 
+function formatMobileDate(dateStr) {
+    const d = new Date(dateStr + 'T00:00:00');
+    const dayName = DAY_NAMES_FULL[d.getDay()];
+    return `${dayName.charAt(0).toUpperCase() + dayName.slice(1)} ${d.getDate()} ${MONTH_NAMES[d.getMonth()]}`;
+}
+
 export default function Calendar({ items, startDate, myMemberIds }) {
     const [absenceModal, setAbsenceModal] = useState(null);
     const [absenceReason, setAbsenceReason] = useState('');
@@ -70,6 +77,18 @@ export default function Calendar({ items, startDate, myMemberIds }) {
         return result;
     }, [items, startDate]);
 
+    const allDays = useMemo(() => weeks.flat(), [weeks]);
+
+    const openAbsenceModal = (item) => {
+        setAbsenceModal(item);
+        const map = {};
+        if (item.absent_members) {
+            item.absent_members.forEach(m => { map[m.id] = m.reason || null; });
+        }
+        setLocalAbsentMap(map);
+        setAbsenceReason('');
+    };
+
     const navigate = useCallback((direction) => {
         const newStart = addDays(startDate, direction * 7);
         router.get('/kalender', { start: newStart }, { preserveState: true, preserveScroll: true });
@@ -85,14 +104,14 @@ export default function Calendar({ items, startDate, myMemberIds }) {
 
             <div className="flex flex-col flex-1 min-h-0">
                 {/* Header */}
-                <div className="flex items-center justify-between mb-1 shrink-0">
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mb-2 shrink-0">
                     <div>
-                        <h1 className="text-2xl font-bold text-white">Kalender</h1>
-                        <p className="text-sm text-slate-400">{formatDateRange(startDate)}</p>
+                        <h1 className="text-xl md:text-2xl font-bold text-white">Kalender</h1>
+                        <p className="text-xs md:text-sm text-slate-400">{formatDateRange(startDate)}</p>
                     </div>
 
-                    {/* Legend */}
-                    <div className="flex items-center gap-4">
+                    {/* Legend — desktop only */}
+                    <div className="hidden md:flex items-center gap-4 flex-1">
                         {Object.entries(TYPE_STYLES).map(([type, style]) => (
                             <div key={type} className="flex items-center gap-1.5">
                                 <div className={`w-2.5 h-2.5 rounded-sm ${style.bg} border-l-2 ${style.border}`} />
@@ -113,29 +132,30 @@ export default function Calendar({ items, startDate, myMemberIds }) {
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1.5 ml-auto">
                         <button
                             onClick={() => navigate(-1)}
-                            className="rounded-lg bg-slate-800 px-3 py-1.5 text-sm font-medium text-slate-300 hover:bg-slate-700 ring-1 ring-slate-700"
+                            className="rounded-lg bg-slate-800 px-2.5 py-1.5 text-sm font-medium text-slate-300 hover:bg-slate-700 ring-1 ring-slate-700"
                         >
-                            ← Vorige
+                            ←<span className="hidden md:inline"> Vorige</span>
                         </button>
                         <button
                             onClick={goToToday}
-                            className="rounded-lg bg-slate-800 px-3 py-1.5 text-sm font-medium text-slate-300 hover:bg-slate-700 ring-1 ring-slate-700"
+                            className="rounded-lg bg-slate-800 px-2.5 py-1.5 text-sm font-medium text-slate-300 hover:bg-slate-700 ring-1 ring-slate-700"
                         >
                             Vandaag
                         </button>
                         <button
                             onClick={() => navigate(1)}
-                            className="rounded-lg bg-slate-800 px-3 py-1.5 text-sm font-medium text-slate-300 hover:bg-slate-700 ring-1 ring-slate-700"
+                            className="rounded-lg bg-slate-800 px-2.5 py-1.5 text-sm font-medium text-slate-300 hover:bg-slate-700 ring-1 ring-slate-700"
                         >
-                            Volgende →
+                            <span className="hidden md:inline">Volgende </span>→
                         </button>
                     </div>
                 </div>
 
-                {/* Day headers */}
+                {/* Desktop grid */}
+                <div className="hidden md:flex flex-col flex-1 min-h-0">
                 <div className="grid grid-cols-7 gap-px bg-slate-800 rounded-t-xl overflow-hidden shrink-0">
                     {DAY_LABELS.map((d) => (
                         <div key={d} className="bg-slate-900 py-1 text-center text-xs font-semibold text-slate-400 uppercase tracking-wide">
@@ -228,7 +248,75 @@ export default function Calendar({ items, startDate, myMemberIds }) {
                         </div>
                     ))}
                 </div>
+                </div>
 
+                {/* Mobile list */}
+                <div className="flex-1 overflow-y-auto md:hidden pb-4">
+                    {allDays.map((day) => (
+                        <div key={day.date}>
+                            <div className={`sticky top-0 z-10 px-3 py-1.5 text-sm font-semibold backdrop-blur-sm ${isToday(day.date) ? 'bg-rose-950/90 text-rose-400' : 'bg-slate-800/90 text-slate-300'}`}>
+                                {formatMobileDate(day.date)}
+                            </div>
+                            {day.items.length === 0 ? (
+                                <div className="px-3 py-2 text-xs text-slate-600">Geen activiteiten</div>
+                            ) : (
+                                <div className="space-y-1.5 px-2 py-1.5">
+                                    {day.items.map((item, i) => {
+                                        const style = TYPE_STYLES[item.type];
+                                        const absentIds = item.absent_members ? item.absent_members.map(m => m.id) : [];
+                                        const participatingMembers = item.participating_members || [];
+                                        const absentCount = participatingMembers.filter(m => absentIds.includes(m.id)).length;
+                                        const allAbsent = participatingMembers.length > 0 && absentCount === participatingMembers.length;
+                                        const someAbsent = absentCount > 0 && !allAbsent;
+                                        const canReportAbsence = (item.type === 'training' || item.type === 'extra_training') && item.participating && item.date >= todayStr;
+                                        return (
+                                            <div
+                                                key={`${item.type}-${i}`}
+                                                className={`${style.bg} border-l-2 ${style.border} rounded-r px-3 py-2 ${canReportAbsence ? 'cursor-pointer active:ring-1 active:ring-slate-500' : ''}`}
+                                                onClick={canReportAbsence ? () => openAbsenceModal(item) : undefined}
+                                            >
+                                                <div className="flex items-center gap-1.5">
+                                                    <span className={`text-sm font-semibold ${style.text} truncate flex-1`}>
+                                                        {item.name}
+                                                    </span>
+                                                    {(item.type === 'tournament' || item.type === 'event') && (
+                                                        <Link
+                                                            href={item.type === 'tournament' ? `/toernooien/${item.id}` : '/evenementen'}
+                                                            className="shrink-0 text-sm text-slate-400 hover:text-white"
+                                                            onClick={e => e.stopPropagation()}
+                                                        >
+                                                            ↗
+                                                        </Link>
+                                                    )}
+                                                    {allAbsent && (
+                                                        <span className="shrink-0 inline-flex items-center rounded bg-red-900/60 px-1.5 py-0.5 text-[10px] font-bold text-red-400">✗</span>
+                                                    )}
+                                                    {someAbsent && (
+                                                        <span className="shrink-0 inline-flex items-center rounded bg-amber-900/60 px-1.5 py-0.5 text-[10px] font-bold text-amber-400">{absentCount}/{participatingMembers.length}</span>
+                                                    )}
+                                                    {!allAbsent && !someAbsent && item.participating && (
+                                                        <span className="shrink-0 inline-flex items-center rounded bg-emerald-900/60 px-1.5 py-0.5 text-[10px] font-bold text-emerald-400">✓</span>
+                                                    )}
+                                                </div>
+                                                <div className="flex items-center gap-1.5 text-xs text-slate-500 mt-0.5">
+                                                    {item.start_time && (
+                                                        <span>{item.start_time}{item.end_time ? `–${item.end_time}` : ''}</span>
+                                                    )}
+                                                    {item.time && !item.start_time && (
+                                                        <span>{item.time}</span>
+                                                    )}
+                                                    {participatingMembers.length > 0 && (
+                                                        <span className="text-slate-400 truncate">{participatingMembers.map(m => m.first_name).join(', ')}</span>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            )}
+                        </div>
+                    ))}
+                </div>
 
             </div>
 
