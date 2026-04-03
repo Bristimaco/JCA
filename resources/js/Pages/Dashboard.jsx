@@ -196,10 +196,16 @@ export default function Dashboard({ pendingCount, pendingUsers, adminCounters, b
     const { auth } = usePage().props;
     const role = auth.user.role;
     const extraModules = auth.user.extra_modules || [];
-    const [expandedGroups, setExpandedGroups] = useState({});
+    const [expandedGroups, setExpandedGroups] = useState(() => {
+        try { return JSON.parse(localStorage.getItem('dashboard-expanded-groups')) || {}; } catch { return {}; }
+    });
 
     const toggleGroup = (title) => {
-        setExpandedGroups((prev) => ({ ...prev, [title]: !prev[title] }));
+        setExpandedGroups((prev) => {
+            const next = { ...prev, [title]: !prev[title] };
+            localStorage.setItem('dashboard-expanded-groups', JSON.stringify(next));
+            return next;
+        });
     };
 
     return (
