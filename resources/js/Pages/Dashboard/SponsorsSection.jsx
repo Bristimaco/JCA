@@ -87,8 +87,8 @@ function SponsorRow({ sponsor: s, onEdit }) {
                     <h4 className="text-sm font-semibold text-white">{s.name}</h4>
                     {tierBadge(s.tier)}
                     {contractBadge(s)}
-                    {s.has_logo && (
-                        <span className="inline-flex items-center rounded-full bg-slate-700/60 px-2 py-0.5 text-xs text-slate-400">📷 Logo</span>
+                    {s.logo_url && (
+                        <img src={s.logo_url} alt={`${s.name} logo`} className="w-8 h-8 rounded object-contain ring-1 ring-slate-600" />
                     )}
                 </div>
                 {(s.address_street || s.address_city) && (
@@ -310,7 +310,10 @@ function EditRow({ sponsor: s, onCancel, onSuccess }) {
                 {logoPreview && (
                     <img src={logoPreview} alt="" className="w-16 h-16 rounded-lg object-contain ring-1 ring-slate-600" />
                 )}
-                {s.has_logo && !logoPreview && (
+                {s.logo_url && !logoPreview && !form.data.remove_logo && (
+                    <img src={s.logo_url} alt="" className="w-16 h-16 rounded-lg object-contain ring-1 ring-slate-600" />
+                )}
+                {s.logo_url && !logoPreview && (
                     <label className="flex items-center gap-2 text-sm text-slate-400">
                         <input
                             type="checkbox"

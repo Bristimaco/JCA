@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\MemberIndexController;
 use App\Http\Controllers\Admin\ProspectController;
 use App\Http\Controllers\Admin\ProspectNoteController;
 use App\Http\Controllers\Admin\SponsorController;
+use App\Http\Controllers\Admin\SponsorLogoController;
 use App\Http\Controllers\Admin\ToggleUserActiveController;
 use App\Http\Controllers\Admin\TournamentController;
 use App\Http\Controllers\Admin\TournamentIndexController;
@@ -80,6 +81,9 @@ Route::get('/tournaments/rsvp/{token}/{response}', TournamentRsvpController::cla
 
 // Public club logo (for favicon/emails)
 Route::get('/club-logo', ClubLogoController::class)->name('club.logo');
+
+// Sponsor logo
+Route::get('/sponsor-logo/{sponsor}', SponsorLogoController::class)->name('sponsor.logo');
 
 // Mollie webhook (no auth, CSRF excluded in bootstrap/app.php)
 Route::post('/webhooks/mollie', MollieWebhookController::class)->name('webhooks.mollie');

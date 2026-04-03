@@ -19,7 +19,7 @@ class SponsorController extends Controller
             ->get(['id', 'name', 'address_street', 'address_city', 'address_postal_code', 'contact_name', 'contact_phone', 'tier', 'contract_start_date', 'contract_end_date', 'is_active', 'logo_mime', 'sponsor_amount', 'renewal_months', 'created_at'])
             ->map(fn (Sponsor $s) => [
                 ...$s->toArray(),
-                'has_logo' => (bool) $s->logo_mime,
+                'logo_url' => $s->logo_mime ? '/sponsor-logo/'.$s->id : null,
             ]);
 
         return Inertia::render('Admin/Sponsors', [
