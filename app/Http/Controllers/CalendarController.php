@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Enums\EventStatus;
+use App\Enums\MembershipStatus;
 use App\Enums\TournamentStatus;
 use App\Models\Event;
 use App\Models\EventRegistration;
+use App\Models\Member;
 use App\Models\Tournament;
 use App\Models\TrainingAbsence;
 use App\Models\TrainingSchedule;
@@ -42,6 +44,7 @@ class CalendarController extends Controller
             ->merge($this->extraTrainingItems($start, $end, $memberIds))
             ->merge($this->tournamentItems($start, $end, $memberIds))
             ->merge($this->eventItems($start, $end, $userId))
+            ->merge($this->birthdayItems($start, $end))
             ->sortBy('date')
             ->values();
 
@@ -217,5 +220,31 @@ class CalendarController extends Controller
                 'participating' => $registeredEventIds->contains($e->id),
             ];
         })->all();
+    }
+
+    private function birthdayItems(Carbon $start, Carbon $end): array
+    {
+        $members = Member::whereNotNull('date_of_birth')
+            ->where('membership_status', MembershipStatus::Active)
+            ->get(['id', 'first_name', 'last_name', 'date_of_birth']);
+
+        $items = [];
+        $current = $start->copy();
+
+        while ($current->lte($end)) {
+            foreach ($members as $member) {
+                if ($member->date_of_birth->month === $current->month && $member->date_of_birth->day === $current->day) {
+                    $age = $member->date_of_birth->diffInYears($current);
+                    $items[] = [
+                        'type' => 'birthday',
+                        'date' => $current->toDateString(),
+                        'name' => $member->first_name.' '.$member->last_name.' ('.$age.')',
+                    ];
+                }
+            }
+            $current->addDay();
+        }
+
+        return $items;
     }
 }
