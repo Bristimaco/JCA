@@ -292,10 +292,6 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::get('/gebruikers', UserPageController::class)->name('admin.users');
         Route::get('/leeftijdscategorieen', AgeCategoryPageController::class)->name('admin.age-categories');
         Route::get('/gewichtscategorieen', WeightCategoryPageController::class)->name('admin.weight-categories');
-    });
-
-    // Admin routes — Logs module (admin OR extra_module:logs)
-    Route::middleware('admin:logs')->prefix('admin')->group(function () {
         Route::get('/activiteit', [AdminActivityController::class, 'index'])->name('admin.activity');
         Route::get('/test-mode-log', [AdminTestModeLogController::class, 'index'])->name('admin.test-mode-log');
         Route::delete('/test-mode-log', [AdminTestModeLogController::class, 'clear'])->name('admin.test-mode-log.clear');

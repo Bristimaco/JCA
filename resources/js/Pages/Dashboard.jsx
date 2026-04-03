@@ -175,19 +175,14 @@ const moduleGroups = [
         ],
     },
     {
-        title: 'Log',
-        modules: [
-            { name: 'Activiteit', href: '/admin/activiteit', roles: ['admin'], extraModule: 'logs' },
-            { name: 'Test Log', href: '/admin/test-mode-log', roles: ['admin'], extraModule: 'logs' },
-        ],
-    },
-    {
         title: 'Beheer',
         modules: [
             { name: 'Club Instellingen', href: '/admin/club-instellingen', roles: ['admin'], extraModule: 'admin' },
             { name: 'Gebruikersbeheer', href: '/admin/gebruikers', roles: ['admin'], extraModule: 'admin' },
             { name: 'Leeftijdscategorieën', href: '/admin/leeftijdscategorieen', roles: ['admin'], extraModule: 'admin' },
             { name: 'Gewichtscategorieën', href: '/admin/gewichtscategorieen', roles: ['admin'], extraModule: 'admin' },
+            { name: 'Activiteit', href: '/admin/activiteit', roles: ['admin'], extraModule: 'admin' },
+            { name: 'Test Log', href: '/admin/test-mode-log', roles: ['admin'], extraModule: 'admin' },
         ],
     },
 ];
