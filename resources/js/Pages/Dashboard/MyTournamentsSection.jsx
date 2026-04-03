@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { router } from '@inertiajs/react';
 import TournamentStepper from '../../Components/TournamentStepper';
 
 const statusGroups = [
@@ -11,6 +12,7 @@ const statusGroups = [
 export default function MyTournamentsSection({ tournaments }) {
     const [expandedId, setExpandedId] = useState(null);
     const [collapsedGroups, setCollapsedGroups] = useState(() => new Set(statusGroups.map(g => g.key)));
+    const [processing, setProcessing] = useState({});
 
     const toggleGroup = (key) => setCollapsedGroups(prev => {
         const next = new Set(prev);
@@ -21,6 +23,15 @@ export default function MyTournamentsSection({ tournaments }) {
     const formatDate = (dateStr) => {
         if (!dateStr) return '-';
         return new Date(dateStr).toLocaleDateString('nl-BE');
+    };
+
+    const respond = (tournamentId, memberId, response) => {
+        const key = `${tournamentId}-${response}`;
+        setProcessing(prev => ({ ...prev, [key]: true }));
+        router.post(`/mijn-toernooien/${tournamentId}/respond/${memberId}`, { response }, {
+            preserveScroll: true,
+            onFinish: () => setProcessing(prev => ({ ...prev, [key]: false })),
+        });
     };
 
     return (
@@ -98,6 +109,41 @@ export default function MyTournamentsSection({ tournaments }) {
                                                             </li>
                                                         ))}
                                                     </ul>
+                                                )}
+                                            </div>
+                                        )}
+                                        {t.invitation_status === 'invited' && (
+                                            <div className="mt-3 pt-3 border-t border-slate-800">
+                                                {t.deadline_passed ? (
+                                                    <p className="text-xs text-slate-500">Deadline verlopen</p>
+                                                ) : (
+                                                    <div className="flex gap-2">
+                                                        {t.payment_required ? (
+                                                            <a
+                                                                href={t.payment_url}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                className="flex-1 text-center rounded-lg px-3 py-1.5 text-xs font-medium bg-amber-900/40 text-amber-400 hover:bg-amber-900/60 transition-colors"
+                                                            >
+                                                                Betaal eerst
+                                                            </a>
+                                                        ) : (
+                                                            <button
+                                                                onClick={() => respond(t.id, t.member_id, 'accept')}
+                                                                disabled={processing[`${t.id}-accept`]}
+                                                                className="flex-1 rounded-lg px-3 py-1.5 text-xs font-medium bg-emerald-900/40 text-emerald-400 hover:bg-emerald-900/60 transition-colors disabled:opacity-50"
+                                                            >
+                                                                {processing[`${t.id}-accept`] ? 'Bezig...' : 'Accepteren'}
+                                                            </button>
+                                                        )}
+                                                        <button
+                                                            onClick={() => respond(t.id, t.member_id, 'decline')}
+                                                            disabled={processing[`${t.id}-decline`]}
+                                                            className="flex-1 rounded-lg px-3 py-1.5 text-xs font-medium bg-red-900/40 text-red-400 hover:bg-red-900/60 transition-colors disabled:opacity-50"
+                                                        >
+                                                            {processing[`${t.id}-decline`] ? 'Bezig...' : 'Afslaan'}
+                                                        </button>
+                                                    </div>
                                                 )}
                                             </div>
                                         )}

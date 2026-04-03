@@ -38,6 +38,10 @@ class MijnToernooienController extends Controller
                         'status_label' => $t->status->label(),
                         'invitation_status' => $myMember?->pivot->invitation_status,
                         'invitation_status_label' => InvitationStatus::tryFrom($myMember?->pivot->invitation_status)?->label(),
+                        'member_id' => $myMember?->id,
+                        'deadline_passed' => $t->invitation_deadline && now()->startOfDay()->gt($t->invitation_deadline),
+                        'payment_required' => $myMember?->pivot->mollie_payment_id && $myMember?->pivot->payment_status !== 'paid',
+                        'payment_url' => $myMember?->pivot->mollie_payment_url,
                         'participants' => $t->members
                             ->filter(fn ($m) => $m->pivot->invitation_status === InvitationStatus::Accepted->value)
                             ->map(function ($m) use ($t) {

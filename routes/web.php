@@ -53,6 +53,7 @@ use App\Http\Controllers\MemberAttendanceController;
 use App\Http\Controllers\MemberPhotoController;
 use App\Http\Controllers\MijnPoefController;
 use App\Http\Controllers\MijnToernooienController;
+use App\Http\Controllers\MijnToernooienRespondController;
 use App\Http\Controllers\MollieWebhookController;
 use App\Http\Controllers\MyMembersController;
 use App\Http\Controllers\NotificationController;
@@ -164,6 +165,7 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
 
     // Mijn toernooien (any authenticated user with linked members)
     Route::get('/mijn-toernooien', MijnToernooienController::class)->name('mijn-toernooien');
+    Route::post('/mijn-toernooien/{tournament}/respond/{member}', MijnToernooienRespondController::class)->name('mijn-toernooien.respond');
 
     // Tournament detail (any authenticated user)
 
