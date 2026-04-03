@@ -36,8 +36,8 @@ class ImportProspect implements ShouldQueue
 
         $data = $result['data'];
 
-        $fields = [
-            'company_name' => $data['company_name'] ?? 'Onbekend',
+        $apiFields = [
+            'company_name' => $data['company_name'] ?? null,
             'address_street' => $data['address_street'] ?? null,
             'address_city' => $data['address_city'] ?? null,
             'address_postal_code' => $data['address_postal_code'] ?? null,
@@ -47,16 +47,21 @@ class ImportProspect implements ShouldQueue
             'website' => $data['website'] ?? null,
             'latitude' => $data['latitude'] ?? null,
             'longitude' => $data['longitude'] ?? null,
-            'cbe_data' => $data,
-            'cbe_fetched_at' => now(),
         ];
 
         $existing = Prospect::where('vat_number', $this->vatNumber)->first();
 
         if ($existing) {
-            $existing->update($fields);
+            // Only update fields where the API returned a non-empty value
+            $updates = array_filter($apiFields, fn ($value) => $value !== null && $value !== '');
+            $updates['cbe_data'] = $data;
+            $updates['cbe_fetched_at'] = now();
+            $existing->update($updates);
         } else {
-            Prospect::create(array_merge(['vat_number' => $data['vat_number'] ?? $this->vatNumber], $fields));
+            $apiFields['company_name'] = $apiFields['company_name'] ?: 'Onbekend';
+            $apiFields['cbe_data'] = $data;
+            $apiFields['cbe_fetched_at'] = now();
+            Prospect::create(array_merge(['vat_number' => $data['vat_number'] ?? $this->vatNumber], $apiFields));
         }
     }
 

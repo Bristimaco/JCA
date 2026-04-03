@@ -131,20 +131,25 @@ class ProspectController extends Controller
 
         $data = $result['data'];
 
-        $prospect->update([
-            'company_name' => $data['company_name'],
-            'address_street' => $data['address_street'],
-            'address_city' => $data['address_city'],
-            'address_postal_code' => $data['address_postal_code'],
-            'legal_form' => $data['legal_form'],
-            'phone' => $data['phone'],
-            'email' => $data['email'],
-            'website' => $data['website'],
+        $apiFields = [
+            'company_name' => $data['company_name'] ?? null,
+            'address_street' => $data['address_street'] ?? null,
+            'address_city' => $data['address_city'] ?? null,
+            'address_postal_code' => $data['address_postal_code'] ?? null,
+            'legal_form' => $data['legal_form'] ?? null,
+            'phone' => $data['phone'] ?? null,
+            'email' => $data['email'] ?? null,
+            'website' => $data['website'] ?? null,
             'latitude' => $data['latitude'] ?? null,
             'longitude' => $data['longitude'] ?? null,
-            'cbe_data' => $data,
-            'cbe_fetched_at' => now(),
-        ]);
+        ];
+
+        // Only update fields where the API returned a non-empty value
+        $updates = array_filter($apiFields, fn ($value) => $value !== null && $value !== '');
+        $updates['cbe_data'] = $data;
+        $updates['cbe_fetched_at'] = now();
+
+        $prospect->update($updates);
 
         return back()->with('status', 'KBO gegevens bijgewerkt.');
     }
