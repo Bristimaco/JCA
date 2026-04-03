@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
 /**
@@ -22,6 +23,7 @@ class BarProduct extends Model
         'price',
         'is_active',
         'display_order',
+        'bar_category_id',
         'needs_refill',
         'needs_refill_at',
     ];
@@ -50,5 +52,10 @@ class BarProduct extends Model
     public function scopeNeedsRefill(Builder $query): Builder
     {
         return $query->where('needs_refill', true);
+    }
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(BarCategory::class, 'bar_category_id');
     }
 }

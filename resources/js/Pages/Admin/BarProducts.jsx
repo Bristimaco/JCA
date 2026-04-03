@@ -2,7 +2,7 @@ import { Head } from '@inertiajs/react';
 import AppLayout from '../../Layouts/AppLayout';
 import BarProductsSection from '../Dashboard/BarProductsSection';
 
-export default function BarProducts({ products }) {
+export default function BarProducts({ products, categories }) {
     return (
         <AppLayout>
             <Head title="Kassa Producten" />
@@ -11,7 +11,7 @@ export default function BarProducts({ products }) {
                 <h1 className="text-2xl font-bold text-white mb-6">Kassa Producten</h1>
 
                 <div className="bg-slate-900 rounded-xl shadow-sm ring-1 ring-slate-800 overflow-hidden">
-                    <BarProductsSection products={products} />
+                    <BarProductsSection products={products} categories={categories} />
                 </div>
             </div>
         </AppLayout>

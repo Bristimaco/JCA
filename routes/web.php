@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\AdminTestModeLogController;
 use App\Http\Controllers\Admin\AgeCategoryController;
 use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\Admin\ApproveUserController;
+use App\Http\Controllers\Admin\BarCategoryController;
 use App\Http\Controllers\Admin\BarProductController;
 use App\Http\Controllers\Admin\CategoryExcelController;
 use App\Http\Controllers\Admin\ClubSettingsController;
@@ -324,6 +325,11 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::patch('/bar-products/{barProduct}', [BarProductController::class, 'update'])->name('admin.bar-products.update');
         Route::delete('/bar-products/{barProduct}', [BarProductController::class, 'destroy'])->name('admin.bar-products.destroy');
         Route::post('/bar-products/{barProduct}/clear-refill', [BarProductController::class, 'clearRefill'])->name('admin.bar-products.clear-refill');
+
+        // Bar categories
+        Route::post('/bar-categories', [BarCategoryController::class, 'store'])->name('admin.bar-categories.store');
+        Route::patch('/bar-categories/{barCategory}', [BarCategoryController::class, 'update'])->name('admin.bar-categories.update');
+        Route::delete('/bar-categories/{barCategory}', [BarCategoryController::class, 'destroy'])->name('admin.bar-categories.destroy');
 
         Route::delete('/members/{member}', [MemberController::class, 'destroy'])->name('admin.members.destroy');
 

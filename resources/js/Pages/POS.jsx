@@ -2,12 +2,13 @@ import { Head, Link } from '@inertiajs/react';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import AppLayout from '../Layouts/AppLayout';
 
-export default function POS({ products: initialProducts }) {
+export default function POS({ products: initialProducts, categories }) {
     const [quantities, setQuantities] = useState({});
     const [products, setProducts] = useState(initialProducts);
     const [showVoucher, setShowVoucher] = useState(false);
     const [gridCols, setGridCols] = useState(5);
     const [saving, setSaving] = useState(false);
+    const [activeCategory, setActiveCategory] = useState(null);
     const [orderSaved, setOrderSaved] = useState(false);
     const gridRef = useRef(null);
 
@@ -191,7 +192,11 @@ export default function POS({ products: initialProducts }) {
     }, []);
 
     // Dynamic grid calculation — fit all products on one screen
-    const tileCount = products.length + 1; // +1 for voucher tile
+    const filteredProducts = activeCategory
+        ? products.filter((p) => p.bar_category_id === activeCategory)
+        : products;
+
+    const tileCount = filteredProducts.length + 1; // +1 for voucher tile
     const calcGrid = useCallback(() => {
         const el = gridRef.current;
         if (!el) return;
@@ -362,7 +367,34 @@ export default function POS({ products: initialProducts }) {
             ) : (
                 /* Product grid */
                 <>
-                    {products.length === 0 ? (
+                    {/* Category filter bar */}
+                    {categories.length > 1 && (
+                        <div className="shrink-0 flex flex-wrap gap-1.5 mb-1">
+                            <button
+                                onClick={() => setActiveCategory(null)}
+                                className={`rounded-md px-3 py-1.5 text-xs font-semibold transition-colors ${activeCategory === null
+                                    ? 'bg-rose-600 text-white'
+                                    : 'bg-slate-800 text-slate-300 ring-1 ring-slate-700 hover:bg-slate-700'
+                                }`}
+                            >
+                                Alle
+                            </button>
+                            {categories.map((cat) => (
+                                <button
+                                    key={cat.id}
+                                    onClick={() => setActiveCategory(cat.id)}
+                                    className={`rounded-md px-3 py-1.5 text-xs font-semibold transition-colors ${activeCategory === cat.id
+                                        ? 'bg-rose-600 text-white'
+                                        : 'bg-slate-800 text-slate-300 ring-1 ring-slate-700 hover:bg-slate-700'
+                                    }`}
+                                >
+                                    {cat.name}
+                                </button>
+                            ))}
+                        </div>
+                    )}
+
+                    {filteredProducts.length === 0 ? (
                         <div className="rounded-xl bg-slate-900 ring-1 ring-slate-800 p-12 text-center text-slate-500">
                             Geen producten beschikbaar.
                         </div>
@@ -375,7 +407,7 @@ export default function POS({ products: initialProducts }) {
                                     gridTemplateRows: `repeat(${gridRows}, 1fr)`,
                                 }}
                             >
-                                {products.map((product) => {
+                                {filteredProducts.map((product) => {
                                     const qty = getQty(product.id);
                                     return (
                                         <div

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\BarCategory;
 use App\Models\BarOrder;
 use App\Models\BarOrderItem;
 use App\Models\BarProduct;
@@ -16,10 +17,12 @@ class BarProductController extends Controller
 {
     public function index(): Response
     {
-        $products = BarProduct::ordered()->get(['id', 'name', 'price', 'is_active', 'display_order']);
+        $products = BarProduct::ordered()->get(['id', 'name', 'price', 'is_active', 'display_order', 'bar_category_id']);
+        $categories = BarCategory::ordered()->get(['id', 'name', 'display_order']);
 
         return Inertia::render('Admin/BarProducts', [
             'products' => $products,
+            'categories' => $categories,
         ]);
     }
 
@@ -40,12 +43,14 @@ class BarProductController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'price' => ['required', 'numeric', 'min:0'],
             'display_order' => ['nullable', 'integer', 'min:0'],
+            'bar_category_id' => ['required', 'exists:bar_categories,id'],
         ]);
 
         BarProduct::create([
             'name' => $validated['name'],
             'price' => $validated['price'],
             'display_order' => $validated['display_order'] ?? 0,
+            'bar_category_id' => $validated['bar_category_id'],
         ]);
 
         return back()->with('status', "Product '{$validated['name']}' aangemaakt.");
@@ -58,6 +63,7 @@ class BarProductController extends Controller
             'price' => ['required', 'numeric', 'min:0'],
             'is_active' => ['required', 'boolean'],
             'display_order' => ['nullable', 'integer', 'min:0'],
+            'bar_category_id' => ['required', 'exists:bar_categories,id'],
         ]);
 
         $barProduct->update($validated);

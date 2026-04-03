@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\UserRole;
+use App\Models\BarCategory;
 use App\Models\BarOrder;
 use App\Models\BarProduct;
 use App\Models\User;
@@ -19,10 +20,13 @@ class POSController extends Controller
     {
         $products = BarProduct::active()
             ->ordered()
-            ->get(['id', 'name', 'price', 'needs_refill']);
+            ->get(['id', 'name', 'price', 'needs_refill', 'bar_category_id']);
+
+        $categories = BarCategory::ordered()->get(['id', 'name']);
 
         return Inertia::render('POS', [
             'products' => $products,
+            'categories' => $categories,
         ]);
     }
 
