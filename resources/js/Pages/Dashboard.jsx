@@ -244,6 +244,31 @@ export default function Dashboard({ pendingCount, pendingUsers, adminCounters, b
             </div>
 
             {(() => {
+                const hasVandaag = (activeTournaments?.length > 0) || (coachTournaments?.length > 0) || (coachTrainingGroups?.some(g => g.schedules?.some(s => s.is_today))) || (extraTrainings?.length > 0) || (activeTrainingSessions?.length > 0);
+                if (!hasVandaag) return null;
+                const isVandaagOpen = expandedGroups['Vandaag'] || false;
+                return (
+                    <div className="mb-1">
+                        <button onClick={() => toggleGroup('Vandaag')} className="w-full flex items-center gap-1.5 py-1.5 text-left">
+                            <svg className={`w-3 h-3 text-slate-500 transition-transform ${isVandaagOpen ? 'rotate-90' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                            </svg>
+                            <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Vandaag</h2>
+                        </button>
+                        {isVandaagOpen && (
+                            <div className="space-y-6 pb-2">
+                                {activeTournaments?.length > 0 && <ActiveTournaments tournaments={activeTournaments} />}
+                                {coachTournaments?.length > 0 && <CoachTournaments tournaments={coachTournaments} />}
+                                {coachTrainingGroups?.length > 0 && <CoachTrainingGroups groups={coachTrainingGroups} />}
+                                {extraTrainings?.length > 0 && <ExtraTrainings trainings={extraTrainings} />}
+                                {activeTrainingSessions?.length > 0 && <ActiveTrainingSessions sessions={activeTrainingSessions} />}
+                            </div>
+                        )}
+                    </div>
+                );
+            })()}
+
+            {(() => {
                 const filtered = moduleGroups.map((group) => ({
                     ...group,
                     visibleModules: group.modules.filter((m) => m.roles.includes(role) || (m.extraModule && extraModules.includes(m.extraModule))),
@@ -300,26 +325,6 @@ export default function Dashboard({ pendingCount, pendingUsers, adminCounters, b
                     </div>
                 );
             })()}
-
-            {activeTournaments && activeTournaments.length > 0 && (
-                <ActiveTournaments tournaments={activeTournaments} />
-            )}
-
-            {coachTournaments && coachTournaments.length > 0 && (
-                <CoachTournaments tournaments={coachTournaments} />
-            )}
-
-            {coachTrainingGroups && coachTrainingGroups.length > 0 && (
-                <CoachTrainingGroups groups={coachTrainingGroups} />
-            )}
-
-            {extraTrainings && extraTrainings.length > 0 && (
-                <ExtraTrainings trainings={extraTrainings} />
-            )}
-
-            {activeTrainingSessions && activeTrainingSessions.length > 0 && (
-                <ActiveTrainingSessions sessions={activeTrainingSessions} />
-            )}
         </AppLayout>
     );
 }
@@ -353,7 +358,7 @@ function ActiveTournaments({ tournaments }) {
     };
 
     return (
-        <div className="mt-10">
+        <div>
             <div className="flex items-center gap-2 mb-4">
                 <div className="relative flex h-3 w-3">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
@@ -403,7 +408,7 @@ function CoachTournaments({ tournaments }) {
     };
 
     return (
-        <div className="mt-10">
+        <div>
             <h2 className="text-lg font-semibold text-white mb-4">
                 Mijn Toernooien als Trainer
                 <span className="ml-2 inline-flex items-center rounded-full bg-rose-900/40 px-2.5 py-0.5 text-xs font-medium text-rose-400">
@@ -445,7 +450,7 @@ function ActiveTrainingSessions({ sessions }) {
     };
 
     return (
-        <div className="mt-10">
+        <div>
             <div className="flex items-center gap-2 mb-4">
                 <div className="relative flex h-3 w-3">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -509,7 +514,7 @@ function CoachTrainingGroups({ groups }) {
         .filter(g => g.schedules.length > 0);
 
     return (
-        <div className="mt-10">
+        <div>
             <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold text-white">
                     Trainingen vandaag
@@ -672,7 +677,7 @@ function ExtraTrainings({ trainings }) {
     };
 
     return (
-        <div className="mt-10">
+        <div>
             <h2 className="text-lg font-semibold text-white mb-4">
                 Extra Trainingen Vandaag
                 <span className="ml-2 inline-flex items-center rounded-full bg-orange-900/40 px-2.5 py-0.5 text-xs font-medium text-orange-400">
