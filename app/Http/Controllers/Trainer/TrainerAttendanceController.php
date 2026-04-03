@@ -16,7 +16,6 @@ class TrainerAttendanceController extends Controller
     public function history(Request $request): Response
     {
         $sessionModels = TrainingSession::whereNotNull('closed_at')
-            ->whereHas('trainingSchedule', fn ($q) => $q->where('trainer_id', $request->user()->id))
             ->with(['trainingSchedule.trainingGroup.members', 'trainingSchedule.trainingGroups.members', 'trainingSchedule.trainer:id,name', 'attendances.member', 'externalAttendances.club'])
             ->orderByDesc('date')
             ->orderByDesc('closed_at')

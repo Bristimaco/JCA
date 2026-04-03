@@ -4,6 +4,10 @@ import AppLayout from '../../Layouts/AppLayout';
 
 export default function SessionHistory({ sessions }) {
     const [expandedId, setExpandedId] = useState(null);
+    const [selectedTrainer, setSelectedTrainer] = useState(null);
+
+    const trainers = [...new Set(sessions.map(s => s.trainer_name).filter(Boolean))].sort();
+    const filtered = selectedTrainer ? sessions.filter(s => s.trainer_name === selectedTrainer) : sessions;
 
     return (
         <AppLayout>
@@ -21,13 +25,33 @@ export default function SessionHistory({ sessions }) {
                     </div>
                 </div>
 
-                {sessions.length === 0 ? (
+                {trainers.length > 1 && (
+                    <div className="flex flex-wrap gap-2 mb-4">
+                        <button
+                            onClick={() => setSelectedTrainer(null)}
+                            className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${!selectedTrainer ? 'bg-rose-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700 ring-1 ring-slate-700'}`}
+                        >
+                            Alle
+                        </button>
+                        {trainers.map(t => (
+                            <button
+                                key={t}
+                                onClick={() => setSelectedTrainer(selectedTrainer === t ? null : t)}
+                                className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${selectedTrainer === t ? 'bg-rose-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700 ring-1 ring-slate-700'}`}
+                            >
+                                {t}
+                            </button>
+                        ))}
+                    </div>
+                )}
+
+                {filtered.length === 0 ? (
                     <div className="bg-slate-900 rounded-xl p-8 text-center ring-1 ring-slate-800">
                         <p className="text-slate-400">Nog geen afgesloten trainingen.</p>
                     </div>
                 ) : (
                     <div className="space-y-3">
-                        {sessions.map(s => (
+                        {filtered.map(s => (
                             <div key={s.id} className="bg-slate-900 rounded-xl ring-1 ring-slate-800 overflow-hidden">
                                 <button
                                     onClick={() => setExpandedId(expandedId === s.id ? null : s.id)}
