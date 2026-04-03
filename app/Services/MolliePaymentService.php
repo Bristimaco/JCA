@@ -335,4 +335,62 @@ class MolliePaymentService
             return null;
         }
     }
+
+    public function createBancontactQrPayment(float $amount, string $description, array $metadata = []): array
+    {
+        if (ClubSettings::current()->test_mode) {
+            $fakeId = 'test_mode_'.uniqid();
+
+            TestModeLog::create([
+                'type' => 'mollie_payment',
+                'recipient' => 'POS QR',
+                'subject' => $description,
+                'body' => json_encode(['amount' => $amount, 'type' => 'bar_qr', 'metadata' => $metadata], JSON_UNESCAPED_UNICODE),
+                'created_at' => now(),
+            ]);
+
+            return [
+                'payment_id' => $fakeId,
+                'qr_src' => null,
+                'checkout_url' => '#test-mode',
+                'expires_at' => now()->addMinutes(15)->toIso8601String(),
+            ];
+        }
+
+        $payment = Mollie::api()->payments->create([
+            'amount' => [
+                'currency' => 'EUR',
+                'value' => number_format($amount, 2, '.', ''),
+            ],
+            'description' => $description,
+            'method' => 'bancontact',
+            'locale' => 'nl_BE',
+            'redirectUrl' => url('/pos'),
+            'webhookUrl' => url('/webhooks/mollie/bar'),
+            'metadata' => $metadata,
+        ], ['include' => 'details.qrCode']);
+
+        Log::info('Bancontact QR betaling aangemaakt', [
+            'mollie_id' => $payment->id,
+            'amount' => $amount,
+        ]);
+
+        return [
+            'payment_id' => $payment->id,
+            'qr_src' => $payment->details->qrCode->src ?? null,
+            'checkout_url' => $payment->getCheckoutUrl(),
+            'expires_at' => $payment->expiresAt,
+        ];
+    }
+
+    public function getPaymentStatusById(string $paymentId): string
+    {
+        if (str_starts_with($paymentId, 'test_mode_')) {
+            return 'open';
+        }
+
+        $payment = Mollie::api()->payments->get($paymentId);
+
+        return $payment->status;
+    }
 }

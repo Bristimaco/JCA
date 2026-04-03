@@ -116,7 +116,10 @@ const moduleGroups = [
     {
         title: 'Kantine',
         modules: [
+            { name: 'Bestelling Plaatsen', href: '/bestelling', roles: ['parent', 'member', 'admin', 'coach', 'barmedewerker'] },
             { name: 'Kassa', href: '/pos', roles: ['barmedewerker', 'admin'] },
+            { name: 'Bestellingen', href: '/pos/bestellingen', roles: ['barmedewerker', 'admin'] },
+            { name: 'Poef', href: '/pos/poef', roles: ['barmedewerker', 'admin'] },
             { name: 'Kassa Producten', href: '/admin/bar-products', roles: ['admin'] },
             { name: 'Aan te vullen', href: '/admin/aan-te-vullen', roles: ['admin'] },
             { name: 'Verkoopstatistieken', href: '/admin/verkoop-statistieken', roles: ['admin'] },

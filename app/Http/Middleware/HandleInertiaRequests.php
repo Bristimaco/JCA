@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\UserRole;
+use App\Models\BarOrder;
 use App\Models\ClubSettings;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -60,6 +62,9 @@ class HandleInertiaRequests extends Middleware
                 'has_logo' => (bool) ClubSettings::current()->logo_data,
             ],
             'testMode' => fn () => (bool) ClubSettings::current()->test_mode,
+            'pendingBarOrderCount' => fn () => $request->user() && in_array($request->user()->role, [UserRole::Admin, UserRole::Barmedewerker])
+                ? BarOrder::pending()->count()
+                : 0,
         ];
     }
 }

@@ -36,6 +36,8 @@ use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordResetController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\BarOrderController;
+use App\Http\Controllers\BarPaymentController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\ClubLogoController;
 use App\Http\Controllers\DashboardController;
@@ -50,6 +52,7 @@ use App\Http\Controllers\MollieWebhookController;
 use App\Http\Controllers\MyMembersController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PodiumPhotoController;
+use App\Http\Controllers\PoefController;
 use App\Http\Controllers\POSController;
 use App\Http\Controllers\PushSubscriptionController;
 use App\Http\Controllers\TournamentAttachmentController;
@@ -74,6 +77,7 @@ Route::get('/club-logo', ClubLogoController::class)->name('club.logo');
 Route::post('/webhooks/mollie', MollieWebhookController::class)->name('webhooks.mollie');
 Route::post('/webhooks/mollie/tournament', TournamentPaymentWebhookController::class)->name('webhooks.mollie.tournament');
 Route::post('/webhooks/mollie/event', EventPaymentWebhookController::class)->name('webhooks.mollie.event');
+Route::post('/webhooks/mollie/bar', [BarPaymentController::class, 'webhook'])->name('webhooks.mollie.bar');
 
 // Public event image
 Route::get('/event-afbeelding/{event}', EventImageController::class)->name('event.image');
@@ -178,6 +182,10 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
     Route::post('/training-absences', [TrainingAbsenceController::class, 'store'])->name('training-absences.store');
     Route::delete('/training-absences', [TrainingAbsenceController::class, 'destroy'])->name('training-absences.destroy');
 
+    // Bar ordering (any approved user)
+    Route::get('/bestelling', [BarOrderController::class, 'index'])->name('bestelling');
+    Route::post('/bestelling', [BarOrderController::class, 'store'])->name('bestelling.store');
+
     // Trainer routes
     Route::middleware('coach')->prefix('trainer')->group(function () {
         Route::get('/training-groups', [TrainerTrainingGroupController::class, 'index'])->name('trainer.training-groups.index');
@@ -221,6 +229,24 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::get('/pos', POSController::class)->name('pos');
         Route::post('/pos/order', [POSController::class, 'store'])->name('pos.order.store');
         Route::post('/pos/products/{barProduct}/toggle-refill', [POSController::class, 'toggleRefill'])->name('pos.toggle-refill');
+        Route::post('/pos/payment/qr', [BarPaymentController::class, 'createQr'])->name('pos.payment.qr');
+        Route::get('/pos/payment/{paymentId}/status', [BarPaymentController::class, 'checkStatus'])->name('pos.payment.status');
+
+        // Order queue
+        Route::get('/pos/bestellingen', [POSController::class, 'orders'])->name('pos.orders');
+        Route::get('/bestellingen/pending-count', [BarOrderController::class, 'pendingCount'])->name('orders.pending-count');
+        Route::patch('/pos/bestellingen/{barOrder}/preparing', [POSController::class, 'startPreparing'])->name('pos.orders.preparing');
+        Route::patch('/pos/bestellingen/{barOrder}/ready', [POSController::class, 'markReady'])->name('pos.orders.ready');
+        Route::patch('/pos/bestellingen/{barOrder}/paid', [POSController::class, 'markPaid'])->name('pos.orders.paid');
+        Route::patch('/pos/bestellingen/{barOrder}/poef', [POSController::class, 'markPoef'])->name('pos.orders.poef');
+
+        // Poef
+        Route::get('/pos/poef', [PoefController::class, 'index'])->name('pos.poef');
+        Route::post('/pos/poef/qr', [PoefController::class, 'createQr'])->name('pos.poef.qr');
+        Route::post('/pos/poef/betaald', [PoefController::class, 'markPaid'])->name('pos.poef.paid');
+
+        // User search for poef assignment
+        Route::get('/pos/users/search', [POSController::class, 'searchUsers'])->name('pos.users.search');
     });
 
     // Admin routes

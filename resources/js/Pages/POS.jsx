@@ -1,8 +1,9 @@
 import { Head, Link } from '@inertiajs/react';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import AppLayout from '../Layouts/AppLayout';
+import QrPaymentOverlay from '../Components/QrPaymentOverlay';
 
-export default function POS({ products: initialProducts, categories }) {
+export default function POS({ products: initialProducts, categories, pendingOrderCount: initialPendingCount }) {
     const [quantities, setQuantities] = useState({});
     const [products, setProducts] = useState(initialProducts);
     const [showVoucher, setShowVoucher] = useState(false);
@@ -11,6 +12,8 @@ export default function POS({ products: initialProducts, categories }) {
     const [activeCategory, setActiveCategory] = useState(null);
     const [orderSaved, setOrderSaved] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
+    const [qrPayment, setQrPayment] = useState(null);
+    const [pendingCount, setPendingCount] = useState(initialPendingCount || 0);
     const gridRef = useRef(null);
 
     // Voucher state
@@ -75,6 +78,21 @@ export default function POS({ products: initialProducts, categories }) {
             if (res.ok) {
                 const data = await res.json();
                 setProducts((prev) => prev.map((p) => p.id === productId ? { ...p, needs_refill: data.needs_refill } : p));
+            }
+        } catch { /* network error */ }
+    };
+
+    const handleQrPayment = async () => {
+        if (itemCount === 0) return;
+        try {
+            const res = await fetch('/pos/payment/qr', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken(), Accept: 'application/json' },
+                body: JSON.stringify({ amount: total }),
+            });
+            if (res.ok) {
+                const data = await res.json();
+                setQrPayment(data);
             }
         } catch { /* network error */ }
     };
@@ -229,6 +247,22 @@ export default function POS({ products: initialProducts, categories }) {
         return () => mq.removeEventListener('change', handler);
     }, []);
 
+    // Poll pending order count every 10 seconds
+    useEffect(() => {
+        const interval = setInterval(async () => {
+            try {
+                const res = await fetch('/bestellingen/pending-count', {
+                    headers: { Accept: 'application/json' },
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    setPendingCount(data.count);
+                }
+            } catch { /* network error */ }
+        }, 10000);
+        return () => clearInterval(interval);
+    }, []);
+
     const statusColors = {
         active: 'bg-emerald-900/30 text-emerald-400 ring-emerald-700/30',
         redeemed: 'bg-slate-700/50 text-slate-400 ring-slate-600/30',
@@ -246,6 +280,17 @@ export default function POS({ products: initialProducts, categories }) {
                     &larr; Dashboard
                 </Link>
                 <h1 className="text-xl font-bold text-white tracking-tight">Kassa</h1>
+                <Link
+                    href="/pos/bestellingen"
+                    className="ml-auto relative rounded-lg bg-slate-800 ring-1 ring-slate-700 px-3 py-1.5 text-sm font-semibold text-white hover:bg-slate-700 transition-colors"
+                >
+                    Bestellingen
+                    {pendingCount > 0 && (
+                        <span className="absolute -top-1.5 -right-1.5 min-w-[1.25rem] h-5 rounded-full bg-rose-600 flex items-center justify-center text-[11px] font-bold text-white px-1">
+                            {pendingCount}
+                        </span>
+                    )}
+                </Link>
             </div>
 
             {showVoucher ? (
@@ -554,11 +599,29 @@ export default function POS({ products: initialProducts, categories }) {
                                 disabled={itemCount === 0 || saving}
                                 className="rounded-lg bg-slate-700 ring-1 ring-slate-600 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                             >
-                                {saving ? 'Opslaan...' : 'Nieuwe bestelling'}
+                                {saving ? 'Opslaan...' : 'Bestelling afronden'}
+                            </button>
+                            <button
+                                onClick={handleQrPayment}
+                                disabled={itemCount === 0}
+                                className="rounded-lg bg-blue-600 ring-1 ring-blue-500 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                            >
+                                QR Betaling
                             </button>
                         </div>
                     </div>
                 </>
+            )}
+
+            {qrPayment && (
+                <QrPaymentOverlay
+                    amount={total}
+                    paymentId={qrPayment.payment_id}
+                    qrSrc={qrPayment.qr_src}
+                    checkoutUrl={qrPayment.checkout_url}
+                    onClose={() => setQrPayment(null)}
+                    onPaid={() => { setQrPayment(null); reset(); setOrderSaved(true); setTimeout(() => setOrderSaved(false), 2000); }}
+                />
             )}
         </AppLayout>
     );

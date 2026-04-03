@@ -9,6 +9,7 @@ use App\Models\BarProduct;
 use App\Models\User;
 use App\Notifications\BarProductRefillNotification;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -24,9 +25,12 @@ class POSController extends Controller
 
         $categories = BarCategory::ordered()->get(['id', 'name']);
 
+        $pendingOrderCount = BarOrder::where('status', 'pending')->count();
+
         return Inertia::render('POS', [
             'products' => $products,
             'categories' => $categories,
+            'pendingOrderCount' => $pendingOrderCount,
         ]);
     }
 
@@ -48,6 +52,7 @@ class POSController extends Controller
             $order = BarOrder::create([
                 'total' => $total,
                 'user_id' => $request->user()->id,
+                'status' => 'ready',
             ]);
 
             foreach ($items as $item) {
@@ -62,6 +67,98 @@ class POSController extends Controller
         });
 
         return response()->json(['success' => true, 'order_id' => $order->id]);
+    }
+
+    public function orders(): Response
+    {
+        $orders = BarOrder::whereIn('status', ['pending', 'preparing', 'ready'])
+            ->with(['items.product:id,name', 'orderedBy:id,name'])
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        return Inertia::render('POS/Bestellingen', [
+            'orders' => $orders,
+        ]);
+    }
+
+    public function startPreparing(BarOrder $barOrder): RedirectResponse
+    {
+        if ($barOrder->status !== 'pending') {
+            return back()->with('error', 'Bestelling kan niet worden klaargezet.');
+        }
+
+        $barOrder->update([
+            'status' => 'preparing',
+            'user_id' => auth()->id(),
+        ]);
+
+        return back();
+    }
+
+    public function markReady(BarOrder $barOrder): RedirectResponse
+    {
+        if ($barOrder->status !== 'preparing') {
+            return back()->with('error', 'Bestelling kan niet als klaar worden gemarkeerd.');
+        }
+
+        $barOrder->update(['status' => 'ready']);
+
+        return back();
+    }
+
+    public function markPaid(BarOrder $barOrder, Request $request): RedirectResponse
+    {
+        if (! in_array($barOrder->status, ['ready', 'poef'])) {
+            return back()->with('error', 'Bestelling kan niet als betaald worden gemarkeerd.');
+        }
+
+        $barOrder->update([
+            'status' => 'paid',
+            'payment_method' => $request->input('payment_method', 'other'),
+            'payment_status' => 'paid',
+            'paid_at' => now(),
+            'user_id' => $barOrder->user_id ?? auth()->id(),
+        ]);
+
+        return back();
+    }
+
+    public function markPoef(BarOrder $barOrder, Request $request): RedirectResponse
+    {
+        if ($barOrder->status !== 'ready') {
+            return back()->with('error', 'Bestelling kan niet op de poef worden gezet.');
+        }
+
+        $request->validate([
+            'ordered_by_user_id' => ['nullable', 'exists:users,id'],
+        ]);
+
+        $data = ['status' => 'poef'];
+
+        if ($request->filled('ordered_by_user_id')) {
+            $data['ordered_by_user_id'] = $request->input('ordered_by_user_id');
+        }
+
+        if (! $barOrder->ordered_by_user_id && ! $request->filled('ordered_by_user_id')) {
+            return back()->with('error', 'Selecteer een gebruiker voor de poef.');
+        }
+
+        $barOrder->update($data);
+
+        return back();
+    }
+
+    public function searchUsers(Request $request): JsonResponse
+    {
+        $query = $request->input('q', '');
+
+        $users = User::where('is_active', true)
+            ->where('name', 'ilike', '%'.$query.'%')
+            ->orderBy('name')
+            ->limit(20)
+            ->get(['id', 'name']);
+
+        return response()->json($users);
     }
 
     public function toggleRefill(BarProduct $barProduct): JsonResponse
