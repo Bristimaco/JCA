@@ -9,6 +9,7 @@ const DAY_NAMES_FULL = ['zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag',
 const TYPE_STYLES = {
     training: { bg: 'bg-amber-900/40', border: 'border-l-amber-500', text: 'text-amber-300', label: 'Training' },
     extra_training: { bg: 'bg-orange-900/40', border: 'border-l-orange-500', text: 'text-orange-300', label: 'Extra Training' },
+    cancelled_training: { bg: 'bg-slate-800/60', border: 'border-l-slate-500', text: 'text-slate-400', label: 'Geen training' },
     tournament: { bg: 'bg-rose-900/40', border: 'border-l-rose-500', text: 'text-rose-300', label: 'Toernooi' },
     event: { bg: 'bg-blue-900/40', border: 'border-l-blue-500', text: 'text-blue-300', label: 'Evenement' },
     birthday: { bg: 'bg-purple-900/40', border: 'border-l-purple-500', text: 'text-purple-300', label: 'Verjaardag' },
@@ -200,8 +201,8 @@ export default function Calendar({ items, startDate, myMemberIds }) {
                                                     } : undefined}
                                                 >
                                                     <div className="flex items-center gap-1">
-                                                        <span className={`text-[10px] font-semibold ${style.text} truncate flex-1`}>
-                                                            {item.name}
+                                                        <span className={`text-[10px] font-semibold ${style.text} truncate flex-1 ${item.type === 'cancelled_training' ? 'line-through' : ''}`}>
+                                                            {item.type === 'cancelled_training' ? `⛔ ${item.name}` : item.name}
                                                         </span>
                                                         {(item.type === 'tournament' || item.type === 'event') && (
                                                             <Link
@@ -235,7 +236,10 @@ export default function Calendar({ items, startDate, myMemberIds }) {
                                                         {item.time && !item.start_time && (
                                                             <span>{item.time}</span>
                                                         )}
-                                                        {participatingMembers.length > 0 && (
+                                                        {item.type === 'cancelled_training' && item.reason && (
+                                                            <span className="text-slate-500 italic truncate">{item.reason}</span>
+                                                        )}
+                                                        {item.type !== 'cancelled_training' && participatingMembers.length > 0 && (
                                                             <span className="text-slate-400 truncate">{participatingMembers.map(m => m.first_name).join(', ')}</span>
                                                         )}
                                                     </div>
@@ -276,8 +280,8 @@ export default function Calendar({ items, startDate, myMemberIds }) {
                                                 onClick={canReportAbsence ? () => openAbsenceModal(item) : undefined}
                                             >
                                                 <div className="flex items-center gap-1.5">
-                                                    <span className={`text-sm font-semibold ${style.text} truncate flex-1`}>
-                                                        {item.name}
+                                                    <span className={`text-sm font-semibold ${style.text} truncate flex-1 ${item.type === 'cancelled_training' ? 'line-through' : ''}`}>
+                                                        {item.type === 'cancelled_training' ? `⛔ ${item.name}` : item.name}
                                                     </span>
                                                     {(item.type === 'tournament' || item.type === 'event') && (
                                                         <Link
@@ -305,7 +309,10 @@ export default function Calendar({ items, startDate, myMemberIds }) {
                                                     {item.time && !item.start_time && (
                                                         <span>{item.time}</span>
                                                     )}
-                                                    {participatingMembers.length > 0 && (
+                                                    {item.type === 'cancelled_training' && item.reason && (
+                                                        <span className="text-slate-500 italic truncate">{item.reason}</span>
+                                                    )}
+                                                    {item.type !== 'cancelled_training' && participatingMembers.length > 0 && (
                                                         <span className="text-slate-400 truncate">{participatingMembers.map(m => m.first_name).join(', ')}</span>
                                                     )}
                                                 </div>

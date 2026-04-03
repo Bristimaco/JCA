@@ -51,4 +51,9 @@ class TrainingSchedule extends Model
     {
         return $this->belongsTo(User::class, 'trainer_id');
     }
+
+    public function cancellations(): HasMany
+    {
+        return $this->hasMany(TrainingCancellation::class);
+    }
 }

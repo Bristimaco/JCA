@@ -539,6 +539,7 @@
                     <a href="#aanwezigheid-registreren" class="nav-link">Aanwezigheid registreren</a>
                     <a href="#gast-andere-club" class="nav-link" style="padding-left: 40px; font-size: 12px;">Gasten van
                         andere clubs</a>
+                    <a href="#training-uitzonderingen" class="nav-link">Uitzonderingen (annuleren)</a>
                     <a href="#extra-trainingen" class="nav-link">Extra Trainingen</a>
                     <a href="#sessiegeschiedenis" class="nav-link">Sessiegeschiedenis</a>
                     <a href="#aanwezigheidsrapport" class="nav-link">Aanwezigheidsrapport</a>
@@ -1099,6 +1100,10 @@
                 <li><strong style="color:#a855f7;">&#9632; Paars</strong> &#8212; <strong>Verjaardag</strong>: toont de
                     naam van het lid en de leeftijd die hij/zij wordt. Verjaardagen van alle actieve clubleden
                     worden automatisch in de kalender weergegeven.</li>
+                <li><strong style="color:#94a3b8;">&#9632; Grijs (doorgestreept)</strong> &#8212; <strong>Geen training</strong>: een
+                    trainingsmoment dat is geannuleerd door een trainer of beheerder. De groepsnaam wordt doorgestreept
+                    weergegeven en eventuele reden (bijv. &#8220;Pasen&#8221;, &#8220;trainer ziek&#8221;) wordt
+                    getoond.</li>
             </ul>
             <p>
                 De <strong>huidige dag</strong> wordt gemarkeerd met een gekleurde rand zodat je altijd ziet waar
@@ -2845,6 +2850,42 @@
                 Beheerders kunnen per trainingsgroep instellen of gasten van andere clubs welkom zijn.
                 Dit doen zij via het <strong>Beheerderspaneel</strong> &#8594; <strong>Trainingsgroepen</strong>
                 en vinks het vak &#8220;Gasten van andere clubs toestaan&#8221; aan.
+            </div>
+
+            <h3 id="training-uitzonderingen">Trainingen annuleren (Uitzonderingen)</h3>
+            <p><span class="role-badge role-admin">Beheerder</span> <span class="role-badge role-coach">Trainer</span></p>
+            <p>
+                Soms gaat een wekelijkse training niet door, bijvoorbeeld wegens een feestdag, vakantie of ziekte
+                van de trainer. Met <strong>Uitzonderingen</strong> kun je specifieke datums van een terugkerend
+                trainingsmoment annuleren, zonder het hele schema te wijzigen.
+            </p>
+
+            <h4>Annulering toevoegen</h4>
+            <ol>
+                <li>Ga naar <strong>Trainingsgroepen</strong> (via Dashboard-tegel of trainersmenu).</li>
+                <li>Klik op de knop <strong>&#8220;Uitzonderingen&#8221;</strong> bij de gewenste trainingsgroep.</li>
+                <li>Als de groep meerdere trainingsmomenten heeft, selecteer het juiste moment in de dropdown.</li>
+                <li>Vul een <strong>datum</strong> in en optioneel een <strong>reden</strong> (bijv. &#8220;Pasen&#8221;,
+                    &#8220;trainer ziek&#8221;).</li>
+                <li>Klik op <strong>&#8220;Toevoegen&#8221;</strong>.</li>
+            </ol>
+            <p>
+                De annulering verschijnt direct in de lijst en wordt in de <strong>kalender</strong> getoond als
+                een grijs, doorgestreept item met de tekst <strong>&#8220;&#9940; [groepsnaam]&#8221;</strong>
+                in plaats van de normale training. Leden zien zo duidelijk dat de training niet doorgaat.
+            </p>
+
+            <h4>Annulering verwijderen</h4>
+            <p>
+                Klik op <strong>&#8220;Verwijderen&#8221;</strong> naast een geplande annulering om deze ongedaan
+                te maken. De training verschijnt dan weer normaal in de kalender.
+            </p>
+
+            <div class="box box-info">
+                <strong>Per trainingsmoment</strong>
+                Annuleringen gelden per individueel trainingsmoment, niet per hele groep. Als een groep zowel op
+                maandag als woensdag traint, kun je alleen de maandagtraining annuleren terwijl de woensdag
+                gewoon doorgaat.
             </div>
 
             <h3 id="extra-trainingen">Extra Trainingen</h3>

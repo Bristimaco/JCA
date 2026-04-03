@@ -10,6 +10,7 @@ use App\Models\EventRegistration;
 use App\Models\Member;
 use App\Models\Tournament;
 use App\Models\TrainingAbsence;
+use App\Models\TrainingCancellation;
 use App\Models\TrainingSchedule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -68,6 +69,12 @@ class CalendarController extends Controller
             ->get()
             ->groupBy(fn ($a) => $a->training_schedule_id.'|'.$a->date->toDateString());
 
+        // Fetch cancellations for the date range
+        $cancellations = TrainingCancellation::whereIn('training_schedule_id', $schedules->pluck('id'))
+            ->whereBetween('date', [$start->toDateString(), $end->toDateString()])
+            ->get()
+            ->groupBy(fn ($c) => $c->training_schedule_id.'|'.$c->date->toDateString());
+
         foreach ($schedules as $schedule) {
             $dayNumber = self::DAY_MAP[$schedule->day] ?? null;
             if ($dayNumber === null) {
@@ -85,6 +92,25 @@ class CalendarController extends Controller
             }
 
             while ($date->lte($end)) {
+                $cancellationKey = $schedule->id.'|'.$date->toDateString();
+
+                // Check if this training is cancelled on this date
+                if (isset($cancellations[$cancellationKey])) {
+                    $cancellation = $cancellations[$cancellationKey]->first();
+                    $items[] = [
+                        'type' => 'cancelled_training',
+                        'date' => $date->toDateString(),
+                        'name' => $schedule->trainingGroup->name,
+                        'start_time' => $schedule->start_time,
+                        'end_time' => $schedule->end_time,
+                        'location' => $schedule->trainingGroup->location,
+                        'reason' => $cancellation->reason,
+                    ];
+                    $date = $date->copy()->addWeek();
+
+                    continue;
+                }
+
                 $groupMemberIds = $schedule->trainingGroup->members->pluck('id');
                 $participatingMemberIds = $memberIds->intersect($groupMemberIds);
 

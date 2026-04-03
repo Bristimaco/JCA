@@ -64,6 +64,7 @@ use App\Http\Controllers\Trainer\TrainerAttendanceController;
 use App\Http\Controllers\Trainer\TrainerTournamentController;
 use App\Http\Controllers\Trainer\TrainerTrainingGroupController;
 use App\Http\Controllers\TrainingAbsenceController;
+use App\Http\Controllers\TrainingCancellationController;
 use App\Http\Controllers\VoucherController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -212,6 +213,10 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::post('/extra-training', [ExtraTrainingController::class, 'store'])->name('trainer.extra-training.store');
         Route::patch('/extra-training/{schedule}', [ExtraTrainingController::class, 'update'])->name('trainer.extra-training.update');
         Route::delete('/extra-training/{schedule}', [ExtraTrainingController::class, 'destroy'])->name('trainer.extra-training.destroy');
+
+        // Training cancellations (uitzonderingen)
+        Route::post('/training-cancellations', [TrainingCancellationController::class, 'store'])->name('training-cancellations.store');
+        Route::delete('/training-cancellations/{trainingCancellation}', [TrainingCancellationController::class, 'destroy'])->name('training-cancellations.destroy');
     });
 
     // Personal attendance toggle

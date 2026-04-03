@@ -1,9 +1,10 @@
-import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { Head, Link, useForm, usePage, router } from '@inertiajs/react';
 import { useState } from 'react';
 import AppLayout from '../../Layouts/AppLayout';
 
 export default function TrainingGroups({ groups, allMembers, isAdmin, trainers }) {
     const [managingId, setManagingId] = useState(null);
+    const [cancellationsId, setCancellationsId] = useState(null);
     const [showAddForm, setShowAddForm] = useState(false);
     const [editingId, setEditingId] = useState(null);
 
@@ -81,7 +82,16 @@ export default function TrainingGroups({ groups, allMembers, isAdmin, trainers }
                                             <div className="flex items-center gap-3 flex-shrink-0">
                                                 <span className="text-sm text-slate-400">{group.member_count} {group.member_count === 1 ? 'lid' : 'leden'}</span>
                                                 <button
-                                                    onClick={() => { setManagingId(managingId === group.id ? null : group.id); setEditingId(null); }}
+                                                    onClick={() => { setCancellationsId(cancellationsId === group.id ? null : group.id); setManagingId(null); setEditingId(null); }}
+                                                    className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${cancellationsId === group.id
+                                                        ? 'bg-amber-600 text-white'
+                                                        : 'bg-slate-800 text-amber-400 hover:bg-slate-700 ring-1 ring-slate-700'
+                                                        }`}
+                                                >
+                                                    Uitzonderingen
+                                                </button>
+                                                <button
+                                                    onClick={() => { setManagingId(managingId === group.id ? null : group.id); setCancellationsId(null); setEditingId(null); }}
                                                     className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${managingId === group.id
                                                         ? 'bg-rose-600 text-white'
                                                         : 'bg-slate-800 text-rose-400 hover:bg-slate-700 ring-1 ring-slate-700'
@@ -111,6 +121,13 @@ export default function TrainingGroups({ groups, allMembers, isAdmin, trainers }
                                         allMembers={allMembers}
                                         isAdmin={isAdmin}
                                         onClose={() => setManagingId(null)}
+                                    />
+                                )}
+
+                                {cancellationsId === group.id && editingId !== group.id && (
+                                    <CancellationManagement
+                                        group={group}
+                                        onClose={() => setCancellationsId(null)}
                                     />
                                 )}
                             </div>
@@ -286,6 +303,125 @@ function MemberAssignment({ group, allMembers, isAdmin, onClose }) {
                 <button type="button" disabled={form.processing} onClick={handleSave} className="rounded-lg bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-700 disabled:opacity-50">Opslaan</button>
                 <button type="button" onClick={() => { form.setData('member_ids', group.member_ids || []); onClose(); }} className="rounded-lg bg-slate-800 border border-slate-600 px-4 py-2 text-sm font-medium text-slate-300 hover:bg-slate-700">Annuleren</button>
             </div>
+        </div>
+    );
+}
+
+function CancellationManagement({ group, onClose }) {
+    const [selectedSchedule, setSelectedSchedule] = useState(group.schedules?.[0]?.id || '');
+    const [date, setDate] = useState('');
+    const [reason, setReason] = useState('');
+    const [submitting, setSubmitting] = useState(false);
+
+    const schedules = group.schedules || [];
+    const currentSchedule = schedules.find(s => s.id === Number(selectedSchedule));
+    const cancellations = currentSchedule?.cancellations || [];
+
+    const handleAdd = (e) => {
+        e.preventDefault();
+        if (!selectedSchedule || !date) return;
+        setSubmitting(true);
+        router.post('/trainer/training-cancellations', {
+            training_schedule_id: selectedSchedule,
+            date,
+            reason: reason || null,
+        }, {
+            preserveScroll: true,
+            onFinish: () => {
+                setSubmitting(false);
+                setDate('');
+                setReason('');
+            },
+        });
+    };
+
+    const handleDelete = (cancellationId) => {
+        if (!confirm('Annulering verwijderen? De training verschijnt dan weer normaal in de kalender.')) return;
+        router.delete(`/trainer/training-cancellations/${cancellationId}`, {
+            preserveScroll: true,
+        });
+    };
+
+    return (
+        <div className="px-3 sm:px-6 py-4 bg-slate-800/50 border-t border-slate-700">
+            <div className="flex items-center justify-between mb-3">
+                <p className="text-sm font-medium text-slate-300">Uitzonderingen — {group.name}</p>
+                <button onClick={onClose} className="text-sm text-slate-400 hover:text-slate-300">Sluiten</button>
+            </div>
+
+            {schedules.length === 0 ? (
+                <p className="text-sm text-slate-500">Geen trainingsmomenten in deze groep.</p>
+            ) : (
+                <>
+                    {schedules.length > 1 && (
+                        <div className="mb-3">
+                            <select
+                                value={selectedSchedule}
+                                onChange={(e) => setSelectedSchedule(e.target.value)}
+                                className="rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                            >
+                                {schedules.map((s) => (
+                                    <option key={s.id} value={s.id}>
+                                        {s.day} {s.start_time}{s.end_time ? `–${s.end_time}` : ''}{s.trainer_name ? ` (${s.trainer_name})` : ''}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
+
+                    <form onSubmit={handleAdd} className="flex items-end gap-2 mb-4 flex-wrap">
+                        <div>
+                            <label className="block text-xs text-slate-400 mb-1">Datum</label>
+                            <input
+                                type="date"
+                                value={date}
+                                onChange={(e) => setDate(e.target.value)}
+                                required
+                                className="rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs text-slate-400 mb-1">Reden (optioneel)</label>
+                            <input
+                                type="text"
+                                value={reason}
+                                onChange={(e) => setReason(e.target.value)}
+                                maxLength={255}
+                                placeholder="bijv. Pasen, ziek trainer..."
+                                className="rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                            />
+                        </div>
+                        <button
+                            type="submit"
+                            disabled={submitting || !date}
+                            className="rounded-md bg-amber-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-amber-700 disabled:opacity-50"
+                        >
+                            Toevoegen
+                        </button>
+                    </form>
+
+                    {cancellations.length === 0 ? (
+                        <p className="text-sm text-slate-500">Geen annuleringen gepland voor dit trainingsmoment.</p>
+                    ) : (
+                        <div className="space-y-1.5">
+                            {cancellations.map((c) => (
+                                <div key={c.id} className="flex items-center justify-between bg-slate-700/30 rounded-lg px-3 py-2 ring-1 ring-slate-700">
+                                    <div>
+                                        <span className="text-sm text-white">{c.date}</span>
+                                        {c.reason && <span className="text-sm text-slate-400 ml-2">— {c.reason}</span>}
+                                    </div>
+                                    <button
+                                        onClick={() => handleDelete(c.id)}
+                                        className="text-sm text-red-400 hover:text-red-300"
+                                    >
+                                        Verwijderen
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </>
+            )}
         </div>
     );
 }

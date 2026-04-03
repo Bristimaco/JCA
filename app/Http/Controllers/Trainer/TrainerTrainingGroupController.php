@@ -23,7 +23,7 @@ class TrainerTrainingGroupController extends Controller
             : TrainingGroup::whereHas('schedules', fn ($q) => $q->where('trainer_id', $user->id));
 
         $groups = $query
-            ->with(['members:id,first_name,last_name', 'schedules.trainer:id,name'])
+            ->with(['members:id,first_name,last_name', 'schedules.trainer:id,name', 'schedules.cancellations'])
             ->orderBy('name')
             ->get()
             ->map(fn (TrainingGroup $g) => [
@@ -35,11 +35,17 @@ class TrainerTrainingGroupController extends Controller
                 'location' => $g->location,
                 'allow_external_members' => $g->allow_external_members,
                 'schedules' => $g->schedules->map(fn ($s) => [
+                    'id' => $s->id,
                     'day' => $s->day,
                     'start_time' => $s->start_time,
                     'end_time' => $s->end_time,
                     'trainer_id' => $s->trainer_id,
                     'trainer_name' => $s->trainer?->name,
+                    'cancellations' => $s->cancellations->map(fn ($c) => [
+                        'id' => $c->id,
+                        'date' => $c->date->toDateString(),
+                        'reason' => $c->reason,
+                    ])->sortBy('date')->values()->all(),
                 ])->values()->all(),
                 'member_ids' => $g->members->pluck('id')->values()->all(),
                 'members' => $g->members->map(fn ($m) => [
