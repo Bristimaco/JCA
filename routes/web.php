@@ -48,6 +48,7 @@ use App\Http\Controllers\EventRsvpController;
 use App\Http\Controllers\ExtraTrainingController;
 use App\Http\Controllers\MemberAttendanceController;
 use App\Http\Controllers\MemberPhotoController;
+use App\Http\Controllers\MijnPoefController;
 use App\Http\Controllers\MollieWebhookController;
 use App\Http\Controllers\MyMembersController;
 use App\Http\Controllers\NotificationController;
@@ -185,6 +186,7 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
     // Bar ordering (any approved user)
     Route::get('/bestelling', [BarOrderController::class, 'index'])->name('bestelling');
     Route::post('/bestelling', [BarOrderController::class, 'store'])->name('bestelling.store');
+    Route::get('/mijn-poef', [MijnPoefController::class, 'index'])->name('mijn-poef');
 
     // Trainer routes
     Route::middleware('coach')->prefix('trainer')->group(function () {

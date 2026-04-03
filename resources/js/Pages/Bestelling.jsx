@@ -92,7 +92,7 @@ export default function Bestelling({ products, categories }) {
                         Geen producten beschikbaar.
                     </div>
                 ) : (
-                    <div className="flex-1 min-h-0 overflow-y-auto space-y-1.5 pb-1">
+                    <div className="flex-1 min-h-0 overflow-y-auto space-y-1.5 pb-16">
                         {filteredProducts.map((product) => {
                             const qty = getQty(product.id);
                             return (
@@ -130,7 +130,7 @@ export default function Bestelling({ products, categories }) {
                 )}
 
                 {/* Total bar */}
-                <div className="shrink-0 bg-slate-900/95 border-t border-slate-700 px-4 py-2 mt-1">
+                <div className="fixed bottom-0 left-0 right-0 z-10 bg-slate-900/95 border-t border-slate-700 px-4 py-2">
                     <div className="flex items-center justify-between gap-4">
                         <div className="flex items-center gap-4">
                             <p className="text-2xl font-bold text-white tabular-nums">€{total.toFixed(2)}</p>

@@ -117,6 +117,10 @@ class DashboardController extends Controller
 
         $props['myMemberCount'] = $request->user()->members()->count();
 
+        $props['myPoefCount'] = BarOrder::unpaidPoef()
+            ->where('ordered_by_user_id', $request->user()->id)
+            ->count();
+
         $props['recentArchived'] = Tournament::whereIn('status', [
             TournamentStatus::Finished,
             TournamentStatus::Archived,
