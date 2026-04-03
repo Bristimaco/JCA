@@ -85,12 +85,12 @@ class DashboardTest extends TestCase
             'email_verified_at' => now(),
         ]);
 
-        $response = $this->actingAs($admin)->get('/admin');
+        $response = $this->actingAs($admin)->get('/admin/gebruikers');
 
         $response->assertStatus(200);
         $response->assertInertia(
             fn ($page) => $page
-                ->component('Admin/Dashboard')
+                ->component('Admin/Users')
                 ->has('pendingUsers', 1)
                 ->has('users')
                 ->has('roles')
@@ -104,7 +104,7 @@ class DashboardTest extends TestCase
             'email_verified_at' => now(),
         ]);
 
-        $response = $this->actingAs($member)->get('/admin');
+        $response = $this->actingAs($member)->get('/admin/gebruikers');
 
         $response->assertStatus(403);
     }

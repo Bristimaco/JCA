@@ -12,6 +12,7 @@ enum ExtraModule: string
     case Sponsors = 'sponsors';
     case Announcements = 'announcements';
     case Logs = 'logs';
+    case Admin = 'admin';
 
     public function label(): string
     {
@@ -24,6 +25,7 @@ enum ExtraModule: string
             self::Sponsors => 'Sponsoring',
             self::Announcements => 'Mededelingen',
             self::Logs => 'Logboeken',
+            self::Admin => 'Beheer',
         };
     }
 }

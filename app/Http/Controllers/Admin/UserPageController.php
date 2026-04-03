@@ -5,19 +5,15 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\ExtraModule;
 use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
-use App\Models\AgeCategory;
-use App\Models\ClubSettings;
 use App\Models\Member;
 use App\Models\User;
-use App\Models\WeightCategory;
-use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class AdminDashboardController extends Controller
+class UserPageController extends Controller
 {
-    public function __invoke(Request $request): Response
+    public function __invoke(): Response
     {
         $pendingUsers = User::whereNull('role')
             ->whereNotNull('email_verified_at')
@@ -50,10 +46,6 @@ class AdminDashboardController extends Controller
             'label' => $m->label(),
         ])->values()->all();
 
-        $ageCategories = AgeCategory::ordered()->get();
-
-        $weightCategories = WeightCategory::ordered()->get();
-
         $renewalDueCount = Member::where('membership_renewal_date', '<=', Carbon::today()->addDays(30))->count();
 
         $renewalDueMembers = Member::where('membership_renewal_date', '<=', Carbon::today()->addDays(30))
@@ -66,15 +58,12 @@ class AdminDashboardController extends Controller
                 'membership_renewal_date' => $m->membership_renewal_date->toDateString(),
             ]);
 
-        return Inertia::render('Admin/Dashboard', [
+        return Inertia::render('Admin/Users', [
             'pendingUsers' => $pendingUsers,
             'users' => $users,
             'roles' => $roles,
             'extraModules' => $extraModules,
-            'ageCategories' => $ageCategories,
-            'weightCategories' => $weightCategories,
             'allMembers' => $allMembers,
-            'clubSettings' => ClubSettings::current(),
             'renewalDueCount' => $renewalDueCount,
             'renewalDueMembers' => $renewalDueMembers,
         ]);

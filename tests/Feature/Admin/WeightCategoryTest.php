@@ -155,7 +155,7 @@ class WeightCategoryTest extends TestCase
             'display_order' => 1,
         ]);
 
-        $response = $this->actingAs($this->admin())->get('/admin');
+        $response = $this->actingAs($this->admin())->get('/admin/gewichtscategorieen');
 
         $response->assertOk();
         $response->assertInertia(

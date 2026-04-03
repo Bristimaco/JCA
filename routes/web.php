@@ -1,16 +1,17 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminActivityController;
-use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminSessionHistoryController;
 use App\Http\Controllers\Admin\AdminTestModeLogController;
 use App\Http\Controllers\Admin\AgeCategoryController;
+use App\Http\Controllers\Admin\AgeCategoryPageController;
 use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\Admin\ApproveUserController;
 use App\Http\Controllers\Admin\BarCategoryController;
 use App\Http\Controllers\Admin\BarProductController;
 use App\Http\Controllers\Admin\CategoryExcelController;
 use App\Http\Controllers\Admin\ClubSettingsController;
+use App\Http\Controllers\Admin\ClubSettingsPageController;
 use App\Http\Controllers\Admin\EventController as AdminEventController;
 use App\Http\Controllers\Admin\InvoiceController;
 use App\Http\Controllers\Admin\MemberController;
@@ -27,8 +28,10 @@ use App\Http\Controllers\Admin\TrainingGroupController;
 use App\Http\Controllers\Admin\TrainingGroupMemberController;
 use App\Http\Controllers\Admin\UpdateUserController;
 use App\Http\Controllers\Admin\UserMembersController;
+use App\Http\Controllers\Admin\UserPageController;
 use App\Http\Controllers\Admin\VoucherController as AdminVoucherController;
 use App\Http\Controllers\Admin\WeightCategoryController;
+use App\Http\Controllers\Admin\WeightCategoryPageController;
 use App\Http\Controllers\ArchivedTournamentsController;
 use App\Http\Controllers\AttendanceKioskController;
 use App\Http\Controllers\AttendanceReportController;
@@ -258,7 +261,6 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
 
     // Admin routes — Core (admin-only)
     Route::middleware('admin')->prefix('admin')->group(function () {
-        Route::get('/', AdminDashboardController::class)->name('admin.dashboard');
         Route::patch('/club-settings', [ClubSettingsController::class, 'update'])->name('admin.club-settings.update');
         Route::patch('/users/{user}/approve', ApproveUserController::class)->name('admin.users.approve');
         Route::patch('/users/{user}/toggle-active', ToggleUserActiveController::class)->name('admin.users.toggle-active');
@@ -282,6 +284,14 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::post('/age-categories/import', [CategoryExcelController::class, 'importAgeCategories'])->name('admin.age-categories.import');
         Route::get('/weight-categories/export', [CategoryExcelController::class, 'exportWeightCategories'])->name('admin.weight-categories.export');
         Route::post('/weight-categories/import', [CategoryExcelController::class, 'importWeightCategories'])->name('admin.weight-categories.import');
+    });
+
+    // Admin routes — Beheer module (admin OR extra_module:admin)
+    Route::middleware('admin:admin')->prefix('admin')->group(function () {
+        Route::get('/club-instellingen', ClubSettingsPageController::class)->name('admin.club-settings');
+        Route::get('/gebruikers', UserPageController::class)->name('admin.users');
+        Route::get('/leeftijdscategorieen', AgeCategoryPageController::class)->name('admin.age-categories');
+        Route::get('/gewichtscategorieen', WeightCategoryPageController::class)->name('admin.weight-categories');
     });
 
     // Admin routes — Logs module (admin OR extra_module:logs)

@@ -160,12 +160,12 @@ class AgeCategoryTest extends TestCase
             'display_order' => 1,
         ]);
 
-        $response = $this->actingAs($this->admin())->get('/admin');
+        $response = $this->actingAs($this->admin())->get('/admin/leeftijdscategorieen');
 
         $response->assertStatus(200);
         $response->assertInertia(
             fn ($page) => $page
-                ->component('Admin/Dashboard')
+                ->component('Admin/AgeCategories')
                 ->has('ageCategories', 1)
         );
     }

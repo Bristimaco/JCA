@@ -38,7 +38,7 @@ class DashboardController extends Controller
         $props = [];
         $user = $request->user();
 
-        if ($user->isAdmin()) {
+        if ($user->isAdmin() || $user->hasExtraModule('admin')) {
             $props['pendingCount'] = User::whereNull('role')
                 ->whereNotNull('email_verified_at')
                 ->count();
