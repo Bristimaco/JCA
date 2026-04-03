@@ -372,7 +372,9 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
     // Admin routes — Sponsors module (admin OR extra_module:sponsors)
     Route::middleware('admin:sponsors')->prefix('admin')->group(function () {
         Route::get('/sponsors', [SponsorController::class, 'index'])->name('admin.sponsors.index');
+        Route::get('/sponsors/{sponsor}', [SponsorController::class, 'show'])->name('admin.sponsors.show');
         Route::patch('/sponsors/{sponsor}', [SponsorController::class, 'update'])->name('admin.sponsors.update');
+        Route::post('/sponsors/{sponsor}/refresh', [SponsorController::class, 'refresh'])->name('admin.sponsors.refresh');
         Route::post('/sponsors/{sponsor}/renew', [SponsorController::class, 'renew'])->name('admin.sponsors.renew');
         Route::delete('/sponsors/{sponsor}', [SponsorController::class, 'destroy'])->name('admin.sponsors.destroy');
 

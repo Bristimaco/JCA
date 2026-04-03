@@ -21,6 +21,10 @@ class Sponsor extends Model
             'is_active' => 'boolean',
             'sponsor_amount' => 'float',
             'renewal_months' => 'integer',
+            'cbe_data' => 'array',
+            'cbe_fetched_at' => 'datetime',
+            'latitude' => 'float',
+            'longitude' => 'float',
         ];
     }
 

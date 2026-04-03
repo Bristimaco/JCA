@@ -244,9 +244,16 @@ class ProspectController extends Controller
 
         $sponsorData = [
             'name' => $prospect->company_name,
+            'vat_number' => $prospect->vat_number,
             'address_street' => $prospect->address_street,
             'address_city' => $prospect->address_city,
             'address_postal_code' => $prospect->address_postal_code,
+            'phone' => $prospect->phone,
+            'email' => $prospect->email,
+            'website' => $prospect->website,
+            'legal_form' => $prospect->legal_form,
+            'latitude' => $prospect->latitude,
+            'longitude' => $prospect->longitude,
             'tier' => $prospect->sponsor_tier ?? 'bronze',
             'contract_start_date' => $startDate->toDateString(),
             'contract_end_date' => $startDate->copy()->addMonths($renewalMonths)->toDateString(),
@@ -255,6 +262,8 @@ class ProspectController extends Controller
             'renewal_months' => $renewalMonths,
             'contact_name' => $prospect->contact_name,
             'contact_phone' => $prospect->contact_phone,
+            'cbe_data' => $prospect->cbe_data,
+            'cbe_fetched_at' => $prospect->cbe_fetched_at,
         ];
 
         if ($prospect->logo_data) {
