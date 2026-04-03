@@ -13,6 +13,9 @@ const moduleIcons = {
     'Toernooien': (
         <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 01-.982-3.172M9.497 14.25a7.454 7.454 0 00.981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 007.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M18.75 4.236c.982.143 1.954.317 2.916.52A6.003 6.003 0 0016.27 9.728M18.75 4.236V4.5c0 2.108-.966 3.99-2.48 5.228m0 0a6.003 6.003 0 01-3.52 1.522m0 0a6.003 6.003 0 01-3.52-1.522" /></svg>
     ),
+    'Mijn Toernooien': (
+        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 01-.982-3.172M9.497 14.25a7.454 7.454 0 00.981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 007.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M18.75 4.236c.982.143 1.954.317 2.916.52A6.003 6.003 0 0016.27 9.728M18.75 4.236V4.5c0 2.108-.966 3.99-2.48 5.228m0 0a6.003 6.003 0 01-3.52 1.522m0 0a6.003 6.003 0 01-3.52-1.522" /></svg>
+    ),
     'Archief': (
         <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" /></svg>
     ),
@@ -95,6 +98,7 @@ const moduleColors = {
     'Leden': 'from-rose-700 to-rose-600',
     'Trainingsgroepen': 'from-amber-600 to-orange-700',
     'Toernooien': 'from-red-700 to-rose-600',
+    'Mijn Toernooien': 'from-rose-600 to-pink-700',
     'Archief': 'from-slate-600 to-slate-500',
     'Kassa': 'from-emerald-600 to-teal-700',
     'Facturen': 'from-blue-600 to-indigo-700',
@@ -141,6 +145,7 @@ const moduleGroups = [
     {
         title: 'Toernooien',
         modules: [
+            { name: 'Mijn Toernooien', href: '/mijn-toernooien', roles: ['parent', 'member', 'admin', 'coach', 'barmedewerker'] },
             { name: 'Toernooien', href: '/admin/tournaments', roles: ['admin', 'coach'], extraModule: 'tournaments' },
             { name: 'Archief', href: '/archief', roles: ['parent', 'member', 'admin', 'coach', 'barmedewerker'] },
         ],
@@ -187,7 +192,7 @@ const moduleGroups = [
     },
 ];
 
-export default function Dashboard({ pendingCount, pendingUsers, adminCounters, barCounters, memberStats, myMemberCount, myPoefCount, myEventCount, archivedTournamentCount, myTournaments, activeTournaments, coachTournaments, coachTrainingGroups, upcomingTournaments, coachTournamentCount, recentArchived, activeTrainingSessions, extraTrainings }) {
+export default function Dashboard({ pendingCount, pendingUsers, adminCounters, barCounters, memberStats, myMemberCount, myPoefCount, myEventCount, archivedTournamentCount, myTournamentCount, activeTournaments, coachTournaments, coachTrainingGroups, upcomingTournaments, coachTournamentCount, recentArchived, activeTrainingSessions, extraTrainings }) {
     const { auth } = usePage().props;
     const role = auth.user.role;
     const extraModules = auth.user.extra_modules || [];
@@ -216,6 +221,7 @@ export default function Dashboard({ pendingCount, pendingUsers, adminCounters, b
                     'Leden': memberStats?.total,
                     'Mijn Leden': myMemberCount,
                     'Toernooien': adminCounters?.activeTournamentCount ?? coachTournamentCount,
+                    'Mijn Toernooien': myTournamentCount,
                     'Facturen': adminCounters?.pendingInvoiceCount,
                     'Vouchers': adminCounters?.activeVoucherCount,
                     'Aan te vullen': adminCounters?.refillProductCount,
@@ -278,10 +284,6 @@ export default function Dashboard({ pendingCount, pendingUsers, adminCounters, b
 
             {activeTrainingSessions && activeTrainingSessions.length > 0 && (
                 <ActiveTrainingSessions sessions={activeTrainingSessions} />
-            )}
-
-            {myTournaments && myTournaments.length > 0 && (
-                <MyTournaments tournaments={myTournaments} />
             )}
         </AppLayout>
     );
@@ -350,118 +352,6 @@ function ActiveTournaments({ tournaments }) {
                     </Link>
                 ))}
             </div>
-        </div>
-    );
-}
-
-const statusGroups = [
-    { key: 'accepted', label: 'Geaccepteerd', color: 'bg-emerald-900/40 text-emerald-400' },
-    { key: 'invited', label: 'Uitgenodigd', color: 'bg-blue-900/40 text-blue-400' },
-    { key: 'declined', label: 'Afgeslagen', color: 'bg-red-900/40 text-red-400' },
-    { key: 'pending', label: 'In afwachting', color: 'bg-slate-700 text-slate-300' },
-];
-
-function MyTournaments({ tournaments }) {
-    const [expandedId, setExpandedId] = useState(null);
-    const [collapsedGroups, setCollapsedGroups] = useState(() => new Set(statusGroups.map(g => g.key)));
-
-    const toggleGroup = (key) => setCollapsedGroups(prev => {
-        const next = new Set(prev);
-        next.has(key) ? next.delete(key) : next.add(key);
-        return next;
-    });
-
-    const formatDate = (dateStr) => {
-        if (!dateStr) return '-';
-        return new Date(dateStr).toLocaleDateString('nl-BE');
-    };
-
-    return (
-        <div className="mt-10">
-            <h2 className="text-lg font-semibold text-white mb-4">Mijn Toernooien</h2>
-            {statusGroups.map(group => {
-                const items = tournaments.filter(t => t.invitation_status === group.key);
-                if (items.length === 0) return null;
-                return (
-                    <div key={group.key} className="mb-6">
-                        <button
-                            onClick={() => toggleGroup(group.key)}
-                            className="flex items-center gap-1.5 text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-3 hover:text-slate-300 transition-colors"
-                        >
-                            <span className="text-[10px]">{collapsedGroups.has(group.key) ? '▶' : '▼'}</span>
-                            {group.label}
-                            <span className={`ml-1 inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${group.color}`}>
-                                {items.length}
-                            </span>
-                        </button>
-                        {!collapsedGroups.has(group.key) && <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                            {items.map(t => (
-                                <div key={t.id} className="bg-slate-900 rounded-xl shadow-sm ring-1 ring-slate-800 overflow-hidden hover:shadow-md hover:-translate-y-0.5">
-                                    {t.latitude && t.longitude && (
-                                        <iframe
-                                            title={`Locatie ${t.name}`}
-                                            width="100%"
-                                            height="140"
-                                            className="border-b border-slate-800 pointer-events-none"
-                                            src={`https://www.openstreetmap.org/export/embed.html?bbox=${t.longitude - 0.01},${t.latitude - 0.01},${parseFloat(t.longitude) + 0.01},${parseFloat(t.latitude) + 0.01}&layer=mapnik&marker=${t.latitude},${t.longitude}`}
-                                        />
-                                    )}
-                                    <div className="p-4">
-                                        <div className="flex items-center gap-2 mb-1">
-                                            <TournamentStepper status={t.status} compact />
-                                        </div>
-                                        <p className="font-semibold text-white">{t.name}</p>
-                                        <p className="text-sm text-slate-400 mt-1">{formatDate(t.tournament_date)}</p>
-                                        <p className="text-xs text-slate-500 mt-1">
-                                            {[t.address_street, t.address_postal_code, t.address_city].filter(Boolean).join(', ') || 'Geen adres'}
-                                        </p>
-                                        {t.attachments && t.attachments.length > 0 && (
-                                            <div className="flex flex-wrap gap-2 mt-2">
-                                                {t.attachments.map(att => (
-                                                    <a key={att.id} href={att.url} target="_blank" rel="noopener noreferrer"
-                                                        className="text-xs text-rose-400 hover:underline">
-                                                        {att.original_name}
-                                                    </a>
-                                                ))}
-                                            </div>
-                                        )}
-                                        <button
-                                            onClick={() => setExpandedId(expandedId === t.id ? null : t.id)}
-                                            className="mt-2 text-xs font-medium text-rose-400 hover:text-rose-300"
-                                        >
-                                            Deelnemers ({t.participants.length}) {expandedId === t.id ? '▲' : '▼'}
-                                        </button>
-                                        {expandedId === t.id && (
-                                            <div className="mt-2 pt-2 border-t border-slate-800">
-                                                {t.participants.length === 0 ? (
-                                                    <p className="text-xs text-slate-500">Nog geen bevestigde deelnemers.</p>
-                                                ) : (
-                                                    <ul className="space-y-1">
-                                                        {t.participants.map(p => (
-                                                            <li key={p.id} className="flex items-center justify-between text-xs text-slate-300">
-                                                                <span>{p.name}</span>
-                                                                {p.result && (
-                                                                    <span className={`inline-flex items-center rounded-full px-1.5 py-0.5 text-[10px] font-medium ${p.result === '1e plaats' ? 'bg-yellow-900/40 text-yellow-400' :
-                                                                        p.result === '2e plaats' ? 'bg-slate-600 text-slate-200' :
-                                                                            p.result === '3e plaats' ? 'bg-amber-900/40 text-amber-400' :
-                                                                                'bg-slate-700 text-slate-300'
-                                                                        }`}>
-                                                                        {p.result}
-                                                                    </span>
-                                                                )}
-                                                            </li>
-                                                        ))}
-                                                    </ul>
-                                                )}
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>}
-                    </div>
-                );
-            })}
         </div>
     );
 }

@@ -52,6 +52,7 @@ use App\Http\Controllers\ExtraTrainingController;
 use App\Http\Controllers\MemberAttendanceController;
 use App\Http\Controllers\MemberPhotoController;
 use App\Http\Controllers\MijnPoefController;
+use App\Http\Controllers\MijnToernooienController;
 use App\Http\Controllers\MollieWebhookController;
 use App\Http\Controllers\MyMembersController;
 use App\Http\Controllers\NotificationController;
@@ -160,6 +161,9 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
     // My members (for ouder/lid roles)
     Route::get('/mijn-leden', [MyMembersController::class, 'index'])->name('my-members.index');
     Route::patch('/mijn-leden/{member}', [MyMembersController::class, 'update'])->name('my-members.update');
+
+    // Mijn toernooien (any authenticated user with linked members)
+    Route::get('/mijn-toernooien', MijnToernooienController::class)->name('mijn-toernooien');
 
     // Tournament detail (any authenticated user)
 
