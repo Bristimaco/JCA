@@ -338,25 +338,6 @@ class MolliePaymentService
 
     public function createBancontactQrPayment(float $amount, string $description, array $metadata = []): array
     {
-        if (ClubSettings::current()->test_mode) {
-            $fakeId = 'test_mode_'.uniqid();
-
-            TestModeLog::create([
-                'type' => 'mollie_payment',
-                'recipient' => 'POS QR',
-                'subject' => $description,
-                'body' => json_encode(['amount' => $amount, 'type' => 'bar_qr', 'metadata' => $metadata], JSON_UNESCAPED_UNICODE),
-                'created_at' => now(),
-            ]);
-
-            return [
-                'payment_id' => $fakeId,
-                'qr_src' => null,
-                'checkout_url' => '#test-mode',
-                'expires_at' => now()->addMinutes(15)->toIso8601String(),
-            ];
-        }
-
         $payment = Mollie::api()->payments->create([
             'amount' => [
                 'currency' => 'EUR',

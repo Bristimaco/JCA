@@ -71,12 +71,6 @@ export default function QrPaymentOverlay({ amount, paymentId, qrSrc, checkoutUrl
                     </div>
                 )}
 
-                {!qrSrc && !isPaid && !isFinal && (!checkoutUrl || checkoutUrl === '#test-mode') && (
-                    <div className="mb-4 p-4 bg-yellow-50 rounded-lg">
-                        <p className="text-sm text-yellow-700">Test mode — geen QR beschikbaar</p>
-                    </div>
-                )}
-
                 <div className={`text-lg font-medium mb-4 ${isPaid ? 'text-green-600' : isFinal ? 'text-red-600' : 'text-gray-600'}`}>
                     {isPaid && <span className="text-3xl block mb-1">✓</span>}
                     {statusLabel[status] ?? status}
