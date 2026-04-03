@@ -446,6 +446,261 @@
                 padding: 32px 20px 60px;
             }
         }
+
+        /* ── Mockup / diagram styles ── */
+        .mockup {
+            background: var(--slate-900);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            overflow-x: auto;
+            color: white;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .mockup-caption {
+            display: block;
+            text-align: center;
+            font-size: 11px;
+            color: var(--slate-400);
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        .mockup-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 12px;
+        }
+
+        .mockup-tiles {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 8px;
+        }
+
+        .mockup-tile {
+            border-radius: 8px;
+            padding: 12px 10px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 11px;
+        }
+
+        .mockup-tile .tile-icon {
+            font-size: 20px;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .mockup-tile .tile-count {
+            font-size: 18px;
+            font-weight: 700;
+            display: block;
+        }
+
+        .mockup-tile .tile-label {
+            font-size: 10px;
+            opacity: .7;
+        }
+
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            margin: 20px 0;
+            padding: 16px 12px;
+            background: var(--slate-900);
+            border-radius: 12px;
+            overflow-x: auto;
+            flex-wrap: nowrap;
+        }
+
+        .flow-node {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 0 0 auto;
+            min-width: 80px;
+            max-width: 120px;
+            text-align: center;
+        }
+
+        .flow-node-box {
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            color: white;
+            white-space: nowrap;
+        }
+
+        .flow-node-sub {
+            font-size: 9px;
+            color: var(--slate-400);
+            margin-top: 4px;
+        }
+
+        .flow-arrow {
+            flex: 0 0 auto;
+            width: 32px;
+            text-align: center;
+            color: var(--slate-500);
+            font-size: 16px;
+        }
+
+        .mockup-calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+            background: var(--slate-800);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .cal-header {
+            background: var(--slate-800);
+            padding: 6px 4px;
+            text-align: center;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--slate-400);
+            text-transform: uppercase;
+        }
+
+        .cal-day {
+            background: var(--slate-900);
+            padding: 6px;
+            min-height: 60px;
+            font-size: 10px;
+        }
+
+        .cal-day-num {
+            font-weight: 600;
+            color: var(--slate-500);
+            margin-bottom: 4px;
+        }
+
+        .cal-day-num.today {
+            color: var(--rose-400);
+            font-weight: 700;
+        }
+
+        .cal-item {
+            border-radius: 3px;
+            padding: 2px 4px;
+            margin-bottom: 2px;
+            font-size: 9px;
+            font-weight: 600;
+            border-left: 2px solid;
+        }
+
+        .cal-item.training {
+            background: rgba(217, 119, 6, .2);
+            border-color: #f59e0b;
+            color: #fcd34d;
+        }
+
+        .cal-item.tournament {
+            background: rgba(244, 63, 94, .2);
+            border-color: #f43f5e;
+            color: #fda4af;
+        }
+
+        .cal-item.event {
+            background: rgba(59, 130, 246, .2);
+            border-color: #3b82f6;
+            color: #93c5fd;
+        }
+
+        .cal-item.birthday {
+            background: rgba(168, 85, 247, .2);
+            border-color: #a855f7;
+            color: #d8b4fe;
+        }
+
+        .cal-item.cancelled {
+            background: rgba(100, 116, 139, .15);
+            border-color: #64748b;
+            color: #94a3b8;
+            text-decoration: line-through;
+        }
+
+        .mockup-card {
+            background: var(--slate-800);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin: 6px 0;
+            border: 1px solid rgba(255, 255, 255, .06);
+        }
+
+        .mockup-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .mockup-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .mockup-grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .flow-diagram {
+                padding: 12px 8px;
+            }
+
+            .mockup-tiles {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .mockup-stat {
+            background: var(--slate-800);
+            border-radius: 8px;
+            padding: 12px 16px;
+            text-align: center;
+        }
+
+        .mockup-stat .stat-value {
+            font-size: 22px;
+            font-weight: 700;
+            display: block;
+        }
+
+        .mockup-stat .stat-label {
+            font-size: 10px;
+            color: var(--slate-400);
+        }
+
+        .mockup-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+        }
+
+        .mockup-table th {
+            text-align: left;
+            padding: 6px 8px;
+            color: var(--slate-400);
+            font-weight: 600;
+            border-bottom: 1px solid var(--slate-700);
+        }
+
+        .mockup-table td {
+            padding: 6px 8px;
+            color: var(--slate-300);
+            border-bottom: 1px solid rgba(255, 255, 255, .04);
+        }
     </style>
 </head>
 
@@ -530,8 +785,12 @@
                 </div>
                 <div class="nav-group">
                     <div class="nav-group-title">Bar &amp; Kassa</div>
+                    <a href="#bestelling" class="nav-link">Bestelling plaatsen</a>
                     <a href="#pos-kassa" class="nav-link">POS Kassa</a>
+                    <a href="#pos-bestellingen" class="nav-link">Bestellingen beheren</a>
+                    <a href="#pos-poef" class="nav-link">Poef beheer</a>
                     <a href="#mijn-poef" class="nav-link">Mijn Poef</a>
+                    <a href="#admin-verkoop" class="nav-link">Verkoopstatistieken</a>
                 </div>
                 <div class="nav-group">
                     <div class="nav-group-title">Trainingen</div>
@@ -622,8 +881,72 @@
                 bepaalde functie. Zo weet je meteen of een onderdeel voor jou relevant is.
             </div>
 
+            <!-- Role-module architecture diagram -->
+            <h3>Overzicht: rollen &amp; modules</h3>
+            <div class="mockup">
+                <div style="display:grid; grid-template-columns: 140px 1fr; gap: 8px; align-items: start;">
+                    <div style="padding:8px 12px; background:#9f1239; border-radius:8px; font-weight:700; text-align:center;">Beheerder</div>
+                    <div style="display:flex; flex-wrap:wrap; gap:4px;">
+                        <span class="mockup-badge" style="background:#1e293b; color:#f43f5e;">Ledenbeheer</span>
+                        <span class="mockup-badge" style="background:#1e293b; color:#f43f5e;">Toernooien</span>
+                        <span class="mockup-badge" style="background:#1e293b; color:#f43f5e;">Evenementen</span>
+                        <span class="mockup-badge" style="background:#1e293b; color:#f43f5e;">Facturen</span>
+                        <span class="mockup-badge" style="background:#1e293b; color:#f43f5e;">Trainingsgroepen</span>
+                        <span class="mockup-badge" style="background:#1e293b; color:#f43f5e;">Sponsors</span>
+                        <span class="mockup-badge" style="background:#1e293b; color:#f43f5e;">Prospectie</span>
+                        <span class="mockup-badge" style="background:#1e293b; color:#f43f5e;">Vouchers</span>
+                        <span class="mockup-badge" style="background:#1e293b; color:#f43f5e;">Bar Producten</span>
+                        <span class="mockup-badge" style="background:#1e293b; color:#f43f5e;">Kassa</span>
+                        <span class="mockup-badge" style="background:#1e293b; color:#f43f5e;">Clubinstellingen</span>
+                    </div>
+                    <div style="padding:8px 12px; background:#047857; border-radius:8px; font-weight:700; text-align:center;">Trainer</div>
+                    <div style="display:flex; flex-wrap:wrap; gap:4px;">
+                        <span class="mockup-badge" style="background:#1e293b; color:#10b981;">Toernooien</span>
+                        <span class="mockup-badge" style="background:#1e293b; color:#10b981;">Trainingsgroepen</span>
+                        <span class="mockup-badge" style="background:#1e293b; color:#10b981;">Sessie openen</span>
+                        <span class="mockup-badge" style="background:#1e293b; color:#10b981;">Aanwezigheid</span>
+                        <span class="mockup-badge" style="background:#1e293b; color:#10b981;">Extra trainingen</span>
+                        <span class="mockup-badge" style="background:#1e293b; color:#10b981;">Uitzonderingen</span>
+                    </div>
+                    <div style="padding:8px 12px; background:#2563eb; border-radius:8px; font-weight:700; text-align:center;">Ouder</div>
+                    <div style="display:flex; flex-wrap:wrap; gap:4px;">
+                        <span class="mockup-badge" style="background:#1e293b; color:#60a5fa;">Mijn Leden</span>
+                        <span class="mockup-badge" style="background:#1e293b; color:#60a5fa;">Kalender</span>
+                        <span class="mockup-badge" style="background:#1e293b; color:#60a5fa;">Afwezigheid</span>
+                        <span class="mockup-badge" style="background:#1e293b; color:#60a5fa;">Evenementen</span>
+                        <span class="mockup-badge" style="background:#1e293b; color:#60a5fa;">Bestelling</span>
+                    </div>
+                    <div style="padding:8px 12px; background:#7c3aed; border-radius:8px; font-weight:700; text-align:center;">Lid</div>
+                    <div style="display:flex; flex-wrap:wrap; gap:4px;">
+                        <span class="mockup-badge" style="background:#1e293b; color:#a78bfa;">Mijn Leden</span>
+                        <span class="mockup-badge" style="background:#1e293b; color:#a78bfa;">Kalender</span>
+                        <span class="mockup-badge" style="background:#1e293b; color:#a78bfa;">Afwezigheid</span>
+                        <span class="mockup-badge" style="background:#1e293b; color:#a78bfa;">Evenementen</span>
+                        <span class="mockup-badge" style="background:#1e293b; color:#a78bfa;">Bestelling</span>
+                    </div>
+                    <div style="padding:8px 12px; background:#047857; border-radius:8px; font-weight:700; text-align:center; font-size:11px;">Barmedewerker</div>
+                    <div style="display:flex; flex-wrap:wrap; gap:4px;">
+                        <span class="mockup-badge" style="background:#1e293b; color:#10b981;">Kassa (POS)</span>
+                        <span class="mockup-badge" style="background:#1e293b; color:#10b981;">Bestellingen</span>
+                        <span class="mockup-badge" style="background:#1e293b; color:#10b981;">Poef beheer</span>
+                        <span class="mockup-badge" style="background:#1e293b; color:#10b981;">Vouchers</span>
+                    </div>
+                </div>
+                <span class="mockup-caption">Overzicht van de vijf rollen en hun toegankelijke modules</span>
+            </div>
+
             <h2 id="registratie">Registratie &amp; Aanmelding</h2>
             <p>Voordat je de applicatie kunt gebruiken, doorloop je een registratieproces:</p>
+
+            <div class="flow-diagram">
+                <div class="flow-node"><div class="flow-node-box" style="background:#475569;">Registreren</div><div class="flow-node-sub">Naam, e-mail, wachtwoord</div></div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node"><div class="flow-node-box" style="background:#2563eb;">Verificatie</div><div class="flow-node-sub">Klik link in e-mail</div></div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node"><div class="flow-node-box" style="background:#d97706;">Wachten</div><div class="flow-node-sub">Beheerder keurt goed</div></div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node"><div class="flow-node-box" style="background:#059669;">Actief</div><div class="flow-node-sub">Rol toegewezen ✓</div></div>
+            </div>
 
             <ol class="steps">
                 <li>
@@ -676,6 +999,53 @@
                 een titel en een telling (bijv. het aantal leden of toernooien). Welke tegels je ziet hangt af van
                 je rol:
             </p>
+
+            <div class="mockup">
+                <div class="mockup-title">Dashboard</div>
+                <div class="mockup-tiles">
+                    <div class="mockup-tile" style="background: linear-gradient(135deg, #e11d48, #f43f5e);">
+                        <span class="tile-icon">👥</span>
+                        <span class="tile-count">3</span>
+                        <span class="tile-label">Mijn Leden</span>
+                    </div>
+                    <div class="mockup-tile" style="background: linear-gradient(135deg, #059669, #10b981);">
+                        <span class="tile-icon">📋</span>
+                        <span class="tile-count">24</span>
+                        <span class="tile-label">Leden</span>
+                    </div>
+                    <div class="mockup-tile" style="background: linear-gradient(135deg, #d97706, #f59e0b);">
+                        <span class="tile-icon">🏆</span>
+                        <span class="tile-count">5</span>
+                        <span class="tile-label">Toernooien</span>
+                    </div>
+                    <div class="mockup-tile" style="background: linear-gradient(135deg, #7c3aed, #a855f7);">
+                        <span class="tile-icon">📦</span>
+                        <span class="tile-count">12</span>
+                        <span class="tile-label">Archief</span>
+                    </div>
+                    <div class="mockup-tile" style="background: linear-gradient(135deg, #2563eb, #3b82f6);">
+                        <span class="tile-icon">🎉</span>
+                        <span class="tile-count">2</span>
+                        <span class="tile-label">Evenementen</span>
+                    </div>
+                    <div class="mockup-tile" style="background: linear-gradient(135deg, #0891b2, #06b6d4);">
+                        <span class="tile-icon">📅</span>
+                        <span class="tile-count"></span>
+                        <span class="tile-label">Kalender</span>
+                    </div>
+                    <div class="mockup-tile" style="background: linear-gradient(135deg, #475569, #64748b);">
+                        <span class="tile-icon">💰</span>
+                        <span class="tile-count"></span>
+                        <span class="tile-label">Kassa</span>
+                    </div>
+                    <div class="mockup-tile" style="background: linear-gradient(135deg, #d97706, #eab308);">
+                        <span class="tile-icon">👛</span>
+                        <span class="tile-count">€4,50</span>
+                        <span class="tile-label">Mijn Poef</span>
+                    </div>
+                </div>
+                <span class="mockup-caption">Voorbeeld dashboardtegels (beheerder ziet alle tegels)</span>
+            </div>
             <table class="perm-table">
                 <thead>
                     <tr>
@@ -1110,6 +1480,22 @@
                 je bent in de kalender.
             </p>
 
+            <!-- Calendar mockup -->
+            <div class="mockup">
+                <div class="mockup-title" style="margin-bottom:8px;">📅 Kalender — weekoverzicht</div>
+                <div class="mockup-calendar">
+                    <div class="cal-header">Ma</div><div class="cal-header">Di</div><div class="cal-header">Wo</div><div class="cal-header">Do</div><div class="cal-header">Vr</div><div class="cal-header">Za</div><div class="cal-header">Zo</div>
+                    <div class="cal-day"><div class="cal-day-num">31</div><div class="cal-item training">Competitie 18:00</div></div>
+                    <div class="cal-day"><div class="cal-day-num">1</div></div>
+                    <div class="cal-day"><div class="cal-day-num">2</div><div class="cal-item training">Recreatie 18:30</div></div>
+                    <div class="cal-day"><div class="cal-day-num today">3</div><div class="cal-item cancelled">⛔ Competitie</div><div class="cal-item birthday">🎂 Jan (12)</div></div>
+                    <div class="cal-day"><div class="cal-day-num">4</div></div>
+                    <div class="cal-day"><div class="cal-day-num">5</div><div class="cal-item tournament">Toernooi Gent</div></div>
+                    <div class="cal-day"><div class="cal-day-num">6</div><div class="cal-item event">BBQ Club</div></div>
+                </div>
+                <span class="mockup-caption">Voorbeeld: 1 week met trainingen, geannuleerde training, verjaardag, toernooi en evenement</span>
+            </div>
+
             <h4>Mobiele weergave</h4>
             <p>
                 Op een <strong>telefoon</strong> (smal scherm) schakelt de kalender automatisch over naar een
@@ -1179,6 +1565,38 @@
                 inschrijven. Evenementen zijn bijvoorbeeld: clubfeesten, demonstraties, stages, of uitstappen.
                 De pagina is bereikbaar via de <strong>&#8220;Evenementen&#8221;</strong>-tegel op het dashboard.
             </p>
+
+            <!-- Event card mockup -->
+            <div class="mockup">
+                <div style="display:grid; gap:10px; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));">
+                    <div style="background:#1e293b; border:1px solid #334155; border-radius:10px; overflow:hidden;">
+                        <div style="background:linear-gradient(135deg, #e11d48, #9f1239); height:60px; display:flex; align-items:center; justify-content:center; font-size:24px;">&#127881;</div>
+                        <div style="padding:10px;">
+                            <div style="font-weight:700; font-size:13px;">Clubfeest 2026</div>
+                            <div style="font-size:10px; color:#94a3b8; margin-top:2px;">&#128197; 15 mei 2026 &middot; 19:00</div>
+                            <div style="font-size:10px; color:#94a3b8;">&#128205; Sporthal De Brug</div>
+                            <div style="margin-top:6px; display:flex; gap:6px;">
+                                <span style="font-size:10px; color:#34d399;">&#8364;10 volw.</span>
+                                <span style="font-size:10px; color:#34d399;">&#8364;5 kind</span>
+                            </div>
+                            <div style="margin-top:8px; background:#e11d48; border-radius:6px; padding:4px 10px; text-align:center; font-size:11px; font-weight:600; cursor:pointer;">Inschrijven</div>
+                        </div>
+                    </div>
+                    <div style="background:#1e293b; border:1px solid #334155; border-radius:10px; overflow:hidden;">
+                        <div style="background:linear-gradient(135deg, #059669, #047857); height:60px; display:flex; align-items:center; justify-content:center; font-size:24px;">&#129355;</div>
+                        <div style="padding:10px;">
+                            <div style="font-weight:700; font-size:13px;">Zomerstage</div>
+                            <div style="font-size:10px; color:#94a3b8; margin-top:2px;">&#128197; 1-5 jul 2026</div>
+                            <div style="font-size:10px; color:#94a3b8;">&#128205; Judoclub Antwerpen</div>
+                            <div style="margin-top:6px;">
+                                <span style="font-size:10px; color:#34d399;">Gratis</span>
+                            </div>
+                            <div style="margin-top:8px; background:#475569; border-radius:6px; padding:4px 10px; text-align:center; font-size:11px; font-weight:600; opacity:.7;">Ingeschreven &#10003;</div>
+                        </div>
+                    </div>
+                </div>
+                <span class="mockup-caption">Evenementenkaarten: datum, locatie, prijs en inschrijfknop</span>
+            </div>
 
             <h3>Evenementen bekijken</h3>
             <p>
@@ -1733,8 +2151,28 @@
 
             <h3 id="admin-gebruikers">Gebruikersbeheer</h3>
 
+            <!-- User approval flow diagram -->
+            <div class="mockup">
+                <div class="flow-diagram" style="flex-wrap:wrap;">
+                    <div class="flow-node" style="background:#64748b;">&#128100; Registratie</div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-node" style="background:#f59e0b;">&#9203; Wachtend op goedkeuring</div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-node" style="background:#8b5cf6;">&#127991; Rol toekennen</div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-node" style="background:#059669;">&#9989; Goedgekeurd</div>
+                </div>
+                <div style="margin-top:8px; display:flex; gap:6px; flex-wrap:wrap; justify-content:center;">
+                    <span class="mockup-badge" style="background:#e11d48;">Beheerder</span>
+                    <span class="mockup-badge" style="background:#3b82f6;">Trainer</span>
+                    <span class="mockup-badge" style="background:#8b5cf6;">Ouder</span>
+                    <span class="mockup-badge" style="background:#059669;">Lid</span>
+                    <span class="mockup-badge" style="background:#d97706;">Barmedewerker</span>
+                </div>
+                <span class="mockup-caption">Goedkeuringsproces: registratie → beoordeling → roltoekenning → actief</span>
+            </div>
+
             <h4>Nieuwe aanvragen goedkeuren</h4>
-            <p>
                 Bovenaan het beheerderspaneel verschijnt de sectie <strong>&#8220;Nieuwe aanvragen&#8221;</strong>
                 wanneer er gebruikers wachten op goedkeuring. Voor elke aanvraag zie je:
             </p>
@@ -2064,6 +2502,24 @@
                 De applicatie kan automatisch facturen genereren en betalingen verwerken via
                 <strong>Mollie</strong>. Dit werkt als volgt:
             </p>
+
+            <!-- Invoice lifecycle flow diagram -->
+            <div class="mockup">
+                <div class="flow-diagram" style="flex-wrap:wrap;">
+                    <div class="flow-node" style="background:#3b82f6;">&#128196; Factuur aangemaakt</div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-node" style="background:#f59e0b;">&#128310; In afwachting</div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-node" style="background:#8b5cf6;">&#128179; Mollie betaallink</div>
+                    <div class="flow-arrow">→</div>
+                    <div style="display:flex; flex-direction:column; gap:6px; align-items:center;">
+                        <div class="flow-node" style="background:#059669;">&#9989; Betaald</div>
+                        <div style="font-size:9px; color:#64748b;">of</div>
+                        <div class="flow-node" style="background:#dc2626;">&#10060; Verlopen / Mislukt</div>
+                    </div>
+                </div>
+                <span class="mockup-caption">Levenscyclus: factuur → betaallink → betaald of verlopen</span>
+            </div>
             <h4>Automatische facturatie</h4>
             <p>
                 Dagelijks controleert het systeem welke leden een vernieuwingsdatum binnen 30 dagen hebben. Voor
@@ -2234,7 +2690,7 @@
             <p>
                 Sponsors kunnen <strong>niet</strong> rechtstreeks worden aangemaakt op deze pagina.
                 Nieuwe sponsors worden uitsluitend aangemaakt via de
-                <a href="#admin-prospects"><strong>Prospectie</strong></a>-module:
+                <a href="#admin-prospectie"><strong>Prospectie</strong></a>-module:
                 zoek een prospect op, vul de sponsorgegevens in, en klik op
                 <strong>&#8220;Omzetten naar sponsor&#8221;</strong>.
             </p>
@@ -2590,6 +3046,59 @@
                 verhogen of verlagen.
             </p>
 
+            <!-- POS kassa mockup -->
+            <div class="mockup">
+                <div style="margin-bottom:8px; display:flex; gap:6px; flex-wrap:wrap;">
+                    <span style="background:#e11d48; padding:4px 12px; border-radius:6px; font-size:11px; font-weight:600;">Alle</span>
+                    <span style="background:#334155; padding:4px 12px; border-radius:6px; font-size:11px;">Drank</span>
+                    <span style="background:#334155; padding:4px 12px; border-radius:6px; font-size:11px;">Snacks</span>
+                    <span style="background:#334155; padding:4px 12px; border-radius:6px; font-size:11px;">Warm</span>
+                </div>
+                <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap:6px;">
+                    <div style="background:#1e293b; border:1px solid #334155; border-radius:8px; padding:10px 8px; text-align:center;">
+                        <div style="font-weight:600; font-size:11px;">Cola</div>
+                        <div style="color:#34d399; font-size:10px;">&#8364;1.50</div>
+                        <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-top:6px;">
+                            <span style="background:#475569; width:22px; height:22px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:12px;">&#8722;</span>
+                            <span style="font-weight:700; font-size:12px; color:#e11d48;">2</span>
+                            <span style="background:#475569; width:22px; height:22px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:12px;">+</span>
+                        </div>
+                    </div>
+                    <div style="background:#1e293b; border:1px solid #334155; border-radius:8px; padding:10px 8px; text-align:center;">
+                        <div style="font-weight:600; font-size:11px;">Water</div>
+                        <div style="color:#34d399; font-size:10px;">&#8364;1.00</div>
+                        <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-top:6px;">
+                            <span style="background:#475569; width:22px; height:22px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:12px;">&#8722;</span>
+                            <span style="font-size:12px; opacity:.5;">0</span>
+                            <span style="background:#475569; width:22px; height:22px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:12px;">+</span>
+                        </div>
+                    </div>
+                    <div style="background:#1e293b; border:1px solid #334155; border-radius:8px; padding:10px 8px; text-align:center;">
+                        <div style="font-weight:600; font-size:11px;">Chips</div>
+                        <div style="color:#34d399; font-size:10px;">&#8364;2.00</div>
+                        <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-top:6px;">
+                            <span style="background:#475569; width:22px; height:22px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:12px;">&#8722;</span>
+                            <span style="font-weight:700; font-size:12px; color:#e11d48;">1</span>
+                            <span style="background:#475569; width:22px; height:22px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:12px;">+</span>
+                        </div>
+                    </div>
+                    <div style="background:#1e293b; border:2px solid #d97706; border-radius:8px; padding:10px 8px; text-align:center; position:relative;">
+                        <div style="position:absolute; top:2px; left:4px; font-size:10px;">&#9888;&#65039;</div>
+                        <div style="font-weight:600; font-size:11px;">Koffie</div>
+                        <div style="color:#34d399; font-size:10px;">&#8364;2.50</div>
+                        <div style="font-size:8px; color:#d97706; margin-top:2px;">bijna op</div>
+                    </div>
+                </div>
+                <div style="margin-top:10px; background:#e11d48; border-radius:8px; padding:8px 14px; display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <div style="font-weight:700; font-size:14px;">&#8364;5.00</div>
+                        <div style="font-size:9px; opacity:.7;">3 items</div>
+                    </div>
+                    <div style="background:rgba(0,0,0,.2); padding:5px 14px; border-radius:6px; font-size:11px; font-weight:600;">Nieuwe bestelling</div>
+                </div>
+                <span class="mockup-caption">Kassa-scherm: producttegels, rubrieken, aantallen en totaalbalk</span>
+            </div>
+
             <h4>Filteren op rubriek</h4>
             <p>
                 Bovenaan het kassa-scherm staan filterknoppen per <strong>rubriek</strong>. Klik op een
@@ -2696,6 +3205,342 @@
                 Dit is bewust zo ingericht zodat de barmedewerker overzicht houdt over alle transacties.
             </div>
 
+            <!-- Bestelling plaatsen -->
+            <h2 id="bestelling">Bestelling plaatsen</h2>
+            <p><span class="role-badge role-parent">Ouder</span> <span
+                    class="role-badge role-member">Lid</span> <span
+                    class="role-badge role-coach">Trainer</span> <span
+                    class="role-badge role-admin">Beheerder</span></p>
+            <p>
+                Via de tegel <strong>&#8220;Bestelling&#8221;</strong> in de sectie <strong>Kantine</strong> op het
+                dashboard kan elke gebruiker zelf een bestelling plaatsen aan de bar. Dit is een QR-bestelscherm dat
+                werkt op je eigen telefoon &#8212; geen barmedewerker nodig.
+            </p>
+
+            <h3>Producten selecteren</h3>
+            <p>
+                Het bestelscherm toont alle actieve barproducten in een overzichtelijke lijst. Elk product toont de
+                naam en prijs (in groen). Gebruik de <strong>+</strong> en <strong>&#8722;</strong> knoppen om het
+                aantal te verhogen of verlagen.
+            </p>
+
+            <!-- Bestelling mockup -->
+            <div class="mockup">
+                <div style="max-width:280px;">
+                    <div style="text-align:center; font-weight:700; font-size:14px; margin-bottom:8px;">Bestelling Plaatsen</div>
+                    <div style="display:flex; gap:4px; margin-bottom:8px;">
+                        <span style="background:#e11d48; padding:3px 10px; border-radius:6px; font-size:10px; font-weight:600;">Alle</span>
+                        <span style="background:#334155; padding:3px 10px; border-radius:6px; font-size:10px;">Drank</span>
+                        <span style="background:#334155; padding:3px 10px; border-radius:6px; font-size:10px;">Snacks</span>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:4px;">
+                        <div style="background:#1e293b; border:1px solid #334155; border-radius:8px; padding:8px 10px; display:flex; justify-content:space-between; align-items:center;">
+                            <div>
+                                <div style="font-weight:600; font-size:11px;">Cola</div>
+                                <div style="color:#34d399; font-size:10px;">&#8364;1.50</div>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:6px;">
+                                <span style="background:#475569; width:20px; height:20px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:11px;">&#8722;</span>
+                                <span style="font-weight:700; font-size:12px; color:#e11d48;">2</span>
+                                <span style="background:#475569; width:20px; height:20px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:11px;">+</span>
+                            </div>
+                        </div>
+                        <div style="background:#1e293b; border:1px solid #334155; border-radius:8px; padding:8px 10px; display:flex; justify-content:space-between; align-items:center;">
+                            <div>
+                                <div style="font-weight:600; font-size:11px;">Chips</div>
+                                <div style="color:#34d399; font-size:10px;">&#8364;2.00</div>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:6px;">
+                                <span style="background:#475569; width:20px; height:20px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:11px;">&#8722;</span>
+                                <span style="font-weight:700; font-size:12px; color:#e11d48;">1</span>
+                                <span style="background:#475569; width:20px; height:20px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:11px;">+</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="margin-top:8px; background:#e11d48; border-radius:8px; padding:8px 12px; display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <div style="font-weight:700; font-size:13px;">&#8364;5.00</div>
+                            <div style="font-size:8px; opacity:.7;">3 items</div>
+                        </div>
+                        <div style="background:rgba(0,0,0,.2); padding:4px 12px; border-radius:6px; font-size:10px; font-weight:600;">Bestelling plaatsen</div>
+                    </div>
+                </div>
+                <span class="mockup-caption">Bestelscherm: productlijst, aantal knoppen en totaalbalk</span>
+            </div>
+
+            <h3>Rubriekfilter</h3>
+            <p>
+                Als er meerdere rubrieken bestaan, verschijnt bovenaan het scherm een rij filterknoppen.
+                Klik op een rubrieknaam om alleen producten uit die categorie te zien. Klik op
+                <strong>&#8220;Alle&#8221;</strong> om alle producten te tonen.
+            </p>
+
+            <h3>Bestelling bevestigen</h3>
+            <p>
+                Wanneer je op <strong>&#8220;Bestelling plaatsen&#8221;</strong> klikt (onderaan het scherm),
+                verschijnt een <strong>bevestigingsvenster</strong> met:
+            </p>
+            <ul>
+                <li>Een overzicht van alle geselecteerde producten met aantal en prijs</li>
+                <li>Het <strong>totaalbedrag</strong> (in groen)</li>
+                <li>Een knop <strong>&#8220;Annuleren&#8221;</strong> om terug te gaan</li>
+                <li>Een knop <strong>&#8220;Bevestigen&#8221;</strong> om de bestelling definitief te plaatsen</li>
+            </ul>
+            <p>
+                Na bevestiging wordt de bestelling doorgestuurd naar het <strong>bestellingenscherm van de
+                barmedewerker</strong> (zie <a href="#pos-bestellingen">POS Bestellingen</a>). Je aantallen werden
+                gereset en je kunt eventueel een nieuwe bestelling plaatsen.
+            </p>
+
+            <div class="box box-tip">
+                <strong>Tip:</strong> De knop &#8220;Bestelling plaatsen&#8221; is uitgeschakeld zolang er geen
+                producten zijn geselecteerd (totaal &#8364;0).
+            </div>
+
+            <!-- POS Bestellingen -->
+            <h2 id="pos-bestellingen">POS Bestellingen</h2>
+            <p><span class="role-badge role-coach">Barmedewerker</span> <span
+                    class="role-badge role-admin">Beheerder</span></p>
+            <p>
+                Het scherm <strong>&#8220;Bestellingen&#8221;</strong> toont alle openstaande bestellingen die door
+                gebruikers zijn geplaatst via het bestelscherm. Dit is de wachtrij voor de barmedewerker.
+                Het scherm ververst automatisch <strong>elke 10 seconden</strong> zodat nieuwe bestellingen
+                direct zichtbaar worden.
+            </p>
+
+            <h3>Bestellingenstatus</h3>
+            <p>
+                Elke bestelling doorloopt drie fasen:
+            </p>
+
+            <!-- Order status flow -->
+            <div class="mockup">
+                <div class="flow-diagram">
+                    <div class="flow-node" style="background:#f59e0b;">Wachtend</div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-node" style="background:#3b82f6;">Wordt klaargezet</div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-node" style="background:#059669;">Klaar</div>
+                    <div class="flow-arrow">→</div>
+                    <div style="display:flex; flex-direction:column; gap:4px; align-items:center;">
+                        <div class="flow-node" style="background:#059669;">&#128179; QR Betaling</div>
+                        <div style="font-size:8px; color:#64748b;">of</div>
+                        <div class="flow-node" style="background:#64748b;">&#128176; Andere weg</div>
+                        <div style="font-size:8px; color:#64748b;">of</div>
+                        <div class="flow-node" style="background:#d97706;">&#128203; Poef</div>
+                    </div>
+                </div>
+                <span class="mockup-caption">Bestellingsflow: wachtend → klaarzetten → klaar → afhandeling</span>
+            </div>
+
+            <ul>
+                <li><span style="background:#f59e0b; padding:1px 6px; border-radius:4px; font-size:10px;">Wachtend</span>
+                    &#8212; nieuwe bestelling, nog niet opgepakt</li>
+                <li><span style="background:#3b82f6; padding:1px 6px; border-radius:4px; font-size:10px;">Wordt klaargezet</span>
+                    &#8212; barmedewerker is bezig met klaarzetten</li>
+                <li><span style="background:#059669; padding:1px 6px; border-radius:4px; font-size:10px;">Klaar</span>
+                    &#8212; bestelling is klaar, wacht op betaling</li>
+            </ul>
+
+            <h3>Bestelling afhandelen</h3>
+            <p>
+                Wanneer een bestelling de status <strong>&#8220;Klaar&#8221;</strong> heeft, verschijnen drie opties:
+            </p>
+            <ul>
+                <li><strong>&#8220;QR Betaling&#8221;</strong> (blauw) &#8212; er wordt een Mollie QR-code
+                    aangemaakt die de klant kan scannen om te betalen via Bancontact. Na succesvolle betaling
+                    verdwijnt de bestelling automatisch.</li>
+                <li><strong>&#8220;Betaald via andere weg&#8221;</strong> (grijs) &#8212; markeer de bestelling
+                    als betaald (bijv. cash of bankcontact-apparaat). De bestelling verdwijnt direct.</li>
+                <li><strong>&#8220;Poef&#8221;</strong> (oranje) &#8212; zet de bestelling op de poef (rekening)
+                    van een gebruiker. Als de bestelling al een gebruiker heeft (zelf besteld via het
+                    bestelscherm), wordt deze automatisch gekoppeld. Anders verschijnt een zoekbalk om
+                    de juiste gebruiker te selecteren.</li>
+            </ul>
+
+            <h3>Bestellingskaart</h3>
+            <p>
+                Elke bestelling wordt getoond als een kaart met:
+            </p>
+            <ul>
+                <li><strong>Bestelnummer</strong> (bijv. #1234)</li>
+                <li><strong>Tijdstip</strong> van de bestelling</li>
+                <li><strong>Statusbadge</strong> (kleur per status)</li>
+                <li><strong>Naam</strong> van de besteller (indien bekend)</li>
+                <li><strong>Totaalbedrag</strong></li>
+                <li><strong>Producttags</strong> met het product en aantal</li>
+            </ul>
+
+            <div class="box box-info">
+                <strong>Auto-refresh:</strong> Het scherm ververst automatisch elke 10 seconden. Nieuwe bestellingen
+                verschijnen vanzelf zonder de pagina handmatig te herladen.
+            </div>
+
+            <!-- POS Poef -->
+            <h2 id="pos-poef">Poef beheer</h2>
+            <p><span class="role-badge role-coach">Barmedewerker</span> <span
+                    class="role-badge role-admin">Beheerder</span></p>
+            <p>
+                Het <strong>&#8220;Poef&#8221;</strong>-scherm toont een overzicht van alle openstaande poefrekeningen,
+                gegroepeerd per gebruiker. Bovenaan zie je het totaalaantal gebruikers met openstaande poef en het
+                <strong>totaal verschuldigde bedrag</strong>.
+            </p>
+
+            <h3>Poef per gebruiker</h3>
+            <p>
+                Elke gebruiker met openstaande bestellingen wordt weergegeven als een inklapbare kaart:
+            </p>
+
+            <!-- Poef user card mockup -->
+            <div class="mockup">
+                <div style="max-width:340px;">
+                    <div style="background:#1e293b; border:1px solid #334155; border-radius:10px; overflow:hidden;">
+                        <div style="padding:10px 14px; display:flex; justify-content:space-between; align-items:center; cursor:pointer;">
+                            <div>
+                                <div style="font-weight:700; font-size:12px;">Jan Peeters &#9660;</div>
+                                <div style="font-size:9px; color:#94a3b8;">3 bestelling(en)</div>
+                            </div>
+                            <div style="font-weight:700; font-size:14px; color:#fbbf24;">&#8364;12.50</div>
+                        </div>
+                        <div style="border-top:1px solid #334155; padding:8px 14px; background:#0f172a;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                                <div>
+                                    <div style="font-size:10px; color:#94a3b8;">#1201 &middot; 01/04 18:32</div>
+                                    <div style="display:flex; gap:4px; margin-top:2px; flex-wrap:wrap;">
+                                        <span style="background:#334155; padding:1px 6px; border-radius:4px; font-size:9px;">Cola &#215;2</span>
+                                        <span style="background:#334155; padding:1px 6px; border-radius:4px; font-size:9px;">Chips &#215;1</span>
+                                    </div>
+                                </div>
+                                <span style="font-size:11px; font-weight:600;">&#8364;5.00</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <div>
+                                    <div style="font-size:10px; color:#94a3b8;">#1198 &middot; 28/03 19:15</div>
+                                    <div style="display:flex; gap:4px; margin-top:2px;">
+                                        <span style="background:#334155; padding:1px 6px; border-radius:4px; font-size:9px;">Water &#215;3</span>
+                                    </div>
+                                </div>
+                                <span style="font-size:11px; font-weight:600;">&#8364;3.00</span>
+                            </div>
+                        </div>
+                        <div style="padding:8px 14px; display:flex; gap:6px; border-top:1px solid #334155;">
+                            <div style="flex:1; background:#3b82f6; border-radius:6px; padding:5px; text-align:center; font-size:10px; font-weight:600;">QR Betaling</div>
+                            <div style="flex:1; background:#475569; border-radius:6px; padding:5px; text-align:center; font-size:10px; font-weight:600;">Betaald</div>
+                        </div>
+                    </div>
+                </div>
+                <span class="mockup-caption">Poef-kaart: gebruiker, bestellingen, totaal en betaalopties</span>
+            </div>
+
+            <ul>
+                <li><strong>Ingeklapt</strong>: gebruikersnaam, aantal bestellingen, totaalbedrag en betaalknoppen</li>
+                <li><strong>Uitgeklapt</strong> (klik op de naam): alle bestellingen met bestelnummer, datum,
+                    producttags en individueel bedrag</li>
+            </ul>
+
+            <h3>Poef afhandelen</h3>
+            <p>
+                Per gebruiker heb je twee opties om de volledige poef in &#233;&#233;n keer af te sluiten:
+            </p>
+            <ul>
+                <li><strong>&#8220;QR Betaling&#8221;</strong> (blauw) &#8212; genereert een Mollie QR-code
+                    voor het totaalbedrag. De gebruiker scant de code en betaalt via Bancontact. Na succesvolle
+                    betaling worden alle bestellingen automatisch als betaald gemarkeerd.</li>
+                <li><strong>&#8220;Betaald&#8221;</strong> (grijs) &#8212; markeer de volledige poef als
+                    betaald via een andere weg (cash, overschrijving, etc.). Alle bestellingen verdwijnen
+                    direct uit het overzicht.</li>
+            </ul>
+
+            <div class="box box-tip">
+                <strong>Tip:</strong> Je kant altijd het totaalbedrag bovenaan de pagina zien. Dit is de som
+                van alle openstaande poefrekeningen samen.
+            </div>
+
+            <!-- Verkoopstatistieken -->
+            <h2 id="admin-verkoop">Verkoopstatistieken</h2>
+            <p><span class="role-badge role-admin">Beheerder</span></p>
+            <p>
+                De pagina <strong>&#8220;Verkoopstatistieken&#8221;</strong> biedt beheerders een overzicht
+                van de barverkoop over een gekozen periode. Deze pagina is bereikbaar via het beheerderspaneel.
+            </p>
+
+            <h3>Periode kiezen</h3>
+            <p>
+                Bovenaan de pagina staat een dropdown waarmee je de rapportageperiode selecteert:
+            </p>
+            <ul>
+                <li><strong>Afgelopen maand</strong></li>
+                <li><strong>Afgelopen 6 maanden</strong></li>
+                <li><strong>Afgelopen jaar</strong></li>
+                <li><strong>Alle tijden</strong></li>
+            </ul>
+
+            <h3>Samenvattingskaarten</h3>
+            <p>
+                Twee overzichtskaarten tonen de belangrijkste cijfers:
+            </p>
+
+            <!-- Sales stats mockup -->
+            <div class="mockup">
+                <div class="mockup-grid-2">
+                    <div class="mockup-stat">
+                        <div style="font-size:10px; color:#94a3b8;">Totaal bestellingen</div>
+                        <div style="font-size:22px; font-weight:800;">247</div>
+                    </div>
+                    <div class="mockup-stat">
+                        <div style="font-size:10px; color:#94a3b8;">Totaal omzet</div>
+                        <div style="font-size:22px; font-weight:800; color:#34d399;">&#8364;1.234,56</div>
+                    </div>
+                </div>
+                <span class="mockup-caption">Samenvattingskaarten: bestellingen en omzet</span>
+            </div>
+
+            <h3>Productrankings</h3>
+            <p>
+                Onder de samenvattingskaarten staat een tabel met alle verkochte producten, gesorteerd van
+                meest naar minst verkocht:
+            </p>
+
+            <!-- Product rankings mockup -->
+            <div class="mockup">
+                <table class="mockup-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Product</th>
+                            <th style="text-align:right;">Aantal verkocht</th>
+                            <th style="text-align:right;">Omzet</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td style="font-weight:600;">Cola</td>
+                            <td style="text-align:right; font-weight:600;">156</td>
+                            <td style="text-align:right; color:#34d399;">&#8364;234,00</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td style="font-weight:600;">Water</td>
+                            <td style="text-align:right; font-weight:600;">98</td>
+                            <td style="text-align:right; color:#34d399;">&#8364;98,00</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td style="font-weight:600;">Chips</td>
+                            <td style="text-align:right; font-weight:600;">67</td>
+                            <td style="text-align:right; color:#34d399;">&#8364;134,00</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <span class="mockup-caption">Productrankings: nummer, product, aantal en omzet</span>
+            </div>
+
+            <div class="box box-info">
+                <strong>Let op:</strong> Als er geen verkopen zijn in de geselecteerde periode, verschijnt de
+                melding &#8220;Geen verkopen in deze periode.&#8221;
+            </div>
+
             <!-- Trainingen & Aanwezigheid -->
             <h2 id="aanwezigheid">Trainingen &amp; Aanwezigheid</h2>
             <p>
@@ -2709,6 +3554,45 @@
             <p>
                 Het trainingssysteem is opgebouwd uit drie niveaus:
             </p>
+
+            <!-- Training architecture diagram -->
+            <div class="mockup">
+                <div style="display:grid; grid-template-columns: 1fr; gap:0; text-align:center;">
+                    <div style="background:#9f1239; border-radius:8px 8px 0 0; padding:10px;">
+                        <div style="font-weight:700; font-size:14px;">Trainingsgroep</div>
+                        <div style="font-size:10px; opacity:.7;">bijv. &ldquo;Competitie&rdquo; &mdash; naam, lidgeld, leden</div>
+                    </div>
+                    <div style="color:#64748b; font-size:18px; padding:2px 0;">▼</div>
+                    <div style="display:flex; gap:6px; justify-content:center; flex-wrap:wrap;">
+                        <div style="background:#d97706; border-radius:8px; padding:8px 14px; flex:0 0 auto;">
+                            <div style="font-weight:700; font-size:12px;">Ma 18:00–19:30</div>
+                            <div style="font-size:9px; opacity:.7;">trainer: Stijn</div>
+                        </div>
+                        <div style="background:#d97706; border-radius:8px; padding:8px 14px; flex:0 0 auto;">
+                            <div style="font-weight:700; font-size:12px;">Wo 18:00–19:30</div>
+                            <div style="font-size:9px; opacity:.7;">trainer: Stijn</div>
+                        </div>
+                    </div>
+                    <div style="color:#64748b; font-size:10px; padding:4px 0;">Trainingsmomenten (schema&rsquo;s)</div>
+                    <div style="color:#64748b; font-size:18px; padding:2px 0;">▼</div>
+                    <div style="display:flex; gap:6px; justify-content:center; flex-wrap:wrap;">
+                        <div style="background:#059669; border-radius:8px; padding:6px 10px; flex:0 0 auto;">
+                            <div style="font-weight:600; font-size:11px;">Sessie 31/03</div>
+                            <div style="font-size:9px; opacity:.7;">✓ 12 aanwezig</div>
+                        </div>
+                        <div style="background:#059669; border-radius:8px; padding:6px 10px; flex:0 0 auto;">
+                            <div style="font-weight:600; font-size:11px;">Sessie 02/04</div>
+                            <div style="font-size:9px; opacity:.7;">✓ 10 aanwezig</div>
+                        </div>
+                        <div style="background:#64748b; border-radius:8px; padding:6px 10px; flex:0 0 auto;">
+                            <div style="font-weight:600; font-size:11px;">⛔ 03/04</div>
+                            <div style="font-size:9px; opacity:.7;">Geannuleerd</div>
+                        </div>
+                    </div>
+                    <div style="color:#64748b; font-size:10px; padding:4px 0;">Trainingssessies &amp; annuleringen</div>
+                </div>
+                <span class="mockup-caption">Structuur: groep → momenten → sessies per datum (incl. annuleringen)</span>
+            </div>
             <ol>
                 <li><strong>Trainingsgroepen</strong> &#8212; de vaste groepen van de club (bijv.
                     &#8220;Competitie&#8221;, &#8220;Recreatie&#8221;, &#8220;Mini Judo&#8221;). Elke groep heeft een
@@ -2981,6 +3865,56 @@
                 van alle leden per trainingsgroep. Deze pagina is bereikbaar via de link
                 &#8220;Aanwezigheidsrapport&#8221; op de sessiegeschiedenis-pagina.
             </p>
+
+            <!-- Attendance report mockup -->
+            <div class="mockup">
+                <div style="overflow-x:auto;">
+                    <table class="mockup-table" style="min-width:380px;">
+                        <thead>
+                            <tr>
+                                <th style="position:sticky; left:0; background:#0f172a; z-index:1;">Lid</th>
+                                <th>01/03</th>
+                                <th>03/03</th>
+                                <th>08/03</th>
+                                <th>10/03</th>
+                                <th style="position:sticky; right:0; background:#0f172a; z-index:1;">%</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="position:sticky; left:0; background:#1e293b; z-index:1; font-weight:600;">Jan Peeters</td>
+                                <td style="color:#34d399;">&#10003;</td>
+                                <td style="color:#34d399;">&#10003;</td>
+                                <td style="color:#fbbf24;">&#10007;</td>
+                                <td style="color:#34d399;">&#10003;</td>
+                                <td style="position:sticky; right:0; background:#1e293b; z-index:1; font-weight:700; color:#34d399;">75%</td>
+                            </tr>
+                            <tr>
+                                <td style="position:sticky; left:0; background:#1e293b; z-index:1; font-weight:600;">Lisa Janssen</td>
+                                <td style="color:#34d399;">&#10003;</td>
+                                <td style="color:#34d399;">&#10003;</td>
+                                <td style="color:#34d399;">&#10003;</td>
+                                <td style="color:#34d399;">&#10003;</td>
+                                <td style="position:sticky; right:0; background:#1e293b; z-index:1; font-weight:700; color:#34d399;">100%</td>
+                            </tr>
+                            <tr>
+                                <td style="position:sticky; left:0; background:#1e293b; z-index:1; font-weight:600;">Tom De Smet</td>
+                                <td style="color:#f87171;">&#10007;</td>
+                                <td style="color:#34d399;">&#10003;</td>
+                                <td style="color:#f87171;">&#10007;</td>
+                                <td style="color:#fbbf24;">&#10007;</td>
+                                <td style="position:sticky; right:0; background:#1e293b; z-index:1; font-weight:700; color:#f87171;">25%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div style="margin-top:8px; display:flex; gap:12px; font-size:10px; flex-wrap:wrap;">
+                    <span>&#10003; <span style="color:#34d399;">aanwezig</span></span>
+                    <span>&#10007; <span style="color:#fbbf24;">afwezig (gemeld)</span></span>
+                    <span>&#10007; <span style="color:#f87171;">afwezig (no-show)</span></span>
+                </div>
+                <span class="mockup-caption">Aanwezigheidsrapport: datumkolommen, aanwezigheidssymbolen en percentage</span>
+            </div>
 
             <h4>Periode selecteren</h4>
             <p>
@@ -3524,6 +4458,49 @@
                 <strong>rood tellerbolletje</strong> met het aantal ongelezen meldingen op het icoon.
             </p>
 
+            <!-- Notification mockup -->
+            <div class="mockup">
+                <div style="background:#1e293b; border:1px solid #334155; border-radius:10px; overflow:hidden; max-width:320px;">
+                    <div style="padding:8px 12px; border-bottom:1px solid #334155; display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-weight:700; font-size:12px;">&#128276; Meldingen</span>
+                        <span style="font-size:9px; color:#60a5fa; cursor:pointer;">Alles gelezen</span>
+                    </div>
+                    <div style="border-bottom:1px solid #334155; padding:8px 12px; background:rgba(59,130,246,.08);">
+                        <div style="display:flex; gap:8px; align-items:flex-start;">
+                            <span style="font-size:16px;">&#128179;</span>
+                            <div>
+                                <div style="font-size:11px; font-weight:600;">Factuur openstaand</div>
+                                <div style="font-size:9px; color:#94a3b8;">Lidgeld Jan &mdash; &#8364;120.00</div>
+                                <div style="font-size:8px; color:#64748b; margin-top:2px;">zojuist</div>
+                            </div>
+                            <span style="width:8px; height:8px; background:#3b82f6; border-radius:50%; flex-shrink:0; margin-top:4px;"></span>
+                        </div>
+                    </div>
+                    <div style="border-bottom:1px solid #334155; padding:8px 12px;">
+                        <div style="display:flex; gap:8px; align-items:flex-start;">
+                            <span style="font-size:16px;">&#128233;</span>
+                            <div>
+                                <div style="font-size:11px; font-weight:600;">Toernooiuitnodiging</div>
+                                <div style="font-size:9px; color:#94a3b8;">Jan &mdash; Vlaams Kampioenschap</div>
+                                <div style="font-size:8px; color:#64748b; margin-top:2px;">2u geleden</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="padding:8px 12px;">
+                        <div style="display:flex; gap:8px; align-items:flex-start;">
+                            <span style="font-size:16px;">&#9888;&#65039;</span>
+                            <div>
+                                <div style="font-size:11px; font-weight:600;">Product bijna op</div>
+                                <div style="font-size:9px; color:#94a3b8;">Cola &mdash; aanvulling nodig</div>
+                                <div style="font-size:8px; color:#64748b; margin-top:2px;">gisteren</div>
+                            </div>
+                            <span style="font-size:10px; color:#64748b; margin-left:auto; cursor:pointer;">&#128465;</span>
+                        </div>
+                    </div>
+                </div>
+                <span class="mockup-caption">Meldingenpaneel: ongelezen (blauw bolletje), gelezen (prullenbak)</span>
+            </div>
+
             <h3>Meldingen bekijken</h3>
             <p>
                 Klik op het belletje om de lijst met meldingen te openen. De meldingen verschijnen als een
@@ -3955,7 +4932,7 @@
             <div
                 style="margin-top: 80px; padding-top: 24px; border-top: 1px solid var(--slate-200); text-align: center;">
                 <p style="font-size: 12px; color: var(--slate-400);">
-                    JCA Handleiding &#8212; Laatst bijgewerkt: 1 april 2026
+                    JCA Handleiding &#8212; Laatst bijgewerkt: 3 april 2026
                 </p>
             </div>
 
