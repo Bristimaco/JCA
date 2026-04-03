@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\ExtraModule;
 use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -19,6 +20,8 @@ class UpdateUserController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'role' => ['required', new Enum(UserRole::class)],
             'results_interest' => ['sometimes', 'boolean'],
+            'extra_modules' => ['nullable', 'array'],
+            'extra_modules.*' => [new Enum(ExtraModule::class)],
         ]);
 
         if ($user->isAdmin() && $validated['role'] !== UserRole::Admin->value) {

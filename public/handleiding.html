@@ -720,6 +720,7 @@
                     <div class="nav-group-title">Aan de slag</div>
                     <a href="#introductie" class="nav-link">Introductie</a>
                     <a href="#rollen" class="nav-link">Rollen &amp; Rechten</a>
+                    <a href="#extra-modules" class="nav-link">Extra Modules</a>
                     <a href="#registratie" class="nav-link">Registratie &amp; Aanmelding</a>
                     <a href="#dashboard" class="nav-link">Dashboard</a>
                     <a href="#dashboard-admin" class="nav-link">Dashboard Beheerder</a>
@@ -933,6 +934,44 @@
                     </div>
                 </div>
                 <span class="mockup-caption">Overzicht van de vijf rollen en hun toegankelijke modules</span>
+            </div>
+
+            <h3 id="extra-modules">Extra Modules</h3>
+            <p>
+                Naast de standaard rechten per rol kunnen beheerders <strong>extra modules</strong> toekennen aan
+                individuele gebruikers. Hiermee krijgt een gebruiker toegang tot specifieke functionaliteiten die
+                normaal niet bij hun rol horen.
+            </p>
+            <p>
+                <strong>Voorbeeld:</strong> Een ouder die vrijwillig het sponsorbeheer op zich neemt, kan de module
+                &ldquo;Sponsoring&rdquo; toegewezen krijgen. Deze ouder ziet dan naast de standaard ouder-modules
+                ook de Sponsors-tegel op het dashboard en heeft toegang tot de sponsorpagina&rsquo;s.
+            </p>
+
+            <p>De beschikbare extra modules zijn:</p>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr><th>Module</th><th>Geeft toegang tot</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Ledenbeheer</td><td>Leden, facturen, vouchers, ledenexport/-import</td></tr>
+                        <tr><td>Trainingen</td><td>Trainingsgroepen, extra trainingen, sessies, aanwezigheid</td></tr>
+                        <tr><td>Toernooien</td><td>Toernooi-overzicht, inschrijvingen, resultaten</td></tr>
+                        <tr><td>Bar &amp; Kassa</td><td>POS kassa, bestellingen, poef, bar producten</td></tr>
+                        <tr><td>Evenementen Beheer</td><td>Evenementen aanmaken en beheren</td></tr>
+                        <tr><td>Sponsoring</td><td>Sponsors, prospectie</td></tr>
+                        <tr><td>Mededelingen</td><td>Mededelingen aanmaken en beheren</td></tr>
+                        <tr><td>Logboeken</td><td>Activiteitenlog, test modus log</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="box box-tip">
+                <strong>Extra modules zijn per modulegroep</strong>
+                Je kent altijd een volledige module toe, niet individuele pagina&rsquo;s. Als iemand de module
+                &ldquo;Sponsoring&rdquo; krijgt, heeft die persoon toegang tot zowel het sponsoroverzicht als de
+                prospectiepagina.
             </div>
 
             <h2 id="registratie">Registratie &amp; Aanmelding</h2>
@@ -2180,12 +2219,13 @@
                 <li>Naam en e-mailadres</li>
                 <li>Registratiedatum</li>
                 <li>Rol-dropdown om een rol toe te wijzen</li>
+                <li>Extra modules &#8212; klik op de module-badges om extra toegangsrechten toe te kennen</li>
                 <li>Knop <strong>&#8220;Goedkeuren&#8221;</strong></li>
             </ul>
             <p>
-                Selecteer de gewenste rol (Beheerder, Trainer, Ouder, Lid of Barmedewerker) en klik op
-                &#8220;Goedkeuren&#8221;. De
-                gebruiker krijgt dan toegang tot het systeem.
+                Selecteer de gewenste rol (Beheerder, Trainer, Ouder, Lid of Barmedewerker), kies eventueel extra
+                modules door op de badges te klikken (geselecteerde modules worden rood), en klik op
+                &#8220;Goedkeuren&#8221;. De gebruiker krijgt dan toegang tot het systeem.
             </p>
 
             <h4>Gebruikers beheren</h4>
@@ -2194,7 +2234,9 @@
                 e-mail en rol. Per gebruiker kun je:
             </p>
             <ul>
-                <li><strong>&#8220;Bewerken&#8221;</strong> &#8212; naam, e-mail en rol aanpassen</li>
+                <li><strong>&#8220;Bewerken&#8221;</strong> &#8212; naam, e-mail, rol en extra modules aanpassen.
+                    Toegekende extra modules worden als rode badges getoond naast de gebruiker. Klik op de
+                    module-badges in het bewerkingsformulier om ze toe te voegen of te verwijderen.</li>
                 <li><strong>&#8220;Status wisselen&#8221;</strong> &#8212; een gebruiker tijdelijk deactiveren of weer
                     activeren. Gedeactiveerde gebruikers kunnen niet meer inloggen.</li>
                 <li><strong>&#8220;Leden koppelen&#8221;</strong> &#8212; leden aan een gebruikersaccount koppelen. Dit

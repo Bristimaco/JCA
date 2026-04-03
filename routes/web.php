@@ -190,7 +190,7 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
     Route::get('/mijn-poef', [MijnPoefController::class, 'index'])->name('mijn-poef');
 
     // Trainer routes
-    Route::middleware('coach')->prefix('trainer')->group(function () {
+    Route::middleware('coach:training')->prefix('trainer')->group(function () {
         Route::get('/training-groups', [TrainerTrainingGroupController::class, 'index'])->name('trainer.training-groups.index');
         Route::get('/toernooien/{tournament}', [TrainerTournamentController::class, 'show'])->name('trainer.tournament.show');
         Route::post('/toernooien/{tournament}/resultaten', [TrainerTournamentController::class, 'storeResults'])->name('trainer.tournament.results');
@@ -232,7 +232,7 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
     Route::post('/vouchers/redeem', [VoucherController::class, 'redeem'])->name('vouchers.redeem');
 
     // POS (barmedewerker + admin)
-    Route::middleware('barmedewerker')->group(function () {
+    Route::middleware('barmedewerker:bar')->group(function () {
         Route::get('/pos', POSController::class)->name('pos');
         Route::post('/pos/order', [POSController::class, 'store'])->name('pos.order.store');
         Route::post('/pos/products/{barProduct}/toggle-refill', [POSController::class, 'toggleRefill'])->name('pos.toggle-refill');
@@ -256,19 +256,16 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::get('/pos/users/search', [POSController::class, 'searchUsers'])->name('pos.users.search');
     });
 
-    // Admin routes
+    // Admin routes — Core (admin-only)
     Route::middleware('admin')->prefix('admin')->group(function () {
         Route::get('/', AdminDashboardController::class)->name('admin.dashboard');
-        Route::get('/activiteit', [AdminActivityController::class, 'index'])->name('admin.activity');
-        Route::get('/test-mode-log', [AdminTestModeLogController::class, 'index'])->name('admin.test-mode-log');
-        Route::delete('/test-mode-log', [AdminTestModeLogController::class, 'clear'])->name('admin.test-mode-log.clear');
-        Route::get('/sessions', AdminSessionHistoryController::class)->name('admin.sessions.history');
-        Route::get('/attendance-report', AttendanceReportController::class)->name('admin.attendance-report');
         Route::patch('/club-settings', [ClubSettingsController::class, 'update'])->name('admin.club-settings.update');
         Route::patch('/users/{user}/approve', ApproveUserController::class)->name('admin.users.approve');
         Route::patch('/users/{user}/toggle-active', ToggleUserActiveController::class)->name('admin.users.toggle-active');
         Route::patch('/users/{user}', UpdateUserController::class)->name('admin.users.update');
         Route::put('/users/{user}/members', [UserMembersController::class, 'update'])->name('admin.users.members');
+        Route::get('/sessions', AdminSessionHistoryController::class)->name('admin.sessions.history');
+        Route::get('/attendance-report', AttendanceReportController::class)->name('admin.attendance-report');
 
         // Age categories
         Route::post('/age-categories', [AgeCategoryController::class, 'store'])->name('admin.age-categories.store');
@@ -280,24 +277,29 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::patch('/weight-categories/{weightCategory}', [WeightCategoryController::class, 'update'])->name('admin.weight-categories.update');
         Route::delete('/weight-categories/{weightCategory}', [WeightCategoryController::class, 'destroy'])->name('admin.weight-categories.destroy');
 
-        // Training groups
-        Route::post('/training-groups', [TrainingGroupController::class, 'store'])->name('admin.training-groups.store');
-        Route::patch('/training-groups/{trainingGroup}', [TrainingGroupController::class, 'update'])->name('admin.training-groups.update');
-        Route::delete('/training-groups/{trainingGroup}', [TrainingGroupController::class, 'destroy'])->name('admin.training-groups.destroy');
-        Route::put('/training-groups/{trainingGroup}/members', [TrainingGroupMemberController::class, 'update'])->name('admin.training-groups.members');
+        // Excel import/export categorieën
+        Route::get('/age-categories/export', [CategoryExcelController::class, 'exportAgeCategories'])->name('admin.age-categories.export');
+        Route::post('/age-categories/import', [CategoryExcelController::class, 'importAgeCategories'])->name('admin.age-categories.import');
+        Route::get('/weight-categories/export', [CategoryExcelController::class, 'exportWeightCategories'])->name('admin.weight-categories.export');
+        Route::post('/weight-categories/import', [CategoryExcelController::class, 'importWeightCategories'])->name('admin.weight-categories.import');
+    });
 
-        // Extra trainingen
-        Route::get('/extra-training', [ExtraTrainingController::class, 'index'])->name('admin.extra-training.index');
-        Route::get('/extra-training/create', [ExtraTrainingController::class, 'create'])->name('admin.extra-training.create');
-        Route::post('/extra-training', [ExtraTrainingController::class, 'store'])->name('admin.extra-training.store');
-        Route::patch('/extra-training/{schedule}', [ExtraTrainingController::class, 'update'])->name('admin.extra-training.update');
-        Route::delete('/extra-training/{schedule}', [ExtraTrainingController::class, 'destroy'])->name('admin.extra-training.destroy');
+    // Admin routes — Logs module (admin OR extra_module:logs)
+    Route::middleware('admin:logs')->prefix('admin')->group(function () {
+        Route::get('/activiteit', [AdminActivityController::class, 'index'])->name('admin.activity');
+        Route::get('/test-mode-log', [AdminTestModeLogController::class, 'index'])->name('admin.test-mode-log');
+        Route::delete('/test-mode-log', [AdminTestModeLogController::class, 'clear'])->name('admin.test-mode-log.clear');
+    });
 
-        // Members
+    // Admin routes — Members module (admin OR extra_module:members)
+    Route::middleware('admin:members')->prefix('admin')->group(function () {
         Route::get('/members', MemberIndexController::class)->name('admin.members.index');
         Route::post('/members', [MemberController::class, 'store'])->name('admin.members.store');
         Route::patch('/members/{member}', [MemberController::class, 'update'])->name('admin.members.update');
+        Route::delete('/members/{member}', [MemberController::class, 'destroy'])->name('admin.members.destroy');
         Route::post('/members/send-renewal-reminders', [MemberController::class, 'sendRenewalReminders'])->name('admin.members.send-renewal-reminders');
+        Route::get('/members/export', [MemberExcelController::class, 'export'])->name('admin.members.export');
+        Route::post('/members/import', [MemberExcelController::class, 'import'])->name('admin.members.import');
 
         // Invoices
         Route::get('/facturen', [InvoiceController::class, 'index'])->name('admin.invoices.index');
@@ -309,15 +311,45 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
 
         // Vouchers
         Route::get('/vouchers', [AdminVoucherController::class, 'index'])->name('admin.vouchers.index');
+    });
 
-        // Announcements
+    // Admin routes — Training module (admin OR extra_module:training)
+    Route::middleware('admin:training')->prefix('admin')->group(function () {
+        Route::post('/training-groups', [TrainingGroupController::class, 'store'])->name('admin.training-groups.store');
+        Route::patch('/training-groups/{trainingGroup}', [TrainingGroupController::class, 'update'])->name('admin.training-groups.update');
+        Route::delete('/training-groups/{trainingGroup}', [TrainingGroupController::class, 'destroy'])->name('admin.training-groups.destroy');
+        Route::put('/training-groups/{trainingGroup}/members', [TrainingGroupMemberController::class, 'update'])->name('admin.training-groups.members');
+        Route::get('/extra-training', [ExtraTrainingController::class, 'index'])->name('admin.extra-training.index');
+        Route::get('/extra-training/create', [ExtraTrainingController::class, 'create'])->name('admin.extra-training.create');
+        Route::post('/extra-training', [ExtraTrainingController::class, 'store'])->name('admin.extra-training.store');
+        Route::patch('/extra-training/{schedule}', [ExtraTrainingController::class, 'update'])->name('admin.extra-training.update');
+        Route::delete('/extra-training/{schedule}', [ExtraTrainingController::class, 'destroy'])->name('admin.extra-training.destroy');
+    });
+
+    // Admin routes — Tournaments module (admin OR extra_module:tournaments)
+    Route::middleware('admin:tournaments')->prefix('admin')->group(function () {
+        Route::post('/tournaments', [TournamentController::class, 'store'])->name('admin.tournaments.store');
+        Route::delete('/tournaments/{tournament}', [TournamentController::class, 'destroy'])->name('admin.tournaments.destroy');
+        Route::post('/tournaments/{tournament}/open-registrations', [TournamentMembersController::class, 'openRegistrations'])->name('admin.tournaments.open-registrations');
+        Route::post('/tournaments/{tournament}/register/{member}', [TournamentMembersController::class, 'register'])->name('admin.tournaments.register');
+        Route::post('/tournaments/{tournament}/unregister/{member}', [TournamentMembersController::class, 'unregister'])->name('admin.tournaments.unregister');
+        Route::post('/tournaments/{tournament}/close-registrations', [TournamentMembersController::class, 'closeRegistrations'])->name('admin.tournaments.close-registrations');
+        Route::post('/tournaments/{tournament}/archive', [TournamentController::class, 'archive'])->name('admin.tournaments.archive');
+        Route::post('/tournaments/{tournament}/coaches', [TournamentMembersController::class, 'addCoach'])->name('admin.tournaments.add-coach');
+        Route::delete('/tournaments/{tournament}/coaches/{member}', [TournamentMembersController::class, 'removeCoach'])->name('admin.tournaments.remove-coach');
+    });
+
+    // Admin routes — Announcements module (admin OR extra_module:announcements)
+    Route::middleware('admin:announcements')->prefix('admin')->group(function () {
         Route::get('/mededelingen', [AnnouncementController::class, 'index'])->name('admin.announcements.index');
         Route::post('/announcements', [AnnouncementController::class, 'store'])->name('admin.announcements.store');
         Route::patch('/announcements/{announcement}', [AnnouncementController::class, 'update'])->name('admin.announcements.update');
         Route::post('/announcements/{announcement}/archive', [AnnouncementController::class, 'archive'])->name('admin.announcements.archive');
         Route::delete('/announcements/{announcement}', [AnnouncementController::class, 'destroy'])->name('admin.announcements.destroy');
+    });
 
-        // Sponsors
+    // Admin routes — Sponsors module (admin OR extra_module:sponsors)
+    Route::middleware('admin:sponsors')->prefix('admin')->group(function () {
         Route::get('/sponsors', [SponsorController::class, 'index'])->name('admin.sponsors.index');
         Route::patch('/sponsors/{sponsor}', [SponsorController::class, 'update'])->name('admin.sponsors.update');
         Route::post('/sponsors/{sponsor}/renew', [SponsorController::class, 'renew'])->name('admin.sponsors.renew');
@@ -337,8 +369,10 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::post('/prospectie/{prospect}/convert', [ProspectController::class, 'convertToSponsor'])->name('admin.prospects.convert');
         Route::post('/prospectie/{prospect}/notes', [ProspectNoteController::class, 'store'])->name('admin.prospect-notes.store');
         Route::delete('/prospectie/{prospect}/notes/{note}', [ProspectNoteController::class, 'destroy'])->name('admin.prospect-notes.destroy');
+    });
 
-        // Events
+    // Admin routes — Events module (admin OR extra_module:events)
+    Route::middleware('admin:events')->prefix('admin')->group(function () {
         Route::get('/evenementen', [AdminEventController::class, 'index'])->name('admin.events.index');
         Route::post('/evenementen', [AdminEventController::class, 'store'])->name('admin.events.store');
         Route::put('/evenementen/{event}', [AdminEventController::class, 'update'])->name('admin.events.update');
@@ -349,8 +383,10 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::post('/evenementen/{event}/resend-invitations', [AdminEventController::class, 'resendInvitations'])->name('admin.events.resend-invitations');
         Route::get('/evenementen/{event}/registrations', [AdminEventController::class, 'registrations'])->name('admin.events.registrations');
         Route::post('/evenementen/{event}/registrations/{registration}/mark-paid', [AdminEventController::class, 'markPaid'])->name('admin.events.mark-paid');
+    });
 
-        // Bar products
+    // Admin routes — Bar module (admin OR extra_module:bar)
+    Route::middleware('admin:bar')->prefix('admin')->group(function () {
         Route::get('/bar-products', [BarProductController::class, 'index'])->name('admin.bar-products.index');
         Route::get('/aan-te-vullen', [BarProductController::class, 'refillIndex'])->name('admin.refill-products.index');
         Route::get('/verkoop-statistieken', [BarProductController::class, 'salesStats'])->name('admin.sales-stats');
@@ -363,37 +399,10 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::post('/bar-categories', [BarCategoryController::class, 'store'])->name('admin.bar-categories.store');
         Route::patch('/bar-categories/{barCategory}', [BarCategoryController::class, 'update'])->name('admin.bar-categories.update');
         Route::delete('/bar-categories/{barCategory}', [BarCategoryController::class, 'destroy'])->name('admin.bar-categories.destroy');
-
-        Route::delete('/members/{member}', [MemberController::class, 'destroy'])->name('admin.members.destroy');
-
-        // Excel import/export leden
-        Route::get('/members/export', [MemberExcelController::class, 'export'])->name('admin.members.export');
-        Route::post('/members/import', [MemberExcelController::class, 'import'])->name('admin.members.import');
-
-        // Excel import/export categorieën
-        Route::get('/age-categories/export', [CategoryExcelController::class, 'exportAgeCategories'])->name('admin.age-categories.export');
-        Route::post('/age-categories/import', [CategoryExcelController::class, 'importAgeCategories'])->name('admin.age-categories.import');
-        Route::get('/weight-categories/export', [CategoryExcelController::class, 'exportWeightCategories'])->name('admin.weight-categories.export');
-        Route::post('/weight-categories/import', [CategoryExcelController::class, 'importWeightCategories'])->name('admin.weight-categories.import');
-
-        // Tournaments
-        Route::post('/tournaments', [TournamentController::class, 'store'])->name('admin.tournaments.store');
-        Route::delete('/tournaments/{tournament}', [TournamentController::class, 'destroy'])->name('admin.tournaments.destroy');
-
-        // Tournament registrations (admin-only)
-        Route::post('/tournaments/{tournament}/open-registrations', [TournamentMembersController::class, 'openRegistrations'])->name('admin.tournaments.open-registrations');
-        Route::post('/tournaments/{tournament}/register/{member}', [TournamentMembersController::class, 'register'])->name('admin.tournaments.register');
-        Route::post('/tournaments/{tournament}/unregister/{member}', [TournamentMembersController::class, 'unregister'])->name('admin.tournaments.unregister');
-        Route::post('/tournaments/{tournament}/close-registrations', [TournamentMembersController::class, 'closeRegistrations'])->name('admin.tournaments.close-registrations');
-        Route::post('/tournaments/{tournament}/archive', [TournamentController::class, 'archive'])->name('admin.tournaments.archive');
-
-        // Tournament coaches (admin-only)
-        Route::post('/tournaments/{tournament}/coaches', [TournamentMembersController::class, 'addCoach'])->name('admin.tournaments.add-coach');
-        Route::delete('/tournaments/{tournament}/coaches/{member}', [TournamentMembersController::class, 'removeCoach'])->name('admin.tournaments.remove-coach');
     });
 
     // Tournament routes (shared: admin + coach)
-    Route::middleware('coach')->prefix('admin')->group(function () {
+    Route::middleware('coach:tournaments')->prefix('admin')->group(function () {
         Route::get('/tournaments', TournamentIndexController::class)->name('admin.tournaments.index');
         Route::post('/tournaments/{tournament}', [TournamentController::class, 'update'])->name('admin.tournaments.update');
 

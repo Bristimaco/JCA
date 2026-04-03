@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\ExtraModule;
 use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -19,9 +20,14 @@ class ApproveUserController extends Controller
 
         $request->validate([
             'role' => ['required', new Enum(UserRole::class)],
+            'extra_modules' => ['nullable', 'array'],
+            'extra_modules.*' => [new Enum(ExtraModule::class)],
         ]);
 
-        $user->update(['role' => $request->input('role')]);
+        $user->update([
+            'role' => $request->input('role'),
+            'extra_modules' => $request->input('extra_modules', []),
+        ]);
 
         return back()->with('status', "{$user->name} is goedgekeurd als {$user->role->label()}.");
     }

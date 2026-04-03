@@ -50,6 +50,7 @@ class HandleInertiaRequests extends Middleware
                     'is_approved' => $request->user()->isApproved(),
                     'email_verified' => $request->user()->hasVerifiedEmail(),
                     'notification_preference' => $request->user()->notification_preference?->value ?? 'both',
+                    'extra_modules' => $request->user()->extra_modules ?? [],
                 ] : null,
             ],
             'unreadNotificationCount' => fn () => $request->user()?->unreadNotifications()->count() ?? 0,
@@ -62,7 +63,7 @@ class HandleInertiaRequests extends Middleware
                 'has_logo' => (bool) ClubSettings::current()->logo_data,
             ],
             'testMode' => fn () => (bool) ClubSettings::current()->test_mode,
-            'pendingBarOrderCount' => fn () => $request->user() && in_array($request->user()->role, [UserRole::Admin, UserRole::Barmedewerker])
+            'pendingBarOrderCount' => fn () => $request->user() && (in_array($request->user()->role, [UserRole::Admin, UserRole::Barmedewerker]) || $request->user()->hasExtraModule('bar'))
                 ? BarOrder::pending()->count()
                 : 0,
         ];

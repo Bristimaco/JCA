@@ -26,6 +26,7 @@ use Illuminate\Support\Facades\Mail;
  * @property bool $is_active
  * @property bool $results_interest
  * @property NotificationPreference $notification_preference
+ * @property array|null $extra_modules
  * @property Carbon|null $email_verified_at
  * @property string $password
  * @property string|null $remember_token
@@ -33,7 +34,7 @@ use Illuminate\Support\Facades\Mail;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['name', 'email', 'password', 'role', 'phone', 'is_active', 'results_interest', 'notification_preference', 'last_active_at'])]
+#[Fillable(['name', 'email', 'password', 'role', 'phone', 'is_active', 'results_interest', 'notification_preference', 'last_active_at', 'extra_modules'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -55,6 +56,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'results_interest' => 'boolean',
             'notification_preference' => NotificationPreference::class,
             'last_active_at' => 'datetime',
+            'extra_modules' => 'array',
         ];
     }
 
@@ -81,6 +83,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function isBarmedewerker(): bool
     {
         return $this->role === UserRole::Barmedewerker;
+    }
+
+    public function hasExtraModule(string $module): bool
+    {
+        return in_array($module, $this->extra_modules ?? []);
     }
 
     public function isApproved(): bool

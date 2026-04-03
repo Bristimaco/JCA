@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\ExtraModule;
 use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Models\AgeCategory;
@@ -26,7 +27,7 @@ class AdminDashboardController extends Controller
         $users = User::whereNotNull('role')
             ->with('members:id')
             ->orderBy('name')
-            ->get(['id', 'name', 'email', 'role', 'is_active', 'results_interest'])
+            ->get(['id', 'name', 'email', 'role', 'is_active', 'results_interest', 'extra_modules'])
             ->map(fn (User $u) => [
                 ...$u->toArray(),
                 'member_ids' => $u->members->pluck('id')->values()->all(),
@@ -42,6 +43,11 @@ class AdminDashboardController extends Controller
         $roles = collect(UserRole::cases())->map(fn (UserRole $role) => [
             'value' => $role->value,
             'label' => $role->label(),
+        ])->values()->all();
+
+        $extraModules = collect(ExtraModule::cases())->map(fn (ExtraModule $m) => [
+            'value' => $m->value,
+            'label' => $m->label(),
         ])->values()->all();
 
         $ageCategories = AgeCategory::ordered()->get();
@@ -64,6 +70,7 @@ class AdminDashboardController extends Controller
             'pendingUsers' => $pendingUsers,
             'users' => $users,
             'roles' => $roles,
+            'extraModules' => $extraModules,
             'ageCategories' => $ageCategories,
             'weightCategories' => $weightCategories,
             'allMembers' => $allMembers,

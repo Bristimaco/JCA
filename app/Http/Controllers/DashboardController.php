@@ -36,8 +36,9 @@ class DashboardController extends Controller
     public function __invoke(Request $request): Response
     {
         $props = [];
+        $user = $request->user();
 
-        if ($request->user()->isAdmin()) {
+        if ($user->isAdmin()) {
             $props['pendingCount'] = User::whereNull('role')
                 ->whereNotNull('email_verified_at')
                 ->count();
@@ -52,32 +53,56 @@ class DashboardController extends Controller
                     'email' => $u->email,
                     'created_at' => $u->created_at->toDateString(),
                 ]);
+        }
 
-            $props['adminCounters'] = [
-                'renewalDueCount' => Member::where('membership_renewal_date', '<=', now()->addDays(30))->count(),
-                'pendingInvoiceCount' => MembershipInvoice::where('status', InvoiceStatus::Pending)->count(),
-                'activeVoucherCount' => Voucher::where('status', VoucherStatus::Active)->where('expires_at', '>=', now())->count(),
-                'activeTournamentCount' => Tournament::where('status', '!=', TournamentStatus::Archived)->count(),
-                'refillProductCount' => BarProduct::needsRefill()->count(),
-                'activeSponsorCount' => Sponsor::active()->count(),
-                'activeAnnouncementCount' => Announcement::active()->count(),
-                'activeEventCount' => Event::notArchived()->where('status', '!=', EventStatus::Draft)->count(),
-                'prospectCount' => Prospect::count(),
-            ];
+        // Admin counters — build selectively based on role + extra modules
+        $adminCounters = [];
 
+        if ($user->isAdmin() || $user->hasExtraModule('members')) {
+            $adminCounters['renewalDueCount'] = Member::where('membership_renewal_date', '<=', now()->addDays(30))->count();
+            $adminCounters['pendingInvoiceCount'] = MembershipInvoice::where('status', InvoiceStatus::Pending)->count();
+            $adminCounters['activeVoucherCount'] = Voucher::where('status', VoucherStatus::Active)->where('expires_at', '>=', now())->count();
+        }
+
+        if ($user->isAdmin() || $user->hasExtraModule('tournaments')) {
+            $adminCounters['activeTournamentCount'] = Tournament::where('status', '!=', TournamentStatus::Archived)->count();
+        }
+
+        if ($user->isAdmin() || $user->hasExtraModule('bar')) {
+            $adminCounters['refillProductCount'] = BarProduct::needsRefill()->count();
+        }
+
+        if ($user->isAdmin() || $user->hasExtraModule('sponsors')) {
+            $adminCounters['activeSponsorCount'] = Sponsor::active()->count();
+            $adminCounters['prospectCount'] = Prospect::count();
+        }
+
+        if ($user->isAdmin() || $user->hasExtraModule('announcements')) {
+            $adminCounters['activeAnnouncementCount'] = Announcement::active()->count();
+        }
+
+        if ($user->isAdmin() || $user->hasExtraModule('events')) {
+            $adminCounters['activeEventCount'] = Event::notArchived()->where('status', '!=', EventStatus::Draft)->count();
+        }
+
+        if (! empty($adminCounters)) {
+            $props['adminCounters'] = $adminCounters;
+        }
+
+        if ($user->isAdmin() || $user->hasExtraModule('members')) {
             $props['memberStats'] = $this->memberStats();
         }
 
-        // Bar counters for barmedewerker + admin
-        if ($request->user()->isAdmin() || $request->user()->isBarmedewerker()) {
+        // Bar counters for barmedewerker + admin + extra module
+        if ($user->isAdmin() || $user->isBarmedewerker() || $user->hasExtraModule('bar')) {
             $props['barCounters'] = [
                 'pendingOrderCount' => BarOrder::pending()->count(),
                 'unpaidPoefCount' => BarOrder::unpaidPoef()->count(),
             ];
         }
 
-        // Upcoming tournaments for admin + coach tile
-        if ($request->user()->isAdmin() || $request->user()->isCoach()) {
+        // Upcoming tournaments for admin + coach + extra module
+        if ($user->isAdmin() || $user->isCoach() || $user->hasExtraModule('tournaments')) {
             $upcomingQuery = Tournament::whereIn('status', [
                 TournamentStatus::Preparation,
                 TournamentStatus::InvitationsSent,
@@ -86,8 +111,8 @@ class DashboardController extends Controller
             ])
                 ->where('tournament_date', '>=', now()->toDateString());
 
-            if ($request->user()->isCoach() && ! $request->user()->isAdmin()) {
-                $coachMemberIds = $request->user()->members()->pluck('members.id');
+            if ($user->isCoach() && ! $user->isAdmin()) {
+                $coachMemberIds = $user->members()->pluck('members.id');
                 $upcomingQuery->whereHas('coaches', fn ($q) => $q->whereIn('members.id', $coachMemberIds));
             }
 
@@ -115,10 +140,10 @@ class DashboardController extends Controller
 
         $props['archivedTournamentCount'] = Tournament::where('status', TournamentStatus::Archived)->count();
 
-        $props['myMemberCount'] = $request->user()->members()->count();
+        $props['myMemberCount'] = $user->members()->count();
 
         $props['myPoefCount'] = BarOrder::unpaidPoef()
-            ->where('ordered_by_user_id', $request->user()->id)
+            ->where('ordered_by_user_id', $user->id)
             ->count();
 
         $props['recentArchived'] = Tournament::whereIn('status', [
@@ -154,8 +179,8 @@ class DashboardController extends Controller
             ]);
 
         // Coach: load tournaments where the user's members are coaches
-        if ($request->user()->isCoach()) {
-            $coachMemberIds = $request->user()->members()->pluck('members.id');
+        if ($user->isCoach()) {
+            $coachMemberIds = $user->members()->pluck('members.id');
             $props['coachTournaments'] = Tournament::whereHas('coaches', fn ($q) => $q->whereIn('members.id', $coachMemberIds))
                 ->whereIn('status', [TournamentStatus::Started, TournamentStatus::Finished])
                 ->orderByDesc('tournament_date')
@@ -172,12 +197,12 @@ class DashboardController extends Controller
                     'participant_count' => $t->members()->count(),
                 ]);
 
-            $props['coachTrainingGroups'] = TrainingGroup::whereHas('schedules', fn ($q) => $q->where('trainer_id', $request->user()->id))
+            $props['coachTrainingGroups'] = TrainingGroup::whereHas('schedules', fn ($q) => $q->where('trainer_id', $user->id))
                 ->with(['members:id,first_name,last_name', 'schedules.trainer:id,name'])
                 ->orderBy('name')
                 ->get()
-                ->map(function (TrainingGroup $g) use ($request) {
-                    $scheduleIds = $g->schedules->where('trainer_id', $request->user()->id)->pluck('id');
+                ->map(function (TrainingGroup $g) use ($user) {
+                    $scheduleIds = $g->schedules->where('trainer_id', $user->id)->pluck('id');
                     $todaySessions = TrainingSession::whereIn('training_schedule_id', $scheduleIds)
                         ->where('date', now()->toDateString())
                         ->with('attendances')
@@ -227,7 +252,7 @@ class DashboardController extends Controller
             // Extra trainings for today (coach)
             $props['extraTrainings'] = TrainingSchedule::where('is_extra', true)
                 ->where('date', now()->toDateString())
-                ->where('trainer_id', $request->user()->id)
+                ->where('trainer_id', $user->id)
                 ->with(['trainingGroups.members:id,first_name,last_name', 'trainer:id,name', 'sessions.attendances'])
                 ->get()
                 ->map(function (TrainingSchedule $s) {
@@ -260,11 +285,11 @@ class DashboardController extends Controller
         }
 
         // Load tournaments for the user's linked members
-        $memberIds = $request->user()->members()->pluck('members.id');
+        $memberIds = $user->members()->pluck('members.id');
 
         // Active training sessions for the user's members (one tile per member per session)
         if ($memberIds->isNotEmpty()) {
-            $members = $request->user()->members()->get(['members.id', 'members.first_name']);
+            $members = $user->members()->get(['members.id', 'members.first_name']);
             $todayAbsences = TrainingAbsence::where('date', now()->toDateString())
                 ->whereIn('member_id', $memberIds)
                 ->get();

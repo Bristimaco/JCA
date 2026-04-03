@@ -5,7 +5,7 @@ import CollapsibleSection from '../../Components/CollapsibleSection';
 import AgeCategoriesSection from './AgeCategoriesSection';
 import WeightCategoriesSection from './WeightCategoriesSection';
 
-export default function AdminPanel({ pendingUsers, users, roles, ageCategories, weightCategories, allMembers, clubSettings, renewalDueCount, renewalDueMembers }) {
+export default function AdminPanel({ pendingUsers, users, roles, extraModules, ageCategories, weightCategories, allMembers, clubSettings, renewalDueCount, renewalDueMembers }) {
     const urlParams = new URLSearchParams(window.location.search);
     const [renewalListOpen, setRenewalListOpen] = useState(urlParams.get('renewal') === 'open');
 
@@ -63,11 +63,11 @@ export default function AdminPanel({ pendingUsers, users, roles, ageCategories, 
             </CollapsibleSection>
 
             <CollapsibleSection title="Nieuwe aanvragen" count={pendingUsers.length} defaultOpen={pendingUsers.length > 0} badge="bg-rose-900/30 text-rose-300">
-                <PendingUsersSection pendingUsers={pendingUsers} roles={roles} />
+                <PendingUsersSection pendingUsers={pendingUsers} roles={roles} extraModules={extraModules} />
             </CollapsibleSection>
 
             <CollapsibleSection title="Gebruikers" count={users.length}>
-                <UsersSection users={users} roles={roles} allMembers={allMembers} />
+                <UsersSection users={users} roles={roles} extraModules={extraModules} allMembers={allMembers} />
             </CollapsibleSection>
 
             <CollapsibleSection title="Leeftijdscategorieën" count={ageCategories.length}>
@@ -343,7 +343,7 @@ function ClubSettingsSection({ clubSettings }) {
     );
 }
 
-function PendingUsersSection({ pendingUsers, roles }) {
+function PendingUsersSection({ pendingUsers, roles, extraModules }) {
     const { flash } = usePage().props;
 
     return (
@@ -361,7 +361,7 @@ function PendingUsersSection({ pendingUsers, roles }) {
             ) : (
                 <div className="divide-y divide-slate-700">
                     {pendingUsers.map((user) => (
-                        <PendingUserRow key={user.id} user={user} roles={roles} />
+                        <PendingUserRow key={user.id} user={user} roles={roles} extraModules={extraModules} />
                     ))}
                 </div>
             )}
@@ -369,51 +369,79 @@ function PendingUsersSection({ pendingUsers, roles }) {
     );
 }
 
-function PendingUserRow({ user, roles }) {
+function PendingUserRow({ user, roles, extraModules }) {
     const [selectedRole, setSelectedRole] = useState('');
-    const form = useForm({ role: '' });
+    const [selectedModules, setSelectedModules] = useState([]);
+    const form = useForm({ role: '', extra_modules: [] });
+
+    const toggleModule = (value) => {
+        setSelectedModules((prev) =>
+            prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
+        );
+    };
 
     const handleApprove = (e) => {
         e.preventDefault();
-        form.transform(() => ({ role: selectedRole }));
+        form.transform(() => ({ role: selectedRole, extra_modules: selectedModules }));
         form.patch(`/admin/users/${user.id}/approve`);
     };
 
     return (
-        <div className="px-3 sm:px-6 py-4 flex items-center justify-between gap-4">
-            <div className="min-w-0 flex-1">
-                <p className="font-medium text-white truncate">{user.name}</p>
-                <p className="text-sm text-slate-500">{user.email}</p>
-                <p className="text-xs text-slate-400">
-                    Geregistreerd op {new Date(user.created_at).toLocaleDateString('nl-BE')}
-                </p>
+        <div className="px-3 sm:px-6 py-4">
+            <div className="flex items-center justify-between gap-4">
+                <div className="min-w-0 flex-1">
+                    <p className="font-medium text-white truncate">{user.name}</p>
+                    <p className="text-sm text-slate-500">{user.email}</p>
+                    <p className="text-xs text-slate-400">
+                        Geregistreerd op {new Date(user.created_at).toLocaleDateString('nl-BE')}
+                    </p>
+                </div>
+                <form onSubmit={handleApprove} className="flex items-center gap-2">
+                    <select
+                        value={selectedRole}
+                        onChange={(e) => setSelectedRole(e.target.value)}
+                        className="rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
+                    >
+                        <option value="">Kies rol...</option>
+                        {roles.map((role) => (
+                            <option key={role.value} value={role.value}>
+                                {role.label}
+                            </option>
+                        ))}
+                    </select>
+                    <button
+                        type="submit"
+                        disabled={!selectedRole || form.processing}
+                        className="rounded-md bg-rose-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-rose-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        Goedkeuren
+                    </button>
+                </form>
             </div>
-            <form onSubmit={handleApprove} className="flex items-center gap-2">
-                <select
-                    value={selectedRole}
-                    onChange={(e) => setSelectedRole(e.target.value)}
-                    className="rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1.5 px-3 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
-                >
-                    <option value="">Kies rol...</option>
-                    {roles.map((role) => (
-                        <option key={role.value} value={role.value}>
-                            {role.label}
-                        </option>
+            <div className="mt-2">
+                <p className="text-xs font-medium text-slate-400 mb-1">Extra modules</p>
+                <div className="flex flex-wrap gap-1.5">
+                    {extraModules.map((mod) => (
+                        <button
+                            key={mod.value}
+                            type="button"
+                            onClick={() => toggleModule(mod.value)}
+                            className={`rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors ${
+                                selectedModules.includes(mod.value)
+                                    ? 'bg-rose-600 text-white'
+                                    : 'bg-slate-700/50 text-slate-400 hover:bg-slate-700'
+                            }`}
+                        >
+                            {mod.label}
+                        </button>
                     ))}
-                </select>
-                <button
-                    type="submit"
-                    disabled={!selectedRole || form.processing}
-                    className="rounded-md bg-rose-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-rose-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                    Goedkeuren
-                </button>
-            </form>
+                </div>
+            </div>
         </div>
     );
 }
 
-function UsersSection({ users, roles, allMembers }) {
+function UsersSection({ users, roles, extraModules, allMembers }) {
     const { flash } = usePage().props;
 
     return (
@@ -425,7 +453,7 @@ function UsersSection({ users, roles, allMembers }) {
             ) : (
                 <div className="divide-y divide-slate-700">
                     {users.map((user) => (
-                        <UserRow key={user.id} user={user} roles={roles} allMembers={allMembers} />
+                        <UserRow key={user.id} user={user} roles={roles} extraModules={extraModules} allMembers={allMembers} />
                     ))}
                 </div>
             )}
@@ -433,7 +461,7 @@ function UsersSection({ users, roles, allMembers }) {
     );
 }
 
-function UserRow({ user, roles, allMembers }) {
+function UserRow({ user, roles, extraModules, allMembers }) {
     const [editing, setEditing] = useState(false);
     const [managingMembers, setManagingMembers] = useState(false);
     const form = useForm({
@@ -441,11 +469,20 @@ function UserRow({ user, roles, allMembers }) {
         email: user.email,
         role: user.role,
         results_interest: user.results_interest || false,
+        extra_modules: user.extra_modules || [],
     });
     const toggleForm = useForm({});
     const membersForm = useForm({
         member_ids: user.member_ids || [],
     });
+
+    const toggleModule = (value) => {
+        const current = form.data.extra_modules;
+        form.setData('extra_modules', current.includes(value)
+            ? current.filter((v) => v !== value)
+            : [...current, value]
+        );
+    };
 
     const handleSave = (e) => {
         e.preventDefault();
@@ -509,6 +546,25 @@ function UserRow({ user, roles, allMembers }) {
                         Interesse in toernooiresultaten
                     </label>
                 </div>
+                <div className="mb-3">
+                    <label className="block text-xs font-medium text-slate-400 mb-1">Extra modules</label>
+                    <div className="flex flex-wrap gap-1.5">
+                        {extraModules.map((mod) => (
+                            <button
+                                key={mod.value}
+                                type="button"
+                                onClick={() => toggleModule(mod.value)}
+                                className={`rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors ${
+                                    form.data.extra_modules.includes(mod.value)
+                                        ? 'bg-rose-600 text-white'
+                                        : 'bg-slate-700/50 text-slate-400 hover:bg-slate-700'
+                                }`}
+                            >
+                                {mod.label}
+                            </button>
+                        ))}
+                    </div>
+                </div>
                 <div className="flex gap-2">
                     <button
                         type="submit"
@@ -553,6 +609,14 @@ function UserRow({ user, roles, allMembers }) {
                                 Resultaten
                             </span>
                         )}
+                        {(user.extra_modules || []).map((mod) => {
+                            const label = extraModules.find((m) => m.value === mod)?.label || mod;
+                            return (
+                                <span key={mod} className="inline-flex items-center rounded-full bg-rose-900/30 px-2 py-0.5 text-xs font-medium text-rose-300">
+                                    {label}
+                                </span>
+                            );
+                        })}
                     </div>
                 </div>
                 <div className="flex items-center gap-3">

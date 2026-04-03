@@ -8,12 +8,20 @@ use Symfony\Component\HttpFoundation\Response;
 
 class EnsureUserIsBarmedewerker
 {
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next, string ...$modules): Response
     {
-        if (! $request->user()?->isBarmedewerker() && ! $request->user()?->isAdmin()) {
-            abort(403);
+        $user = $request->user();
+
+        if ($user?->isBarmedewerker() || $user?->isAdmin()) {
+            return $next($request);
         }
 
-        return $next($request);
+        foreach ($modules as $module) {
+            if ($user?->hasExtraModule($module)) {
+                return $next($request);
+            }
+        }
+
+        abort(403);
     }
 }

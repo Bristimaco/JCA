@@ -110,22 +110,22 @@ const moduleGroups = [
         title: 'Leden',
         modules: [
             { name: 'Mijn Leden', href: '/mijn-leden', roles: ['parent', 'member', 'admin', 'coach', 'barmedewerker'] },
-            { name: 'Leden', href: '/admin/members', roles: ['admin'] },
-            { name: 'Facturen', href: '/admin/facturen', roles: ['admin'] },
-            { name: 'Vouchers', href: '/admin/vouchers', roles: ['admin'] },
+            { name: 'Leden', href: '/admin/members', roles: ['admin'], extraModule: 'members' },
+            { name: 'Facturen', href: '/admin/facturen', roles: ['admin'], extraModule: 'members' },
+            { name: 'Vouchers', href: '/admin/vouchers', roles: ['admin'], extraModule: 'members' },
         ],
     },
     {
         title: 'Trainingen',
         modules: [
-            { name: 'Trainingsgroepen', href: '/trainer/training-groups', roles: ['coach', 'admin'] },
-            { name: 'Extra Training', href: '/trainer/extra-training', roles: ['coach', 'admin'] },
+            { name: 'Trainingsgroepen', href: '/trainer/training-groups', roles: ['coach', 'admin'], extraModule: 'training' },
+            { name: 'Extra Training', href: '/trainer/extra-training', roles: ['coach', 'admin'], extraModule: 'training' },
         ],
     },
     {
         title: 'Toernooien',
         modules: [
-            { name: 'Toernooien', href: '/admin/tournaments', roles: ['admin', 'coach'] },
+            { name: 'Toernooien', href: '/admin/tournaments', roles: ['admin', 'coach'], extraModule: 'tournaments' },
             { name: 'Archief', href: '/archief', roles: ['parent', 'member', 'admin', 'coach', 'barmedewerker'] },
         ],
     },
@@ -134,12 +134,12 @@ const moduleGroups = [
         modules: [
             { name: 'Bestelling Plaatsen', href: '/bestelling', roles: ['parent', 'member', 'admin', 'coach', 'barmedewerker'] },
             { name: 'Mijn Poef', href: '/mijn-poef', roles: ['parent', 'member', 'admin', 'coach', 'barmedewerker'] },
-            { name: 'Kassa', href: '/pos', roles: ['barmedewerker', 'admin'] },
-            { name: 'Bestellingen', href: '/pos/bestellingen', roles: ['barmedewerker', 'admin'] },
-            { name: 'Poef', href: '/pos/poef', roles: ['barmedewerker', 'admin'] },
-            { name: 'Kassa Producten', href: '/admin/bar-products', roles: ['admin'] },
-            { name: 'Aan te vullen', href: '/admin/aan-te-vullen', roles: ['admin'] },
-            { name: 'Verkoopstatistieken', href: '/admin/verkoop-statistieken', roles: ['admin'] },
+            { name: 'Kassa', href: '/pos', roles: ['barmedewerker', 'admin'], extraModule: 'bar' },
+            { name: 'Bestellingen', href: '/pos/bestellingen', roles: ['barmedewerker', 'admin'], extraModule: 'bar' },
+            { name: 'Poef', href: '/pos/poef', roles: ['barmedewerker', 'admin'], extraModule: 'bar' },
+            { name: 'Kassa Producten', href: '/admin/bar-products', roles: ['admin'], extraModule: 'bar' },
+            { name: 'Aan te vullen', href: '/admin/aan-te-vullen', roles: ['admin'], extraModule: 'bar' },
+            { name: 'Verkoopstatistieken', href: '/admin/verkoop-statistieken', roles: ['admin'], extraModule: 'bar' },
         ],
     },
     {
@@ -147,22 +147,22 @@ const moduleGroups = [
         modules: [
             { name: 'Kalender', href: '/kalender', roles: ['parent', 'member', 'admin', 'coach', 'barmedewerker'] },
             { name: 'Evenementen', href: '/evenementen', roles: ['parent', 'member', 'admin', 'coach', 'barmedewerker'] },
-            { name: 'Evenementen Beheer', href: '/admin/evenementen', roles: ['admin'] },
-            { name: 'Mededelingen', href: '/admin/mededelingen', roles: ['admin'] },
+            { name: 'Evenementen Beheer', href: '/admin/evenementen', roles: ['admin'], extraModule: 'events' },
+            { name: 'Mededelingen', href: '/admin/mededelingen', roles: ['admin'], extraModule: 'announcements' },
         ],
     },
     {
         title: 'Sponsoring',
         modules: [
-            { name: 'Sponsors', href: '/admin/sponsors', roles: ['admin'] },
-            { name: 'Prospectie', href: '/admin/prospectie', roles: ['admin'] },
+            { name: 'Sponsors', href: '/admin/sponsors', roles: ['admin'], extraModule: 'sponsors' },
+            { name: 'Prospectie', href: '/admin/prospectie', roles: ['admin'], extraModule: 'sponsors' },
         ],
     },
     {
         title: 'Log',
         modules: [
-            { name: 'Activiteit', href: '/admin/activiteit', roles: ['admin'] },
-            { name: 'Test Log', href: '/admin/test-mode-log', roles: ['admin'] },
+            { name: 'Activiteit', href: '/admin/activiteit', roles: ['admin'], extraModule: 'logs' },
+            { name: 'Test Log', href: '/admin/test-mode-log', roles: ['admin'], extraModule: 'logs' },
         ],
     },
 ];
@@ -170,6 +170,7 @@ const moduleGroups = [
 export default function Dashboard({ pendingCount, pendingUsers, adminCounters, barCounters, memberStats, myMemberCount, myPoefCount, myEventCount, archivedTournamentCount, myTournaments, activeTournaments, coachTournaments, coachTrainingGroups, upcomingTournaments, coachTournamentCount, recentArchived, activeTrainingSessions, extraTrainings }) {
     const { auth } = usePage().props;
     const role = auth.user.role;
+    const extraModules = auth.user.extra_modules || [];
     const [expandedGroups, setExpandedGroups] = useState({});
 
     const toggleGroup = (title) => {
@@ -188,7 +189,7 @@ export default function Dashboard({ pendingCount, pendingUsers, adminCounters, b
             {(() => {
                 const filtered = moduleGroups.map((group) => ({
                     ...group,
-                    visibleModules: group.modules.filter((m) => m.roles.includes(role)),
+                    visibleModules: group.modules.filter((m) => m.roles.includes(role) || (m.extraModule && extraModules.includes(m.extraModule))),
                 })).filter((g) => g.visibleModules.length > 0);
 
                 const counts = {

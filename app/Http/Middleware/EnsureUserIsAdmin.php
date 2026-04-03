@@ -8,12 +8,20 @@ use Symfony\Component\HttpFoundation\Response;
 
 class EnsureUserIsAdmin
 {
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next, string ...$modules): Response
     {
-        if (! $request->user()?->isAdmin()) {
-            abort(403);
+        $user = $request->user();
+
+        if ($user?->isAdmin()) {
+            return $next($request);
         }
 
-        return $next($request);
+        foreach ($modules as $module) {
+            if ($user?->hasExtraModule($module)) {
+                return $next($request);
+            }
+        }
+
+        abort(403);
     }
 }
