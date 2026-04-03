@@ -152,6 +152,9 @@ export default function Calendar({ items, startDate, myMemberIds }) {
                         >
                             <span className="hidden md:inline">Volgende </span>→
                         </button>
+                        <Link href="/" className="ml-2 text-sm font-medium text-slate-400 hover:text-slate-300">
+                            ← Dashboard
+                        </Link>
                     </div>
                 </div>
 

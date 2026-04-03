@@ -112,16 +112,11 @@ export default function Prospectie({ prospects, showArchived }) {
 
             <div className="mb-6">
                 <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <Link href="/" className="text-slate-400 hover:text-white">
-                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-                        </Link>
-                        <div>
-                            <h1 className="text-2xl font-bold text-white">Prospectie</h1>
-                            <p className="text-sm text-slate-400 mt-1">Zoek bedrijven op via de KBO en beheer prospecten</p>
-                        </div>
-                    </div>
                     <div>
+                        <h1 className="text-2xl font-bold text-white">Prospectie</h1>
+                        <p className="text-sm text-slate-400 mt-1">Zoek bedrijven op via de KBO en beheer prospecten</p>
+                    </div>
+                    <div className="flex items-center gap-3">
                         <input type="file" ref={fileInputRef} accept=".xlsx" onChange={handleImport} className="hidden" />
                         <button
                             onClick={() => fileInputRef.current?.click()}
@@ -140,6 +135,9 @@ export default function Prospectie({ prospects, showArchived }) {
                                 </>
                             )}
                         </button>
+                        <Link href="/" className="text-sm font-medium text-slate-400 hover:text-slate-300">
+                            ← Dashboard
+                        </Link>
                     </div>
                 </div>
             </div>

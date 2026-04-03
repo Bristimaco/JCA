@@ -35,20 +35,20 @@ export default function TestModeLog({ logs }) {
             <Head title="Test Mode Log" />
 
             <div className="mb-6 flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                    <Link href="/" className="text-sm text-slate-500 hover:text-slate-300">
-                        &larr; Dashboard
+                <h1 className="text-2xl font-bold text-white">Test Mode Log</h1>
+                <div className="flex items-center gap-3">
+                    {logs.data.length > 0 && (
+                        <button
+                            onClick={handleClear}
+                            className="rounded-md bg-red-600/20 px-3 py-1.5 text-xs font-medium text-red-400 ring-1 ring-red-600/30 hover:bg-red-600/30"
+                        >
+                            Log wissen
+                        </button>
+                    )}
+                    <Link href="/" className="text-sm font-medium text-slate-400 hover:text-slate-300">
+                        ← Dashboard
                     </Link>
-                    <h1 className="text-2xl font-bold text-white">Test Mode Log</h1>
                 </div>
-                {logs.data.length > 0 && (
-                    <button
-                        onClick={handleClear}
-                        className="rounded-md bg-red-600/20 px-3 py-1.5 text-xs font-medium text-red-400 ring-1 ring-red-600/30 hover:bg-red-600/30"
-                    >
-                        Log wissen
-                    </button>
-                )}
             </div>
 
             <p className="text-sm text-slate-400 mb-4">

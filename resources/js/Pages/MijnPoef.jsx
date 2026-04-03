@@ -12,12 +12,14 @@ export default function MijnPoef({ orders, total }) {
         <AppLayout>
             <Head title="Mijn Poef" />
 
-            <div className="mb-6 flex items-center gap-4">
-                <Link href="/" className="text-sm font-medium text-slate-500 hover:text-slate-300">
-                    &larr; Dashboard
+            <div className="mb-6 flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                    <h1 className="text-2xl font-bold text-white tracking-tight">Mijn Poef</h1>
+                    <span className="text-lg font-bold text-amber-400">€{Number(total).toFixed(2)}</span>
+                </div>
+                <Link href="/" className="text-sm font-medium text-slate-400 hover:text-slate-300">
+                    ← Dashboard
                 </Link>
-                <h1 className="text-2xl font-bold text-white tracking-tight">Mijn Poef</h1>
-                <span className="ml-auto text-lg font-bold text-amber-400">€{Number(total).toFixed(2)}</span>
             </div>
 
             <div className="bg-slate-900 rounded-xl shadow-sm ring-1 ring-slate-700/60 border-t-2 border-t-rose-700">

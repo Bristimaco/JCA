@@ -276,9 +276,6 @@ export default function POS({ products: initialProducts, categories, pendingOrde
             <Head title="Kassa" />
 
             <div className="shrink-0 flex items-center gap-4 mb-1">
-                <Link href="/" className="text-sm font-medium text-slate-500 hover:text-slate-300">
-                    &larr; Dashboard
-                </Link>
                 <h1 className="text-xl font-bold text-white tracking-tight">Kassa</h1>
                 <Link
                     href="/pos/bestellingen"
@@ -290,6 +287,9 @@ export default function POS({ products: initialProducts, categories, pendingOrde
                             {pendingCount}
                         </span>
                     )}
+                </Link>
+                <Link href="/" className="text-sm font-medium text-slate-400 hover:text-slate-300">
+                    ← Dashboard
                 </Link>
             </div>
 

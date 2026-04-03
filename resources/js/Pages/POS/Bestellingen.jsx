@@ -109,6 +109,9 @@ export default function Bestellingen({ orders: initialOrders }) {
                     </Link>
                     <h1 className="text-xl font-bold text-white tracking-tight">Bestellingen</h1>
                     <span className="text-sm text-slate-400">{orders.length} actief</span>
+                    <Link href="/" className="ml-auto text-sm font-medium text-slate-400 hover:text-slate-300">
+                        ← Dashboard
+                    </Link>
                 </div>
 
                 <div className="flex-1 min-h-0 overflow-y-auto space-y-2 pb-2">

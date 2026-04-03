@@ -7,13 +7,15 @@ export default function Tournaments({ tournaments, ageCategories, competitionMem
         <AppLayout>
             <Head title="Toernooien" />
 
-            <div className="mb-6 flex items-center gap-4">
-                <Link href="/" className="text-sm text-slate-500 hover:text-slate-300">
-                    &larr; Dashboard
-                </Link>
-                <h1 className="text-2xl font-bold text-white">Toernooien</h1>
-                <Link href="/archief" className="text-sm text-purple-600 hover:text-purple-800">
-                    Archief →
+            <div className="mb-6 flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                    <h1 className="text-2xl font-bold text-white">Toernooien</h1>
+                    <Link href="/archief" className="text-sm text-purple-600 hover:text-purple-800">
+                        Archief →
+                    </Link>
+                </div>
+                <Link href="/" className="text-sm font-medium text-slate-400 hover:text-slate-300">
+                    ← Dashboard
                 </Link>
             </div>
 

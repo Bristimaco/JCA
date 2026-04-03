@@ -72,6 +72,9 @@ export default function Poef({ poefUsers }) {
                     <h1 className="text-xl font-bold text-white tracking-tight">Poef</h1>
                     <span className="text-sm text-slate-400">{poefUsers.length} {poefUsers.length === 1 ? 'gebruiker' : 'gebruikers'}</span>
                     <span className="ml-auto text-lg font-bold text-amber-400">€{totalPoef.toFixed(2)}</span>
+                    <Link href="/" className="text-sm font-medium text-slate-400 hover:text-slate-300">
+                        ← Dashboard
+                    </Link>
                 </div>
 
                 <div className="flex-1 min-h-0 overflow-y-auto space-y-2 pb-2">

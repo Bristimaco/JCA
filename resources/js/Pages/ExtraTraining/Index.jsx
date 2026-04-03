@@ -74,12 +74,17 @@ export default function Index({ extraTrainings, groups, trainers, isAdmin }) {
             <div className="max-w-4xl mx-auto">
                 <div className="flex items-center justify-between mb-6">
                     <h1 className="text-2xl font-bold text-white">Extra Trainingen</h1>
-                    <Link
-                        href={`${prefix}/extra-training/create`}
-                        className="rounded-lg bg-rose-600 px-4 py-2 text-sm font-semibold text-white hover:bg-rose-700 transition-all"
-                    >
-                        + Aanmaken
-                    </Link>
+                    <div className="flex items-center gap-3">
+                        <Link
+                            href={`${prefix}/extra-training/create`}
+                            className="rounded-lg bg-rose-600 px-4 py-2 text-sm font-semibold text-white hover:bg-rose-700 transition-all"
+                        >
+                            + Aanmaken
+                        </Link>
+                        <Link href="/" className="text-sm font-medium text-slate-400 hover:text-slate-300">
+                            ← Dashboard
+                        </Link>
+                    </div>
                 </div>
 
                 {extraTrainings.length === 0 ? (

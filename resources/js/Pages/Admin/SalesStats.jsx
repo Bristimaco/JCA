@@ -1,4 +1,4 @@
-import { Head, router } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import AppLayout from '../../Layouts/AppLayout';
 
 const periods = [
@@ -20,15 +20,20 @@ export default function SalesStats({ rankings, period, totalOrders, totalRevenue
             <div className="max-w-4xl mx-auto">
                 <div className="flex items-center justify-between mb-6">
                     <h1 className="text-2xl font-bold text-white">Verkoopstatistieken</h1>
-                    <select
-                        value={period}
-                        onChange={(e) => changePeriod(e.target.value)}
-                        className="rounded-lg bg-slate-800 border border-slate-700 text-white px-3 py-2 text-sm focus:ring-2 focus:ring-rose-500 focus:border-transparent"
-                    >
-                        {periods.map((p) => (
-                            <option key={p.value} value={p.value}>{p.label}</option>
-                        ))}
-                    </select>
+                    <div className="flex items-center gap-3">
+                        <select
+                            value={period}
+                            onChange={(e) => changePeriod(e.target.value)}
+                            className="rounded-lg bg-slate-800 border border-slate-700 text-white px-3 py-2 text-sm focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                        >
+                            {periods.map((p) => (
+                                <option key={p.value} value={p.value}>{p.label}</option>
+                            ))}
+                        </select>
+                        <Link href="/" className="text-sm font-medium text-slate-400 hover:text-slate-300">
+                            ← Dashboard
+                        </Link>
+                    </div>
                 </div>
 
                 {/* Summary cards */}

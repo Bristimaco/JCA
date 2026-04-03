@@ -36,14 +36,16 @@ export default function ArchivedTournaments({ tournaments }) {
         <AppLayout>
             <Head title="Archief" />
 
-            <div className="mb-6 flex items-center gap-4">
-                <Link href="/" className="text-sm font-medium text-slate-400 hover:text-slate-400">
-                    &larr; Dashboard
+            <div className="mb-6 flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                    <h1 className="text-2xl font-bold text-stone-100 tracking-tight">Gearchiveerde Toernooien</h1>
+                    <span className="inline-flex items-center rounded-full bg-purple-900/40 px-2.5 py-0.5 text-xs font-semibold text-purple-400">
+                        {tournaments.length}
+                    </span>
+                </div>
+                <Link href="/" className="text-sm font-medium text-slate-400 hover:text-slate-300">
+                    ← Dashboard
                 </Link>
-                <h1 className="text-2xl font-bold text-stone-100 tracking-tight">Gearchiveerde Toernooien</h1>
-                <span className="inline-flex items-center rounded-full bg-purple-900/40 px-2.5 py-0.5 text-xs font-semibold text-purple-400">
-                    {tournaments.length}
-                </span>
             </div>
 
             {tournaments.length === 0 ? (

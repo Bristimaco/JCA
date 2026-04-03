@@ -28,9 +28,14 @@ export default function Index({ events }) {
     return (
         <AppLayout>
             <Head title="Evenementen" />
-            <div className="mb-6">
-                <h1 className="text-2xl font-bold text-white">Evenementen</h1>
-                <p className="text-sm text-slate-400 mt-1">Bekijk en schrijf je in voor evenementen</p>
+            <div className="mb-6 flex items-center justify-between">
+                <div>
+                    <h1 className="text-2xl font-bold text-white">Evenementen</h1>
+                    <p className="text-sm text-slate-400 mt-1">Bekijk en schrijf je in voor evenementen</p>
+                </div>
+                <Link href="/" className="text-sm font-medium text-slate-400 hover:text-slate-300">
+                    ← Dashboard
+                </Link>
             </div>
 
             <div className="flex gap-2 mb-6 flex-wrap">

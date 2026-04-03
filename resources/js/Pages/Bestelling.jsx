@@ -1,4 +1,4 @@
-import { Head, usePage, router } from '@inertiajs/react';
+import { Head, Link, usePage, router } from '@inertiajs/react';
 import { useState } from 'react';
 import AppLayout from '../Layouts/AppLayout';
 
@@ -51,6 +51,9 @@ export default function Bestelling({ products, categories }) {
             <div className="flex flex-col h-[calc(100dvh-3.5rem)] overflow-hidden p-2">
                 <div className="flex items-center justify-between mb-2">
                     <h1 className="text-lg font-bold text-white">Bestelling Plaatsen</h1>
+                    <Link href="/" className="text-sm font-medium text-slate-400 hover:text-slate-300">
+                        ← Dashboard
+                    </Link>
                 </div>
 
                 {flash?.status && (
