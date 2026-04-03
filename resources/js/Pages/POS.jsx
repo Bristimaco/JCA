@@ -10,6 +10,7 @@ export default function POS({ products: initialProducts, categories }) {
     const [saving, setSaving] = useState(false);
     const [activeCategory, setActiveCategory] = useState(null);
     const [orderSaved, setOrderSaved] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
     const gridRef = useRef(null);
 
     // Voucher state
@@ -220,6 +221,14 @@ export default function POS({ products: initialProducts, categories }) {
         return () => ro.disconnect();
     }, [calcGrid]);
 
+    useEffect(() => {
+        const mq = window.matchMedia('(max-width: 639px)');
+        setIsMobile(mq.matches);
+        const handler = (e) => setIsMobile(e.matches);
+        mq.addEventListener('change', handler);
+        return () => mq.removeEventListener('change', handler);
+    }, []);
+
     const statusColors = {
         active: 'bg-emerald-900/30 text-emerald-400 ring-emerald-700/30',
         redeemed: 'bg-slate-700/50 text-slate-400 ring-slate-600/30',
@@ -397,6 +406,63 @@ export default function POS({ products: initialProducts, categories }) {
                     {filteredProducts.length === 0 ? (
                         <div className="rounded-xl bg-slate-900 ring-1 ring-slate-800 p-12 text-center text-slate-500">
                             Geen producten beschikbaar.
+                        </div>
+                    ) : isMobile ? (
+                        /* Mobile: vertical scrollable list */
+                        <div className="flex-1 min-h-0 overflow-y-auto space-y-1.5 pb-1">
+                            {filteredProducts.map((product) => {
+                                const qty = getQty(product.id);
+                                return (
+                                    <div
+                                        key={product.id}
+                                        className={`rounded-lg ring-1 px-3 py-2.5 flex items-center gap-3 select-none transition-all ${product.needs_refill
+                                            ? 'bg-amber-900/20 ring-amber-500/60'
+                                            : qty > 0
+                                                ? 'bg-rose-900/20 ring-rose-700/40'
+                                                : 'bg-slate-900 ring-slate-800'
+                                            }`}
+                                    >
+                                        <button
+                                            onClick={() => toggleRefill(product.id)}
+                                            className={`shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs transition-all ${product.needs_refill
+                                                ? 'bg-amber-600 text-white'
+                                                : 'bg-slate-700/60 text-slate-500'
+                                                }`}
+                                        >
+                                            ⚠️
+                                        </button>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-sm font-semibold text-white truncate">{product.name}</p>
+                                            <p className="text-sm font-bold text-emerald-400">€{Number(product.price).toFixed(2)}</p>
+                                        </div>
+                                        <div className="flex items-center gap-2 shrink-0">
+                                            <button
+                                                onClick={() => decrement(product.id)}
+                                                disabled={qty <= 0}
+                                                className="w-9 h-9 rounded-md bg-slate-700 ring-1 ring-slate-600 text-white text-base font-bold flex items-center justify-center disabled:opacity-30 active:scale-95 transition-transform"
+                                            >
+                                                −
+                                            </button>
+                                            <span className="w-6 text-center text-base font-bold text-white tabular-nums">{qty}</span>
+                                            <button
+                                                onClick={() => increment(product.id)}
+                                                className="w-9 h-9 rounded-md bg-rose-600 text-white text-base font-bold flex items-center justify-center active:scale-95 transition-transform"
+                                            >
+                                                +
+                                            </button>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+
+                            {/* Voucher row */}
+                            <button
+                                onClick={openVoucherPanel}
+                                className="w-full rounded-lg ring-1 ring-purple-700/40 bg-purple-900/20 px-3 py-2.5 flex items-center gap-3 select-none hover:bg-purple-900/30 active:scale-[0.98] transition-all"
+                            >
+                                <span className="text-xl">🎟️</span>
+                                <p className="text-sm font-semibold text-white">Voucher</p>
+                            </button>
                         </div>
                     ) : (
                         <div ref={gridRef} className="flex-1 min-h-0">
