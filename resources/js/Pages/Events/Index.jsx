@@ -1,7 +1,28 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
+import { useMemo } from 'react';
 import AppLayout from '../../Layouts/AppLayout';
 
+const filterTabs = [
+    { key: '', label: 'Alle' },
+    { key: 'uitgenodigd', label: 'Uitgenodigd' },
+    { key: 'ingeschreven', label: 'Ingeschreven' },
+    { key: 'betaald', label: 'Betaald' },
+];
+
 export default function Index({ events }) {
+    const { url } = usePage();
+    const activeFilter = useMemo(() => new URL(url, window.location.origin).searchParams.get('filter') || '', [url]);
+
+    const filteredEvents = useMemo(() => {
+        if (!activeFilter) return events;
+        return events.filter((ev) => {
+            if (activeFilter === 'uitgenodigd') return !ev.my_registration && ev.status === 'published';
+            if (activeFilter === 'ingeschreven') return ev.my_registration && ev.my_registration.payment_status !== 'paid';
+            if (activeFilter === 'betaald') return ev.my_registration?.payment_status === 'paid';
+            return true;
+        });
+    }, [events, activeFilter]);
+
     const fmtDate = (d) => d ? new Date(d).toLocaleDateString('nl-BE') : '-';
 
     return (
@@ -12,13 +33,25 @@ export default function Index({ events }) {
                 <p className="text-sm text-slate-400 mt-1">Bekijk en schrijf je in voor evenementen</p>
             </div>
 
-            {events.length === 0 ? (
+            <div className="flex gap-2 mb-6 flex-wrap">
+                {filterTabs.map((tab) => (
+                    <button
+                        key={tab.key}
+                        onClick={() => router.visit(tab.key ? `/evenementen?filter=${tab.key}` : '/evenementen', { preserveState: true, preserveScroll: true })}
+                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeFilter === tab.key ? 'bg-rose-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white'}`}
+                    >
+                        {tab.label}
+                    </button>
+                ))}
+            </div>
+
+            {filteredEvents.length === 0 ? (
                 <div className="bg-slate-900 rounded-xl ring-1 ring-slate-800 px-6 py-12 text-center text-slate-500">
-                    Er zijn momenteel geen evenementen.
+                    Er zijn momenteel geen evenementen{activeFilter ? ' voor dit filter' : ''}.
                 </div>
             ) : (
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    {events.map((ev) => (
+                    {filteredEvents.map((ev) => (
                         <div key={ev.id} className="bg-slate-900 rounded-xl ring-1 ring-slate-800 overflow-hidden hover:ring-rose-500/30 transition-all">
                             {ev.has_image && (
                                 <img src={`/event-afbeelding/${ev.id}`} alt={ev.name} className="w-full h-40 object-cover" />

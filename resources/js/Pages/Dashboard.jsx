@@ -49,6 +49,15 @@ const moduleIcons = {
     'Mededelingen': (
         <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H7.5a4.5 4.5 0 110-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783.247.55.06 1.21-.463 1.511l-.657.38c-.551.318-1.26.117-1.527-.461a20.845 20.845 0 01-1.44-4.282m3.102.069a18.03 18.03 0 01-.59-4.59c0-1.586.205-3.124.59-4.59m0 9.18a23.848 23.848 0 018.835 2.535M10.34 6.66a23.847 23.847 0 008.835-2.535m0 0A23.74 23.74 0 0018.795 3m.38 1.125a23.91 23.91 0 011.014 5.395m-1.014 8.855c-.118.38-.245.754-.38 1.125m.38-1.125a23.91 23.91 0 001.014-5.395m0-3.46c.495.413.811 1.035.811 1.73 0 .695-.316 1.317-.811 1.73m0-3.46a24.347 24.347 0 010 3.46" /></svg>
     ),
+    'Uitgenodigd': (
+        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>
+    ),
+    'Ingeschreven': (
+        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15a2.25 2.25 0 011.65 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0118 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3l1.5 1.5 3-3.75" /></svg>
+    ),
+    'Betaald': (
+        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" /></svg>
+    ),
     'Evenementen': (
         <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5m-9-6h.008v.008H12v-.008zM12 15h.008v.008H12V15zm0 2.25h.008v.008H12v-.008zM9.75 15h.008v.008H9.75V15zm0 2.25h.008v.008H9.75v-.008zM7.5 15h.008v.008H7.5V15zm0 2.25h.008v.008H7.5v-.008zm6.75-4.5h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V15zm0 2.25h.008v.008h-.008v-.008zm2.25-4.5h.008v.008H16.5v-.008zm0 2.25h.008v.008H16.5V15z" /></svg>
     ),
@@ -109,6 +118,9 @@ const moduleColors = {
     'Sponsors': 'from-pink-600 to-rose-700',
     'Prospectie': 'from-teal-600 to-cyan-700',
     'Mededelingen': 'from-cyan-600 to-teal-700',
+    'Uitgenodigd': 'from-yellow-500 to-amber-600',
+    'Ingeschreven': 'from-orange-500 to-orange-700',
+    'Betaald': 'from-green-500 to-emerald-700',
     'Evenementen': 'from-orange-600 to-amber-700',
     'Evenementen Beheer': 'from-orange-700 to-red-700',
     'Activiteit': 'from-indigo-600 to-purple-700',
@@ -166,6 +178,9 @@ const moduleGroups = [
     {
         title: 'Evenementen',
         modules: [
+            { name: 'Uitgenodigd', href: '/evenementen?filter=uitgenodigd', roles: ['parent', 'member', 'admin', 'coach', 'barmedewerker'] },
+            { name: 'Ingeschreven', href: '/evenementen?filter=ingeschreven', roles: ['parent', 'member', 'admin', 'coach', 'barmedewerker'] },
+            { name: 'Betaald', href: '/evenementen?filter=betaald', roles: ['parent', 'member', 'admin', 'coach', 'barmedewerker'] },
             { name: 'Evenementen', href: '/evenementen', roles: ['parent', 'member', 'admin', 'coach', 'barmedewerker'] },
             { name: 'Evenementen Beheer', href: '/admin/evenementen', roles: ['admin'], extraModule: 'events' },
             { name: 'Mededelingen', href: '/admin/mededelingen', roles: ['admin'], extraModule: 'announcements' },
@@ -191,7 +206,7 @@ const moduleGroups = [
     },
 ];
 
-export default function Dashboard({ pendingCount, pendingUsers, adminCounters, barCounters, memberStats, myMemberCount, myPoefCount, myEventCount, archivedTournamentCount, myTournamentCount, activeTournaments, coachTournaments, coachTrainingGroups, upcomingTournaments, coachTournamentCount, recentArchived, activeTrainingSessions, extraTrainings }) {
+export default function Dashboard({ pendingCount, pendingUsers, adminCounters, barCounters, memberStats, myMemberCount, myPoefCount, myEventCount, invitedEventCount, registeredEventCount, paidEventCount, archivedTournamentCount, myTournamentCount, activeTournaments, coachTournaments, coachTrainingGroups, upcomingTournaments, coachTournamentCount, recentArchived, activeTrainingSessions, extraTrainings }) {
     const { auth } = usePage().props;
     const role = auth.user.role;
     const extraModules = auth.user.extra_modules || [];
@@ -245,6 +260,9 @@ export default function Dashboard({ pendingCount, pendingUsers, adminCounters, b
                     'Sponsors': adminCounters?.activeSponsorCount,
                     'Prospectie': adminCounters?.prospectCount,
                     'Mededelingen': adminCounters?.activeAnnouncementCount,
+                    'Uitgenodigd': invitedEventCount,
+                    'Ingeschreven': registeredEventCount,
+                    'Betaald': paidEventCount,
                     'Evenementen Beheer': adminCounters?.activeEventCount,
                     'Evenementen': myEventCount,
                     'Archief': archivedTournamentCount,

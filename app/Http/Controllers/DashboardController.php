@@ -13,6 +13,7 @@ use App\Models\BarOrder;
 use App\Models\BarProduct;
 use App\Models\BeltHistory;
 use App\Models\Event;
+use App\Models\EventRegistration;
 use App\Models\Member;
 use App\Models\MembershipInvoice;
 use App\Models\Prospect;
@@ -134,6 +135,22 @@ class DashboardController extends Controller
         $props['myEventCount'] = Event::where('status', '!=', EventStatus::Draft)
             ->where('status', '!=', EventStatus::Archived)
             ->where('event_date', '>=', now()->toDateString())
+            ->count();
+
+        $userRegisteredEventIds = EventRegistration::where('user_id', $user->id)->pluck('event_id');
+
+        $props['invitedEventCount'] = Event::where('status', EventStatus::Published)
+            ->where('event_date', '>=', now()->toDateString())
+            ->whereNotIn('id', $userRegisteredEventIds)
+            ->count();
+
+        $props['registeredEventCount'] = EventRegistration::where('user_id', $user->id)
+            ->where('payment_status', '!=', 'paid')
+            ->whereHas('event', fn ($q) => $q->where('event_date', '>=', now()->toDateString()))
+            ->count();
+
+        $props['paidEventCount'] = EventRegistration::where('user_id', $user->id)
+            ->where('payment_status', 'paid')
             ->count();
 
         $props['archivedTournamentCount'] = Tournament::where('status', TournamentStatus::Archived)->count();
