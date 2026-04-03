@@ -9,7 +9,20 @@ export default function Prospectie({ prospects, showArchived }) {
     const [lookupLoading, setLookupLoading] = useState(false);
     const [vatInput, setVatInput] = useState('');
     const [importing, setImporting] = useState(false);
+    const [search, setSearch] = useState('');
     const fileInputRef = useRef(null);
+
+    const filtered = prospects.filter((p) => {
+        if (!search) return true;
+        const q = search.toLowerCase();
+        return (
+            (p.company_name && p.company_name.toLowerCase().includes(q)) ||
+            (p.city && p.city.toLowerCase().includes(q)) ||
+            (p.email && p.email.toLowerCase().includes(q)) ||
+            (p.phone && p.phone.toLowerCase().includes(q)) ||
+            (p.vat_number && p.vat_number.toLowerCase().includes(q))
+        );
+    });
 
     const saveForm = useForm({
         vat_number: '',
@@ -242,8 +255,15 @@ export default function Prospectie({ prospects, showArchived }) {
 
             {/* Prospect List */}
             <div className="bg-slate-900 rounded-xl ring-1 ring-slate-800 overflow-hidden">
-                <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
-                    <h2 className="text-lg font-semibold text-white">Prospecten ({prospects.length})</h2>
+                <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between gap-3 flex-wrap">
+                    <h2 className="text-lg font-semibold text-white">Prospecten ({filtered.length})</h2>
+                    <input
+                        type="text"
+                        placeholder="Zoeken op naam, stad, BTW..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        className="rounded-md border border-slate-600 bg-slate-700/50 text-white text-sm py-1 px-3 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500 w-56"
+                    />
                     <div className="flex rounded-lg bg-slate-800 p-0.5 ring-1 ring-slate-700">
                         <button
                             onClick={() => router.get('/admin/prospectie', {}, { preserveState: true })}
@@ -259,9 +279,9 @@ export default function Prospectie({ prospects, showArchived }) {
                         </button>
                     </div>
                 </div>
-                {prospects.length === 0 ? (
+                {filtered.length === 0 ? (
                     <div className="px-6 py-12 text-center">
-                        <p className="text-sm text-slate-500">Nog geen prospecten opgeslagen.</p>
+                        <p className="text-sm text-slate-500">{search ? 'Geen prospecten gevonden.' : 'Nog geen prospecten opgeslagen.'}</p>
                     </div>
                 ) : (
                     <div className="overflow-x-auto">
@@ -280,7 +300,7 @@ export default function Prospectie({ prospects, showArchived }) {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-800">
-                                {prospects.map((p) => (
+                                {filtered.map((p) => (
                                     <tr key={p.id} className="hover:bg-slate-800/50 cursor-pointer" onClick={() => router.visit(`/admin/prospectie/${p.id}`)}>
                                         <td className="px-6 py-3">
                                             <div className="flex items-center gap-2">
