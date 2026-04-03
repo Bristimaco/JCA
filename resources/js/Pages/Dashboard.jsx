@@ -166,7 +166,6 @@ const moduleGroups = [
     {
         title: 'Evenementen',
         modules: [
-            { name: 'Kalender', href: '/kalender', roles: ['parent', 'member', 'admin', 'coach', 'barmedewerker'] },
             { name: 'Evenementen', href: '/evenementen', roles: ['parent', 'member', 'admin', 'coach', 'barmedewerker'] },
             { name: 'Evenementen Beheer', href: '/admin/evenementen', roles: ['admin'], extraModule: 'events' },
             { name: 'Mededelingen', href: '/admin/mededelingen', roles: ['admin'], extraModule: 'announcements' },
@@ -215,6 +214,18 @@ export default function Dashboard({ pendingCount, pendingUsers, adminCounters, b
             <div className="mb-2">
                 <h1 className="text-xl font-bold text-stone-100 tracking-tight">Dashboard</h1>
                 <p className="text-slate-400 text-xs">Welkom terug, {auth.user.name}</p>
+            </div>
+
+            <div className="mb-3">
+                <Link
+                    href="/kalender"
+                    className="inline-flex items-center gap-2 bg-slate-900 rounded-xl shadow-sm ring-1 ring-slate-800 border-t-2 border-t-rose-700/40 px-4 py-2.5 hover:shadow-md hover:ring-rose-500/40 hover:-translate-y-0.5 transition-all"
+                >
+                    <div className={`w-7 h-7 rounded-lg bg-gradient-to-br ${moduleColors['Kalender']} flex items-center justify-center text-white shadow-sm [&_svg]:w-3.5 [&_svg]:h-3.5`}>
+                        {moduleIcons['Kalender']}
+                    </div>
+                    <span className="text-sm font-semibold text-white">Kalender</span>
+                </Link>
             </div>
 
             {(() => {
