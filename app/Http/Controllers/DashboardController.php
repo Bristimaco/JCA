@@ -10,6 +10,7 @@ use App\Enums\InvoiceStatus;
 use App\Enums\TournamentStatus;
 use App\Enums\VoucherStatus;
 use App\Models\Announcement;
+use App\Models\BarOrder;
 use App\Models\BarProduct;
 use App\Models\BeltHistory;
 use App\Models\Event;
@@ -65,6 +66,14 @@ class DashboardController extends Controller
             ];
 
             $props['memberStats'] = $this->memberStats();
+        }
+
+        // Bar counters for barmedewerker + admin
+        if ($request->user()->isAdmin() || $request->user()->isBarmedewerker()) {
+            $props['barCounters'] = [
+                'pendingOrderCount' => BarOrder::pending()->count(),
+                'unpaidPoefCount' => BarOrder::unpaidPoef()->count(),
+            ];
         }
 
         // Upcoming tournaments for admin + coach tile

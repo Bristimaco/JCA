@@ -64,6 +64,15 @@ const moduleIcons = {
     'Extra Training': (
         <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4.5v15m7.5-7.5h-15" /></svg>
     ),
+    'Bestelling Plaatsen': (
+        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" /></svg>
+    ),
+    'Bestellingen': (
+        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" /></svg>
+    ),
+    'Poef': (
+        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+    ),
 };
 
 const moduleColors = {
@@ -87,6 +96,9 @@ const moduleColors = {
     'Test Log': 'from-amber-600 to-orange-700',
     'Kalender': 'from-sky-600 to-blue-700',
     'Extra Training': 'from-orange-600 to-orange-700',
+    'Bestelling Plaatsen': 'from-lime-600 to-green-700',
+    'Bestellingen': 'from-teal-600 to-emerald-700',
+    'Poef': 'from-amber-500 to-orange-600',
 };
 
 const moduleGroups = [
@@ -150,9 +162,14 @@ const moduleGroups = [
     },
 ];
 
-export default function Dashboard({ pendingCount, pendingUsers, adminCounters, memberStats, myMemberCount, myEventCount, archivedTournamentCount, myTournaments, activeTournaments, coachTournaments, coachTrainingGroups, upcomingTournaments, coachTournamentCount, recentArchived, activeTrainingSessions, extraTrainings }) {
+export default function Dashboard({ pendingCount, pendingUsers, adminCounters, barCounters, memberStats, myMemberCount, myEventCount, archivedTournamentCount, myTournaments, activeTournaments, coachTournaments, coachTrainingGroups, upcomingTournaments, coachTournamentCount, recentArchived, activeTrainingSessions, extraTrainings }) {
     const { auth } = usePage().props;
     const role = auth.user.role;
+    const [expandedGroups, setExpandedGroups] = useState({});
+
+    const toggleGroup = (title) => {
+        setExpandedGroups((prev) => ({ ...prev, [title]: !prev[title] }));
+    };
 
     return (
         <AppLayout>
@@ -164,9 +181,6 @@ export default function Dashboard({ pendingCount, pendingUsers, adminCounters, m
             </div>
 
             {(() => {
-                const pairedTitles = ['Trainingen', 'Toernooien', 'Sponsoring', 'Log'];
-                const rendered = [];
-                let i = 0;
                 const filtered = moduleGroups.map((group) => ({
                     ...group,
                     visibleModules: group.modules.filter((m) => m.roles.includes(role)),
@@ -185,40 +199,37 @@ export default function Dashboard({ pendingCount, pendingUsers, adminCounters, m
                     'Evenementen Beheer': adminCounters?.activeEventCount,
                     'Evenementen': myEventCount,
                     'Archief': archivedTournamentCount,
+                    'Bestellingen': barCounters?.pendingOrderCount,
+                    'Poef': barCounters?.unpaidPoefCount,
                 };
 
-                while (i < filtered.length) {
-                    const g = filtered[i];
-                    const next = filtered[i + 1];
-                    if (pairedTitles.includes(g.title) && next && pairedTitles.includes(next.title)) {
-                        rendered.push(
-                            <div key={g.title + '+' + next.title} className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 mb-2">
-                                {[g, next].map((pg) => (
-                                    <div key={pg.title} className="col-span-2 sm:col-span-3 grid grid-cols-2 sm:grid-cols-3 gap-2">
-                                        <h2 className="col-span-2 sm:col-span-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">{pg.title}</h2>
-                                        {pg.visibleModules.map((m) => (
-                                            <ModuleTile key={m.name} m={m} moduleColors={moduleColors} moduleIcons={moduleIcons} counts={counts} />
-                                        ))}
-                                    </div>
-                                ))}
-                            </div>
-                        );
-                        i += 2;
-                    } else {
-                        rendered.push(
-                            <div key={g.title} className="mb-2">
-                                <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">{g.title}</h2>
-                                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
-                                    {g.visibleModules.map((m) => (
-                                        <ModuleTile key={m.name} m={m} moduleColors={moduleColors} moduleIcons={moduleIcons} counts={counts} />
-                                    ))}
+                return (
+                    <div className="space-y-1">
+                        {filtered.map((g) => {
+                            const isOpen = expandedGroups[g.title] || false;
+                            return (
+                                <div key={g.title}>
+                                    <button
+                                        onClick={() => toggleGroup(g.title)}
+                                        className="w-full flex items-center gap-1.5 py-1.5 text-left"
+                                    >
+                                        <svg className={`w-3 h-3 text-slate-500 transition-transform ${isOpen ? 'rotate-90' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                                        </svg>
+                                        <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{g.title}</h2>
+                                    </button>
+                                    {isOpen && (
+                                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 pb-1">
+                                            {g.visibleModules.map((m) => (
+                                                <ModuleTile key={m.name} m={m} moduleColors={moduleColors} moduleIcons={moduleIcons} counts={counts} />
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
-                            </div>
-                        );
-                        i += 1;
-                    }
-                }
-                return rendered;
+                            );
+                        })}
+                    </div>
+                );
             })()}
 
             {activeTournaments && activeTournaments.length > 0 && (
