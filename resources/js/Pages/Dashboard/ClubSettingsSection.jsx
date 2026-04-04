@@ -1,6 +1,70 @@
 import { useForm } from '@inertiajs/react';
 import { useState } from 'react';
 
+function DimensionConfig({ index, form }) {
+    const key = `dimension_${index}`;
+    const dimension = form.data[key] || { name: '', values: [] };
+    const [newValue, setNewValue] = useState('');
+
+    const update = (field, val) => {
+        form.setData(key, { ...dimension, [field]: val });
+    };
+
+    const addValue = () => {
+        const trimmed = newValue.trim();
+        if (!trimmed || dimension.values.includes(trimmed)) return;
+        update('values', [...dimension.values, trimmed]);
+        setNewValue('');
+    };
+
+    const removeValue = (val) => {
+        update('values', dimension.values.filter(v => v !== val));
+    };
+
+    return (
+        <div className="rounded-lg bg-slate-800/30 ring-1 ring-slate-700/40 p-4">
+            <label className="block text-xs font-medium text-slate-400 mb-1">Dimensie {index} — Naam</label>
+            <input
+                type="text"
+                value={dimension.name}
+                onChange={(e) => update('name', e.target.value)}
+                placeholder={`Bijv. Kostenplaats, Categorie...`}
+                className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-rose-500 focus:ring-rose-500 text-sm"
+            />
+            {form.errors[`${key}.name`] && <p className="text-sm text-red-400 mt-1">{form.errors[`${key}.name`]}</p>}
+
+            {dimension.name && (
+                <div className="mt-3">
+                    <label className="block text-xs font-medium text-slate-400 mb-1">Waardes</label>
+                    <div className="flex flex-wrap gap-1.5 mb-2">
+                        {dimension.values.map((val) => (
+                            <span key={val} className="inline-flex items-center gap-1 rounded-md bg-slate-700 px-2 py-1 text-xs text-slate-200 ring-1 ring-slate-600">
+                                {val}
+                                <button type="button" onClick={() => removeValue(val)} className="text-slate-400 hover:text-red-400">&times;</button>
+                            </span>
+                        ))}
+                        {dimension.values.length === 0 && <span className="text-xs text-slate-500">Nog geen waardes</span>}
+                    </div>
+                    <div className="flex gap-2">
+                        <input
+                            type="text"
+                            value={newValue}
+                            onChange={(e) => setNewValue(e.target.value)}
+                            onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addValue(); } }}
+                            placeholder="Nieuwe waarde..."
+                            className="flex-1 rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-rose-500 focus:ring-rose-500 text-sm"
+                        />
+                        <button type="button" onClick={addValue}
+                            className="rounded-md bg-slate-700 px-3 py-1.5 text-sm font-medium text-slate-200 hover:bg-slate-600 ring-1 ring-slate-600">
+                            +
+                        </button>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}
+
 export default function ClubSettingsSection({ clubSettings }) {
     const form = useForm({
         name: clubSettings.name || '',
@@ -17,6 +81,9 @@ export default function ClubSettingsSection({ clubSettings }) {
         slide_duration_announcements: clubSettings.slide_duration_announcements ?? 15,
         mollie_expiry_days: clubSettings.mollie_expiry_days ?? 14,
         test_mode: clubSettings.test_mode ?? false,
+        dimension_1: clubSettings.dimension_1 || { name: '', values: [] },
+        dimension_2: clubSettings.dimension_2 || { name: '', values: [] },
+        dimension_3: clubSettings.dimension_3 || { name: '', values: [] },
         logo: null,
     });
 
@@ -216,6 +283,16 @@ export default function ClubSettingsSection({ clubSettings }) {
                 />
                 <p className="text-xs text-slate-500 mt-1">Aantal dagen waarna een Mollie betaallink automatisch vervalt</p>
                 {form.errors.mollie_expiry_days && <p className="text-sm text-red-400 mt-1">{form.errors.mollie_expiry_days}</p>}
+            </div>
+
+            <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Analytische Dimensies</label>
+                <p className="text-xs text-slate-500 mb-3">Definieer tot 3 dimensies om bankverrichtingen te categoriseren (bijv. Kostenplaats, Project, Afdeling)</p>
+                <div className="space-y-3">
+                    <DimensionConfig index={1} form={form} />
+                    <DimensionConfig index={2} form={form} />
+                    <DimensionConfig index={3} form={form} />
+                </div>
             </div>
 
             <div className={`rounded-lg p-4 ring-1 ${form.data.test_mode ? 'bg-amber-900/20 ring-amber-600/40' : 'bg-slate-800/30 ring-slate-700/40'}`}>

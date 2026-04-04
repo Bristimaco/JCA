@@ -318,6 +318,7 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::post('/bankbewegingen/{bankTransaction}/bijlage', [BankTransactionController::class, 'uploadDocument'])->name('admin.bank-transactions.document.upload');
         Route::get('/bankbewegingen/{bankTransaction}/bijlage', [BankTransactionController::class, 'showDocument'])->name('admin.bank-transactions.document.show');
         Route::delete('/bankbewegingen/{bankTransaction}/bijlage', [BankTransactionController::class, 'deleteDocument'])->name('admin.bank-transactions.document.delete');
+        Route::patch('/bankbewegingen/{bankTransaction}/dimensies', [BankTransactionController::class, 'updateDimensions'])->name('admin.bank-transactions.dimensions.update');
     });
 
     // Admin routes — Members module (admin OR extra_module:members)

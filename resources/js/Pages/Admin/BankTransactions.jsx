@@ -219,13 +219,18 @@ function AttachmentModal({ transaction, onClose }) {
     );
 }
 
-export default function BankTransactions({ transactions, accounts, filters }) {
+export default function BankTransactions({ transactions, accounts, filters, dimensions }) {
     const { flash } = usePage().props;
     const [search, setSearch] = useState(filters.search || '');
     const [account, setAccount] = useState(filters.account || '');
     const [from, setFrom] = useState(filters.from || '');
     const [to, setTo] = useState(filters.to || '');
+    const [dim1, setDim1] = useState(filters.dimension_1 || '');
+    const [dim2, setDim2] = useState(filters.dimension_2 || '');
+    const [dim3, setDim3] = useState(filters.dimension_3 || '');
     const [attachmentTransaction, setAttachmentTransaction] = useState(null);
+
+    const activeDimensions = dimensions.filter(d => d !== null);
 
     const importForm = useForm({ file: null });
 
@@ -235,6 +240,9 @@ export default function BankTransactions({ transactions, accounts, filters }) {
             ...(account && { account }),
             ...(from && { from }),
             ...(to && { to }),
+            ...(dim1 && { dimension_1: dim1 }),
+            ...(dim2 && { dimension_2: dim2 }),
+            ...(dim3 && { dimension_3: dim3 }),
         }, { preserveState: true, preserveScroll: true });
     };
 
@@ -243,7 +251,19 @@ export default function BankTransactions({ transactions, accounts, filters }) {
         setAccount('');
         setFrom('');
         setTo('');
+        setDim1('');
+        setDim2('');
+        setDim3('');
         router.get('/admin/bankbewegingen', {}, { preserveState: true });
+    };
+
+    const handleDimensionChange = (transactionId, field, value) => {
+        router.patch(`/admin/bankbewegingen/${transactionId}/dimensies`, {
+            dimension_1_value: transactions.find(t => t.id === transactionId)?.dimension_1_value || null,
+            dimension_2_value: transactions.find(t => t.id === transactionId)?.dimension_2_value || null,
+            dimension_3_value: transactions.find(t => t.id === transactionId)?.dimension_3_value || null,
+            [field]: value || null,
+        }, { preserveScroll: true, preserveState: true });
     };
 
     const handleImport = (e) => {
@@ -267,7 +287,7 @@ export default function BankTransactions({ transactions, accounts, filters }) {
         return `${d}/${m}/${y}`;
     };
 
-    const hasActiveFilters = search || account || from || to;
+    const hasActiveFilters = search || account || from || to || dim1 || dim2 || dim3;
 
     return (
         <AppLayout>
@@ -363,6 +383,40 @@ export default function BankTransactions({ transactions, accounts, filters }) {
                         />
                     </div>
                 </div>
+                {activeDimensions.length > 0 && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+                        {dimensions[0] && (
+                            <div>
+                                <label className="block text-xs font-medium text-slate-400 mb-1">{dimensions[0].name}</label>
+                                <select value={dim1} onChange={(e) => setDim1(e.target.value)}
+                                    className="w-full rounded-lg bg-slate-800 border border-slate-700 text-white px-3 py-2 text-sm focus:ring-2 focus:ring-rose-500 focus:border-transparent">
+                                    <option value="">Alle</option>
+                                    {dimensions[0].values.map(v => <option key={v} value={v}>{v}</option>)}
+                                </select>
+                            </div>
+                        )}
+                        {dimensions[1] && (
+                            <div>
+                                <label className="block text-xs font-medium text-slate-400 mb-1">{dimensions[1].name}</label>
+                                <select value={dim2} onChange={(e) => setDim2(e.target.value)}
+                                    className="w-full rounded-lg bg-slate-800 border border-slate-700 text-white px-3 py-2 text-sm focus:ring-2 focus:ring-rose-500 focus:border-transparent">
+                                    <option value="">Alle</option>
+                                    {dimensions[1].values.map(v => <option key={v} value={v}>{v}</option>)}
+                                </select>
+                            </div>
+                        )}
+                        {dimensions[2] && (
+                            <div>
+                                <label className="block text-xs font-medium text-slate-400 mb-1">{dimensions[2].name}</label>
+                                <select value={dim3} onChange={(e) => setDim3(e.target.value)}
+                                    className="w-full rounded-lg bg-slate-800 border border-slate-700 text-white px-3 py-2 text-sm focus:ring-2 focus:ring-rose-500 focus:border-transparent">
+                                    <option value="">Alle</option>
+                                    {dimensions[2].values.map(v => <option key={v} value={v}>{v}</option>)}
+                                </select>
+                            </div>
+                        )}
+                    </div>
+                )}
                 <div className="flex gap-2 mt-4">
                     <button
                         onClick={applyFilters}
@@ -404,6 +458,9 @@ export default function BankTransactions({ transactions, accounts, filters }) {
                                         <th className="px-6 py-3">Rekening</th>
                                         <th className="px-6 py-3 text-right">Bedrag</th>
                                         <th className="px-6 py-3">Mededeling</th>
+                                        {dimensions[0] && <th className="px-4 py-3">{dimensions[0].name}</th>}
+                                        {dimensions[1] && <th className="px-4 py-3">{dimensions[1].name}</th>}
+                                        {dimensions[2] && <th className="px-4 py-3">{dimensions[2].name}</th>}
                                         <th className="px-6 py-3 text-center">Bijlage</th>
                                     </tr>
                                 </thead>
@@ -419,6 +476,33 @@ export default function BankTransactions({ transactions, accounts, filters }) {
                                             <td className="px-6 py-3 text-slate-400 max-w-xs truncate">
                                                 {t.structured_message || t.message || '-'}
                                             </td>
+                                            {dimensions[0] && (
+                                                <td className="px-4 py-3">
+                                                    <select value={t.dimension_1_value || ''} onChange={(e) => handleDimensionChange(t.id, 'dimension_1_value', e.target.value)}
+                                                        className="w-full rounded bg-slate-800 border border-slate-700 text-xs text-white px-2 py-1 focus:ring-1 focus:ring-rose-500 focus:border-transparent">
+                                                        <option value="">—</option>
+                                                        {dimensions[0].values.map(v => <option key={v} value={v}>{v}</option>)}
+                                                    </select>
+                                                </td>
+                                            )}
+                                            {dimensions[1] && (
+                                                <td className="px-4 py-3">
+                                                    <select value={t.dimension_2_value || ''} onChange={(e) => handleDimensionChange(t.id, 'dimension_2_value', e.target.value)}
+                                                        className="w-full rounded bg-slate-800 border border-slate-700 text-xs text-white px-2 py-1 focus:ring-1 focus:ring-rose-500 focus:border-transparent">
+                                                        <option value="">—</option>
+                                                        {dimensions[1].values.map(v => <option key={v} value={v}>{v}</option>)}
+                                                    </select>
+                                                </td>
+                                            )}
+                                            {dimensions[2] && (
+                                                <td className="px-4 py-3">
+                                                    <select value={t.dimension_3_value || ''} onChange={(e) => handleDimensionChange(t.id, 'dimension_3_value', e.target.value)}
+                                                        className="w-full rounded bg-slate-800 border border-slate-700 text-xs text-white px-2 py-1 focus:ring-1 focus:ring-rose-500 focus:border-transparent">
+                                                        <option value="">—</option>
+                                                        {dimensions[2].values.map(v => <option key={v} value={v}>{v}</option>)}
+                                                    </select>
+                                                </td>
+                                            )}
                                             <td className="px-6 py-3 text-center">
                                                 <button onClick={() => setAttachmentTransaction(t)} className={`inline-flex items-center justify-center w-7 h-7 rounded-md hover:bg-slate-700 ${t.has_document ? 'text-emerald-400' : 'text-slate-500'}`} title={t.has_document ? t.document_name : 'Bijlage toevoegen'}>
                                                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
@@ -440,6 +524,31 @@ export default function BankTransactions({ transactions, accounts, filters }) {
                                             <p className="text-xs text-slate-500 mt-0.5">{formatDate(t.transaction_date)}</p>
                                             {(t.structured_message || t.message) && (
                                                 <p className="text-xs text-slate-400 mt-1 truncate">{t.structured_message || t.message}</p>
+                                            )}
+                                            {activeDimensions.length > 0 && (
+                                                <div className="flex flex-wrap gap-1 mt-1.5">
+                                                    {dimensions[0] && (
+                                                        <select value={t.dimension_1_value || ''} onChange={(e) => handleDimensionChange(t.id, 'dimension_1_value', e.target.value)}
+                                                            className="rounded bg-slate-800 border border-slate-700 text-[10px] text-slate-300 px-1.5 py-0.5 focus:ring-1 focus:ring-rose-500">
+                                                            <option value="">{dimensions[0].name}</option>
+                                                            {dimensions[0].values.map(v => <option key={v} value={v}>{v}</option>)}
+                                                        </select>
+                                                    )}
+                                                    {dimensions[1] && (
+                                                        <select value={t.dimension_2_value || ''} onChange={(e) => handleDimensionChange(t.id, 'dimension_2_value', e.target.value)}
+                                                            className="rounded bg-slate-800 border border-slate-700 text-[10px] text-slate-300 px-1.5 py-0.5 focus:ring-1 focus:ring-rose-500">
+                                                            <option value="">{dimensions[1].name}</option>
+                                                            {dimensions[1].values.map(v => <option key={v} value={v}>{v}</option>)}
+                                                        </select>
+                                                    )}
+                                                    {dimensions[2] && (
+                                                        <select value={t.dimension_3_value || ''} onChange={(e) => handleDimensionChange(t.id, 'dimension_3_value', e.target.value)}
+                                                            className="rounded bg-slate-800 border border-slate-700 text-[10px] text-slate-300 px-1.5 py-0.5 focus:ring-1 focus:ring-rose-500">
+                                                            <option value="">{dimensions[2].name}</option>
+                                                            {dimensions[2].values.map(v => <option key={v} value={v}>{v}</option>)}
+                                                        </select>
+                                                    )}
+                                                </div>
                                             )}
                                         </div>
                                         <div className="flex items-center gap-2">

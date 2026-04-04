@@ -28,6 +28,18 @@ class ClubSettingsController extends Controller
             'slide_duration_announcements' => ['nullable', 'integer', 'min:5'],
             'mollie_expiry_days' => ['nullable', 'integer', 'min:1', 'max:365'],
             'test_mode' => ['boolean'],
+            'dimension_1' => ['nullable', 'array'],
+            'dimension_1.name' => ['required_with:dimension_1', 'nullable', 'string', 'max:255'],
+            'dimension_1.values' => ['nullable', 'array'],
+            'dimension_1.values.*' => ['string', 'max:255'],
+            'dimension_2' => ['nullable', 'array'],
+            'dimension_2.name' => ['required_with:dimension_2', 'nullable', 'string', 'max:255'],
+            'dimension_2.values' => ['nullable', 'array'],
+            'dimension_2.values.*' => ['string', 'max:255'],
+            'dimension_3' => ['nullable', 'array'],
+            'dimension_3.name' => ['required_with:dimension_3', 'nullable', 'string', 'max:255'],
+            'dimension_3.values' => ['nullable', 'array'],
+            'dimension_3.values.*' => ['string', 'max:255'],
         ]);
 
         $settings = ClubSettings::first();
@@ -47,6 +59,9 @@ class ClubSettingsController extends Controller
             'slide_duration_announcements' => $validated['slide_duration_announcements'] ?? 15,
             'mollie_expiry_days' => $validated['mollie_expiry_days'] ?? 14,
             'test_mode' => $validated['test_mode'] ?? false,
+            'dimension_1' => $this->parseDimension($validated['dimension_1'] ?? null),
+            'dimension_2' => $this->parseDimension($validated['dimension_2'] ?? null),
+            'dimension_3' => $this->parseDimension($validated['dimension_3'] ?? null),
         ];
 
         if ($request->hasFile('logo')) {
@@ -61,5 +76,17 @@ class ClubSettingsController extends Controller
         $settings->update($data);
 
         return back()->with('status', 'Clubinstellingen bijgewerkt.');
+    }
+
+    private function parseDimension(?array $dimension): ?array
+    {
+        if (! $dimension || empty($dimension['name'])) {
+            return null;
+        }
+
+        return [
+            'name' => $dimension['name'],
+            'values' => array_values(array_filter($dimension['values'] ?? [])),
+        ];
     }
 }

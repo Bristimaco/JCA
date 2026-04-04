@@ -34,6 +34,9 @@ class ClubSettings extends Model
         'slide_duration_announcements' => 'integer',
         'mollie_expiry_days' => 'integer',
         'test_mode' => 'boolean',
+        'dimension_1' => 'array',
+        'dimension_2' => 'array',
+        'dimension_3' => 'array',
     ];
 
     public static function current(): self

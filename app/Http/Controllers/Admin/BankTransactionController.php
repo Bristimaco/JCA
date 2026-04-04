@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\BankTransaction;
+use App\Models\ClubSettings;
 use App\Services\CodaImportService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -39,6 +40,12 @@ class BankTransactionController extends Controller
             });
         }
 
+        foreach ([1, 2, 3] as $i) {
+            if ($request->filled("dimension_{$i}")) {
+                $query->where("dimension_{$i}_value", $request->input("dimension_{$i}"));
+            }
+        }
+
         $transactions = $query->get()->map(fn (BankTransaction $t) => [
             'id' => $t->id,
             'account_number' => $t->account_number,
@@ -53,6 +60,9 @@ class BankTransactionController extends Controller
             'has_document' => $t->document_data !== null,
             'document_name' => $t->document_name,
             'document_url' => $t->document_data ? route('admin.bank-transactions.document.show', $t) : null,
+            'dimension_1_value' => $t->dimension_1_value,
+            'dimension_2_value' => $t->dimension_2_value,
+            'dimension_3_value' => $t->dimension_3_value,
         ]);
 
         $accounts = BankTransaction::select('account_number', 'account_name')
@@ -64,14 +74,25 @@ class BankTransactionController extends Controller
                 'name' => $a->account_name,
             ]);
 
+        $settings = ClubSettings::first();
+        $dimensions = [];
+        foreach ([1, 2, 3] as $i) {
+            $dim = $settings?->{"dimension_{$i}"};
+            $dimensions[] = $dim && ! empty($dim['name']) ? $dim : null;
+        }
+
         return Inertia::render('Admin/BankTransactions', [
             'transactions' => $transactions,
             'accounts' => $accounts,
+            'dimensions' => $dimensions,
             'filters' => [
                 'account' => $request->input('account', ''),
                 'from' => $request->input('from', ''),
                 'to' => $request->input('to', ''),
                 'search' => $request->input('search', ''),
+                'dimension_1' => $request->input('dimension_1', ''),
+                'dimension_2' => $request->input('dimension_2', ''),
+                'dimension_3' => $request->input('dimension_3', ''),
             ],
         ]);
     }
@@ -159,5 +180,22 @@ class BankTransactionController extends Controller
         ]);
 
         return back()->with('status', 'Bijlage verwijderd.');
+    }
+
+    public function updateDimensions(Request $request, BankTransaction $bankTransaction): RedirectResponse
+    {
+        $validated = $request->validate([
+            'dimension_1_value' => ['nullable', 'string', 'max:255'],
+            'dimension_2_value' => ['nullable', 'string', 'max:255'],
+            'dimension_3_value' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $bankTransaction->update([
+            'dimension_1_value' => $validated['dimension_1_value'] ?? null,
+            'dimension_2_value' => $validated['dimension_2_value'] ?? null,
+            'dimension_3_value' => $validated['dimension_3_value'] ?? null,
+        ]);
+
+        return back();
     }
 }
