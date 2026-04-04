@@ -7,6 +7,7 @@ use App\Models\BankTransaction;
 use App\Services\CodaImportService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response as HttpResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -49,6 +50,9 @@ class BankTransactionController extends Controller
             'counterparty_account' => $t->counterparty_account,
             'message' => $t->message,
             'structured_message' => $t->structured_message,
+            'has_document' => $t->document_data !== null,
+            'document_name' => $t->document_name,
+            'document_url' => $t->document_data ? route('admin.bank-transactions.document.show', $t) : null,
         ]);
 
         $accounts = BankTransaction::select('account_number', 'account_name')
@@ -106,5 +110,54 @@ class BankTransactionController extends Controller
         $count = count($transactions);
 
         return back()->with('status', "{$count} transactie(s) geïmporteerd uit '{$filename}'.");
+    }
+
+    public function uploadDocument(Request $request, BankTransaction $bankTransaction): RedirectResponse
+    {
+        $request->validate([
+            'document' => ['required', 'string'],
+            'document_name' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $dataUrl = $request->input('document');
+
+        if (! str_contains($dataUrl, ',')) {
+            return back()->with('error', 'Ongeldig bestandsformaat.');
+        }
+
+        [$meta, $base64] = explode(',', $dataUrl, 2);
+
+        $mime = 'application/octet-stream';
+        if (preg_match('/data:([^;]+);/', $meta, $m)) {
+            $mime = $m[1];
+        }
+
+        $bankTransaction->update([
+            'document_data' => $base64,
+            'document_mime' => $mime,
+            'document_name' => $request->input('document_name', 'bijlage'),
+        ]);
+
+        return back()->with('status', 'Bijlage opgeslagen.');
+    }
+
+    public function showDocument(BankTransaction $bankTransaction): HttpResponse
+    {
+        abort_unless($bankTransaction->document_data, 404);
+
+        return response(base64_decode($bankTransaction->document_data, true) ?: '')
+            ->header('Content-Type', $bankTransaction->document_mime ?? 'application/octet-stream')
+            ->header('Content-Disposition', 'inline; filename="'.$bankTransaction->document_name.'"');
+    }
+
+    public function deleteDocument(BankTransaction $bankTransaction): RedirectResponse
+    {
+        $bankTransaction->update([
+            'document_data' => null,
+            'document_mime' => null,
+            'document_name' => null,
+        ]);
+
+        return back()->with('status', 'Bijlage verwijderd.');
     }
 }

@@ -1,6 +1,223 @@
 import { Head, Link, useForm, router, usePage } from '@inertiajs/react';
-import { useState } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import AppLayout from '../../Layouts/AppLayout';
+
+function hasCameraApi() {
+    return typeof navigator !== 'undefined'
+        && !!navigator.mediaDevices
+        && typeof navigator.mediaDevices.getUserMedia === 'function';
+}
+
+function fileToBase64DataUrl(file) {
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => resolve(null);
+        reader.readAsDataURL(file);
+    });
+}
+
+function imageFileToBase64DataUrl(file, maxSize = 1200) {
+    return new Promise((resolve) => {
+        const img = new Image();
+        const url = URL.createObjectURL(file);
+        img.onload = () => {
+            URL.revokeObjectURL(url);
+            let { width, height } = img;
+            if (width > maxSize || height > maxSize) {
+                if (width > height) { height = Math.round(height * maxSize / width); width = maxSize; }
+                else { width = Math.round(width * maxSize / height); height = maxSize; }
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = width; canvas.height = height;
+            canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+            resolve(canvas.toDataURL('image/jpeg', 0.85));
+        };
+        img.onerror = () => { URL.revokeObjectURL(url); resolve(null); };
+        img.src = url;
+    });
+}
+
+function AttachmentModal({ transaction, onClose }) {
+    const [documentData, setDocumentData] = useState(null);
+    const [documentName, setDocumentName] = useState('');
+    const [uploading, setUploading] = useState(false);
+    const [deleting, setDeleting] = useState(false);
+    const [cameraActive, setCameraActive] = useState(false);
+    const [stream, setStream] = useState(null);
+    const [cameraError, setCameraError] = useState(null);
+    const videoRef = useRef(null);
+    const canvasRef = useRef(null);
+
+    const startCamera = useCallback(async () => {
+        setCameraError(null);
+        if (!hasCameraApi()) { setCameraError('Camera niet beschikbaar.'); return; }
+        try {
+            const mediaStream = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 960 } },
+            });
+            setStream(mediaStream);
+            setCameraActive(true);
+            setTimeout(() => { if (videoRef.current) videoRef.current.srcObject = mediaStream; }, 50);
+        } catch { setCameraError('Camera kon niet worden geopend.'); }
+    }, []);
+
+    const stopCamera = useCallback(() => {
+        if (stream) { stream.getTracks().forEach(t => t.stop()); setStream(null); }
+        setCameraActive(false);
+    }, [stream]);
+
+    const takePhoto = useCallback(() => {
+        const video = videoRef.current; const canvas = canvasRef.current;
+        if (!video || !canvas) return;
+        canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+        canvas.getContext('2d').drawImage(video, 0, 0);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+        setDocumentData(dataUrl);
+        setDocumentName('foto.jpg');
+        stopCamera();
+    }, [stopCamera]);
+
+    const handleFileChange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        let dataUrl;
+        if (file.type.startsWith('image/')) {
+            dataUrl = await imageFileToBase64DataUrl(file);
+        } else {
+            dataUrl = await fileToBase64DataUrl(file);
+        }
+        if (dataUrl) {
+            setDocumentData(dataUrl);
+            setDocumentName(file.name);
+        }
+    };
+
+    const handleUpload = () => {
+        if (!documentData) return;
+        setUploading(true);
+        router.post(`/admin/bankbewegingen/${transaction.id}/bijlage`, {
+            document: documentData,
+            document_name: documentName,
+        }, {
+            preserveScroll: true,
+            onSuccess: () => { setUploading(false); onClose(); },
+            onError: () => setUploading(false),
+        });
+    };
+
+    const handleDelete = () => {
+        setDeleting(true);
+        router.delete(`/admin/bankbewegingen/${transaction.id}/bijlage`, {
+            preserveScroll: true,
+            onSuccess: () => { setDeleting(false); onClose(); },
+            onError: () => setDeleting(false),
+        });
+    };
+
+    const isImage = transaction.document_url && transaction.document_name?.match(/\.(jpg|jpeg|png|gif|webp)$/i);
+
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60" onClick={onClose}>
+            <div className="bg-slate-900 rounded-xl ring-1 ring-slate-700 w-full max-w-lg max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+                <div className="flex items-center justify-between px-5 py-4 border-b border-slate-800">
+                    <h3 className="text-lg font-semibold text-white">Bijlage</h3>
+                    <button onClick={() => { stopCamera(); onClose(); }} className="text-slate-400 hover:text-white">
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
+                </div>
+
+                <div className="p-5 space-y-4">
+                    <div className="text-sm text-slate-400">
+                        <span className="text-white font-medium">{transaction.counterparty_name || 'Onbekend'}</span>
+                        {' — '}
+                        <span className={transaction.amount >= 0 ? 'text-emerald-400' : 'text-red-400'}>
+                            {transaction.amount >= 0 ? '+' : '-'}€{Math.abs(transaction.amount).toLocaleString('nl-BE', { minimumFractionDigits: 2 })}
+                        </span>
+                    </div>
+
+                    {/* Existing attachment */}
+                    {transaction.has_document && (
+                        <div className="rounded-lg bg-slate-800 p-4 ring-1 ring-slate-700">
+                            <div className="flex items-center justify-between mb-3">
+                                <p className="text-sm text-slate-300 font-medium">{transaction.document_name}</p>
+                                <div className="flex gap-2">
+                                    <a href={transaction.document_url} target="_blank" rel="noopener noreferrer"
+                                        className="text-xs text-sky-400 hover:text-sky-300">Openen</a>
+                                    <button onClick={handleDelete} disabled={deleting}
+                                        className="text-xs text-red-400 hover:text-red-300 disabled:opacity-50">
+                                        {deleting ? 'Bezig...' : 'Verwijderen'}
+                                    </button>
+                                </div>
+                            </div>
+                            {isImage && (
+                                <img src={transaction.document_url} alt="Bijlage" className="w-full rounded-md border border-slate-700" />
+                            )}
+                        </div>
+                    )}
+
+                    {/* Upload new */}
+                    <div>
+                        <p className="text-xs font-medium text-slate-400 mb-2">
+                            {transaction.has_document ? 'Vervang bijlage' : 'Bijlage toevoegen'}
+                        </p>
+
+                        {cameraActive ? (
+                            <div className="space-y-2">
+                                <video ref={videoRef} autoPlay playsInline muted className="w-full rounded-lg border border-slate-700" />
+                                <div className="flex gap-2">
+                                    <button onClick={takePhoto} className="rounded-md bg-rose-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-rose-700">Foto nemen</button>
+                                    <button onClick={stopCamera} className="rounded-md bg-slate-800 border border-slate-700 px-3 py-1.5 text-sm font-medium text-slate-200 hover:bg-slate-700">Annuleren</button>
+                                </div>
+                                <canvas ref={canvasRef} className="hidden" />
+                            </div>
+                        ) : (
+                            <>
+                                {documentData && (
+                                    <div className="mb-3 relative inline-block">
+                                        {documentData.startsWith('data:image/') ? (
+                                            <img src={documentData} alt="Preview" className="w-32 h-32 object-cover rounded-lg border border-slate-700" />
+                                        ) : (
+                                            <div className="flex items-center gap-2 rounded-lg bg-slate-800 px-3 py-2 ring-1 ring-slate-700">
+                                                <svg className="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>
+                                                <span className="text-sm text-slate-300">{documentName}</span>
+                                            </div>
+                                        )}
+                                        <button onClick={() => { setDocumentData(null); setDocumentName(''); }}
+                                            className="absolute -top-1.5 -right-1.5 bg-red-900/80 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs leading-none hover:bg-red-600">&times;</button>
+                                    </div>
+                                )}
+
+                                <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                                    <input type="file" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx" onChange={handleFileChange}
+                                        className="w-full text-sm text-slate-500 file:mr-2 file:rounded-md file:border-0 file:bg-slate-800 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-slate-200 hover:file:bg-slate-700" />
+                                    {hasCameraApi() && (
+                                        <button onClick={startCamera}
+                                            className="inline-flex items-center gap-1.5 rounded-md bg-slate-800 px-3 py-1.5 text-sm font-medium text-slate-200 hover:bg-slate-700 whitespace-nowrap ring-1 ring-slate-700">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+                                                <path d="M1 8a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 018.07 3h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0016.07 6H17a2 2 0 012 2v7a2 2 0 01-2 2H3a2 2 0 01-2-2V8z" />
+                                                <path d="M10 13a3 3 0 100-6 3 3 0 000 6z" />
+                                            </svg>
+                                            Camera
+                                        </button>
+                                    )}
+                                </div>
+                            </>
+                        )}
+                        {cameraError && <p className="text-xs text-rose-400 mt-1">{cameraError}</p>}
+                    </div>
+
+                    {documentData && (
+                        <button onClick={handleUpload} disabled={uploading}
+                            className="w-full rounded-lg bg-rose-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-rose-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                            {uploading ? 'Bezig met uploaden...' : 'Bijlage opslaan'}
+                        </button>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+}
 
 export default function BankTransactions({ transactions, accounts, filters }) {
     const { flash } = usePage().props;
@@ -8,6 +225,7 @@ export default function BankTransactions({ transactions, accounts, filters }) {
     const [account, setAccount] = useState(filters.account || '');
     const [from, setFrom] = useState(filters.from || '');
     const [to, setTo] = useState(filters.to || '');
+    const [attachmentTransaction, setAttachmentTransaction] = useState(null);
 
     const importForm = useForm({ file: null });
 
@@ -186,6 +404,7 @@ export default function BankTransactions({ transactions, accounts, filters }) {
                                         <th className="px-6 py-3">Rekening</th>
                                         <th className="px-6 py-3 text-right">Bedrag</th>
                                         <th className="px-6 py-3">Mededeling</th>
+                                        <th className="px-6 py-3 text-center">Bijlage</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-800">
@@ -199,6 +418,11 @@ export default function BankTransactions({ transactions, accounts, filters }) {
                                             </td>
                                             <td className="px-6 py-3 text-slate-400 max-w-xs truncate">
                                                 {t.structured_message || t.message || '-'}
+                                            </td>
+                                            <td className="px-6 py-3 text-center">
+                                                <button onClick={() => setAttachmentTransaction(t)} className={`inline-flex items-center justify-center w-7 h-7 rounded-md hover:bg-slate-700 ${t.has_document ? 'text-emerald-400' : 'text-slate-500'}`} title={t.has_document ? t.document_name : 'Bijlage toevoegen'}>
+                                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
+                                                </button>
                                             </td>
                                         </tr>
                                     ))}
@@ -218,9 +442,14 @@ export default function BankTransactions({ transactions, accounts, filters }) {
                                                 <p className="text-xs text-slate-400 mt-1 truncate">{t.structured_message || t.message}</p>
                                             )}
                                         </div>
-                                        <span className={`text-sm font-semibold whitespace-nowrap ${t.amount >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                                            {formatAmount(t.amount)}
-                                        </span>
+                                        <div className="flex items-center gap-2">
+                                            <button onClick={() => setAttachmentTransaction(t)} className={`w-7 h-7 flex items-center justify-center rounded-md ${t.has_document ? 'text-emerald-400' : 'text-slate-500'}`}>
+                                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
+                                            </button>
+                                            <span className={`text-sm font-semibold whitespace-nowrap ${t.amount >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                                                {formatAmount(t.amount)}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             ))}
@@ -228,6 +457,13 @@ export default function BankTransactions({ transactions, accounts, filters }) {
                     </>
                 )}
             </div>
+
+            {attachmentTransaction && (
+                <AttachmentModal
+                    transaction={attachmentTransaction}
+                    onClose={() => setAttachmentTransaction(null)}
+                />
+            )}
         </AppLayout>
     );
 }
