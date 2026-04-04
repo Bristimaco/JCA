@@ -59,7 +59,7 @@ class BankTransactionController extends Controller
             'structured_message' => $t->structured_message,
             'has_document' => $t->document_data !== null,
             'document_name' => $t->document_name,
-            'document_url' => $t->document_data ? route('admin.bank-transactions.document.show', $t) : null,
+            'document_url' => $t->document_data ? route('admin.bank-transactions.document.show', $t).'?v='.$t->updated_at->timestamp : null,
             'dimension_1_value' => $t->dimension_1_value,
             'dimension_2_value' => $t->dimension_2_value,
             'dimension_3_value' => $t->dimension_3_value,
@@ -168,7 +168,8 @@ class BankTransactionController extends Controller
 
         return response(base64_decode($bankTransaction->document_data, true) ?: '')
             ->header('Content-Type', $bankTransaction->document_mime ?? 'application/octet-stream')
-            ->header('Content-Disposition', 'inline; filename="'.$bankTransaction->document_name.'"');
+            ->header('Content-Disposition', 'inline; filename="'.$bankTransaction->document_name.'"')
+            ->header('Cache-Control', 'no-store');
     }
 
     public function deleteDocument(BankTransaction $bankTransaction): RedirectResponse
