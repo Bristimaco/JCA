@@ -11,6 +11,7 @@
     "require": {
         "php": "^8.3",
         "ext-gmp": "*",
+        "codelicious/php-coda-parser": "^2.0",
         "inertiajs/inertia-laravel": "^2.0",
         "laravel/framework": "^13.0",
         "laravel/tinker": "^3.0",

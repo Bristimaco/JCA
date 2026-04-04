@@ -103,6 +103,9 @@ const moduleIcons = {
     'Gewichtscategorieën': (
         <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 3v17.25m0 0c-1.472 0-2.882.265-4.185.75M12 20.25c1.472 0 2.882.265 4.185.75M18.75 4.97A48.416 48.416 0 0012 4.5c-2.291 0-4.545.16-6.75.47m13.5 0c1.01.143 2.01.317 3 .52m-3-.52l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.988 5.988 0 01-2.031.352 5.988 5.988 0 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L18.75 4.971zm-13.5 0L2.633 15.57c-.122.499.106 1.028.589 1.202a5.989 5.989 0 002.031.352 5.989 5.989 0 002.031-.352c.483-.174.711-.703.59-1.202L5.25 4.971z" /></svg>
     ),
+    'Financieel Beheer': (
+        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" /></svg>
+    ),
 };
 
 const moduleColors = {
@@ -139,6 +142,7 @@ const moduleColors = {
     'Gebruikersbeheer': 'from-rose-600 to-red-700',
     'Leeftijdscategorieën': 'from-sky-600 to-blue-700',
     'Gewichtscategorieën': 'from-indigo-600 to-violet-700',
+    'Financieel Beheer': 'from-emerald-600 to-green-700',
 };
 
 const moduleGroups = [
@@ -207,6 +211,7 @@ const moduleGroups = [
             { name: 'Gewichtscategorieën', href: '/admin/gewichtscategorieen', roles: ['admin'], extraModule: 'admin' },
             { name: 'Activiteit', href: '/admin/activiteit', roles: ['admin'], extraModule: 'admin' },
             { name: 'Test Log', href: '/admin/test-mode-log', roles: ['admin'], extraModule: 'admin' },
+            { name: 'Financieel Beheer', href: '/admin/bankbewegingen', roles: ['admin'], extraModule: 'admin' },
         ],
     },
 ];

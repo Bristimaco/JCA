@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\AgeCategoryController;
 use App\Http\Controllers\Admin\AgeCategoryPageController;
 use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\Admin\ApproveUserController;
+use App\Http\Controllers\Admin\BankTransactionController;
 use App\Http\Controllers\Admin\BarCategoryController;
 use App\Http\Controllers\Admin\BarProductController;
 use App\Http\Controllers\Admin\CategoryExcelController;
@@ -310,6 +311,10 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::get('/activiteit', [AdminActivityController::class, 'index'])->name('admin.activity');
         Route::get('/test-mode-log', [AdminTestModeLogController::class, 'index'])->name('admin.test-mode-log');
         Route::delete('/test-mode-log', [AdminTestModeLogController::class, 'clear'])->name('admin.test-mode-log.clear');
+
+        // Bank transactions (CODA import)
+        Route::get('/bankbewegingen', [BankTransactionController::class, 'index'])->name('admin.bank-transactions.index');
+        Route::post('/bankbewegingen/import', [BankTransactionController::class, 'import'])->name('admin.bank-transactions.import');
     });
 
     // Admin routes — Members module (admin OR extra_module:members)
