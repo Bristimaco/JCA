@@ -211,24 +211,24 @@ class ProspectController extends Controller
             'remove_logo' => ['nullable', 'boolean'],
         ]);
 
-        $prospect->address_street = $validated['address_street'] ?? null;
-        $prospect->address_city = $validated['address_city'] ?? null;
-        $prospect->address_postal_code = $validated['address_postal_code'] ?? null;
-        $prospect->legal_form = $validated['legal_form'] ?? null;
-        $prospect->phone = $validated['phone'] ?? null;
-        $prospect->email = $validated['email'] ?? null;
-        $prospect->website = $validated['website'] ?? null;
-        $prospect->contact_name = $validated['contact_name'] ?? null;
-        $prospect->contact_phone = $validated['contact_phone'] ?? null;
-        $prospect->sponsor_amount = $validated['sponsor_amount'] ?? null;
-        $prospect->sponsor_start_date = $validated['sponsor_start_date'] ?? null;
-        $prospect->sponsor_renewal_months = $validated['sponsor_renewal_months'] ?? null;
-        $prospect->sponsor_tier = $validated['sponsor_tier'] ?? null;
+        $companyFields = ['address_street', 'address_city', 'address_postal_code', 'legal_form', 'phone', 'email', 'website', 'contact_name', 'contact_phone'];
+        foreach ($companyFields as $field) {
+            if ($request->has($field)) {
+                $prospect->$field = $validated[$field] ?? null;
+            }
+        }
 
-        if (! empty($validated['remove_logo'])) {
+        $sponsorFields = ['sponsor_amount', 'sponsor_start_date', 'sponsor_renewal_months', 'sponsor_tier'];
+        foreach ($sponsorFields as $field) {
+            if ($request->has($field)) {
+                $prospect->$field = $validated[$field] ?? null;
+            }
+        }
+
+        if ($request->has('remove_logo') && ! empty($validated['remove_logo'])) {
             $prospect->logo_data = null;
             $prospect->logo_mime = null;
-        } elseif (! empty($validated['logo'])) {
+        } elseif ($request->has('logo') && ! empty($validated['logo'])) {
             $this->applyLogo($prospect, $validated['logo']);
         }
 
