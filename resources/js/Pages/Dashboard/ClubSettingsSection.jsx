@@ -102,7 +102,7 @@ export default function ClubSettingsSection({ clubSettings }) {
     const handleSubmit = (e) => {
         e.preventDefault();
         form.patch('/admin/club-settings', {
-            forceFormData: true,
+            forceFormData: form.data.logo instanceof File,
             preserveScroll: true,
         });
     };
