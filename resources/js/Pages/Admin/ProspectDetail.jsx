@@ -27,6 +27,10 @@ function resizeImage(file, maxSize = 1920, quality = 0.85) {
 }
 
 export default function ProspectDetail({ prospect }) {
+    return <ProspectDetailContent key={prospect.id + '-' + (prospect.cbe_fetched_at || 'none')} prospect={prospect} />;
+}
+
+function ProspectDetailContent({ prospect }) {
     const { flash } = usePage().props;
     const [showConvertModal, setShowConvertModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);

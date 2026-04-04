@@ -33,6 +33,10 @@ const TIERS = [
 ];
 
 export default function SponsorDetail({ sponsor }) {
+    return <SponsorDetailContent key={sponsor.id + '-' + (sponsor.cbe_fetched_at || 'none') + '-' + (sponsor.contract_end_date || '')} sponsor={sponsor} />;
+}
+
+function SponsorDetailContent({ sponsor }) {
     const { flash } = usePage().props;
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [logoPreview, setLogoPreview] = useState(null);
