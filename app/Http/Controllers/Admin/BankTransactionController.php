@@ -65,22 +65,35 @@ class BankTransactionController extends Controller
             'dimension_3_value' => $t->dimension_3_value,
         ]);
 
+        $settings = ClubSettings::first();
+
         $accounts = collect($settings?->bank_accounts ?? [])->map(fn ($a) => [
             'number' => $a['account_number'],
             'name' => $a['name'],
         ]);
 
-        $settings = ClubSettings::first();
         $dimensions = [];
         foreach ([1, 2, 3] as $i) {
             $dim = $settings?->{"dimension_{$i}"};
             $dimensions[] = $dim && ! empty($dim['name']) ? $dim : null;
         }
 
+        $imports = BankTransaction::selectRaw('coda_filename, count(*) as count, min(transaction_date) as min_date, max(transaction_date) as max_date')
+            ->groupBy('coda_filename')
+            ->orderByDesc('max_date')
+            ->get()
+            ->map(fn ($i) => [
+                'filename' => $i->coda_filename,
+                'count' => $i->count,
+                'min_date' => $i->min_date,
+                'max_date' => $i->max_date,
+            ]);
+
         return Inertia::render('Admin/BankTransactions', [
             'transactions' => $transactions,
             'accounts' => $accounts,
             'dimensions' => $dimensions,
+            'imports' => $imports,
             'filters' => [
                 'account' => $request->input('account', ''),
                 'from' => $request->input('from', ''),
@@ -214,5 +227,23 @@ class BankTransactionController extends Controller
         ]);
 
         return back();
+    }
+
+    public function deleteImport(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'filename' => ['required', 'string', 'max:255'],
+        ]);
+
+        $filename = $request->input('filename');
+        $count = BankTransaction::where('coda_filename', $filename)->count();
+
+        if ($count === 0) {
+            return back()->with('error', 'Geen transacties gevonden voor dit bestand.');
+        }
+
+        BankTransaction::where('coda_filename', $filename)->delete();
+
+        return back()->with('status', "{$count} transactie(s) van '{$filename}' verwijderd.");
     }
 }

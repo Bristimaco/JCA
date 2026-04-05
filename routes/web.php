@@ -315,6 +315,7 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         // Bank transactions (CODA import)
         Route::get('/bankbewegingen', [BankTransactionController::class, 'index'])->name('admin.bank-transactions.index');
         Route::post('/bankbewegingen/import', [BankTransactionController::class, 'import'])->name('admin.bank-transactions.import');
+        Route::delete('/bankbewegingen/import', [BankTransactionController::class, 'deleteImport'])->name('admin.bank-transactions.delete-import');
         Route::post('/bankbewegingen/{bankTransaction}/bijlage', [BankTransactionController::class, 'uploadDocument'])->name('admin.bank-transactions.document.upload');
         Route::get('/bankbewegingen/{bankTransaction}/bijlage', [BankTransactionController::class, 'showDocument'])->name('admin.bank-transactions.document.show');
         Route::delete('/bankbewegingen/{bankTransaction}/bijlage', [BankTransactionController::class, 'deleteDocument'])->name('admin.bank-transactions.document.delete');
