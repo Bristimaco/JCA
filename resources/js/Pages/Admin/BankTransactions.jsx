@@ -232,7 +232,7 @@ export default function BankTransactions({ transactions, accounts, filters, dime
 
     const activeDimensions = dimensions.filter(d => d !== null);
 
-    const importForm = useForm({ file: null });
+    const importForm = useForm({ file: null, account_number: accounts.length === 1 ? accounts[0].number : '' });
 
     const applyFilters = () => {
         router.get('/admin/bankbewegingen', {
@@ -314,25 +314,42 @@ export default function BankTransactions({ transactions, accounts, filters, dime
             {/* Import */}
             <div className="bg-slate-900 rounded-xl ring-1 ring-slate-800 p-6 mb-6">
                 <h2 className="text-lg font-semibold text-white mb-3">CODA Bestand Importeren</h2>
-                <form onSubmit={handleImport} className="flex items-end gap-4">
-                    <div className="flex-1">
-                        <label className="block text-xs font-medium text-slate-400 mb-1">Selecteer een .cod bestand</label>
-                        <input
-                            type="file"
-                            accept=".cod,.coda"
-                            onChange={(e) => importForm.setData('file', e.target.files[0])}
-                            className="w-full text-sm text-slate-400 file:mr-3 file:rounded-lg file:border-0 file:bg-slate-800 file:px-4 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-slate-700 file:ring-1 file:ring-slate-700"
-                        />
-                    </div>
-                    <button
-                        type="submit"
-                        disabled={importForm.processing || !importForm.data.file}
-                        className="rounded-lg bg-rose-600 px-5 py-2 text-sm font-semibold text-white hover:bg-rose-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                    >
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
-                        Importeren
-                    </button>
-                </form>
+                {accounts.length === 0 ? (
+                    <p className="text-sm text-slate-400">Configureer eerst minstens één bankrekening in de <Link href="/" className="text-rose-400 hover:text-rose-300 underline">clubinstellingen</Link> om CODA bestanden te importeren.</p>
+                ) : (
+                    <form onSubmit={handleImport} className="flex flex-col sm:flex-row items-end gap-4">
+                        <div className="w-full sm:w-auto sm:min-w-[200px]">
+                            <label className="block text-xs font-medium text-slate-400 mb-1">Rekening</label>
+                            <select
+                                value={importForm.data.account_number}
+                                onChange={(e) => importForm.setData('account_number', e.target.value)}
+                                className="w-full rounded-lg bg-slate-800 border border-slate-700 text-white px-3 py-2 text-sm focus:ring-2 focus:ring-rose-500 focus:border-transparent"
+                            >
+                                {accounts.length > 1 && <option value="">Selecteer rekening...</option>}
+                                {accounts.map((a) => (
+                                    <option key={a.number} value={a.number}>{a.name} ({a.number})</option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="flex-1 w-full">
+                            <label className="block text-xs font-medium text-slate-400 mb-1">Selecteer een .cod bestand</label>
+                            <input
+                                type="file"
+                                accept=".cod,.coda"
+                                onChange={(e) => importForm.setData('file', e.target.files[0])}
+                                className="w-full text-sm text-slate-400 file:mr-3 file:rounded-lg file:border-0 file:bg-slate-800 file:px-4 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-slate-700 file:ring-1 file:ring-slate-700"
+                            />
+                        </div>
+                        <button
+                            type="submit"
+                            disabled={importForm.processing || !importForm.data.file || !importForm.data.account_number}
+                            className="rounded-lg bg-rose-600 px-5 py-2 text-sm font-semibold text-white hover:bg-rose-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                        >
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                            Importeren
+                        </button>
+                    </form>
+                )}
             </div>
 
             {/* Filters */}
@@ -349,7 +366,7 @@ export default function BankTransactions({ transactions, accounts, filters, dime
                             className="w-full rounded-lg bg-slate-800 border border-slate-700 text-white px-3 py-2 text-sm focus:ring-2 focus:ring-rose-500 focus:border-transparent placeholder-slate-500"
                         />
                     </div>
-                    {accounts.length > 1 && (
+                    {accounts.length > 0 && (
                         <div>
                             <label className="block text-xs font-medium text-slate-400 mb-1">Rekening</label>
                             <select

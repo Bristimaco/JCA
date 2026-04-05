@@ -65,14 +65,10 @@ class BankTransactionController extends Controller
             'dimension_3_value' => $t->dimension_3_value,
         ]);
 
-        $accounts = BankTransaction::select('account_number', 'account_name')
-            ->distinct()
-            ->orderBy('account_number')
-            ->get()
-            ->map(fn ($a) => [
-                'number' => $a->account_number,
-                'name' => $a->account_name,
-            ]);
+        $accounts = collect($settings?->bank_accounts ?? [])->map(fn ($a) => [
+            'number' => $a['account_number'],
+            'name' => $a['name'],
+        ]);
 
         $settings = ClubSettings::first();
         $dimensions = [];
@@ -101,7 +97,22 @@ class BankTransactionController extends Controller
     {
         $request->validate([
             'file' => ['required', 'file'],
+            'account_number' => ['required', 'string', 'max:34'],
         ]);
+
+        $settings = ClubSettings::first();
+        $bankAccounts = $settings?->bank_accounts ?? [];
+
+        if (empty($bankAccounts)) {
+            return back()->with('error', 'Configureer eerst minstens één bankrekening in de clubinstellingen.');
+        }
+
+        $selectedAccount = $request->input('account_number');
+        $knownAccounts = array_column($bankAccounts, 'account_number');
+
+        if (! in_array($selectedAccount, $knownAccounts)) {
+            return back()->with('error', 'Ongeldige rekening geselecteerd.');
+        }
 
         $file = $request->file('file');
         $filename = $file->getClientOriginalName();
@@ -118,6 +129,11 @@ class BankTransactionController extends Controller
 
         if (empty($transactions)) {
             return back()->with('error', 'Geen transacties gevonden in het bestand.');
+        }
+
+        $codaAccount = $transactions[0]['account_number'] ?? null;
+        if ($codaAccount && $codaAccount !== $selectedAccount) {
+            return back()->with('error', "Het CODA bestand bevat rekening {$codaAccount}, maar u selecteerde {$selectedAccount}.");
         }
 
         $now = now();

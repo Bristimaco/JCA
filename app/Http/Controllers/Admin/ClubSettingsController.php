@@ -40,6 +40,9 @@ class ClubSettingsController extends Controller
             'dimension_3.name' => ['nullable', 'string', 'max:255'],
             'dimension_3.values' => ['nullable', 'array'],
             'dimension_3.values.*' => ['string', 'max:255'],
+            'bank_accounts' => ['nullable', 'array'],
+            'bank_accounts.*.name' => ['required', 'string', 'max:255'],
+            'bank_accounts.*.account_number' => ['required', 'string', 'max:34'],
         ]);
 
         $settings = ClubSettings::first();
@@ -62,6 +65,7 @@ class ClubSettingsController extends Controller
             'dimension_1' => $this->parseDimension($validated['dimension_1'] ?? null),
             'dimension_2' => $this->parseDimension($validated['dimension_2'] ?? null),
             'dimension_3' => $this->parseDimension($validated['dimension_3'] ?? null),
+            'bank_accounts' => ! empty($validated['bank_accounts']) ? array_values($validated['bank_accounts']) : null,
         ];
 
         if ($request->hasFile('logo')) {

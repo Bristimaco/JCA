@@ -84,6 +84,7 @@ export default function ClubSettingsSection({ clubSettings }) {
         dimension_1: clubSettings.dimension_1 || { name: '', values: [] },
         dimension_2: clubSettings.dimension_2 || { name: '', values: [] },
         dimension_3: clubSettings.dimension_3 || { name: '', values: [] },
+        bank_accounts: clubSettings.bank_accounts || [],
         logo: null,
     });
 
@@ -283,6 +284,66 @@ export default function ClubSettingsSection({ clubSettings }) {
                 />
                 <p className="text-xs text-slate-500 mt-1">Aantal dagen waarna een Mollie betaallink automatisch vervalt</p>
                 {form.errors.mollie_expiry_days && <p className="text-sm text-red-400 mt-1">{form.errors.mollie_expiry_days}</p>}
+            </div>
+
+            <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Bankrekeningen</label>
+                <p className="text-xs text-slate-500 mb-3">Voeg bankrekeningen toe om CODA bestanden te importeren en verrichtingen per rekening te filteren</p>
+                <div className="space-y-3">
+                    {form.data.bank_accounts.map((acc, idx) => (
+                        <div key={idx} className="rounded-lg bg-slate-800/30 ring-1 ring-slate-700/40 p-4">
+                            <div className="flex items-start gap-3">
+                                <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <div>
+                                        <label className="block text-xs font-medium text-slate-400 mb-1">Naam</label>
+                                        <input
+                                            type="text"
+                                            value={acc.name}
+                                            onChange={(e) => {
+                                                const updated = [...form.data.bank_accounts];
+                                                updated[idx] = { ...updated[idx], name: e.target.value };
+                                                form.setData('bank_accounts', updated);
+                                            }}
+                                            placeholder="Bijv. Hoofdrekening, Spaarrekening..."
+                                            className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-rose-500 focus:ring-rose-500 text-sm"
+                                        />
+                                        {form.errors[`bank_accounts.${idx}.name`] && <p className="text-sm text-red-400 mt-1">{form.errors[`bank_accounts.${idx}.name`]}</p>}
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-medium text-slate-400 mb-1">IBAN</label>
+                                        <input
+                                            type="text"
+                                            value={acc.account_number}
+                                            onChange={(e) => {
+                                                const updated = [...form.data.bank_accounts];
+                                                updated[idx] = { ...updated[idx], account_number: e.target.value };
+                                                form.setData('bank_accounts', updated);
+                                            }}
+                                            placeholder="BE00 0000 0000 0000"
+                                            className="w-full rounded-md border border-slate-600 bg-slate-700/50 text-white shadow-sm focus:border-rose-500 focus:ring-rose-500 text-sm font-mono"
+                                        />
+                                        {form.errors[`bank_accounts.${idx}.account_number`] && <p className="text-sm text-red-400 mt-1">{form.errors[`bank_accounts.${idx}.account_number`]}</p>}
+                                    </div>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => form.setData('bank_accounts', form.data.bank_accounts.filter((_, i) => i !== idx))}
+                                    className="mt-6 text-slate-400 hover:text-red-400"
+                                    title="Verwijderen"
+                                >
+                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                    <button
+                        type="button"
+                        onClick={() => form.setData('bank_accounts', [...form.data.bank_accounts, { name: '', account_number: '' }])}
+                        className="rounded-md bg-slate-700 px-3 py-1.5 text-sm font-medium text-slate-200 hover:bg-slate-600 ring-1 ring-slate-600"
+                    >
+                        + Rekening toevoegen
+                    </button>
+                </div>
             </div>
 
             <div>

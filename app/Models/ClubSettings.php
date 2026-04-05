@@ -37,6 +37,7 @@ class ClubSettings extends Model
         'dimension_1' => 'array',
         'dimension_2' => 'array',
         'dimension_3' => 'array',
+        'bank_accounts' => 'array',
     ];
 
     public static function current(): self
