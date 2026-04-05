@@ -271,6 +271,7 @@ export default function BankTransactions({ transactions, accounts, filters, dime
         e.preventDefault();
         if (!importForm.data.file) return;
         importForm.post('/admin/bankbewegingen/import', {
+            forceFormData: true,
             preserveScroll: true,
             onSuccess: () => importForm.reset('file'),
         });
@@ -350,6 +351,13 @@ export default function BankTransactions({ transactions, accounts, filters, dime
                             Importeren
                         </button>
                     </form>
+                )}
+                {Object.keys(importForm.errors).length > 0 && (
+                    <div className="mt-3">
+                        {Object.values(importForm.errors).map((err, i) => (
+                            <p key={i} className="text-sm text-red-400">{err}</p>
+                        ))}
+                    </div>
                 )}
             </div>
 
