@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\AgeCategoryController;
 use App\Http\Controllers\Admin\AgeCategoryPageController;
 use App\Http\Controllers\Admin\AnnouncementController;
 use App\Http\Controllers\Admin\ApproveUserController;
+use App\Http\Controllers\Admin\BankReportController;
 use App\Http\Controllers\Admin\BankTransactionController;
 use App\Http\Controllers\Admin\BarCategoryController;
 use App\Http\Controllers\Admin\BarProductController;
@@ -321,6 +322,10 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::get('/bankbewegingen/{bankTransaction}/bijlage', [BankTransactionController::class, 'showDocument'])->name('admin.bank-transactions.document.show');
         Route::delete('/bankbewegingen/{bankTransaction}/bijlage', [BankTransactionController::class, 'deleteDocument'])->name('admin.bank-transactions.document.delete');
         Route::patch('/bankbewegingen/{bankTransaction}/dimensies', [BankTransactionController::class, 'updateDimensions'])->name('admin.bank-transactions.dimensions.update');
+
+        // Financial report
+        Route::get('/financieel-rapport', [BankReportController::class, 'index'])->name('admin.bank-report.index');
+        Route::get('/financieel-rapport/export', [BankReportController::class, 'export'])->name('admin.bank-report.export');
     });
 
     // Admin routes — Members module (admin OR extra_module:members)
