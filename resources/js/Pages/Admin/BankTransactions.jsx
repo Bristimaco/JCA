@@ -219,7 +219,7 @@ function AttachmentModal({ transaction, onClose }) {
     );
 }
 
-export default function BankTransactions({ transactions, accounts, filters, dimensions, imports }) {
+export default function BankTransactions({ transactions, accounts, filters, dimensions }) {
     const { flash } = usePage().props;
     const [search, setSearch] = useState(filters.search || '');
     const [account, setAccount] = useState(filters.account || '');
@@ -229,7 +229,6 @@ export default function BankTransactions({ transactions, accounts, filters, dime
     const [dim2, setDim2] = useState(filters.dimension_2 || '');
     const [dim3, setDim3] = useState(filters.dimension_3 || '');
     const [attachmentTransaction, setAttachmentTransaction] = useState(null);
-    const [deleteFilename, setDeleteFilename] = useState(null);
 
     const activeDimensions = dimensions.filter(d => d !== null);
 
@@ -316,6 +315,12 @@ export default function BankTransactions({ transactions, accounts, filters, dime
             {/* Import */}
             <div className="bg-slate-900 rounded-xl ring-1 ring-slate-800 p-6 mb-6">
                 <h2 className="text-lg font-semibold text-white mb-3">CODA Bestand Importeren</h2>
+                <div className="flex items-center justify-between mb-3 -mt-3">
+                    <div />
+                    <Link href="/admin/bankbewegingen/imports" className="text-xs text-slate-400 hover:text-white underline">
+                        Geïmporteerde bestanden bekijken
+                    </Link>
+                </div>
                 {accounts.length === 0 ? (
                     <p className="text-sm text-slate-400">Configureer eerst minstens één bankrekening in de <Link href="/" className="text-rose-400 hover:text-rose-300 underline">clubinstellingen</Link> om CODA bestanden te importeren.</p>
                 ) : (
@@ -360,65 +365,6 @@ export default function BankTransactions({ transactions, accounts, filters, dime
                     </div>
                 )}
             </div>
-
-            {/* Import history */}
-            {imports.length > 0 && (
-                <div className="bg-slate-900 rounded-xl ring-1 ring-slate-800 p-6 mb-6">
-                    <h2 className="text-lg font-semibold text-white mb-3">Geïmporteerde Bestanden</h2>
-                    <div className="space-y-2">
-                        {imports.map((imp) => (
-                            <div key={imp.filename} className="flex items-center justify-between rounded-lg bg-slate-800/50 ring-1 ring-slate-700/50 px-4 py-3">
-                                <div className="min-w-0 flex-1">
-                                    <p className="text-sm font-medium text-white truncate">{imp.filename}</p>
-                                    <p className="text-xs text-slate-400">
-                                        {imp.count} transactie{imp.count !== 1 ? 's' : ''} — {formatDate(imp.min_date)}{imp.min_date !== imp.max_date ? ` t/m ${formatDate(imp.max_date)}` : ''}
-                                    </p>
-                                </div>
-                                <button
-                                    onClick={() => setDeleteFilename(imp.filename)}
-                                    className="ml-3 text-slate-400 hover:text-red-400"
-                                    title="Import verwijderen"
-                                >
-                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                                </button>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            )}
-
-            {/* Delete confirmation modal */}
-            {deleteFilename && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60" onClick={() => setDeleteFilename(null)}>
-                    <div className="bg-slate-900 rounded-xl ring-1 ring-slate-700 w-full max-w-md p-6" onClick={e => e.stopPropagation()}>
-                        <h3 className="text-lg font-semibold text-white mb-2">Import verwijderen?</h3>
-                        <p className="text-sm text-slate-400 mb-1">
-                            Alle transacties uit <span className="font-medium text-white">{deleteFilename}</span> worden permanent verwijderd.
-                        </p>
-                        <p className="text-xs text-slate-500 mb-5">Dit kan niet ongedaan gemaakt worden. U kunt het bestand nadien opnieuw importeren.</p>
-                        <div className="flex justify-end gap-3">
-                            <button
-                                onClick={() => setDeleteFilename(null)}
-                                className="rounded-lg bg-slate-800 px-4 py-2 text-sm font-medium text-slate-300 hover:bg-slate-700 ring-1 ring-slate-700"
-                            >
-                                Annuleren
-                            </button>
-                            <button
-                                onClick={() => {
-                                    router.delete('/admin/bankbewegingen/import', {
-                                        data: { filename: deleteFilename },
-                                        preserveScroll: true,
-                                        onSuccess: () => setDeleteFilename(null),
-                                    });
-                                }}
-                                className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700"
-                            >
-                                Verwijderen
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
 
             {/* Filters */}
             <div className="bg-slate-900 rounded-xl ring-1 ring-slate-800 p-6 mb-6">

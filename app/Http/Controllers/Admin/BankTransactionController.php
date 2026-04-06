@@ -78,6 +78,24 @@ class BankTransactionController extends Controller
             $dimensions[] = $dim && ! empty($dim['name']) ? $dim : null;
         }
 
+        return Inertia::render('Admin/BankTransactions', [
+            'transactions' => $transactions,
+            'accounts' => $accounts,
+            'dimensions' => $dimensions,
+            'filters' => [
+                'account' => $request->input('account', ''),
+                'from' => $request->input('from', ''),
+                'to' => $request->input('to', ''),
+                'search' => $request->input('search', ''),
+                'dimension_1' => $request->input('dimension_1', ''),
+                'dimension_2' => $request->input('dimension_2', ''),
+                'dimension_3' => $request->input('dimension_3', ''),
+            ],
+        ]);
+    }
+
+    public function imports(): Response
+    {
         $imports = BankTransaction::selectRaw('coda_filename, count(*) as count, min(transaction_date) as min_date, max(transaction_date) as max_date')
             ->groupBy('coda_filename')
             ->orderByDesc('max_date')
@@ -89,20 +107,8 @@ class BankTransactionController extends Controller
                 'max_date' => $i->max_date,
             ]);
 
-        return Inertia::render('Admin/BankTransactions', [
-            'transactions' => $transactions,
-            'accounts' => $accounts,
-            'dimensions' => $dimensions,
+        return Inertia::render('Admin/BankTransactionImports', [
             'imports' => $imports,
-            'filters' => [
-                'account' => $request->input('account', ''),
-                'from' => $request->input('from', ''),
-                'to' => $request->input('to', ''),
-                'search' => $request->input('search', ''),
-                'dimension_1' => $request->input('dimension_1', ''),
-                'dimension_2' => $request->input('dimension_2', ''),
-                'dimension_3' => $request->input('dimension_3', ''),
-            ],
         ]);
     }
 
