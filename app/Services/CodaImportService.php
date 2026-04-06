@@ -20,8 +20,8 @@ class CodaImportService
                 $counterparty = $transaction->getAccount();
 
                 $transactions[] = [
-                    'account_number' => $account->getNumber(),
-                    'account_name' => $account->getName(),
+                    'account_number' => trim($account->getNumber()),
+                    'account_name' => trim($account->getName()),
                     'transaction_date' => $transaction->getTransactionDate()->format('Y-m-d'),
                     'valuta_date' => $transaction->getValutaDate()->format('Y-m-d'),
                     'amount' => $transaction->getAmount(),

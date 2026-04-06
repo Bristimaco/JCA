@@ -120,8 +120,8 @@ class BankTransactionController extends Controller
             return back()->with('error', 'Configureer eerst minstens één bankrekening in de clubinstellingen.');
         }
 
-        $selectedAccount = $request->input('account_number');
-        $knownAccounts = array_column($bankAccounts, 'account_number');
+        $selectedAccount = preg_replace('/\s+/', '', $request->input('account_number'));
+        $knownAccounts = array_map(fn ($a) => preg_replace('/\s+/', '', $a), array_column($bankAccounts, 'account_number'));
 
         if (! in_array($selectedAccount, $knownAccounts)) {
             return back()->with('error', 'Ongeldige rekening geselecteerd.');
@@ -144,7 +144,7 @@ class BankTransactionController extends Controller
             return back()->with('error', 'Geen transacties gevonden in het bestand.');
         }
 
-        $codaAccount = $transactions[0]['account_number'] ?? null;
+        $codaAccount = preg_replace('/\s+/', '', $transactions[0]['account_number'] ?? '');
         if ($codaAccount && $codaAccount !== $selectedAccount) {
             return back()->with('error', "Het CODA bestand bevat rekening {$codaAccount}, maar u selecteerde {$selectedAccount}.");
         }
