@@ -85,6 +85,18 @@ export default function DebugBarOrders({ orders, status }) {
                     <div className="px-6 py-12 text-center text-slate-500">Geen bestellingen gevonden.</div>
                 ) : (
                     <div className="divide-y divide-slate-800">
+                        {/* Header */}
+                        <div className="hidden sm:flex items-center gap-4 px-4 py-2 text-xs text-slate-500 font-medium border-b border-slate-800">
+                            <span className="w-4" />
+                            <span className="w-12">#</span>
+                            <span className="w-16">Status</span>
+                            <span className="w-20">Bedrag</span>
+                            <span>Betaald via</span>
+                            <span>Betaalstatus</span>
+                            <span>Gebruiker</span>
+                            <span className="ml-auto">Datum</span>
+                            <span className="w-8" />
+                        </div>
                         {orders.data.map((order) => (
                             <div key={order.id}>
                                 <div
