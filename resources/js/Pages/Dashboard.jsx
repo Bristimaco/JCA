@@ -321,6 +321,8 @@ export default function Dashboard({ pendingCount, pendingUsers, adminCounters, b
                     'Evenementen Beheer': adminCounters?.activeEventCount,
                     'Evenementen': myEventCount,
                     'Archief': archivedTournamentCount,
+                    'Stages': adminCounters?.activeStageCount,
+                    'Stage Archief': adminCounters?.archivedStageCount,
                     'Bestellingen': barCounters?.pendingOrderCount,
                     'Poef': barCounters?.unpaidPoefCount,
                     'Mijn Poef': myPoefCount,

@@ -6,6 +6,7 @@ use App\Enums\BeltRank;
 use App\Enums\EventStatus;
 use App\Enums\Gender;
 use App\Enums\InvoiceStatus;
+use App\Enums\StageStatus;
 use App\Enums\TournamentStatus;
 use App\Enums\VoucherStatus;
 use App\Models\Announcement;
@@ -18,6 +19,7 @@ use App\Models\Member;
 use App\Models\MembershipInvoice;
 use App\Models\Prospect;
 use App\Models\Sponsor;
+use App\Models\Stage;
 use App\Models\Tournament;
 use App\Models\TrainingAbsence;
 use App\Models\TrainingGroup;
@@ -65,6 +67,11 @@ class DashboardController extends Controller
 
         if ($user->isAdmin() || $user->hasExtraModule('tournaments')) {
             $adminCounters['activeTournamentCount'] = Tournament::where('status', '!=', TournamentStatus::Archived)->count();
+        }
+
+        if ($user->isAdmin() || $user->hasExtraModule('training')) {
+            $adminCounters['activeStageCount'] = Stage::where('status', '!=', StageStatus::Archived)->count();
+            $adminCounters['archivedStageCount'] = Stage::where('status', StageStatus::Archived)->count();
         }
 
         if ($user->isAdmin() || $user->hasExtraModule('bar')) {
