@@ -92,7 +92,6 @@ export default function DebugBarOrders({ orders, status }) {
                             <span className="w-16">Status</span>
                             <span className="w-20">Bedrag</span>
                             <span>Betaald via</span>
-                            <span>Betaalstatus</span>
                             <span>Gebruiker</span>
                             <span className="ml-auto">Datum</span>
                             <span className="w-8" />
@@ -110,9 +109,6 @@ export default function DebugBarOrders({ orders, status }) {
                                     </span>
                                     <span className="text-sm text-white font-medium">{formatCurrency(order.total)}</span>
                                     <span className="text-xs text-slate-400 hidden sm:inline">{order.payment_method || '-'}</span>
-                                    <span className={`hidden sm:inline px-2 py-0.5 rounded-full text-xs font-medium ${order.payment_status === 'paid' ? 'bg-green-500/20 text-green-400' : order.payment_status ? 'bg-orange-500/20 text-orange-400' : 'bg-slate-700 text-slate-400'}`}>
-                                        {order.payment_status || '-'}
-                                    </span>
                                     <span className="text-xs text-slate-400 hidden sm:inline">
                                         {order.ordered_by?.name || order.user?.name || '-'}
                                     </span>
@@ -130,8 +126,11 @@ export default function DebugBarOrders({ orders, status }) {
                                     <div className="px-4 pb-3 pl-14">
                                         <div className="sm:hidden text-xs text-slate-500 mb-2 space-y-0.5">
                                             <div>{order.ordered_by?.name || order.user?.name || '-'} — {formatDate(order.created_at)}</div>
-                                            <div>Betaald via: {order.payment_method || '-'} — Status: {order.payment_status || '-'}</div>
+                                            <div>Betaald via: {order.payment_method || '-'}</div>
                                         </div>
+                                        {order.payment_status && order.payment_status !== order.status && (
+                                            <p className="text-xs text-slate-500 mb-2">Betaalstatus: {order.payment_status}</p>
+                                        )}
                                         <table className="w-full text-xs">
                                             <thead>
                                                 <tr className="text-slate-500">
