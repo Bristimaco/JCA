@@ -39,6 +39,7 @@ use App\Http\Controllers\Admin\UserPageController;
 use App\Http\Controllers\Admin\VoucherController as AdminVoucherController;
 use App\Http\Controllers\Admin\WeightCategoryController;
 use App\Http\Controllers\Admin\WeightCategoryPageController;
+use App\Http\Controllers\ArchivedStagesController;
 use App\Http\Controllers\ArchivedTournamentsController;
 use App\Http\Controllers\AttendanceKioskController;
 use App\Http\Controllers\AttendanceReportController;
@@ -208,6 +209,10 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
     // Archived tournaments (any authenticated user)
     Route::get('/archief', ArchivedTournamentsController::class)->name('archived.tournaments');
     Route::delete('/archief/{tournament}', [ArchivedTournamentsController::class, 'destroy'])->middleware('admin')->name('archived.tournaments.destroy');
+
+    // Archived stages (any authenticated user)
+    Route::get('/archief/stages', ArchivedStagesController::class)->name('archived.stages');
+    Route::delete('/archief/stages/{stage}', [ArchivedStagesController::class, 'destroy'])->middleware('admin')->name('archived.stages.destroy');
 
     // Calendar
     Route::get('/kalender', CalendarController::class)->name('calendar');
