@@ -86,36 +86,37 @@ export default function DebugBarOrders({ orders, status }) {
                 ) : (
                     <div className="divide-y divide-slate-800">
                         {/* Header */}
-                        <div className="hidden sm:flex items-center gap-4 px-4 py-2 text-xs text-slate-500 font-medium border-b border-slate-800">
-                            <span className="w-4" />
-                            <span className="w-12">#</span>
-                            <span className="w-16">Status</span>
-                            <span className="w-20">Bedrag</span>
+                        <div className="hidden sm:grid items-center px-4 py-2 text-xs text-slate-500 font-medium border-b border-slate-800" style={{ gridTemplateColumns: '24px 48px 72px 88px 1fr 1fr 152px 32px' }}>
+                            <span />
+                            <span>#</span>
+                            <span>Status</span>
+                            <span>Bedrag</span>
                             <span>Betaald via</span>
                             <span>Gebruiker</span>
-                            <span className="ml-auto">Datum</span>
-                            <span className="w-8" />
+                            <span className="text-right">Datum</span>
+                            <span />
                         </div>
                         {orders.data.map((order) => (
                             <div key={order.id}>
                                 <div
-                                    className="flex items-center gap-4 px-4 py-3 hover:bg-slate-800/50 cursor-pointer"
+                                    className="flex sm:grid items-center gap-2 sm:gap-0 px-4 py-3 hover:bg-slate-800/50 cursor-pointer"
+                                    style={{ gridTemplateColumns: '24px 48px 72px 88px 1fr 1fr 152px 32px' }}
                                     onClick={() => toggle(order.id)}
                                 >
                                     <svg className={`w-4 h-4 text-slate-500 transition-transform ${expanded[order.id] ? 'rotate-90' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-                                    <span className="text-xs text-slate-500 font-mono w-12">#{order.id}</span>
-                                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${statusColors[order.status] || 'bg-slate-700 text-slate-300'}`}>
+                                    <span className="text-xs text-slate-500 font-mono">#{order.id}</span>
+                                    <span className={`px-2 py-0.5 rounded-full text-xs font-medium w-fit ${statusColors[order.status] || 'bg-slate-700 text-slate-300'}`}>
                                         {order.status}
                                     </span>
                                     <span className="text-sm text-white font-medium">{formatCurrency(order.total)}</span>
-                                    <span className="text-xs text-slate-400 hidden sm:inline">{order.payment_method || '-'}</span>
-                                    <span className="text-xs text-slate-400 hidden sm:inline">
+                                    <span className="text-xs text-slate-400 hidden sm:inline truncate">{order.payment_method || '-'}</span>
+                                    <span className="text-xs text-slate-400 hidden sm:inline truncate">
                                         {order.ordered_by?.name || order.user?.name || '-'}
                                     </span>
-                                    <span className="text-xs text-slate-500 ml-auto hidden sm:inline">{formatDate(order.created_at)}</span>
+                                    <span className="text-xs text-slate-500 hidden sm:inline text-right">{formatDate(order.created_at)}</span>
                                     <button
                                         onClick={(e) => { e.stopPropagation(); setDeleteId(order.id); }}
-                                        className="ml-2 text-slate-500 hover:text-red-400 shrink-0"
+                                        className="text-slate-500 hover:text-red-400 shrink-0 justify-self-end sm:justify-self-auto"
                                         title="Verwijderen"
                                     >
                                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
