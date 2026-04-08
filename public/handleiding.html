@@ -760,6 +760,13 @@
                     <a href="#toernooi-detail" class="nav-link">Toernooidetails bekijken</a>
                 </div>
                 <div class="nav-group">
+                    <div class="nav-group-title">Stages</div>
+                    <a href="#stage-overzicht" class="nav-link">Stage-overzicht</a>
+                    <a href="#stage-flow" class="nav-link">Stage-workflow</a>
+                    <a href="#stage-detail" class="nav-link">Stagedetails bekijken</a>
+                    <a href="#stage-kalender" class="nav-link">Stages op de kalender</a>
+                </div>
+                <div class="nav-group">
                     <div class="nav-group-title">Archief</div>
                     <a href="#archief" class="nav-link">Archief bekijken</a>
                 </div>
@@ -2180,6 +2187,60 @@
                 <li>Bijlagen om te downloaden</li>
                 <li>Trainers die aan het toernooi gekoppeld zijn</li>
             </ul>
+
+            <!-- ==================== STAGES ==================== -->
+            <h2 id="stage-overzicht">Stages</h2>
+            <p><span class="role-badge role-admin">Admin</span> <span class="role-badge role-coach">Coach</span></p>
+            <p>
+                Een <strong>stage</strong> is vergelijkbaar met een toernooi, maar duurt meerdere dagen (start- en einddatum)
+                en heeft g&eacute;&eacute;n resultaten. Stages worden beheerd via de tegel <strong>&#8220;Stages&#8221;</strong>
+                in de sectie <strong>Toernooien</strong> op het dashboard.
+            </p>
+            <p>De pagina toont alle actieve stages als uitklapbare kaarten met:</p>
+            <ul>
+                <li>Naam, startdatum, einddatum en locatie</li>
+                <li>Statusstepper (teal/cyaan kleur)</li>
+                <li>Ledenlijst met uitnodigings- en inschrijvingsstatus</li>
+                <li>Betalingsstatus (als de stage betaald is)</li>
+                <li>Bijlagen</li>
+            </ul>
+
+            <h3 id="stage-flow">Stage-workflow</h3>
+            <p>
+                Stages doorlopen een vereenvoudigde workflow ten opzichte van toernooien. De stappen zijn:
+            </p>
+            <ol>
+                <li><strong>Voorbereiding</strong> &#8211; Stage aanmaken met naam, adres, start- en einddatum, deadlines en leeftijdscategorie&euml;n. Leden koppelen.</li>
+                <li><strong>Uitnodigingen verstuurd</strong> &#8211; Uitnodigingen versturen per e-mail. Leden kunnen via een link accepteren of weigeren.</li>
+                <li><strong>Inschrijvingen gestart</strong> &#8211; Leden die geaccepteerd hebben kunnen worden ingeschreven (met eventuele betaling via Mollie).</li>
+                <li><strong>Inschrijvingen voltooid</strong> &#8211; Inschrijvingen worden afgesloten.</li>
+                <li><strong>Gearchiveerd</strong> &#8211; De stage wordt gearchiveerd.</li>
+            </ol>
+            <p>
+                <em>Er zijn g&eacute;&eacute;n stappen &#8220;Gestart&#8221; en &#8220;Afgelopen&#8221; zoals bij toernooien,
+                en er worden geen resultaten geregistreerd.</em>
+            </p>
+
+            <h3 id="stage-detail">Stagedetails bekijken</h3>
+            <p><span class="role-badge role-all">Alle rollen</span></p>
+            <p>
+                De detailpagina van een stage toont:
+            </p>
+            <ul>
+                <li>Naam, startdatum (Van) en einddatum (Tot), locatie</li>
+                <li>Statusstepper (alleen-lezen)</li>
+                <li>Kaart met locatie (als co&ouml;rdinaten beschikbaar zijn)</li>
+                <li>Lijst van deelnemers, gegroepeerd per leeftijds- en gewichtscategorie</li>
+                <li>Bijlagen</li>
+                <li>Gekoppelde trainers</li>
+            </ul>
+
+            <h3 id="stage-kalender">Stages op de kalender</h3>
+            <p>
+                Stages verschijnen op de kalender in een <strong>teal/cyaan kleur</strong>. Omdat een stage meerdere dagen duurt,
+                wordt de stage op <em>elke dag</em> tussen de start- en einddatum weergegeven. Klik op het &#8593;-icoon
+                om naar de detailpagina te navigeren.
+            </p>
 
             <h2 id="archief">Archief</h2>
             <p><span class="role-badge role-all">Alle rollen</span></p>

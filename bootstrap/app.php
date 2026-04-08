@@ -24,6 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'webhooks/mollie/tournament',
             'webhooks/mollie/event',
             'webhooks/mollie/bar',
+            'webhooks/mollie/stage',
         ]);
 
         $middleware->web(append: [

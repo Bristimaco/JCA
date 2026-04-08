@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Enums\EventStatus;
 use App\Enums\MembershipStatus;
+use App\Enums\StageStatus;
 use App\Enums\TournamentStatus;
 use App\Models\Event;
 use App\Models\EventRegistration;
 use App\Models\Member;
+use App\Models\Stage;
 use App\Models\Tournament;
 use App\Models\TrainingAbsence;
 use App\Models\TrainingCancellation;
@@ -44,6 +46,7 @@ class CalendarController extends Controller
             ->merge($this->trainingItems($start, $end, $memberIds))
             ->merge($this->extraTrainingItems($start, $end, $memberIds))
             ->merge($this->tournamentItems($start, $end, $memberIds))
+            ->merge($this->stageItems($start, $end, $memberIds))
             ->merge($this->eventItems($start, $end, $userId))
             ->merge($this->birthdayItems($start, $end))
             ->sortBy('date')
@@ -223,6 +226,45 @@ class CalendarController extends Controller
                 'participating' => $participating,
             ];
         })->all();
+    }
+
+    private function stageItems(Carbon $start, Carbon $end, $memberIds): array
+    {
+        $stages = Stage::where('status', '!=', StageStatus::Archived)
+            ->where('start_date', '<=', $end->toDateString())
+            ->where('end_date', '>=', $start->toDateString())
+            ->get();
+
+        $items = [];
+
+        foreach ($stages as $stage) {
+            $participating = $stage->members()
+                ->whereIn('members.id', $memberIds)
+                ->whereIn('member_stage.invitation_status', ['accepted', 'invited'])
+                ->exists();
+
+            $stageStart = $stage->start_date instanceof Carbon ? $stage->start_date : Carbon::parse($stage->start_date);
+            $stageEnd = $stage->end_date instanceof Carbon ? $stage->end_date : Carbon::parse($stage->end_date);
+
+            $dayStart = $stageStart->copy()->max($start);
+            $dayEnd = $stageEnd->copy()->min($end);
+
+            $current = $dayStart->copy();
+            while ($current->lte($dayEnd)) {
+                $items[] = [
+                    'type' => 'stage',
+                    'id' => $stage->id,
+                    'date' => $current->toDateString(),
+                    'name' => $stage->name,
+                    'city' => $stage->address_city,
+                    'status' => $stage->status->value,
+                    'participating' => $participating,
+                ];
+                $current->addDay();
+            }
+        }
+
+        return $items;
     }
 
     private function eventItems(Carbon $start, Carbon $end, int $userId): array

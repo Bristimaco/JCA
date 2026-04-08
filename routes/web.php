@@ -24,6 +24,9 @@ use App\Http\Controllers\Admin\ProspectController;
 use App\Http\Controllers\Admin\ProspectNoteController;
 use App\Http\Controllers\Admin\SponsorController;
 use App\Http\Controllers\Admin\SponsorLogoController;
+use App\Http\Controllers\Admin\StageController;
+use App\Http\Controllers\Admin\StageIndexController;
+use App\Http\Controllers\Admin\StageMembersController;
 use App\Http\Controllers\Admin\ToggleUserActiveController;
 use App\Http\Controllers\Admin\TournamentController;
 use App\Http\Controllers\Admin\TournamentIndexController;
@@ -66,6 +69,10 @@ use App\Http\Controllers\PodiumPhotoController;
 use App\Http\Controllers\PoefController;
 use App\Http\Controllers\POSController;
 use App\Http\Controllers\PushSubscriptionController;
+use App\Http\Controllers\StageAttachmentController;
+use App\Http\Controllers\StageDetailController;
+use App\Http\Controllers\StagePaymentWebhookController;
+use App\Http\Controllers\StageRsvpController;
 use App\Http\Controllers\TournamentAttachmentController;
 use App\Http\Controllers\TournamentDetailController;
 use App\Http\Controllers\TournamentPaymentWebhookController;
@@ -79,8 +86,9 @@ use App\Http\Controllers\VoucherController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-// Public RSVP route (no auth required)
+// Public RSVP routes (no auth required)
 Route::get('/tournaments/rsvp/{token}/{response}', TournamentRsvpController::class)->name('tournament.rsvp');
+Route::get('/stages/rsvp/{token}/{response}', StageRsvpController::class)->name('stage.rsvp');
 
 // Public club logo (for favicon/emails)
 Route::get('/club-logo', ClubLogoController::class)->name('club.logo');
@@ -92,6 +100,7 @@ Route::get('/sponsor-logo/{sponsor}', SponsorLogoController::class)->name('spons
 Route::post('/webhooks/mollie', MollieWebhookController::class)->name('webhooks.mollie');
 Route::post('/webhooks/mollie/tournament', TournamentPaymentWebhookController::class)->name('webhooks.mollie.tournament');
 Route::post('/webhooks/mollie/event', EventPaymentWebhookController::class)->name('webhooks.mollie.event');
+Route::post('/webhooks/mollie/stage', StagePaymentWebhookController::class)->name('webhooks.mollie.stage');
 Route::post('/webhooks/mollie/bar', [BarPaymentController::class, 'webhook'])->name('webhooks.mollie.bar');
 
 // Public event image
@@ -183,7 +192,13 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
     // Tournament attachment download
     Route::get('/bijlagen/{attachment}', TournamentAttachmentController::class)->name('attachments.show');
 
+    // Stage attachment download
+    Route::get('/stage-bijlagen/{attachment}', StageAttachmentController::class)->name('stage-attachments.show');
+
     Route::get('/toernooien/{tournament}', TournamentDetailController::class)->name('tournament.detail');
+
+    // Stage detail (any authenticated user)
+    Route::get('/stages/{stage}', StageDetailController::class)->name('stage.detail');
 
     // Events (any authenticated user)
     Route::get('/evenementen', [EventController::class, 'index'])->name('events.index');
@@ -380,6 +395,17 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::post('/tournaments/{tournament}/archive', [TournamentController::class, 'archive'])->name('admin.tournaments.archive');
         Route::post('/tournaments/{tournament}/coaches', [TournamentMembersController::class, 'addCoach'])->name('admin.tournaments.add-coach');
         Route::delete('/tournaments/{tournament}/coaches/{member}', [TournamentMembersController::class, 'removeCoach'])->name('admin.tournaments.remove-coach');
+
+        // Stages (admin-only actions within tournaments module)
+        Route::post('/stages', [StageController::class, 'store'])->name('admin.stages.store');
+        Route::delete('/stages/{stage}', [StageController::class, 'destroy'])->name('admin.stages.destroy');
+        Route::post('/stages/{stage}/open-registrations', [StageMembersController::class, 'openRegistrations'])->name('admin.stages.open-registrations');
+        Route::post('/stages/{stage}/register/{member}', [StageMembersController::class, 'register'])->name('admin.stages.register');
+        Route::post('/stages/{stage}/unregister/{member}', [StageMembersController::class, 'unregister'])->name('admin.stages.unregister');
+        Route::post('/stages/{stage}/close-registrations', [StageMembersController::class, 'closeRegistrations'])->name('admin.stages.close-registrations');
+        Route::post('/stages/{stage}/archive', [StageController::class, 'archive'])->name('admin.stages.archive');
+        Route::post('/stages/{stage}/coaches', [StageMembersController::class, 'addCoach'])->name('admin.stages.add-coach');
+        Route::delete('/stages/{stage}/coaches/{member}', [StageMembersController::class, 'removeCoach'])->name('admin.stages.remove-coach');
     });
 
     // Admin routes — Announcements module (admin OR extra_module:announcements)
@@ -472,5 +498,30 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
 
         // Start tournament (coach-only, enforced in controller)
         Route::post('/tournaments/{tournament}/start', [TournamentMembersController::class, 'startTournament'])->name('admin.tournaments.start');
+    });
+
+    // Stage routes (shared: admin + coach)
+    Route::middleware('coach:tournaments')->prefix('admin')->group(function () {
+        Route::get('/stages', StageIndexController::class)->name('admin.stages.index');
+        Route::post('/stages/{stage}', [StageController::class, 'update'])->name('admin.stages.update');
+
+        // Member list management (coach-only, enforced in controller)
+        Route::post('/stages/{stage}/populate', [StageMembersController::class, 'populate'])->name('admin.stages.populate');
+        Route::post('/stages/{stage}/members', [StageMembersController::class, 'addMember'])->name('admin.stages.add-member');
+        Route::delete('/stages/{stage}/members/{member}', [StageMembersController::class, 'removeMember'])->name('admin.stages.remove-member');
+
+        // Invitations (both admin + coach)
+        Route::post('/stages/{stage}/invite-all', [StageMembersController::class, 'inviteAll'])->name('admin.stages.invite-all');
+        Route::post('/stages/{stage}/invite/{member}', [StageMembersController::class, 'invite'])->name('admin.stages.invite');
+        Route::post('/stages/{stage}/close-invitations', [StageMembersController::class, 'closeInvitations'])->name('admin.stages.close-invitations');
+        Route::post('/stages/{stage}/revert-status', [StageMembersController::class, 'revertStatus'])->name('admin.stages.revert-status');
+
+        // RSVP management (both admin + coach)
+        Route::post('/stages/{stage}/accept/{member}', [StageMembersController::class, 'adminAccept'])->name('admin.stages.accept');
+        Route::post('/stages/{stage}/decline/{member}', [StageMembersController::class, 'adminDecline'])->name('admin.stages.decline');
+
+        // Payment management (both admin + coach)
+        Route::post('/stages/{stage}/mark-paid/{member}', [StageMembersController::class, 'markPaid'])->name('admin.stages.mark-paid');
+        Route::post('/stages/{stage}/check-payment/{member}', [StageMembersController::class, 'checkPaymentStatus'])->name('admin.stages.check-payment');
     });
 });

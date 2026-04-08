@@ -176,6 +176,7 @@ const moduleGroups = [
         modules: [
             { name: 'Mijn Toernooien', href: '/mijn-toernooien', roles: ['parent', 'member', 'admin', 'coach', 'barmedewerker'] },
             { name: 'Toernooien', href: '/admin/tournaments', roles: ['admin', 'coach'], extraModule: 'tournaments' },
+            { name: 'Stages', href: '/admin/stages', roles: ['admin', 'coach'], extraModule: 'tournaments' },
             { name: 'Archief', href: '/archief', roles: ['parent', 'member', 'admin', 'coach', 'barmedewerker'] },
         ],
     },

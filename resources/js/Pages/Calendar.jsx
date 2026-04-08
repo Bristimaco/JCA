@@ -11,6 +11,7 @@ const TYPE_STYLES = {
     extra_training: { bg: 'bg-orange-900/40', border: 'border-l-orange-500', text: 'text-orange-300', label: 'Extra Training' },
     cancelled_training: { bg: 'bg-slate-800/60', border: 'border-l-slate-500', text: 'text-slate-400', label: 'Geen training' },
     tournament: { bg: 'bg-rose-900/40', border: 'border-l-rose-500', text: 'text-rose-300', label: 'Toernooi' },
+    stage: { bg: 'bg-teal-900/40', border: 'border-l-teal-500', text: 'text-teal-300', label: 'Stage' },
     event: { bg: 'bg-blue-900/40', border: 'border-l-blue-500', text: 'text-blue-300', label: 'Evenement' },
     birthday: { bg: 'bg-purple-900/40', border: 'border-l-purple-500', text: 'text-purple-300', label: 'Verjaardag' },
 };
@@ -207,9 +208,9 @@ export default function Calendar({ items, startDate, myMemberIds }) {
                                                         <span className={`text-[10px] font-semibold ${style.text} truncate flex-1 ${item.type === 'cancelled_training' ? 'line-through' : ''}`}>
                                                             {item.type === 'cancelled_training' ? `⛔ ${item.name}` : item.name}
                                                         </span>
-                                                        {(item.type === 'tournament' || item.type === 'event') && (
+                                                        {(item.type === 'tournament' || item.type === 'stage' || item.type === 'event') && (
                                                             <Link
-                                                                href={item.type === 'tournament' ? `/toernooien/${item.id}` : '/evenementen'}
+                                                                href={item.type === 'tournament' ? `/toernooien/${item.id}` : item.type === 'stage' ? `/stages/${item.id}` : '/evenementen'}
                                                                 className="shrink-0 text-[10px] text-slate-400 hover:text-white"
                                                                 onClick={e => e.stopPropagation()}
                                                             >
@@ -286,9 +287,9 @@ export default function Calendar({ items, startDate, myMemberIds }) {
                                                     <span className={`text-sm font-semibold ${style.text} truncate flex-1 ${item.type === 'cancelled_training' ? 'line-through' : ''}`}>
                                                         {item.type === 'cancelled_training' ? `⛔ ${item.name}` : item.name}
                                                     </span>
-                                                    {(item.type === 'tournament' || item.type === 'event') && (
+                                                    {(item.type === 'tournament' || item.type === 'stage' || item.type === 'event') && (
                                                         <Link
-                                                            href={item.type === 'tournament' ? `/toernooien/${item.id}` : '/evenementen'}
+                                                            href={item.type === 'tournament' ? `/toernooien/${item.id}` : item.type === 'stage' ? `/stages/${item.id}` : '/evenementen'}
                                                             className="shrink-0 text-sm text-slate-400 hover:text-white"
                                                             onClick={e => e.stopPropagation()}
                                                         >
