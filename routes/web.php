@@ -396,7 +396,10 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::post('/tournaments/{tournament}/coaches', [TournamentMembersController::class, 'addCoach'])->name('admin.tournaments.add-coach');
         Route::delete('/tournaments/{tournament}/coaches/{member}', [TournamentMembersController::class, 'removeCoach'])->name('admin.tournaments.remove-coach');
 
-        // Stages (admin-only actions within tournaments module)
+    });
+
+    // Admin routes — Stages (admin OR extra_module:training)
+    Route::middleware('admin:training')->prefix('admin')->group(function () {
         Route::post('/stages', [StageController::class, 'store'])->name('admin.stages.store');
         Route::delete('/stages/{stage}', [StageController::class, 'destroy'])->name('admin.stages.destroy');
         Route::post('/stages/{stage}/open-registrations', [StageMembersController::class, 'openRegistrations'])->name('admin.stages.open-registrations');
@@ -501,7 +504,7 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
     });
 
     // Stage routes (shared: admin + coach)
-    Route::middleware('coach:tournaments')->prefix('admin')->group(function () {
+    Route::middleware('coach:training')->prefix('admin')->group(function () {
         Route::get('/stages', StageIndexController::class)->name('admin.stages.index');
         Route::post('/stages/{stage}', [StageController::class, 'update'])->name('admin.stages.update');
 

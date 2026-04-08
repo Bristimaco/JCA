@@ -169,6 +169,7 @@ const moduleGroups = [
             { name: 'Trainingsgroepen', href: '/trainer/training-groups', roles: ['coach', 'admin'], extraModule: 'training' },
             { name: 'Extra Training', href: '/trainer/extra-training', roles: ['coach', 'admin'], extraModule: 'training' },
             { name: 'Historiek', href: '/trainer/sessions', roles: ['coach', 'admin'], extraModule: 'training' },
+            { name: 'Stages', href: '/admin/stages', roles: ['admin', 'coach'], extraModule: 'training' },
         ],
     },
     {
@@ -176,7 +177,6 @@ const moduleGroups = [
         modules: [
             { name: 'Mijn Toernooien', href: '/mijn-toernooien', roles: ['parent', 'member', 'admin', 'coach', 'barmedewerker'] },
             { name: 'Toernooien', href: '/admin/tournaments', roles: ['admin', 'coach'], extraModule: 'tournaments' },
-            { name: 'Stages', href: '/admin/stages', roles: ['admin', 'coach'], extraModule: 'tournaments' },
             { name: 'Archief', href: '/archief', roles: ['parent', 'member', 'admin', 'coach', 'barmedewerker'] },
         ],
     },
