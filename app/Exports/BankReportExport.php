@@ -16,16 +16,16 @@ class BankReportExport implements FromArray, WithHeadings
 
     private ?Carbon $to;
 
-    private int $dimensionIndex;
+    private array $dimFilters;
 
     private array $months = [];
 
-    public function __construct(string $tab, ?Carbon $from, ?Carbon $to, int $dimensionIndex)
+    public function __construct(string $tab, ?Carbon $from, ?Carbon $to, array $dimFilters)
     {
         $this->tab = $tab;
         $this->from = $from;
         $this->to = $to;
-        $this->dimensionIndex = $dimensionIndex;
+        $this->dimFilters = $dimFilters;
     }
 
     public function headings(): array
@@ -56,7 +56,6 @@ class BankReportExport implements FromArray, WithHeadings
     {
         $groupField = match ($this->tab) {
             'counterparty' => 'counterparty_account',
-            'dimension' => "dimension_{$this->dimensionIndex}_value",
             default => 'account_number',
         };
 
@@ -66,6 +65,11 @@ class BankReportExport implements FromArray, WithHeadings
         }
         if ($this->to) {
             $query->whereDate('transaction_date', '<=', $this->to);
+        }
+        foreach ([1, 2, 3] as $i) {
+            if (! empty($this->dimFilters[$i] ?? [])) {
+                $query->whereIn("dimension_{$i}_value", $this->dimFilters[$i]);
+            }
         }
 
         $raw = $query

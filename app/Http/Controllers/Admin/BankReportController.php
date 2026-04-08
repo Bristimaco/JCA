@@ -19,7 +19,11 @@ class BankReportController extends Controller
     {
         $tab = $request->input('tab', 'account');
         $period = $request->input('period', 'year');
-        $dimensionIndex = (int) $request->input('dimension_index', 1);
+
+        $dimFilters = [];
+        foreach ([1, 2, 3] as $i) {
+            $dimFilters[$i] = array_filter((array) $request->input("dim{$i}", []));
+        }
 
         [$from, $to] = $this->resolvePeriod($period, $request->input('from'), $request->input('to'));
 
@@ -38,17 +42,25 @@ class BankReportController extends Controller
 
         $groupField = match ($tab) {
             'counterparty' => 'counterparty_account',
-            'dimension' => "dimension_{$dimensionIndex}_value",
             default => 'account_number',
         };
 
+        $baseScope = function ($q) use ($from, $to, $dimFilters) {
+            if ($from) {
+                $q->whereDate('transaction_date', '>=', $from);
+            }
+            if ($to) {
+                $q->whereDate('transaction_date', '<=', $to);
+            }
+            foreach ([1, 2, 3] as $i) {
+                if (! empty($dimFilters[$i])) {
+                    $q->whereIn("dimension_{$i}_value", $dimFilters[$i]);
+                }
+            }
+        };
+
         $query = BankTransaction::query();
-        if ($from) {
-            $query->whereDate('transaction_date', '>=', $from);
-        }
-        if ($to) {
-            $query->whereDate('transaction_date', '<=', $to);
-        }
+        $baseScope($query);
 
         $raw = $query
             ->selectRaw("{$groupField} as group_key, to_char(transaction_date, 'YYYY-MM') as month, SUM(CASE WHEN amount >= 0 THEN amount ELSE 0 END) as income, SUM(CASE WHEN amount < 0 THEN amount ELSE 0 END) as expense, SUM(amount) as total")
@@ -61,17 +73,42 @@ class BankReportController extends Controller
 
         $monthTotals = BankTransaction::query()
             ->selectRaw("to_char(transaction_date, 'YYYY-MM') as month, SUM(CASE WHEN amount >= 0 THEN amount ELSE 0 END) as income, SUM(CASE WHEN amount < 0 THEN amount ELSE 0 END) as expense, SUM(amount) as total");
-        if ($from) {
-            $monthTotals->whereDate('transaction_date', '>=', $from);
-        }
-        if ($to) {
-            $monthTotals->whereDate('transaction_date', '<=', $to);
-        }
+        $baseScope($monthTotals);
         $chartData = $monthTotals->groupBy('month')->orderBy('month')->get()->map(fn ($m) => [
             'month' => $m->month,
             'income' => round((float) $m->income, 2),
             'expense' => round(abs((float) $m->expense), 2),
         ]);
+
+        // Cascading available values per dimension
+        $availableValues = [];
+        foreach ([1, 2, 3] as $i) {
+            if (! $dimensions[$i - 1]) {
+                $availableValues[$i] = [];
+
+                continue;
+            }
+            $avQ = BankTransaction::query();
+            if ($from) {
+                $avQ->whereDate('transaction_date', '>=', $from);
+            }
+            if ($to) {
+                $avQ->whereDate('transaction_date', '<=', $to);
+            }
+            // Apply filters from all previous dimensions
+            for ($prev = 1; $prev < $i; $prev++) {
+                if (! empty($dimFilters[$prev])) {
+                    $avQ->whereIn("dimension_{$prev}_value", $dimFilters[$prev]);
+                }
+            }
+            $availableValues[$i] = $avQ
+                ->whereNotNull("dimension_{$i}_value")
+                ->where("dimension_{$i}_value", '!=', '')
+                ->distinct()
+                ->orderBy("dimension_{$i}_value")
+                ->pluck("dimension_{$i}_value")
+                ->all();
+        }
 
         $months = $raw->pluck('month')->unique()->sort()->values()->all();
 
@@ -102,7 +139,7 @@ class BankReportController extends Controller
             foreach ($grouped as $key => &$row) {
                 $row['label'] = $names[$key]?->counterparty_name ?? $key;
             }
-        } elseif ($tab === 'account') {
+        } else {
             $acctMap = collect($settings?->bank_accounts ?? [])->keyBy(fn ($a) => preg_replace('/\s+/', '', $a['account_number']));
             foreach ($grouped as $key => &$row) {
                 $normalized = preg_replace('/\s+/', '', $key);
@@ -130,9 +167,12 @@ class BankReportController extends Controller
             'totals' => ['income' => $grandIncome, 'expense' => $grandExpense, 'total' => $grandTotal],
             'accounts' => $accounts,
             'dimensions' => $dimensions,
+            'availableValues' => $availableValues,
             'tab' => $tab,
             'period' => $period,
-            'dimensionIndex' => $dimensionIndex,
+            'dim1' => $dimFilters[1],
+            'dim2' => $dimFilters[2],
+            'dim3' => $dimFilters[3],
             'from' => $from?->toDateString() ?? '',
             'to' => $to?->toDateString() ?? '',
         ]);
@@ -142,11 +182,15 @@ class BankReportController extends Controller
     {
         $tab = $request->input('tab', 'account');
         $period = $request->input('period', 'year');
-        $dimensionIndex = (int) $request->input('dimension_index', 1);
+
+        $dimFilters = [];
+        foreach ([1, 2, 3] as $i) {
+            $dimFilters[$i] = array_filter((array) $request->input("dim{$i}", []));
+        }
 
         [$from, $to] = $this->resolvePeriod($period, $request->input('from'), $request->input('to'));
 
-        return Excel::download(new BankReportExport($tab, $from, $to, $dimensionIndex), 'financieel-rapport.xlsx');
+        return Excel::download(new BankReportExport($tab, $from, $to, $dimFilters), 'financieel-rapport.xlsx');
     }
 
     private function resolvePeriod(string $period, ?string $customFrom, ?string $customTo): array

@@ -27,29 +27,27 @@ function formatMonth(m) {
     return `${names[parseInt(mo) - 1]} ${y}`;
 }
 
-export default function BankReport({ rows, months, chartData, totals, accounts, dimensions, tab, period, dimensionIndex, from, to }) {
+export default function BankReport({ rows, months, chartData, totals, accounts, dimensions, availableValues, tab, period, dim1, dim2, dim3, from, to }) {
     const [customFrom, setCustomFrom] = useState(from || '');
     const [customTo, setCustomTo] = useState(to || '');
 
-    const dimensionTabs = dimensions
-        .map((d, i) => d ? { key: 'dimension', label: `Per ${d.name}`, index: i + 1 } : null)
-        .filter(Boolean);
-
-    const allTabs = [...TABS, ...dimensionTabs];
+    const dimSelections = { 1: dim1 || [], 2: dim2 || [], 3: dim3 || [] };
 
     const navigate = (params) => {
         router.get('/admin/financieel-rapport', {
             tab,
             period,
-            dimension_index: dimensionIndex,
             from: customFrom,
             to: customTo,
+            dim1: dimSelections[1],
+            dim2: dimSelections[2],
+            dim3: dimSelections[3],
             ...params,
         }, { preserveState: true });
     };
 
-    const handleTabChange = (t, idx) => {
-        navigate({ tab: t, dimension_index: idx || dimensionIndex });
+    const handleTabChange = (t) => {
+        navigate({ tab: t });
     };
 
     const handlePeriodChange = (p) => {
@@ -64,7 +62,35 @@ export default function BankReport({ rows, months, chartData, totals, accounts, 
         navigate({ period: 'custom' });
     };
 
-    const exportUrl = `/admin/financieel-rapport/export?tab=${tab}&period=${period}&dimension_index=${dimensionIndex}&from=${customFrom}&to=${customTo}`;
+    const toggleDim = (dimIndex, value) => {
+        const current = [...dimSelections[dimIndex]];
+        const idx = current.indexOf(value);
+        const updated = idx >= 0 ? current.filter((v) => v !== value) : [...current, value];
+        const params = { [`dim${dimIndex}`]: updated };
+        // Cascade: clear child dimensions
+        for (let child = dimIndex + 1; child <= 3; child++) {
+            params[`dim${child}`] = [];
+        }
+        navigate(params);
+    };
+
+    const clearDim = (dimIndex) => {
+        const params = { [`dim${dimIndex}`]: [] };
+        for (let child = dimIndex + 1; child <= 3; child++) {
+            params[`dim${child}`] = [];
+        }
+        navigate(params);
+    };
+
+    const exportParams = new URLSearchParams();
+    exportParams.set('tab', tab);
+    exportParams.set('period', period);
+    exportParams.set('from', customFrom);
+    exportParams.set('to', customTo);
+    dimSelections[1].forEach((v) => exportParams.append('dim1[]', v));
+    dimSelections[2].forEach((v) => exportParams.append('dim2[]', v));
+    dimSelections[3].forEach((v) => exportParams.append('dim3[]', v));
+    const exportUrl = `/admin/financieel-rapport/export?${exportParams.toString()}`;
 
     return (
         <AppLayout>
@@ -79,12 +105,12 @@ export default function BankReport({ rows, months, chartData, totals, accounts, 
 
             {/* Tabs */}
             <div className="flex flex-wrap gap-2 mb-4">
-                {allTabs.map((t) => (
+                {TABS.map((t) => (
                     <button
-                        key={t.key + (t.index || '')}
-                        onClick={() => handleTabChange(t.key, t.index)}
+                        key={t.key}
+                        onClick={() => handleTabChange(t.key)}
                         className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
-                            tab === t.key && (!t.index || dimensionIndex === t.index)
+                            tab === t.key
                                 ? 'bg-indigo-600 text-white'
                                 : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
                         }`}
@@ -147,6 +173,49 @@ export default function BankReport({ rows, months, chartData, totals, accounts, 
                 </div>
             </div>
 
+            {/* Dimension Filters */}
+            {dimensions.some(Boolean) && (
+                <div className="space-y-3 mb-6">
+                    {[1, 2, 3].map((i) => {
+                        const dim = dimensions[i - 1];
+                        if (!dim) return null;
+                        const available = availableValues?.[i] || [];
+                        if (available.length === 0) return null;
+                        const selected = dimSelections[i];
+                        return (
+                            <div key={i}>
+                                <div className="flex items-center gap-2 mb-1.5">
+                                    <span className="text-xs text-slate-400 font-medium uppercase tracking-wide">{dim.name}</span>
+                                    {selected.length > 0 && (
+                                        <button onClick={() => clearDim(i)} className="text-xs text-indigo-400 hover:text-indigo-300">
+                                            Alles wissen
+                                        </button>
+                                    )}
+                                </div>
+                                <div className="flex flex-wrap gap-1.5">
+                                    {available.map((val) => {
+                                        const active = selected.includes(val);
+                                        return (
+                                            <button
+                                                key={val}
+                                                onClick={() => toggleDim(i, val)}
+                                                className={`px-3 py-1 rounded-full text-xs font-medium transition ${
+                                                    active
+                                                        ? 'bg-indigo-600 text-white ring-1 ring-indigo-500'
+                                                        : 'bg-slate-800 text-slate-300 ring-1 ring-slate-700 hover:bg-slate-700'
+                                                }`}
+                                            >
+                                                {val}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+            )}
+
             {/* Summary Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
                 <div className="bg-slate-900 rounded-xl ring-1 ring-slate-800 p-5">
@@ -193,7 +262,7 @@ export default function BankReport({ rows, months, chartData, totals, accounts, 
                         <thead>
                             <tr className="border-b border-slate-800">
                                 <th className="px-4 py-3 text-slate-400 font-medium sticky left-0 bg-slate-900 z-10 min-w-[180px]">
-                                    {tab === 'account' ? 'Rekening' : tab === 'counterparty' ? 'Tegenpartij' : 'Dimensie'}
+                                    {tab === 'counterparty' ? 'Tegenpartij' : 'Rekening'}
                                 </th>
                                 {months.map((m) => (
                                     <th key={m} className="px-3 py-3 text-slate-400 font-medium text-right whitespace-nowrap">{formatMonth(m)}</th>
