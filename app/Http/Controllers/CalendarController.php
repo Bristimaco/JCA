@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Enums\EventStatus;
 use App\Enums\MembershipStatus;
-use App\Enums\StageStatus;
-use App\Enums\TournamentStatus;
 use App\Models\Event;
 use App\Models\EventRegistration;
 use App\Models\Member;
@@ -207,7 +205,6 @@ class CalendarController extends Controller
     private function tournamentItems(Carbon $start, Carbon $end, $memberIds): array
     {
         $tournaments = Tournament::whereBetween('tournament_date', [$start->toDateString(), $end->toDateString()])
-            ->where('status', '!=', TournamentStatus::Archived)
             ->get();
 
         return $tournaments->map(function (Tournament $t) use ($memberIds) {
@@ -230,8 +227,7 @@ class CalendarController extends Controller
 
     private function stageItems(Carbon $start, Carbon $end, $memberIds): array
     {
-        $stages = Stage::where('status', '!=', StageStatus::Archived)
-            ->where('start_date', '<=', $end->toDateString())
+        $stages = Stage::where('start_date', '<=', $end->toDateString())
             ->where('end_date', '>=', $start->toDateString())
             ->get();
 
