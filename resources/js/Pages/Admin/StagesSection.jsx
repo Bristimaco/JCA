@@ -706,11 +706,13 @@ function StageForm({ stage, ageCategories, onSuccess, onCancel }) {
             form.post(`/admin/stages/${stage.id}`, {
                 onSuccess,
                 forceFormData: true,
+                onError: (errors) => console.error('Stage update errors:', errors),
             });
         } else {
             form.post('/admin/stages', {
                 onSuccess: () => { form.reset(); onSuccess(); },
                 forceFormData: true,
+                onError: (errors) => console.error('Stage create errors:', errors),
             });
         }
     };
@@ -722,6 +724,16 @@ function StageForm({ stage, ageCategories, onSuccess, onCancel }) {
             <h3 className="text-sm font-semibold text-slate-300 mb-3">
                 {isEditing ? `Bewerk: ${stage.name}` : 'Nieuw stage'}
             </h3>
+            {Object.keys(form.errors).length > 0 && (
+                <div className="mb-3 rounded-lg border border-red-500/50 bg-red-900/30 px-4 py-3">
+                    <p className="text-xs font-semibold text-red-400 mb-1">Er zijn fouten gevonden:</p>
+                    <ul className="list-disc list-inside text-xs text-red-300 space-y-0.5">
+                        {Object.entries(form.errors).map(([field, msg]) => (
+                            <li key={field}><strong>{field}:</strong> {msg}</li>
+                        ))}
+                    </ul>
+                </div>
+            )}
             <div className="flex gap-6">
                 {/* Left: form fields */}
                 <div className="min-w-0 flex-1">
