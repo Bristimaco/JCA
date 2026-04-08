@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\BarProductController;
 use App\Http\Controllers\Admin\CategoryExcelController;
 use App\Http\Controllers\Admin\ClubSettingsController;
 use App\Http\Controllers\Admin\ClubSettingsPageController;
+use App\Http\Controllers\Admin\DebugController;
 use App\Http\Controllers\Admin\EventController as AdminEventController;
 use App\Http\Controllers\Admin\InvoiceController;
 use App\Http\Controllers\Admin\MemberController;
@@ -326,6 +327,11 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         // Financial report
         Route::get('/financieel-rapport', [BankReportController::class, 'index'])->name('admin.bank-report.index');
         Route::get('/financieel-rapport/export', [BankReportController::class, 'export'])->name('admin.bank-report.export');
+
+        // Debug
+        Route::get('/debug', [DebugController::class, 'index'])->name('admin.debug.index');
+        Route::get('/debug/bestellingen', [DebugController::class, 'barOrders'])->name('admin.debug.bar-orders');
+        Route::delete('/debug/bestellingen/{barOrder}', [DebugController::class, 'destroyBarOrder'])->name('admin.debug.bar-orders.destroy');
     });
 
     // Admin routes — Members module (admin OR extra_module:members)
