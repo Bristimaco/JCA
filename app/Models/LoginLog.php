@@ -9,12 +9,7 @@ class LoginLog extends Model
 {
     public $timestamps = false;
 
-    protected $fillable = [
-        'user_id',
-        'logged_in_at',
-        'ip_address',
-        'user_agent',
-    ];
+    protected $guarded = ['id'];
 
     protected function casts(): array
     {

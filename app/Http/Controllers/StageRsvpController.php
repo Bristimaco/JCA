@@ -7,10 +7,11 @@ use App\Models\Member;
 use App\Models\Stage;
 use App\Services\MolliePaymentService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 
 class StageRsvpController extends Controller
 {
-    public function __invoke(string $token, string $response)
+    public function __invoke(string $token, string $response): View
     {
         if (! in_array($response, ['accept', 'decline'])) {
             abort(404);

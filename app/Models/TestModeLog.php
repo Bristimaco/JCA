@@ -8,13 +8,7 @@ class TestModeLog extends Model
 {
     public $timestamps = false;
 
-    protected $fillable = [
-        'type',
-        'recipient',
-        'subject',
-        'body',
-        'created_at',
-    ];
+    protected $guarded = ['id'];
 
     protected function casts(): array
     {

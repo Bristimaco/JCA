@@ -14,8 +14,5 @@ use Illuminate\Support\Carbon;
  */
 class Club extends Model
 {
-    protected $fillable = [
-        'name',
-        'club_number',
-    ];
+    protected $guarded = ['id'];
 }

@@ -7,11 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class TrainingCancellation extends Model
 {
-    protected $fillable = [
-        'training_schedule_id',
-        'date',
-        'reason',
-    ];
+    protected $guarded = ['id'];
 
     protected function casts(): array
     {

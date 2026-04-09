@@ -17,12 +17,7 @@ use Illuminate\Support\Carbon;
  */
 class PushSubscription extends Model
 {
-    protected $fillable = [
-        'user_id',
-        'endpoint',
-        'p256dh_key',
-        'auth_key',
-    ];
+    protected $guarded = ['id'];
 
     public function user(): BelongsTo
     {

@@ -18,15 +18,7 @@ use Illuminate\Support\Carbon;
  */
 class BarProduct extends Model
 {
-    protected $fillable = [
-        'name',
-        'price',
-        'is_active',
-        'display_order',
-        'bar_category_id',
-        'needs_refill',
-        'needs_refill_at',
-    ];
+    protected $guarded = ['id'];
 
     protected function casts(): array
     {

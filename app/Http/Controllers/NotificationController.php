@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Enums\NotificationPreference;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 class NotificationController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
         $notifications = $request->user()
             ->notifications()
@@ -26,7 +28,7 @@ class NotificationController extends Controller
         return response()->json($notifications);
     }
 
-    public function markAsRead(Request $request, string $id)
+    public function markAsRead(Request $request, string $id): JsonResponse
     {
         $notification = $request->user()
             ->notifications()
@@ -38,14 +40,14 @@ class NotificationController extends Controller
         return response()->json(['success' => true]);
     }
 
-    public function markAllAsRead(Request $request)
+    public function markAllAsRead(Request $request): JsonResponse
     {
         $request->user()->unreadNotifications->markAsRead();
 
         return response()->json(['success' => true]);
     }
 
-    public function destroy(Request $request, string $id)
+    public function destroy(Request $request, string $id): JsonResponse
     {
         $request->user()
             ->notifications()
@@ -56,7 +58,7 @@ class NotificationController extends Controller
         return response()->json(['success' => true]);
     }
 
-    public function updatePreference(Request $request)
+    public function updatePreference(Request $request): RedirectResponse
     {
         $validated = $request->validate([
             'notification_preference' => ['required', Rule::enum(NotificationPreference::class)],

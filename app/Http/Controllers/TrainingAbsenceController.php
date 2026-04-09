@@ -5,11 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\TrainingAbsence;
 use App\Models\TrainingAttendance;
 use App\Models\TrainingSession;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class TrainingAbsenceController extends Controller
 {
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
             'member_id' => 'required|integer',
@@ -44,7 +45,7 @@ class TrainingAbsenceController extends Controller
         return response()->json(['success' => true, 'absence' => $absence]);
     }
 
-    public function destroy(Request $request)
+    public function destroy(Request $request): JsonResponse
     {
         $validated = $request->validate([
             'member_id' => 'required|integer',

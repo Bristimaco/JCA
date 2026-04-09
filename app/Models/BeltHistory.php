@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Enums\BeltRank;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
@@ -21,8 +20,6 @@ use Illuminate\Support\Carbon;
  */
 class BeltHistory extends Model
 {
-    use HasFactory;
-
     protected $guarded = ['id'];
 
     protected function casts(): array

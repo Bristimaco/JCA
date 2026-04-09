@@ -125,7 +125,7 @@ class TrainerTournamentController extends Controller
         ]);
     }
 
-    public function storeResults(Request $request, Tournament $tournament)
+    public function storeResults(Request $request, Tournament $tournament): RedirectResponse
     {
         if (in_array($tournament->status, [TournamentStatus::Finished, TournamentStatus::Archived], true)) {
             return redirect()->back()->with('status', 'Resultaten kunnen niet meer worden aangepast na afsluiting.');
@@ -191,7 +191,7 @@ class TrainerTournamentController extends Controller
         return redirect()->back()->with('status', 'Resultaten opgeslagen.');
     }
 
-    public function closeTournament(Request $request, Tournament $tournament)
+    public function closeTournament(Request $request, Tournament $tournament): RedirectResponse
     {
         if ($tournament->status !== TournamentStatus::Started) {
             return redirect()->back()->with('status', 'Dit toernooi kan niet worden afgesloten (status is niet "Gestart").');

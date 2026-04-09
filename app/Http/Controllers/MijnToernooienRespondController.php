@@ -6,12 +6,13 @@ use App\Enums\InvitationStatus;
 use App\Models\Member;
 use App\Models\Tournament;
 use App\Services\MolliePaymentService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class MijnToernooienRespondController extends Controller
 {
-    public function __invoke(Request $request, Tournament $tournament, Member $member)
+    public function __invoke(Request $request, Tournament $tournament, Member $member): RedirectResponse
     {
         $request->validate([
             'response' => ['required', 'in:accept,decline'],

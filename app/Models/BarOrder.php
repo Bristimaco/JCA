@@ -9,17 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class BarOrder extends Model
 {
-    protected $fillable = [
-        'total',
-        'status',
-        'user_id',
-        'ordered_by_user_id',
-        'mollie_payment_id',
-        'mollie_payment_url',
-        'payment_method',
-        'payment_status',
-        'paid_at',
-    ];
+    protected $guarded = ['id'];
 
     protected function casts(): array
     {

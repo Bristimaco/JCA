@@ -16,6 +16,7 @@ use App\Models\TournamentResult;
 use App\Models\TrainingAbsence;
 use App\Models\TrainingAttendance;
 use App\Models\TrainingSession;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -409,14 +410,14 @@ class AttendanceKioskController extends Controller
         return back();
     }
 
-    public function listClubs(): Response
+    public function listClubs(): JsonResponse
     {
         $clubs = Club::orderBy('name')->get();
 
         return response()->json(['clubs' => $clubs]);
     }
 
-    public function createClub(Request $request)
+    public function createClub(Request $request): RedirectResponse
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],

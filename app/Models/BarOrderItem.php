@@ -7,12 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class BarOrderItem extends Model
 {
-    protected $fillable = [
-        'bar_order_id',
-        'bar_product_id',
-        'quantity',
-        'unit_price',
-    ];
+    protected $guarded = ['id'];
 
     protected function casts(): array
     {

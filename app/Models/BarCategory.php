@@ -8,10 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class BarCategory extends Model
 {
-    protected $fillable = [
-        'name',
-        'display_order',
-    ];
+    protected $guarded = ['id'];
 
     protected function casts(): array
     {

@@ -18,4 +18,14 @@ enum EventStatus: string
             self::Archived => 'Gearchiveerd',
         };
     }
+
+    public function previous(): ?self
+    {
+        return match ($this) {
+            self::Draft => null,
+            self::Published => self::Draft,
+            self::RegistrationClosed => self::Published,
+            self::Archived => self::RegistrationClosed,
+        };
+    }
 }

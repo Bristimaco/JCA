@@ -706,13 +706,11 @@ function StageForm({ stage, ageCategories, onSuccess, onCancel }) {
             form.post(`/admin/stages/${stage.id}`, {
                 onSuccess,
                 forceFormData: true,
-                onError: (errors) => console.error('Stage update errors:', errors),
             });
         } else {
             form.post('/admin/stages', {
                 onSuccess: () => { form.reset(); onSuccess(); },
                 forceFormData: true,
-                onError: (errors) => console.error('Stage create errors:', errors),
             });
         }
     };
