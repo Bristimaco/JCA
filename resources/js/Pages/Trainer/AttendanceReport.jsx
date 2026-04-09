@@ -63,7 +63,8 @@ function GroupTable({ group, threshold }) {
                 <span className="text-xs text-slate-500">{group.total_sessions} {group.total_sessions === 1 ? 'sessie' : 'sessies'}</span>
             </div>
 
-            <div className="overflow-x-auto">
+            {/* Desktop table */}
+            <div className="hidden lg:block overflow-x-auto">
                 <table className="w-full text-sm">
                     <thead>
                         <tr className="border-b border-slate-800">
@@ -114,6 +115,34 @@ function GroupTable({ group, threshold }) {
                         })}
                     </tbody>
                 </table>
+            </div>
+
+            {/* Mobile cards */}
+            <div className="lg:hidden divide-y divide-slate-800/50">
+                {group.members.map(member => {
+                    const belowThreshold = member.percentage < threshold;
+                    const attended = member.attended_session_ids.length;
+                    const notified = member.notified_absent_session_ids?.length ?? 0;
+                    return (
+                        <div
+                            key={member.id}
+                            className={`px-4 py-3 flex items-center justify-between gap-3 ${belowThreshold ? 'bg-red-950/20' : 'bg-emerald-950/10'}`}
+                        >
+                            <div className="min-w-0">
+                                <p className={`text-sm font-medium truncate ${belowThreshold ? 'text-red-300' : 'text-emerald-300'}`}>
+                                    {member.name}
+                                </p>
+                                <p className="text-xs text-slate-500">
+                                    {attended}/{group.total_sessions} aanwezig
+                                    {notified > 0 && <span className="text-amber-400/70"> · {notified} gemeld afwezig</span>}
+                                </p>
+                            </div>
+                            <span className={`text-lg font-bold tabular-nums shrink-0 ${belowThreshold ? 'text-red-400' : 'text-emerald-400'}`}>
+                                {member.percentage}%
+                            </span>
+                        </div>
+                    );
+                })}
             </div>
         </div>
     );

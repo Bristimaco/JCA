@@ -55,26 +55,45 @@ export default function SalesStats({ rankings, period, totalOrders, totalRevenue
                             Geen verkopen in deze periode.
                         </div>
                     ) : (
-                        <table className="w-full text-sm">
-                            <thead>
-                                <tr className="border-b border-slate-700 text-left">
-                                    <th className="px-6 py-3 text-xs font-medium text-slate-400 w-12">#</th>
-                                    <th className="px-6 py-3 text-xs font-medium text-slate-400">Product</th>
-                                    <th className="px-6 py-3 text-xs font-medium text-slate-400 text-right">Aantal verkocht</th>
-                                    <th className="px-6 py-3 text-xs font-medium text-slate-400 text-right">Omzet</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-800">
-                                {rankings.map((r, i) => (
-                                    <tr key={i} className="hover:bg-slate-800/30">
-                                        <td className="px-6 py-3 text-slate-500 font-medium">{i + 1}</td>
-                                        <td className="px-6 py-3 font-medium text-white">{r.product_name}</td>
-                                        <td className="px-6 py-3 text-right font-bold text-white tabular-nums">{r.total_quantity}</td>
-                                        <td className="px-6 py-3 text-right font-medium text-emerald-400 tabular-nums">€{Number(r.total_revenue).toFixed(2)}</td>
+                        <>
+                            {/* Desktop table */}
+                            <table className="hidden lg:table w-full text-sm">
+                                <thead>
+                                    <tr className="border-b border-slate-700 text-left">
+                                        <th className="px-6 py-3 text-xs font-medium text-slate-400 w-12">#</th>
+                                        <th className="px-6 py-3 text-xs font-medium text-slate-400">Product</th>
+                                        <th className="px-6 py-3 text-xs font-medium text-slate-400 text-right">Aantal verkocht</th>
+                                        <th className="px-6 py-3 text-xs font-medium text-slate-400 text-right">Omzet</th>
                                     </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-800">
+                                    {rankings.map((r, i) => (
+                                        <tr key={i} className="hover:bg-slate-800/30">
+                                            <td className="px-6 py-3 text-slate-500 font-medium">{i + 1}</td>
+                                            <td className="px-6 py-3 font-medium text-white">{r.product_name}</td>
+                                            <td className="px-6 py-3 text-right font-bold text-white tabular-nums">{r.total_quantity}</td>
+                                            <td className="px-6 py-3 text-right font-medium text-emerald-400 tabular-nums">€{Number(r.total_revenue).toFixed(2)}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+
+                            {/* Mobile cards */}
+                            <div className="lg:hidden divide-y divide-slate-800">
+                                {rankings.map((r, i) => (
+                                    <div key={i} className="px-4 py-3 flex items-center justify-between">
+                                        <div className="flex items-center gap-3 min-w-0">
+                                            <span className="text-slate-500 font-medium w-6 shrink-0">{i + 1}</span>
+                                            <span className="font-medium text-white truncate">{r.product_name}</span>
+                                        </div>
+                                        <div className="text-right shrink-0 ml-3">
+                                            <p className="text-sm font-bold text-white tabular-nums">{r.total_quantity}x</p>
+                                            <p className="text-xs font-medium text-emerald-400 tabular-nums">€{Number(r.total_revenue).toFixed(2)}</p>
+                                        </div>
+                                    </div>
                                 ))}
-                            </tbody>
-                        </table>
+                            </div>
+                        </>
                     )}
                 </div>
             </div>

@@ -123,7 +123,9 @@ export default function ArchivedTournaments({ tournaments }) {
                                     {t.results.length === 0 ? (
                                         <p className="px-5 py-4 text-sm text-slate-500">Geen resultaten beschikbaar.</p>
                                     ) : (
-                                        <div className="overflow-x-auto">
+                                        <>
+                                        {/* Desktop table */}
+                                        <div className="hidden lg:block overflow-x-auto">
                                             <table className="w-full text-sm">
                                                 <thead>
                                                     <tr className="border-b border-slate-700/50">
@@ -143,6 +145,20 @@ export default function ArchivedTournaments({ tournaments }) {
                                                 </tbody>
                                             </table>
                                         </div>
+
+                                        {/* Mobile cards */}
+                                        <div className="lg:hidden divide-y divide-slate-700/50">
+                                            {t.results.map((r, idx) => (
+                                                <div key={idx} className="px-4 py-2.5 flex items-center justify-between gap-2">
+                                                    <div className="min-w-0">
+                                                        <p className="text-sm text-slate-300 font-medium truncate">{r.member_name}</p>
+                                                        {r.notes && <p className="text-xs text-slate-400 italic truncate">{r.notes}</p>}
+                                                    </div>
+                                                    <div className="shrink-0">{resultBadge(r.result)}</div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        </>
                                     )}
                                 </div>
                             )}

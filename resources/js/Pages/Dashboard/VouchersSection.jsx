@@ -98,7 +98,9 @@ export default function VouchersSection({ vouchers }) {
                     Geen vouchers gevonden.
                 </div>
             ) : (
-                <div className="overflow-x-auto">
+                <>
+                {/* Desktop table */}
+                <div className="hidden lg:block overflow-x-auto">
                     <table className="w-full text-sm">
                         <thead>
                             <tr className="border-b border-slate-700 text-left">
@@ -145,7 +147,38 @@ export default function VouchersSection({ vouchers }) {
                         </tbody>
                     </table>
                 </div>
-            )}
+
+                {/* Mobile cards */}
+                <div className="lg:hidden divide-y divide-slate-800">
+                    {filtered.map((v) => (
+                        <div key={v.id} className="px-4 py-3 space-y-2">
+                            <div className="flex items-center justify-between">
+                                <span className="font-mono text-sm text-white">{v.code}</span>
+                                <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${statusColors[v.status] || 'bg-slate-700 text-slate-300'}`}>
+                                    {statusLabels[v.status] || v.status}
+                                </span>
+                            </div>
+                            <div className="text-sm text-white">{v.member_name}</div>
+                            <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-400">
+                                <span>Geldig tot: {v.expires_at ? new Date(v.expires_at).toLocaleDateString('nl-BE') : '-'}</span>
+                                {v.redeemed_at && <span>Verbruikt: {v.redeemed_at}</span>}
+                                {v.redeemed_by_name && <span>Door: {v.redeemed_by_name}</span>}
+                            </div>
+                            {v.status === 'active' && (
+                                <button
+                                    onClick={() => handleRedeem(v.code)}
+                                    disabled={redeeming === v.code}
+                                    className="text-xs font-medium text-emerald-400 hover:text-emerald-300 disabled:opacity-50"
+                                >
+                                    {redeeming === v.code ? 'Bezig...' : 'Activeer'}
+                                </button>
+                            )}
+                            {v.status === 'redeemed' && (
+                                <span className="text-xs text-slate-500">✓ Verbruikt</span>
+                            )}
+                        </div>
+                    ))}
+                </div>                </>            )}
         </>
     );
 }

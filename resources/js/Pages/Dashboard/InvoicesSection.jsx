@@ -81,7 +81,8 @@ export default function InvoicesSection({ invoices }) {
                 </div>
             </div>
 
-            <div className="overflow-x-auto">
+            {/* Desktop table */}
+            <div className="hidden lg:block overflow-x-auto">
                 <table className="w-full text-sm">
                     <thead>
                         <tr className="border-b border-slate-700 text-left">
@@ -100,6 +101,13 @@ export default function InvoicesSection({ invoices }) {
                         ))}
                     </tbody>
                 </table>
+            </div>
+
+            {/* Mobile cards */}
+            <div className="lg:hidden divide-y divide-slate-800">
+                {invoices.map((inv) => (
+                    <InvoiceMobileCard key={inv.id} invoice={inv} />
+                ))}
             </div>
         </>
     );
@@ -203,5 +211,81 @@ function InvoiceRow({ invoice }) {
                 )}
             </td>
         </tr>
+    );
+}
+
+function InvoiceMobileCard({ invoice }) {
+    const retryForm = useForm({});
+    const checkStatusForm = useForm({});
+    const reminderForm = useForm({});
+    const [deleting, setDeleting] = useState(false);
+
+    const handleRetry = () => {
+        retryForm.post(`/admin/invoices/${invoice.id}/retry-payment`, { preserveScroll: true });
+    };
+    const handleCheckStatus = () => {
+        checkStatusForm.post(`/admin/invoices/${invoice.id}/check-status`, { preserveScroll: true });
+    };
+    const handleSendReminder = () => {
+        reminderForm.post(`/admin/invoices/${invoice.id}/send-reminder`, { preserveScroll: true });
+    };
+    const handleDelete = () => {
+        if (!window.confirm('Weet je zeker dat je deze factuur wilt verwijderen? De Mollie betaallink wordt ook verwijderd.')) return;
+        setDeleting(true);
+        router.delete(`/admin/invoices/${invoice.id}`, {
+            preserveScroll: true,
+            onFinish: () => setDeleting(false),
+        });
+    };
+
+    return (
+        <div className="px-4 py-3 space-y-2">
+            <div className="flex items-center justify-between">
+                <div>
+                    <p className="text-sm font-medium text-white">{invoice.user_name}</p>
+                    <p className="text-xs text-slate-500">{invoice.user_email}</p>
+                </div>
+                <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${statusColors[invoice.status] || 'bg-slate-700 text-slate-300'}`}>
+                    {statusLabels[invoice.status] || invoice.status}
+                </span>
+            </div>
+            <div className="flex flex-wrap gap-1">
+                {invoice.members.map((m, i) => (
+                    <span key={i} className="inline-flex items-center rounded-full bg-slate-800 px-2 py-0.5 text-xs text-slate-300">
+                        {m}
+                    </span>
+                ))}
+            </div>
+            <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-400">
+                <span className="text-sm font-medium text-emerald-400">€{Number(invoice.total_amount).toFixed(2)}</span>
+                <span>Vervalt: {invoice.due_date ? new Date(invoice.due_date).toLocaleDateString('nl-BE') : '-'}</span>
+                {invoice.paid_at && <span>Betaald: {new Date(invoice.paid_at).toLocaleDateString('nl-BE')}</span>}
+            </div>
+            <div className="flex flex-wrap gap-2 pt-1">
+                {invoice.status === 'pending' && !invoice.has_payment_url && (
+                    <button onClick={handleRetry} disabled={retryForm.processing} className="text-xs font-medium text-rose-400 hover:text-rose-300 disabled:opacity-50">
+                        {retryForm.processing ? 'Bezig...' : 'Betaallink aanmaken'}
+                    </button>
+                )}
+                {invoice.status === 'pending' && invoice.has_payment_url && (
+                    <>
+                        <button onClick={handleCheckStatus} disabled={checkStatusForm.processing} className="text-xs font-medium text-sky-400 hover:text-sky-300 disabled:opacity-50">
+                            {checkStatusForm.processing ? 'Bezig...' : 'Status controleren'}
+                        </button>
+                        <button onClick={handleSendReminder} disabled={reminderForm.processing} className="text-xs font-medium text-amber-400 hover:text-amber-300 disabled:opacity-50">
+                            {reminderForm.processing ? 'Bezig...' : 'Herinnering sturen'}
+                        </button>
+                    </>
+                )}
+                {invoice.status === 'paid' && (
+                    <span className="text-xs text-emerald-500">✓ Betaald</span>
+                )}
+                {invoice.status !== 'paid' && (
+                    <button onClick={handleDelete} disabled={deleting} className="text-xs font-medium text-red-500 hover:text-red-400 disabled:opacity-50">
+                        {deleting ? 'Bezig...' : 'Verwijderen'}
+                    </button>
+                )}
+            </div>
+        </div>
     );
 }

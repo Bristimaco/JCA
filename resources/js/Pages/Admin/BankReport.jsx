@@ -257,7 +257,8 @@ export default function BankReport({ rows, months, chartData, totals, accounts, 
 
             {/* Data Table */}
             <div className="bg-slate-900 rounded-xl ring-1 ring-slate-800 overflow-hidden">
-                <div className="overflow-x-auto">
+                {/* Desktop table */}
+                <div className="hidden lg:block overflow-x-auto">
                     <table className="w-full text-sm text-left">
                         <thead>
                             <tr className="border-b border-slate-800">
@@ -316,6 +317,48 @@ export default function BankReport({ rows, months, chartData, totals, accounts, 
                             </tfoot>
                         )}
                     </table>
+                </div>
+
+                {/* Mobile cards */}
+                <div className="lg:hidden">
+                    {rows.length === 0 ? (
+                        <div className="px-4 py-12 text-center text-slate-500">
+                            Geen data gevonden voor de geselecteerde periode.
+                        </div>
+                    ) : (
+                        <>
+                            <div className="divide-y divide-slate-800">
+                                {rows.map((row, i) => (
+                                    <div key={i} className="px-4 py-3 space-y-1.5">
+                                        <div className="flex items-center justify-between gap-2">
+                                            <span className="text-sm text-white font-medium truncate">{row.label}</span>
+                                            <span className={`text-sm font-semibold tabular-nums shrink-0 ${row.total >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                                                {formatCurrency(row.total)}
+                                            </span>
+                                        </div>
+                                        <div className="flex flex-wrap gap-x-3 gap-y-0.5">
+                                            {months.map((m) => {
+                                                const val = row.months[m]?.total ?? 0;
+                                                if (val === 0) return null;
+                                                return (
+                                                    <span key={m} className="text-xs text-slate-400">
+                                                        <span className="text-slate-500">{formatMonth(m)}:</span>{' '}
+                                                        <span className={val >= 0 ? 'text-emerald-400/70' : 'text-red-400/70'}>{formatCurrency(val)}</span>
+                                                    </span>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                            <div className="border-t-2 border-slate-700 bg-slate-800/50 px-4 py-3 flex items-center justify-between">
+                                <span className="text-sm text-white font-bold">Totaal</span>
+                                <span className={`text-sm font-bold tabular-nums ${totals.total >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                                    {formatCurrency(totals.total)}
+                                </span>
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
         </AppLayout>

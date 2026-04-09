@@ -555,9 +555,74 @@ function StageMembersPanel({ stage, members, competitionMembers, availableCoache
                     </thead>
                 );
 
+                const renderMemberCard = (member) => (
+                    <div key={member.id} className="px-4 py-3 border-t border-slate-700 space-y-2">
+                        <div className="flex items-center justify-between gap-2">
+                            <span className="text-sm font-medium text-white">{member.name}</span>
+                            <span className={`shrink-0 inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${invitationStatusColors[member.invitation_status] || ''}`}>
+                                {member.invitation_status_label}
+                            </span>
+                        </div>
+                        <div className="flex flex-wrap gap-1.5">
+                            {member.age_category && (
+                                <span className="inline-flex items-center rounded-full bg-teal-900/30 px-2 py-0.5 text-xs font-medium text-teal-300">{member.age_category}</span>
+                            )}
+                            {member.weight_category && (
+                                <span className="inline-flex items-center rounded-full bg-teal-900/30 px-2 py-0.5 text-xs font-medium text-teal-400">{member.weight_category}</span>
+                            )}
+                            {member.registration_status === 'registered' && (
+                                <span className="inline-flex items-center rounded-full bg-emerald-900/40 text-emerald-400 px-2 py-0.5 text-xs font-medium">Ingeschreven</span>
+                            )}
+                            {member.registration_status === 'unregistered' && (
+                                <span className="inline-flex items-center rounded-full bg-red-900/40 text-red-400 px-2 py-0.5 text-xs font-medium">Uitgeschreven</span>
+                            )}
+                            {isPaidStage && member.payment_status === 'paid' && (
+                                <span className="inline-flex items-center rounded-full bg-emerald-900/40 text-emerald-400 px-2 py-0.5 text-xs font-medium">💳 Betaald</span>
+                            )}
+                            {isPaidStage && member.payment_status === 'expired' && (
+                                <span className="inline-flex items-center rounded-full bg-red-900/40 text-red-400 px-2 py-0.5 text-xs font-medium">Verlopen</span>
+                            )}
+                            {isPaidStage && member.payment_status === 'pending' && (
+                                <span className="inline-flex items-center rounded-full bg-amber-900/40 text-amber-400 px-2 py-0.5 text-xs font-medium">In afwachting</span>
+                            )}
+                        </div>
+                        <div className="flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-slate-400">
+                            <span>{member.date_of_birth ? new Date(member.date_of_birth).toLocaleDateString('nl-BE') : '-'}</span>
+                            {member.license_number && <span>#{member.license_number}</span>}
+                        </div>
+                        <div className="flex items-center gap-2 pt-0.5">
+                            {member.invitation_status === 'pending' && stage.status === 'preparation' && (
+                                <button onClick={() => handleInvite(member.id)} disabled={processing[member.id]} className="text-xs text-emerald-600 hover:text-emerald-400 disabled:opacity-50">Uitnodigen</button>
+                            )}
+                            {member.invitation_status === 'invited' && (
+                                <>
+                                    <button onClick={() => handleAdminAccept(member.id)} disabled={processing[member.id]} className="text-xs text-emerald-600 hover:text-emerald-400 disabled:opacity-50" title="Accepteren namens lid">✓</button>
+                                    <button onClick={() => handleAdminDecline(member.id)} disabled={processing[member.id]} className="text-xs text-red-500 hover:text-red-400 disabled:opacity-50" title="Afslaan namens lid">✗</button>
+                                </>
+                            )}
+                            {stage.status === 'registrations_open' && member.invitation_status === 'accepted' && member.registration_status !== 'registered' && userRole === 'admin' && (
+                                <button onClick={() => handleRegister(member.id)} disabled={processing[member.id]} className="text-xs text-emerald-600 hover:text-emerald-400 disabled:opacity-50">Inschrijven</button>
+                            )}
+                            {stage.status === 'registrations_open' && member.registration_status === 'registered' && userRole === 'admin' && (
+                                <button onClick={() => handleUnregister(member.id, member.name)} disabled={processing[member.id]} className="text-xs text-red-500 hover:text-red-400 disabled:opacity-50">Uitschrijven</button>
+                            )}
+                            {stage.status === 'preparation' && userRole === 'coach' && (
+                                <button onClick={() => handleRemove(member.id, member.name)} className="text-xs text-red-500 hover:text-red-400">✕</button>
+                            )}
+                            {isPaidStage && member.payment_status && member.payment_status !== 'paid' && (
+                                <>
+                                    <button onClick={() => handleMarkPaid(member.id)} disabled={processing[member.id]} className="text-xs text-emerald-600 hover:text-emerald-400 disabled:opacity-50" title="Markeer als betaald">💳</button>
+                                    <button onClick={() => handleCheckPayment(member.id)} disabled={processing[member.id]} className="text-xs text-blue-500 hover:text-blue-400 disabled:opacity-50" title="Status controleren">🔄</button>
+                                </>
+                            )}
+                        </div>
+                    </div>
+                );
+
                 return (
                     <>
-                        <div className="overflow-x-auto">
+                        {/* Desktop table */}
+                        <div className="hidden lg:block overflow-x-auto">
                             <table className="w-full">
                                 {tableHeader}
                                 <tbody>
@@ -565,17 +630,30 @@ function StageMembersPanel({ stage, members, competitionMembers, availableCoache
                                 </tbody>
                             </table>
                         </div>
+
+                        {/* Mobile cards */}
+                        <div className="lg:hidden">
+                            {participating.map(renderMemberCard)}
+                        </div>
+
                         {notParticipating.length > 0 && (
                             <>
                                 <div className="px-4 py-2 bg-slate-900 border-t border-b border-slate-800">
                                     <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Niet-deelnemers ({notParticipating.length})</span>
                                 </div>
-                                <div className="overflow-x-auto">
+
+                                {/* Desktop table */}
+                                <div className="hidden lg:block overflow-x-auto">
                                     <table className="w-full opacity-60">
                                         <tbody>
                                             {notParticipating.map(renderMember)}
                                         </tbody>
                                     </table>
+                                </div>
+
+                                {/* Mobile cards */}
+                                <div className="lg:hidden opacity-60">
+                                    {notParticipating.map(renderMemberCard)}
                                 </div>
                             </>
                         )}

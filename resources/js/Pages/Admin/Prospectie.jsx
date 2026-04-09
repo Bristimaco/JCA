@@ -284,7 +284,9 @@ export default function Prospectie({ prospects, showArchived }) {
                         <p className="text-sm text-slate-500">{search ? 'Geen prospecten gevonden.' : 'Nog geen prospecten opgeslagen.'}</p>
                     </div>
                 ) : (
-                    <div className="overflow-x-auto">
+                    <>
+                    {/* Desktop table */}
+                    <div className="hidden lg:block overflow-x-auto">
                         <table className="w-full">
                             <thead>
                                 <tr className="border-b border-slate-800">
@@ -349,6 +351,53 @@ export default function Prospectie({ prospects, showArchived }) {
                             </tbody>
                         </table>
                     </div>
+
+                    {/* Mobile cards */}
+                    <div className="lg:hidden divide-y divide-slate-800">
+                        {filtered.map((p) => (
+                            <div key={p.id} className="px-4 py-3 space-y-2 active:bg-slate-800/50 cursor-pointer" onClick={() => router.visit(`/admin/prospectie/${p.id}`)}>
+                                <div className="flex items-center justify-between gap-2">
+                                    <div className="flex items-center gap-2 min-w-0">
+                                        <p className="text-sm font-medium text-white truncate">{p.company_name}</p>
+                                        {p.archived_reason && (
+                                            <span className={`shrink-0 inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${p.archived_reason === 'converted' ? 'bg-emerald-900/50 text-emerald-400' : 'bg-slate-700 text-slate-400'}`}>
+                                                {p.archived_reason === 'converted' ? 'Omgezet' : 'Geen sponsor'}
+                                            </span>
+                                        )}
+                                    </div>
+                                    <div className="flex items-center gap-1 shrink-0">
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); router.post(`/admin/prospectie/${p.id}/refresh`, {}, { preserveScroll: true }); }}
+                                            className="rounded-md bg-slate-700 p-1.5 text-slate-400 hover:bg-slate-600 hover:text-white transition-colors"
+                                            title="Vernieuwen"
+                                        >
+                                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                                        </button>
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); if (confirm(`'${p.company_name}' verwijderen?`)) router.delete(`/admin/prospectie/${p.id}`, { preserveScroll: true }); }}
+                                            className="rounded-md bg-slate-700 p-1.5 text-slate-400 hover:bg-red-600 hover:text-white transition-colors"
+                                            title="Verwijderen"
+                                        >
+                                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                {p.legal_form && <p className="text-xs text-slate-500">{p.legal_form}</p>}
+                                <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-400">
+                                    {p.status && <span>{p.status}</span>}
+                                    {p.address_city && <span>{p.address_city}</span>}
+                                    {p.phone && <span>{p.phone}</span>}
+                                    {p.email && <span className="text-slate-300">{p.email}</span>}
+                                </div>
+                                <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500">
+                                    {p.vat_number && <span>{formatVat(p.vat_number)}</span>}
+                                    {p.notes_count > 0 && <span className="inline-flex items-center rounded-full bg-slate-700 px-2 py-0.5 text-xs font-medium text-slate-300">{p.notes_count} notities</span>}
+                                    <span>{p.created_at}</span>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                    </>
                 )}
             </div>
         </AppLayout>
