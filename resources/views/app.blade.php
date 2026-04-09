@@ -23,7 +23,7 @@
     @inertiaHead
 </head>
 
-<body style="overflow-x:hidden">
+<body>
     @inertia
     <script>
         if ('serviceWorker' in navigator) {
