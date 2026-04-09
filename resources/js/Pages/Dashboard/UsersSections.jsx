@@ -46,7 +46,7 @@ function PendingUserRow({ user, roles, extraModules }) {
 
     return (
         <div className="px-3 sm:px-6 py-4">
-            <div className="flex items-center justify-between gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4">
                 <div className="min-w-0 flex-1">
                     <p className="font-medium text-white truncate">{user.name}</p>
                     <p className="text-sm text-slate-500">{user.email}</p>
@@ -276,7 +276,7 @@ function UserRow({ user, roles, extraModules, allMembers }) {
                         })}
                     </div>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-2 lg:gap-3">
                     <span className="text-sm text-slate-500">
                         {roles.find((r) => r.value === user.role)?.label}
                     </span>

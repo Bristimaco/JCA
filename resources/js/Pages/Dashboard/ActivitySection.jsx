@@ -59,7 +59,7 @@ export default function ActivitySection({ activeSessions, inactiveUsers, loginLo
                     <button
                         key={t.key}
                         onClick={() => setTab(t.key)}
-                        className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                        className={`flex-1 px-3 py-2 text-xs sm:text-sm font-medium rounded-md transition-colors ${
                             tab === t.key
                                 ? 'bg-rose-700 text-white shadow-sm'
                                 : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
@@ -79,7 +79,7 @@ export default function ActivitySection({ activeSessions, inactiveUsers, loginLo
 
             {/* Active Sessions */}
             {tab === 'active' && (
-                <div className="bg-slate-900 rounded-xl ring-1 ring-slate-800 overflow-hidden">
+                <div className="bg-slate-900 rounded-xl ring-1 ring-slate-800 overflow-x-auto">
                     {activeSessions.length === 0 ? (
                         <p className="p-6 text-slate-500 text-sm text-center">Geen actieve sessies op dit moment.</p>
                     ) : (
@@ -119,7 +119,7 @@ export default function ActivitySection({ activeSessions, inactiveUsers, loginLo
 
             {/* Login History */}
             {tab === 'history' && (
-                <div className="bg-slate-900 rounded-xl ring-1 ring-slate-800 overflow-hidden">
+                <div className="bg-slate-900 rounded-xl ring-1 ring-slate-800 overflow-x-auto">
                     {loginLogs.data.length === 0 ? (
                         <p className="p-6 text-slate-500 text-sm text-center">Nog geen login historiek.</p>
                     ) : (
@@ -195,7 +195,7 @@ export default function ActivitySection({ activeSessions, inactiveUsers, loginLo
                         </select>
                     </div>
 
-                    <div className="bg-slate-900 rounded-xl ring-1 ring-slate-800 overflow-hidden">
+                    <div className="bg-slate-900 rounded-xl ring-1 ring-slate-800 overflow-x-auto">
                         {inactiveUsers.length === 0 ? (
                             <p className="p-6 text-slate-500 text-sm text-center">Geen inactieve gebruikers gevonden.</p>
                         ) : (

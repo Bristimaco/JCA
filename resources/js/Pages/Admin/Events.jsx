@@ -164,7 +164,7 @@ function EventRow({ event, onEdit }) {
                     )}
                 </div>
             </div>
-            <div className="flex items-center gap-2 shrink-0">
+            <div className="flex flex-wrap items-center gap-2">
                 {event.status === 'draft' && (
                     <button onClick={() => router.post(`/admin/evenementen/${event.id}/publish`, {}, { preserveScroll: true })} className="rounded-lg bg-emerald-900/30 px-3 py-1.5 text-xs font-semibold text-emerald-400 hover:bg-emerald-900/50 ring-1 ring-emerald-700/30">Publiceren</button>
                 )}

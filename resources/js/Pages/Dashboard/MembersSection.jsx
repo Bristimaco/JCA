@@ -121,7 +121,7 @@ export default function MembersSection({ members, ageCategories, weightCategorie
                         {members.length}
                     </span>
                 </h2>
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-2 lg:gap-3">
                     {activeFilter === 'renewal' && (
                         <button
                             onClick={() => setActiveFilter('all')}
@@ -277,7 +277,7 @@ function MemberRow({ member, ageCategoryName, weightCategoryName, onView, onEdit
                     )}
                 </div>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2 lg:gap-3">
                 <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${statusColors[member.membership_status] || ''}`}>
                     {statusLabels[member.membership_status] || member.membership_status}
                 </span>

@@ -68,7 +68,7 @@ function statusBadge(a) {
 
 function AnnouncementRow({ announcement: a, onEdit }) {
     return (
-        <div className="px-3 sm:px-6 py-4 flex items-start gap-4">
+        <div className="px-3 sm:px-6 py-4 flex flex-col sm:flex-row items-start gap-2 sm:gap-4">
             <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
                     <h4 className="text-sm font-semibold text-white">{a.title}</h4>
@@ -83,7 +83,7 @@ function AnnouncementRow({ announcement: a, onEdit }) {
                     {a.display_order > 0 && <span className="ml-2">Volgorde: {a.display_order}</span>}
                 </p>
             </div>
-            <div className="flex gap-2 flex-shrink-0">
+            <div className="flex gap-2">
                 <button
                     onClick={() => {
                         router.post(`/admin/announcements/${a.id}/archive`, {}, { preserveScroll: true });
@@ -156,7 +156,7 @@ function AddAnnouncementForm() {
                     />
                     {form.errors.title && <p className="text-sm text-red-400 mt-1">{form.errors.title}</p>}
                 </div>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                     <div>
                         <label className="block text-sm text-slate-300 mb-1">Startdatum *</label>
                         <input
@@ -269,7 +269,7 @@ function EditRow({ announcement: a, onCancel, onSuccess }) {
                     />
                     {form.errors.title && <p className="text-sm text-red-400 mt-1">{form.errors.title}</p>}
                 </div>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                     <div>
                         <label className="block text-sm text-slate-300 mb-1">Startdatum *</label>
                         <input
