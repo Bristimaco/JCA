@@ -345,7 +345,7 @@ export default function Dashboard({ pendingCount, pendingUsers, adminCounters, b
                                         <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{g.title}</h2>
                                     </button>
                                     {isOpen && (
-                                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 pb-1">
+                                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 pb-1 overflow-hidden">
                                             {g.visibleModules.map((m) => (
                                                 <ModuleTile key={m.name} m={m} moduleColors={moduleColors} moduleIcons={moduleIcons} counts={counts} />
                                             ))}
@@ -368,11 +368,11 @@ function ModuleTile({ m, moduleColors, moduleIcons, counts }) {
             href={m.href}
             className="group bg-slate-900 rounded-xl shadow-sm ring-1 ring-slate-800 border-t-2 border-t-rose-700/40 p-2 hover:shadow-md hover:ring-rose-500/40 hover:-translate-y-0.5"
         >
-            <div className="flex flex-col items-center text-center">
+            <div className="flex flex-col items-center text-center overflow-hidden">
                 <div className={`w-7 h-7 rounded-lg bg-gradient-to-br ${moduleColors[m.name]} flex items-center justify-center text-white mb-1 shadow-sm group-hover:scale-105 [&_svg]:w-3.5 [&_svg]:h-3.5`}>
                     {moduleIcons[m.name]}
                 </div>
-                <span className="text-sm font-semibold text-white">{m.name}</span>
+                <span className="text-xs sm:text-sm font-semibold text-white break-words w-full">{m.name}</span>
                 {count !== undefined && count !== null && (
                     <span className="mt-0.5 inline-flex items-center rounded-full bg-slate-800 px-1.5 py-0 text-xs font-medium text-slate-300">
                         {count}
@@ -565,8 +565,8 @@ function CoachTrainingGroups({ groups }) {
 
                             {g.schedules?.map((s, i) => (
                                 <div key={i} className="mt-2 p-2 rounded-lg bg-slate-800/50 ring-1 ring-slate-700/50">
-                                    <div className="flex items-center justify-between">
-                                        <span className="text-xs text-slate-400">
+                                    <div className="flex flex-wrap items-center justify-between gap-y-1">
+                                        <span className="text-xs text-slate-400 min-w-0">
                                             {s.day} {s.start_time}{s.end_time ? `–${s.end_time}` : ''}{s.trainer_name ? ` (${s.trainer_name})` : ''}
                                         </span>
                                         {s.trainer_id === auth.user.id && (
@@ -591,10 +591,10 @@ function CoachTrainingGroups({ groups }) {
                                                             return (notifiedAbsent.length > 0 || unnotifiedAbsent.length > 0) ? (
                                                                 <div className="mt-1.5 space-y-0.5">
                                                                     {notifiedAbsent.length > 0 && (
-                                                                        <div><span className="text-[10px] text-amber-400/80">⚠ Gemeld afwezig: {notifiedAbsent.map(m => m.name).join(', ')}</span></div>
+                                                                        <div className="break-words"><span className="text-[10px] text-amber-400/80">⚠ Gemeld afwezig: {notifiedAbsent.map(m => m.name).join(', ')}</span></div>
                                                                     )}
                                                                     {unnotifiedAbsent.length > 0 && (
-                                                                        <div><span className="text-[10px] text-red-400/70">Afwezig: {unnotifiedAbsent.map(m => m.name).join(', ')}</span></div>
+                                                                        <div className="break-words"><span className="text-[10px] text-red-400/70">Afwezig: {unnotifiedAbsent.map(m => m.name).join(', ')}</span></div>
                                                                     )}
                                                                 </div>
                                                             ) : null;
@@ -732,7 +732,7 @@ function ExtraTrainings({ trainings }) {
                                 {t.trainer_id === auth.user.id && (
                                     <>
                                         {t.session?.is_open ? (
-                                            <div className="flex items-center gap-2">
+                                            <div className="flex flex-wrap items-center gap-2">
                                                 <span className="inline-flex items-center gap-1 rounded-full bg-emerald-900/40 px-2 py-0.5 text-[10px] font-semibold text-emerald-400">
                                                     <span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span></span>
                                                     {t.session.attendance_count} aanwezig
@@ -749,7 +749,7 @@ function ExtraTrainings({ trainings }) {
                                                 Afgesloten ({t.session.attendance_count})
                                             </span>
                                         ) : (
-                                            <div className="flex items-center gap-2">
+                                            <div className="flex flex-wrap items-center gap-2">
                                                 <button
                                                     onClick={() => handleOpenSession(t.id)}
                                                     className="rounded-md bg-emerald-900/30 px-2 py-1 text-[10px] font-semibold text-emerald-400 hover:bg-emerald-900/50 ring-1 ring-emerald-700/30"
