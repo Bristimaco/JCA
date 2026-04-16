@@ -322,6 +322,9 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
         Route::patch('/age-categories/{ageCategory}', [AgeCategoryController::class, 'update'])->name('admin.age-categories.update');
         Route::delete('/age-categories/{ageCategory}', [AgeCategoryController::class, 'destroy'])->name('admin.age-categories.destroy');
 
+        // Food products
+        Route::delete('/producten/{foodProduct}', [ProductenController::class, 'destroy'])->name('admin.producten.destroy');
+
         // Weight categories
         Route::post('/weight-categories', [WeightCategoryController::class, 'store'])->name('admin.weight-categories.store');
         Route::patch('/weight-categories/{weightCategory}', [WeightCategoryController::class, 'update'])->name('admin.weight-categories.update');
