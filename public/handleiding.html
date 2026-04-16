@@ -3700,7 +3700,9 @@
                     <em>&ldquo;Toevoegen aan mijn lijst&rdquo;</em> om het product te activeren.
                 </li>
                 <li><strong>Product bestaat nog niet:</strong> Je krijgt een formulier te zien om de voedingswaarden
-                    in te vullen (calorie&euml;n, eiwit, koolhydraten en vetten &mdash; allemaal per 100g). Klik op
+                    in te vullen (calorie&euml;n, eiwit, koolhydraten en vetten &mdash; allemaal per 100g).
+                    Je kunt ook een <strong>standaard portie</strong> instellen (bijv. 30g voor een boterham).
+                    Klik op
                     <em>&ldquo;Aanmaken &amp; Toevoegen&rdquo;</em> om het product aan te maken in de gedeelde
                     catalogus &eacute;n direct toe te voegen aan je persoonlijke lijst.
                 </li>
@@ -3753,6 +3755,10 @@
                 <li><strong>Eiwit</strong> &mdash; gram eiwit per 100g</li>
                 <li><strong>Koolh.</strong> &mdash; gram koolhydraten per 100g</li>
                 <li><strong>Vetten</strong> &mdash; gram vetten per 100g</li>
+                <li><strong>Portie</strong> &mdash; je standaard portie in gram (standaard 100g). Dit wordt
+                    automatisch ingevuld als hoeveelheid wanneer je dit product selecteert in het
+                    <a href="#voeding-dagboek">Voeding Dagboek</a>. Je kunt de portie direct in de tabel
+                    aanpassen &mdash; de wijziging wordt automatisch opgeslagen.</li>
             </ul>
             <p>
                 Klik op <em>&ldquo;Verwijderen&rdquo;</em> om een product uit je persoonlijke lijst te halen.
@@ -3868,7 +3874,9 @@
             </p>
             <ul>
                 <li>Een product selecteren uit je <strong>Mijn Producten</strong>-lijst</li>
-                <li>De <strong>hoeveelheid in gram</strong> opgeven (standaard 100g)</li>
+                <li>De <strong>hoeveelheid in gram</strong> opgeven &mdash; deze wordt automatisch ingevuld met
+                    de <strong>standaard portie</strong> die je hebt ingesteld bij het product
+                    (zie <a href="#mijn-producten">Mijn Producten</a>)</li>
                 <li>Een <strong>preview</strong> bekijken van de berekende voedingswaarden</li>
             </ul>
             <p>
@@ -3880,8 +3888,20 @@
             <p>
                 Als een product nog niet in je lijst staat, klik dan op
                 <em>&ldquo;Product niet in je lijst? Voeg een nieuw product toe&rdquo;</em>.
-                Je kunt dan zoeken in de voedingsdatabases (Open Food Facts / USDA) of handmatig een product
-                aanmaken. Het nieuwe product wordt automatisch aan je productenlijst toegevoegd.
+                Je krijgt dan dezelfde zoekervaring als op de <a href="#mijn-producten">Mijn Producten</a> pagina:
+            </p>
+            <ul>
+                <li>Het systeem zoekt eerst in de <strong>lokale catalogus</strong> naar een exacte match.
+                    Als het product al bestaat, kun je het direct aan je lijst toevoegen.</li>
+                <li>Bij een gedeeltelijke match worden <strong>suggesties</strong> getoond als klikbare pills.</li>
+                <li>Automatisch zoeken in <strong>Open Food Facts</strong> en <strong>USDA</strong>.
+                    Klik op een resultaat om de voedingswaarden over te nemen.</li>
+                <li>Of vul de waarden <strong>handmatig</strong> in.</li>
+                <li>Je kunt ook een <strong>standaard portie</strong> instellen.</li>
+            </ul>
+            <p>
+                Na het toevoegen wordt het nieuwe product <strong>automatisch geselecteerd</strong> in de
+                productlijst, zodat je direct de hoeveelheid kunt invoeren en toevoegen aan je dagboek.
             </p>
 
             <h3>Gauge-meters</h3>

@@ -9,7 +9,7 @@ const CATEGORIES = [
     { key: 'tussendoortjes', label: 'Tussendoortjes', icon: '🍎' },
 ];
 
-export default function VoedingDagboek({ member, entries, myProducts }) {
+export default function VoedingDagboek({ member, entries, myProducts, catalog }) {
     const { flash } = usePage().props;
     const [openCategory, setOpenCategory] = useState('ontbijt');
 
@@ -64,6 +64,7 @@ export default function VoedingDagboek({ member, entries, myProducts }) {
                         icon={icon}
                         entries={entries.filter((e) => e.category === key)}
                         myProducts={myProducts}
+                        catalog={catalog}
                         memberId={member.id}
                         isOpen={openCategory === key}
                         onToggle={() => setOpenCategory(openCategory === key ? null : key)}
@@ -158,7 +159,7 @@ function Gauge({ label, unit, value, min, max }) {
 }
 
 /* ─── Meal Category ─── */
-function MealCategory({ categoryKey, label, icon, entries, myProducts, memberId, isOpen, onToggle }) {
+function MealCategory({ categoryKey, label, icon, entries, myProducts, catalog, memberId, isOpen, onToggle }) {
     const categoryTotal = useMemo(() => {
         const t = { calories: 0, protein: 0, carbohydrates: 0, fats: 0 };
         entries.forEach((e) => {
@@ -212,7 +213,7 @@ function MealCategory({ categoryKey, label, icon, entries, myProducts, memberId,
                         </div>
                     )}
 
-                    <AddEntryForm categoryKey={categoryKey} myProducts={myProducts} memberId={memberId} />
+                    <AddEntryForm categoryKey={categoryKey} myProducts={myProducts} catalog={catalog} memberId={memberId} />
                 </div>
             )}
         </div>
@@ -220,7 +221,8 @@ function MealCategory({ categoryKey, label, icon, entries, myProducts, memberId,
 }
 
 /* ─── Add Entry Form ─── */
-function AddEntryForm({ categoryKey, myProducts, memberId }) {
+function AddEntryForm({ categoryKey, myProducts, catalog, memberId }) {
+    const { flash } = usePage().props;
     const [showForm, setShowForm] = useState(false);
     const [showNewProduct, setShowNewProduct] = useState(false);
     const [selectedProductId, setSelectedProductId] = useState('');
@@ -228,12 +230,35 @@ function AddEntryForm({ categoryKey, myProducts, memberId }) {
     const [search, setSearch] = useState('');
     const [processing, setProcessing] = useState(false);
 
+    // Auto-select newly added product via flash
+    useEffect(() => {
+        if (flash.added_product_id) {
+            const newProduct = myProducts.find((p) => p.id === Number(flash.added_product_id));
+            if (newProduct) {
+                setSelectedProductId(String(newProduct.id));
+                setGrams(String(newProduct.pivot?.default_portion ?? 100));
+                setShowNewProduct(false);
+                setShowForm(true);
+            }
+        }
+    }, [flash.added_product_id, myProducts]);
+
     const filtered = useMemo(() => {
         if (!search.trim()) return myProducts;
         return myProducts.filter((p) => p.name.toLowerCase().includes(search.toLowerCase()));
     }, [myProducts, search]);
 
     const selectedProduct = myProducts.find((p) => p.id === Number(selectedProductId));
+
+    // When selecting a product, set grams to its default portion
+    const handleSelectProduct = (id) => {
+        setSelectedProductId(String(id));
+        setSearch('');
+        const product = myProducts.find((p) => p.id === Number(id));
+        if (product) {
+            setGrams(String(product.pivot?.default_portion ?? 100));
+        }
+    };
 
     const preview = selectedProduct && grams > 0 ? {
         calories: Math.round((parseFloat(grams) / 100) * selectedProduct.calories * 10) / 10,
@@ -300,7 +325,7 @@ function AddEntryForm({ categoryKey, myProducts, memberId }) {
                                 <button
                                     key={p.id}
                                     type="button"
-                                    onClick={() => { setSelectedProductId(String(p.id)); setSearch(''); }}
+                                    onClick={() => handleSelectProduct(p.id)}
                                     className={`w-full text-left rounded-md px-3 py-1.5 text-sm transition-colors ${
                                         Number(selectedProductId) === p.id
                                             ? 'bg-lime-900/30 ring-1 ring-lime-700/50 text-white'
@@ -309,6 +334,9 @@ function AddEntryForm({ categoryKey, myProducts, memberId }) {
                                 >
                                     <span className="font-medium">{p.name}</span>
                                     <span className="text-xs text-slate-500 ml-2">{p.calories} kcal/100g</span>
+                                    {p.pivot?.default_portion && p.pivot.default_portion !== 100 && (
+                                        <span className="text-xs text-lime-600 ml-1">· {p.pivot.default_portion}g</span>
+                                    )}
                                 </button>
                             ))
                         )}
@@ -353,41 +381,60 @@ function AddEntryForm({ categoryKey, myProducts, memberId }) {
                     </button>
                 </>
             ) : (
-                <NewProductForm memberId={memberId} onCancel={() => setShowNewProduct(false)} />
+                <NewProductForm memberId={memberId} catalog={catalog} myProducts={myProducts} onCancel={() => setShowNewProduct(false)} />
             )}
         </div>
     );
 }
 
 /* ─── New Product Form (within diary) ─── */
-function NewProductForm({ memberId, onCancel }) {
-    const [form, setForm] = useState({ name: '', calories: '', protein: '', carbohydrates: '', fats: '' });
+function NewProductForm({ memberId, catalog, myProducts, onCancel }) {
+    const [searchName, setSearchName] = useState('');
+    const [form, setForm] = useState({ name: '', calories: '', protein: '', carbohydrates: '', fats: '', default_portion: '100' });
     const [processing, setProcessing] = useState(false);
     const [errors, setErrors] = useState({});
+    const [showManualForm, setShowManualForm] = useState(false);
 
     // API search
     const [apiResults, setApiResults] = useState([]);
     const [apiLoading, setApiLoading] = useState(false);
+    const [apiSearched, setApiSearched] = useState(false);
     const debounceRef = useRef(null);
 
+    // Catalog matching
+    const match = useMemo(() => {
+        if (!searchName.trim()) return null;
+        return catalog.find((p) => p.name.toLowerCase() === searchName.trim().toLowerCase()) || null;
+    }, [searchName, catalog]);
+
+    const isAlreadyInMyList = match ? myProducts.some((p) => p.id === match.id) : false;
+
+    const partialMatches = useMemo(() => {
+        if (!searchName.trim() || match) return [];
+        return catalog.filter((p) => p.name.toLowerCase().includes(searchName.trim().toLowerCase())).slice(0, 5);
+    }, [searchName, catalog, match]);
+
+    // API search with debounce
     useEffect(() => {
         clearTimeout(debounceRef.current);
-        if (form.name.trim().length < 2) {
+        if (!searchName.trim() || searchName.trim().length < 2 || match) {
             setApiResults([]);
+            setApiSearched(false);
             return;
         }
         debounceRef.current = setTimeout(() => {
             setApiLoading(true);
-            fetch(`/api/voeding/zoek?q=${encodeURIComponent(form.name.trim())}`, {
+            setApiSearched(false);
+            fetch(`/api/voeding/zoek?q=${encodeURIComponent(searchName.trim())}`, {
                 headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
             })
                 .then((r) => r.ok ? r.json() : [])
-                .then((data) => setApiResults(data))
-                .catch(() => setApiResults([]))
+                .then((data) => { setApiResults(data); setApiSearched(true); })
+                .catch(() => { setApiResults([]); setApiSearched(true); })
                 .finally(() => setApiLoading(false));
         }, 400);
         return () => clearTimeout(debounceRef.current);
-    }, [form.name]);
+    }, [searchName, match]);
 
     const handleSelectApi = (product) => {
         setForm({
@@ -396,88 +443,203 @@ function NewProductForm({ memberId, onCancel }) {
             protein: String(product.protein),
             carbohydrates: String(product.carbohydrates),
             fats: String(product.fats),
+            default_portion: form.default_portion,
         });
+        setSearchName(product.name);
         setApiResults([]);
+        setShowManualForm(true);
     };
 
-    const handleSubmit = () => {
+    const handleAddExisting = (product) => {
         setProcessing(true);
-        setErrors({});
-        router.post(`/voeding-dagboek/${memberId}/product`, form, {
+        router.post(`/voeding-dagboek/${memberId}/product`, {
+            name: product.name,
+            default_portion: form.default_portion,
+        }, {
             preserveScroll: true,
-            onError: (errs) => setErrors(errs),
             onFinish: () => setProcessing(false),
-            onSuccess: () => onCancel(),
         });
     };
 
     return (
         <div className="space-y-2">
-            <p className="text-xs font-medium text-sky-400">Nieuw product aanmaken</p>
+            <p className="text-xs font-medium text-sky-400">Nieuw product toevoegen</p>
 
             <div>
+                <label className="block text-xs text-slate-500 mb-1">Productnaam</label>
                 <input
                     type="text"
-                    value={form.name}
-                    onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    placeholder="Productnaam"
-                    className="w-full rounded-md bg-slate-800 border-slate-700 text-white text-sm px-3 py-1.5 placeholder-slate-500"
+                    value={searchName}
+                    onChange={(e) => { setSearchName(e.target.value); setShowManualForm(false); }}
+                    placeholder="Bijv. Bruin brood"
+                    className="w-full rounded-md bg-slate-800 border-slate-700 text-white text-sm px-3 py-1.5 placeholder-slate-500 focus:ring-sky-500 focus:border-sky-500"
                 />
                 {errors.name && <p className="text-xs text-red-400 mt-1">{errors.name}</p>}
             </div>
 
-            {apiLoading && <p className="text-xs text-sky-400">Zoeken in voedingsdatabases...</p>}
+            {searchName.trim() && (
+                <>
+                    {/* Exact match found in catalog */}
+                    {match ? (
+                        <div className="rounded-lg ring-1 ring-emerald-700/30 bg-emerald-900/20 p-3">
+                            <p className="text-xs font-medium text-emerald-400 mb-2">Product gevonden in catalogus</p>
+                            <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 text-xs mb-2">
+                                <span className="text-slate-400">Naam:</span>
+                                <span className="text-white font-medium">{match.name}</span>
+                                <span className="text-slate-400">Calorieën:</span>
+                                <span className="text-slate-200">{match.calories} kcal</span>
+                                <span className="text-slate-400">Eiwit:</span>
+                                <span className="text-slate-200">{match.protein}g</span>
+                                <span className="text-slate-400">Koolhydraten:</span>
+                                <span className="text-slate-200">{match.carbohydrates}g</span>
+                                <span className="text-slate-400">Vetten:</span>
+                                <span className="text-slate-200">{match.fats}g</span>
+                            </div>
+                            {isAlreadyInMyList ? (
+                                <p className="text-xs text-amber-400">Dit product staat al in je lijst. Ga terug om het te selecteren.</p>
+                            ) : (
+                                <div className="flex items-end gap-2">
+                                    <div>
+                                        <label className="block text-xs text-slate-500 mb-1">Standaard portie (g)</label>
+                                        <input
+                                            type="number"
+                                            min="1"
+                                            max="9999"
+                                            step="1"
+                                            value={form.default_portion}
+                                            onChange={(e) => setForm({ ...form, default_portion: e.target.value })}
+                                            className="w-20 rounded-md bg-slate-800 border-slate-700 text-white text-sm px-2 py-1.5 focus:ring-emerald-500 focus:border-emerald-500"
+                                        />
+                                    </div>
+                                    <button
+                                        onClick={() => handleAddExisting(match)}
+                                        disabled={processing}
+                                        className="rounded-md bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+                                    >
+                                        {processing ? '...' : 'Toevoegen aan mijn lijst'}
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    ) : (
+                        <>
+                            {/* Partial match suggestions */}
+                            {partialMatches.length > 0 && (
+                                <div className="rounded-lg ring-1 ring-amber-700/30 bg-amber-900/20 p-2">
+                                    <p className="text-xs font-medium text-amber-400 mb-1">Bedoelde je misschien:</p>
+                                    <div className="flex flex-wrap gap-1">
+                                        {partialMatches.map((s) => (
+                                            <button
+                                                key={s.id}
+                                                onClick={() => setSearchName(s.name)}
+                                                className="rounded-full bg-amber-800/40 px-2 py-0.5 text-xs text-amber-200 hover:bg-amber-700/50 transition-colors"
+                                            >
+                                                {s.name}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
 
-            {!apiLoading && apiResults.length > 0 && (
-                <div className="space-y-1 max-h-32 overflow-y-auto">
-                    {apiResults.map((p, i) => (
-                        <button
-                            key={i}
-                            type="button"
-                            onClick={() => handleSelectApi(p)}
-                            className="w-full text-left rounded-md bg-sky-900/30 hover:bg-sky-800/40 px-3 py-1.5 ring-1 ring-sky-800/30 transition-colors"
-                        >
-                            <p className="text-xs text-white font-medium truncate">{p.name}</p>
-                            <p className="text-xs text-sky-300/70">{p.calories} kcal · {p.protein}g eiwit · {p.carbohydrates}g koolh. · {p.fats}g vet</p>
-                        </button>
-                    ))}
-                </div>
+                            {/* API search results */}
+                            {apiLoading && <p className="text-xs text-sky-400">Zoeken in voedingsdatabases...</p>}
+
+                            {!apiLoading && apiResults.length > 0 && (
+                                <div className="rounded-lg ring-1 ring-sky-700/30 bg-sky-900/20 p-2">
+                                    <p className="text-xs font-medium text-sky-400 mb-1">Resultaten uit voedingsdatabase <span className="text-sky-600">(per 100g)</span></p>
+                                    <div className="space-y-1 max-h-32 overflow-y-auto">
+                                        {apiResults.map((p, i) => (
+                                            <button
+                                                key={i}
+                                                type="button"
+                                                onClick={() => handleSelectApi(p)}
+                                                className="w-full text-left rounded-md bg-sky-900/30 hover:bg-sky-800/40 px-3 py-1.5 ring-1 ring-sky-800/30 transition-colors"
+                                            >
+                                                <p className="text-xs text-white font-medium truncate">{p.name}</p>
+                                                <p className="text-xs text-sky-300/70">{p.calories} kcal · {p.protein}g eiwit · {p.carbohydrates}g koolh. · {p.fats}g vet</p>
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {!apiLoading && apiSearched && apiResults.length === 0 && (
+                                <p className="text-xs text-slate-600">Geen resultaten in voedingsdatabases.</p>
+                            )}
+
+                            {/* Manual creation form */}
+                            {(showManualForm || (apiSearched && !apiLoading)) && (
+                                <div className="rounded-lg ring-1 ring-slate-700 bg-slate-800/50 p-3">
+                                    <p className="text-xs font-medium text-slate-400 mb-2">
+                                        Voedingswaarden invullen (per 100g)
+                                    </p>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        {[
+                                            { key: 'calories', label: 'Calorieën (kcal)' },
+                                            { key: 'protein', label: 'Eiwit (g)' },
+                                            { key: 'carbohydrates', label: 'Koolhydraten (g)' },
+                                            { key: 'fats', label: 'Vetten (g)' },
+                                        ].map(({ key, label }) => (
+                                            <div key={key}>
+                                                <label className="block text-xs text-slate-500 mb-1">{label}</label>
+                                                <input
+                                                    type="number"
+                                                    step="0.1"
+                                                    min="0"
+                                                    value={form[key]}
+                                                    onChange={(e) => setForm({ ...form, [key]: e.target.value })}
+                                                    className="w-full rounded-md bg-slate-800 border-slate-700 text-white text-sm px-3 py-1.5"
+                                                />
+                                                {errors[key] && <p className="text-xs text-red-400 mt-1">{errors[key]}</p>}
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <div className="mt-2">
+                                        <label className="block text-xs text-slate-500 mb-1">Standaard portie (g)</label>
+                                        <input
+                                            type="number"
+                                            min="1"
+                                            max="9999"
+                                            step="1"
+                                            value={form.default_portion}
+                                            onChange={(e) => setForm({ ...form, default_portion: e.target.value })}
+                                            className="w-28 rounded-md bg-slate-800 border-slate-700 text-white text-sm px-3 py-1.5"
+                                        />
+                                    </div>
+                                    <div className="flex gap-2 mt-3">
+                                        <button
+                                            onClick={() => {
+                                                const submitData = { ...form, name: searchName.trim() };
+                                                setForm(submitData);
+                                                setProcessing(true);
+                                                setErrors({});
+                                                router.post(`/voeding-dagboek/${memberId}/product`, submitData, {
+                                                    preserveScroll: true,
+                                                    onError: (errs) => setErrors(errs),
+                                                    onFinish: () => setProcessing(false),
+                                                });
+                                            }}
+                                            disabled={processing}
+                                            className="rounded-md bg-sky-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-sky-700 disabled:opacity-50"
+                                        >
+                                            {processing ? 'Bezig...' : 'Aanmaken & Toevoegen'}
+                                        </button>
+                                        <button onClick={onCancel} className="text-xs text-slate-500 hover:text-slate-400 px-2">
+                                            Annuleren
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                        </>
+                    )}
+                </>
             )}
 
-            <div className="grid grid-cols-2 gap-2">
-                {[
-                    { key: 'calories', label: 'Calorieën (kcal)' },
-                    { key: 'protein', label: 'Eiwit (g)' },
-                    { key: 'carbohydrates', label: 'Koolhydraten (g)' },
-                    { key: 'fats', label: 'Vetten (g)' },
-                ].map(({ key, label }) => (
-                    <div key={key}>
-                        <label className="block text-xs text-slate-500 mb-1">{label}</label>
-                        <input
-                            type="number"
-                            step="0.1"
-                            min="0"
-                            value={form[key]}
-                            onChange={(e) => setForm({ ...form, [key]: e.target.value })}
-                            className="w-full rounded-md bg-slate-800 border-slate-700 text-white text-sm px-3 py-1.5"
-                        />
-                        {errors[key] && <p className="text-xs text-red-400 mt-1">{errors[key]}</p>}
-                    </div>
-                ))}
-            </div>
-
-            <div className="flex gap-2">
-                <button
-                    onClick={handleSubmit}
-                    disabled={processing}
-                    className="rounded-md bg-sky-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-sky-700 disabled:opacity-50"
-                >
-                    {processing ? 'Bezig...' : 'Aanmaken'}
+            {!searchName.trim() && (
+                <button onClick={onCancel} className="text-xs text-slate-500 hover:text-slate-400">
+                    ← Terug naar producten
                 </button>
-                <button onClick={onCancel} className="text-xs text-slate-500 hover:text-slate-400 px-2">
-                    Annuleren
-                </button>
-            </div>
+            )}
         </div>
     );
 }

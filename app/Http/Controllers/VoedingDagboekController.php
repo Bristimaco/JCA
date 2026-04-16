@@ -36,6 +36,9 @@ class VoedingDagboekController extends Controller
             ->orderBy('name')
             ->get(['food_products.id', 'name', 'calories', 'protein', 'carbohydrates', 'fats']);
 
+        $catalog = FoodProduct::orderBy('name')
+            ->get(['id', 'name', 'calories', 'protein', 'carbohydrates', 'fats']);
+
         return Inertia::render('VoedingDagboek', [
             'member' => [
                 'id' => $member->id,
@@ -44,6 +47,7 @@ class VoedingDagboekController extends Controller
             ],
             'entries' => $entries,
             'myProducts' => $myProducts,
+            'catalog' => $catalog,
         ]);
     }
 
@@ -85,12 +89,18 @@ class VoedingDagboekController extends Controller
             'name' => ['required', 'string', 'max:255'],
         ]);
 
+        $request->validate([
+            'default_portion' => ['nullable', 'numeric', 'min:1', 'max:9999'],
+        ]);
+
+        $portion = $request->input('default_portion', 100);
         $existing = FoodProduct::where('name', $request->input('name'))->first();
 
         if ($existing) {
-            $request->user()->foodProducts()->syncWithoutDetaching([$existing->id]);
+            $request->user()->foodProducts()->syncWithoutDetaching([$existing->id => ['default_portion' => $portion]]);
 
-            return back()->with('status', "'{$existing->name}' toegevoegd aan je productenlijst.");
+            return back()->with('status', "'{$existing->name}' toegevoegd aan je productenlijst.")
+                ->with('added_product_id', $existing->id);
         }
 
         $request->validate([
@@ -109,9 +119,10 @@ class VoedingDagboekController extends Controller
             'created_by' => $request->user()->id,
         ]);
 
-        $request->user()->foodProducts()->attach($product);
+        $request->user()->foodProducts()->attach($product, ['default_portion' => $portion]);
 
-        return back()->with('status', "'{$product->name}' aangemaakt en toegevoegd aan je productenlijst.");
+        return back()->with('status', "'{$product->name}' aangemaakt en toegevoegd aan je productenlijst.")
+            ->with('added_product_id', $product->id);
     }
 
     private function authorizeMember(Request $request, Member $member): void

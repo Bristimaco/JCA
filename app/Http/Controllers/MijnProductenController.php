@@ -31,12 +31,14 @@ class MijnProductenController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'default_portion' => ['nullable', 'numeric', 'min:1', 'max:9999'],
         ]);
 
+        $portion = $request->input('default_portion', 100);
         $existing = FoodProduct::where('name', $request->input('name'))->first();
 
         if ($existing) {
-            $request->user()->foodProducts()->syncWithoutDetaching([$existing->id]);
+            $request->user()->foodProducts()->syncWithoutDetaching([$existing->id => ['default_portion' => $portion]]);
 
             return back()->with('status', "'{$existing->name}' toegevoegd aan je lijst.");
         }
@@ -57,9 +59,22 @@ class MijnProductenController extends Controller
             'created_by' => $request->user()->id,
         ]);
 
-        $request->user()->foodProducts()->attach($product);
+        $request->user()->foodProducts()->attach($product, ['default_portion' => $portion]);
 
         return back()->with('status', "'{$product->name}' aangemaakt en toegevoegd aan je lijst.");
+    }
+
+    public function updatePortion(Request $request, FoodProduct $foodProduct): RedirectResponse
+    {
+        $request->validate([
+            'default_portion' => ['required', 'numeric', 'min:1', 'max:9999'],
+        ]);
+
+        $request->user()->foodProducts()->updateExistingPivot($foodProduct->id, [
+            'default_portion' => $request->input('default_portion'),
+        ]);
+
+        return back()->with('status', "Standaard portie van '{$foodProduct->name}' bijgewerkt.");
     }
 
     public function destroy(Request $request, FoodProduct $foodProduct): RedirectResponse

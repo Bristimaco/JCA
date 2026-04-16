@@ -134,28 +134,13 @@ export default function MijnProducten({ myProducts, catalog }) {
                                     <th className="px-3 sm:px-6 py-3 text-right text-xs font-medium text-slate-400 uppercase tracking-wider">Eiwit</th>
                                     <th className="px-3 sm:px-6 py-3 text-right text-xs font-medium text-slate-400 uppercase tracking-wider">Koolh.</th>
                                     <th className="px-3 sm:px-6 py-3 text-right text-xs font-medium text-slate-400 uppercase tracking-wider">Vetten</th>
+                                    <th className="px-3 sm:px-6 py-3 text-right text-xs font-medium text-slate-400 uppercase tracking-wider">Portie</th>
                                     <th className="px-3 sm:px-6 py-3"></th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-800">
                                 {myProducts.map((p) => (
-                                    <tr key={p.id} className="hover:bg-slate-800/30">
-                                        <td className="px-3 sm:px-6 py-3 text-sm font-medium text-white">{p.name}</td>
-                                        <td className="px-3 sm:px-6 py-3 text-sm text-slate-300 text-right">{p.calories}</td>
-                                        <td className="px-3 sm:px-6 py-3 text-sm text-slate-300 text-right">{p.protein}g</td>
-                                        <td className="px-3 sm:px-6 py-3 text-sm text-slate-300 text-right">{p.carbohydrates}g</td>
-                                        <td className="px-3 sm:px-6 py-3 text-sm text-slate-300 text-right">{p.fats}g</td>
-                                        <td className="px-3 sm:px-6 py-3 text-right">
-                                            <button
-                                                onClick={() => {
-                                                    router.delete(`/mijn-producten/${p.id}`, { preserveScroll: true });
-                                                }}
-                                                className="text-xs font-medium text-red-500 hover:text-red-400"
-                                            >
-                                                Verwijderen
-                                            </button>
-                                        </td>
-                                    </tr>
+                                    <PortionRow key={p.id} product={p} />
                                 ))}
                             </tbody>
                         </table>
@@ -167,8 +152,10 @@ export default function MijnProducten({ myProducts, catalog }) {
 }
 
 function MatchFound({ product, isAlreadyInMyList, onDone }) {
+    const [portion, setPortion] = useState('100');
+
     const handleAdd = () => {
-        router.post('/mijn-producten', { name: product.name }, {
+        router.post('/mijn-producten', { name: product.name, default_portion: portion }, {
             preserveScroll: true,
             onSuccess: () => onDone(),
         });
@@ -192,19 +179,33 @@ function MatchFound({ product, isAlreadyInMyList, onDone }) {
             {isAlreadyInMyList ? (
                 <p className="text-xs text-amber-400">Dit product staat al in je lijst.</p>
             ) : (
-                <button
-                    onClick={handleAdd}
-                    className="rounded-md bg-emerald-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-emerald-700"
-                >
-                    Toevoegen aan mijn lijst
-                </button>
+                <div className="flex items-end gap-2">
+                    <div>
+                        <label className="block text-xs text-slate-500 mb-1">Standaard portie (g)</label>
+                        <input
+                            type="number"
+                            min="1"
+                            max="9999"
+                            step="1"
+                            value={portion}
+                            onChange={(e) => setPortion(e.target.value)}
+                            className="w-24 rounded-md bg-slate-800 border-slate-700 text-white text-sm px-3 py-1.5 focus:ring-emerald-500 focus:border-emerald-500"
+                        />
+                    </div>
+                    <button
+                        onClick={handleAdd}
+                        className="rounded-md bg-emerald-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-emerald-700"
+                    >
+                        Toevoegen aan mijn lijst
+                    </button>
+                </div>
             )}
         </div>
     );
 }
 
 function CreateNewProduct({ name, suggestions, apiResults, apiLoading, apiSearched, onDone, onSelectSuggestion }) {
-    const form = useForm({ name, calories: '', protein: '', carbohydrates: '', fats: '' });
+    const form = useForm({ name, calories: '', protein: '', carbohydrates: '', fats: '', default_portion: '100' });
 
     const handleSelectApiProduct = (product) => {
         form.setData({
@@ -332,6 +333,19 @@ function CreateNewProduct({ name, suggestions, apiResults, apiLoading, apiSearch
                             {form.errors.fats && <p className="text-xs text-red-400 mt-1">{form.errors.fats}</p>}
                         </div>
                     </div>
+                    <div>
+                        <label className="block text-xs text-slate-500 mb-1">Standaard portie (g)</label>
+                        <input
+                            type="number"
+                            min="1"
+                            max="9999"
+                            step="1"
+                            value={form.data.default_portion}
+                            onChange={(e) => form.setData('default_portion', e.target.value)}
+                            className="w-32 rounded-md bg-slate-800 border-slate-700 text-white text-sm px-3 py-1.5"
+                        />
+                        {form.errors.default_portion && <p className="text-xs text-red-400 mt-1">{form.errors.default_portion}</p>}
+                    </div>
                     {form.errors.name && <p className="text-xs text-red-400">{form.errors.name}</p>}
                     <button
                         type="submit"
@@ -343,5 +357,51 @@ function CreateNewProduct({ name, suggestions, apiResults, apiLoading, apiSearch
                 </form>
             </div>
         </div>
+    );
+}
+
+function PortionRow({ product }) {
+    const [portion, setPortion] = useState(String(product.pivot?.default_portion ?? 100));
+    const debounceRef = useRef(null);
+
+    const handlePortionChange = (value) => {
+        setPortion(value);
+        clearTimeout(debounceRef.current);
+        if (value && Number(value) >= 1) {
+            debounceRef.current = setTimeout(() => {
+                router.patch(`/mijn-producten/${product.id}/portie`, { default_portion: value }, { preserveScroll: true });
+            }, 600);
+        }
+    };
+
+    useEffect(() => () => clearTimeout(debounceRef.current), []);
+
+    return (
+        <tr className="hover:bg-slate-800/30">
+            <td className="px-3 sm:px-6 py-3 text-sm font-medium text-white">{product.name}</td>
+            <td className="px-3 sm:px-6 py-3 text-sm text-slate-300 text-right">{product.calories}</td>
+            <td className="px-3 sm:px-6 py-3 text-sm text-slate-300 text-right">{product.protein}g</td>
+            <td className="px-3 sm:px-6 py-3 text-sm text-slate-300 text-right">{product.carbohydrates}g</td>
+            <td className="px-3 sm:px-6 py-3 text-sm text-slate-300 text-right">{product.fats}g</td>
+            <td className="px-3 sm:px-6 py-3 text-right">
+                <input
+                    type="number"
+                    min="1"
+                    max="9999"
+                    step="1"
+                    value={portion}
+                    onChange={(e) => handlePortionChange(e.target.value)}
+                    className="w-20 rounded-md bg-slate-800 border-slate-700 text-white text-sm px-2 py-1 text-right focus:ring-lime-500 focus:border-lime-500"
+                />
+            </td>
+            <td className="px-3 sm:px-6 py-3 text-right">
+                <button
+                    onClick={() => router.delete(`/mijn-producten/${product.id}`, { preserveScroll: true })}
+                    className="text-xs font-medium text-red-500 hover:text-red-400"
+                >
+                    Verwijderen
+                </button>
+            </td>
+        </tr>
     );
 }

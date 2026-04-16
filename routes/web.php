@@ -235,6 +235,7 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
     Route::get('/mijn-producten', [MijnProductenController::class, 'index'])->name('mijn-producten');
     Route::post('/mijn-producten', [MijnProductenController::class, 'store'])->name('mijn-producten.store');
     Route::delete('/mijn-producten/{foodProduct}', [MijnProductenController::class, 'destroy'])->name('mijn-producten.destroy');
+    Route::patch('/mijn-producten/{foodProduct}/portie', [MijnProductenController::class, 'updatePortion'])->name('mijn-producten.update-portion');
     Route::get('/producten', [ProductenController::class, 'index'])->name('producten');
     Route::get('/api/voeding/zoek', [VoedingZoekController::class, 'search'])->name('voeding.zoek');
     Route::get('/voedingsplan', [VoedingsplanController::class, 'index'])->name('voedingsplan');
