@@ -85,6 +85,7 @@ use App\Http\Controllers\Trainer\TrainerTournamentController;
 use App\Http\Controllers\Trainer\TrainerTrainingGroupController;
 use App\Http\Controllers\TrainingAbsenceController;
 use App\Http\Controllers\TrainingCancellationController;
+use App\Http\Controllers\VoedingDagboekController;
 use App\Http\Controllers\VoedingsplanController;
 use App\Http\Controllers\VoedingZoekController;
 use App\Http\Controllers\VoucherController;
@@ -238,6 +239,10 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
     Route::get('/api/voeding/zoek', [VoedingZoekController::class, 'search'])->name('voeding.zoek');
     Route::get('/voedingsplan', [VoedingsplanController::class, 'index'])->name('voedingsplan');
     Route::post('/voedingsplan/{member}', [VoedingsplanController::class, 'store'])->name('voedingsplan.store');
+    Route::get('/voeding-dagboek/{member}', [VoedingDagboekController::class, 'show'])->name('voeding-dagboek.show');
+    Route::post('/voeding-dagboek/{member}', [VoedingDagboekController::class, 'store'])->name('voeding-dagboek.store');
+    Route::delete('/voeding-dagboek/{foodDiaryEntry}', [VoedingDagboekController::class, 'destroy'])->name('voeding-dagboek.destroy');
+    Route::post('/voeding-dagboek/{member}/product', [VoedingDagboekController::class, 'addProduct'])->name('voeding-dagboek.add-product');
 
     // Trainer routes
     Route::middleware('coach:training')->prefix('trainer')->group(function () {

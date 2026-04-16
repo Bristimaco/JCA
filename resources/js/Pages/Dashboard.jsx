@@ -256,7 +256,7 @@ const moduleGroups = [
     },
 ];
 
-export default function Dashboard({ pendingCount, pendingUsers, adminCounters, barCounters, memberStats, myMemberCount, myPoefCount, myEventCount, invitedEventCount, registeredEventCount, paidEventCount, archivedTournamentCount, myTournamentCount, activeTournaments, coachTournaments, coachTrainingGroups, upcomingTournaments, coachTournamentCount, recentArchived, activeTrainingSessions, extraTrainings }) {
+export default function Dashboard({ pendingCount, pendingUsers, adminCounters, barCounters, memberStats, myMemberCount, myPoefCount, myEventCount, invitedEventCount, registeredEventCount, paidEventCount, archivedTournamentCount, myTournamentCount, activeTournaments, coachTournaments, coachTrainingGroups, upcomingTournaments, coachTournamentCount, recentArchived, activeTrainingSessions, extraTrainings, membersWithNutritionPlan }) {
     const { auth } = usePage().props;
     const role = auth.user.role;
     const extraModules = auth.user.extra_modules || [];
@@ -294,7 +294,7 @@ export default function Dashboard({ pendingCount, pendingUsers, adminCounters, b
             </div>
 
             {(() => {
-                const hasVandaag = (activeTournaments?.length > 0) || (coachTournaments?.length > 0) || (coachTrainingGroups?.some(g => g.schedules?.some(s => s.is_today))) || (extraTrainings?.length > 0) || (activeTrainingSessions?.length > 0);
+                const hasVandaag = (activeTournaments?.length > 0) || (coachTournaments?.length > 0) || (coachTrainingGroups?.some(g => g.schedules?.some(s => s.is_today))) || (extraTrainings?.length > 0) || (activeTrainingSessions?.length > 0) || (membersWithNutritionPlan?.length > 0);
                 if (!hasVandaag) return null;
                 const isVandaagOpen = expandedGroups['Vandaag'] || false;
                 return (
@@ -312,6 +312,37 @@ export default function Dashboard({ pendingCount, pendingUsers, adminCounters, b
                                 {coachTrainingGroups?.length > 0 && <CoachTrainingGroups groups={coachTrainingGroups} />}
                                 {extraTrainings?.length > 0 && <ExtraTrainings trainings={extraTrainings} />}
                                 {activeTrainingSessions?.length > 0 && <ActiveTrainingSessions sessions={activeTrainingSessions} />}
+                                {membersWithNutritionPlan?.length > 0 && (
+                                    <div className="space-y-2">
+                                        {membersWithNutritionPlan.map((m) => {
+                                            const pct = m.max_calories > 0 ? Math.min(Math.round(m.total_calories / m.max_calories * 100), 100) : 0;
+                                            return (
+                                                <Link
+                                                    key={m.id}
+                                                    href={`/voeding-dagboek/${m.id}`}
+                                                    className="block bg-slate-900 rounded-xl ring-1 ring-slate-700/60 border-t-2 border-t-lime-700 p-4 hover:ring-lime-500/40 transition-all"
+                                                >
+                                                    <div className="flex items-center justify-between mb-2">
+                                                        <div>
+                                                            <p className="text-sm font-semibold text-white">{m.name}</p>
+                                                            <p className="text-xs text-slate-500">Voeding vandaag</p>
+                                                        </div>
+                                                        <div className="text-right">
+                                                            <p className="text-lg font-bold text-lime-400">{Math.round(m.total_calories)}</p>
+                                                            <p className="text-xs text-slate-500">/ {Math.round(m.max_calories)} kcal</p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="w-full bg-slate-800 rounded-full h-2">
+                                                        <div
+                                                            className={`h-2 rounded-full transition-all ${pct >= 100 ? 'bg-red-500' : pct >= 70 ? 'bg-lime-500' : 'bg-amber-500'}`}
+                                                            style={{ width: `${pct}%` }}
+                                                        />
+                                                    </div>
+                                                </Link>
+                                            );
+                                        })}
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>

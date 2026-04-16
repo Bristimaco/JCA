@@ -344,6 +344,26 @@ class DashboardController extends Controller
 
         if ($memberIds->isNotEmpty()) {
             $props['myTournamentCount'] = DB::table('member_tournament')->whereIn('member_id', $memberIds)->count();
+
+            $props['membersWithNutritionPlan'] = $user->members()
+                ->whereHas('nutritionPlan')
+                ->with('nutritionPlan')
+                ->get(['members.id', 'first_name', 'last_name'])
+                ->map(function (Member $m) {
+                    $todayEntries = $m->foodDiaryEntries()
+                        ->where('date', now()->toDateString())
+                        ->with('foodProduct:id,calories')
+                        ->get();
+
+                    $totalCalories = $todayEntries->sum(fn ($e) => round((float) $e->grams / 100 * (float) $e->foodProduct->calories, 1));
+
+                    return [
+                        'id' => $m->id,
+                        'name' => $m->fullName(),
+                        'total_calories' => round($totalCalories, 1),
+                        'max_calories' => (float) $m->nutritionPlan->max_calories,
+                    ];
+                });
         }
 
         return Inertia::render('Dashboard', $props);

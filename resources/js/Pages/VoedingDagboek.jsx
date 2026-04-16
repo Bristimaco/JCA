@@ -1,0 +1,483 @@
+import { Head, Link, usePage, router } from '@inertiajs/react';
+import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
+import AppLayout from '../Layouts/AppLayout';
+
+const CATEGORIES = [
+    { key: 'ontbijt', label: 'Ontbijt', icon: '🌅' },
+    { key: 'middagmaal', label: 'Middagmaal', icon: '☀️' },
+    { key: 'avondmaal', label: 'Avondmaal', icon: '🌙' },
+    { key: 'tussendoortjes', label: 'Tussendoortjes', icon: '🍎' },
+];
+
+export default function VoedingDagboek({ member, entries, myProducts }) {
+    const { flash } = usePage().props;
+    const [openCategory, setOpenCategory] = useState('ontbijt');
+
+    const totals = useMemo(() => {
+        const t = { calories: 0, protein: 0, carbohydrates: 0, fats: 0 };
+        entries.forEach((e) => {
+            t.calories += e.calories;
+            t.protein += e.protein;
+            t.carbohydrates += e.carbohydrates;
+            t.fats += e.fats;
+        });
+        return {
+            calories: Math.round(t.calories * 10) / 10,
+            protein: Math.round(t.protein * 10) / 10,
+            carbohydrates: Math.round(t.carbohydrates * 10) / 10,
+            fats: Math.round(t.fats * 10) / 10,
+        };
+    }, [entries]);
+
+    const plan = member.nutrition_plan;
+
+    return (
+        <AppLayout>
+            <Head title={`Voeding — ${member.name}`} />
+
+            <div className="mb-4 flex items-center justify-between">
+                <div>
+                    <h1 className="text-xl font-bold text-stone-100 tracking-tight">{member.name}</h1>
+                    <p className="text-slate-400 text-xs">Voedingsdagboek — {new Date().toLocaleDateString('nl-BE', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
+                </div>
+                <Link href="/" className="text-sm font-medium text-slate-400 hover:text-slate-300">
+                    &larr; Dashboard
+                </Link>
+            </div>
+
+            {flash.status && (
+                <div className="mb-4 rounded-md bg-emerald-900/30 ring-1 ring-emerald-700/30 p-3">
+                    <p className="text-sm text-emerald-400">{flash.status}</p>
+                </div>
+            )}
+
+            {/* Gauge meters */}
+            {plan && <GaugePanel totals={totals} plan={plan} />}
+
+            {/* Meal categories */}
+            <div className="space-y-3">
+                {CATEGORIES.map(({ key, label, icon }) => (
+                    <MealCategory
+                        key={key}
+                        categoryKey={key}
+                        label={label}
+                        icon={icon}
+                        entries={entries.filter((e) => e.category === key)}
+                        myProducts={myProducts}
+                        memberId={member.id}
+                        isOpen={openCategory === key}
+                        onToggle={() => setOpenCategory(openCategory === key ? null : key)}
+                    />
+                ))}
+            </div>
+        </AppLayout>
+    );
+}
+
+/* ─── Gauge Panel ─── */
+function GaugePanel({ totals, plan }) {
+    const gauges = [
+        { label: 'Calorieën', unit: 'kcal', value: totals.calories, min: plan.min_calories, max: plan.max_calories },
+    ];
+
+    if (plan.min_protein != null || plan.max_protein != null) {
+        gauges.push({ label: 'Eiwit', unit: 'g', value: totals.protein, min: plan.min_protein, max: plan.max_protein });
+    }
+    if (plan.min_carbohydrates != null || plan.max_carbohydrates != null) {
+        gauges.push({ label: 'Koolhydraten', unit: 'g', value: totals.carbohydrates, min: plan.min_carbohydrates, max: plan.max_carbohydrates });
+    }
+    if (plan.min_fats != null || plan.max_fats != null) {
+        gauges.push({ label: 'Vetten', unit: 'g', value: totals.fats, min: plan.min_fats, max: plan.max_fats });
+    }
+
+    return (
+        <div className={`grid gap-3 mb-4 ${gauges.length <= 2 ? 'grid-cols-2' : 'grid-cols-2 sm:grid-cols-4'}`}>
+            {gauges.map((g) => (
+                <Gauge key={g.label} {...g} />
+            ))}
+        </div>
+    );
+}
+
+function Gauge({ label, unit, value, min, max }) {
+    const numMin = parseFloat(min) || 0;
+    const numMax = parseFloat(max) || numMin || 1;
+    const pct = numMax > 0 ? Math.min((value / numMax) * 100, 150) : 0;
+    const displayPct = Math.min(pct, 100);
+
+    let color, status;
+    if (value < numMin) {
+        color = 'text-amber-400';
+        status = 'Onder minimum';
+    } else if (value <= numMax) {
+        color = 'text-lime-400';
+        status = 'In range';
+    } else {
+        color = 'text-red-400';
+        status = 'Boven maximum';
+    }
+
+    // SVG arc gauge
+    const radius = 36;
+    const circumference = Math.PI * radius; // half circle
+    const offset = circumference - (displayPct / 100) * circumference;
+
+    let strokeColor;
+    if (value < numMin) strokeColor = '#f59e0b';
+    else if (value <= numMax) strokeColor = '#84cc16';
+    else strokeColor = '#ef4444';
+
+    return (
+        <div className="bg-slate-900 rounded-xl ring-1 ring-slate-700/60 p-3 flex flex-col items-center">
+            <svg width="90" height="55" viewBox="0 0 90 55" className="mb-1">
+                {/* Background arc */}
+                <path
+                    d="M 9 50 A 36 36 0 0 1 81 50"
+                    fill="none"
+                    stroke="#334155"
+                    strokeWidth="6"
+                    strokeLinecap="round"
+                />
+                {/* Value arc */}
+                <path
+                    d="M 9 50 A 36 36 0 0 1 81 50"
+                    fill="none"
+                    stroke={strokeColor}
+                    strokeWidth="6"
+                    strokeLinecap="round"
+                    strokeDasharray={circumference}
+                    strokeDashoffset={offset}
+                    className="transition-all duration-500"
+                />
+            </svg>
+            <p className={`text-lg font-bold ${color}`}>{Math.round(value)}</p>
+            <p className="text-xs text-slate-500">{label} ({unit})</p>
+            <p className="text-xs text-slate-600 mt-0.5">{numMin}–{numMax} {unit}</p>
+        </div>
+    );
+}
+
+/* ─── Meal Category ─── */
+function MealCategory({ categoryKey, label, icon, entries, myProducts, memberId, isOpen, onToggle }) {
+    const categoryTotal = useMemo(() => {
+        const t = { calories: 0, protein: 0, carbohydrates: 0, fats: 0 };
+        entries.forEach((e) => {
+            t.calories += e.calories;
+            t.protein += e.protein;
+            t.carbohydrates += e.carbohydrates;
+            t.fats += e.fats;
+        });
+        return t;
+    }, [entries]);
+
+    return (
+        <div className="bg-slate-900 rounded-xl ring-1 ring-slate-700/60 border-t-2 border-t-lime-700 overflow-hidden">
+            <button
+                onClick={onToggle}
+                className="w-full px-4 py-3 flex items-center justify-between hover:bg-slate-800/30 transition-colors"
+            >
+                <div className="flex items-center gap-2">
+                    <span className="text-lg">{icon}</span>
+                    <span className="text-sm font-semibold text-white">{label}</span>
+                    <span className="text-xs text-slate-500">({entries.length} item{entries.length !== 1 ? 's' : ''})</span>
+                </div>
+                <div className="flex items-center gap-3">
+                    <span className="text-xs text-slate-400">{Math.round(categoryTotal.calories)} kcal</span>
+                    <svg className={`w-4 h-4 text-slate-500 transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                </div>
+            </button>
+
+            {isOpen && (
+                <div className="border-t border-slate-800/60">
+                    {entries.length > 0 && (
+                        <div className="divide-y divide-slate-800/40">
+                            {entries.map((entry) => (
+                                <div key={entry.id} className="px-4 py-2.5 flex items-center justify-between">
+                                    <div>
+                                        <p className="text-sm text-white font-medium">{entry.name}</p>
+                                        <p className="text-xs text-slate-500">
+                                            {entry.grams}g · {entry.calories} kcal · {entry.protein}g eiwit · {entry.carbohydrates}g koolh. · {entry.fats}g vet
+                                        </p>
+                                    </div>
+                                    <button
+                                        onClick={() => router.delete(`/voeding-dagboek/${entry.id}`, { preserveScroll: true })}
+                                        className="text-xs font-medium text-red-500 hover:text-red-400 ml-3 shrink-0"
+                                    >
+                                        ✕
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                    <AddEntryForm categoryKey={categoryKey} myProducts={myProducts} memberId={memberId} />
+                </div>
+            )}
+        </div>
+    );
+}
+
+/* ─── Add Entry Form ─── */
+function AddEntryForm({ categoryKey, myProducts, memberId }) {
+    const [showForm, setShowForm] = useState(false);
+    const [showNewProduct, setShowNewProduct] = useState(false);
+    const [selectedProductId, setSelectedProductId] = useState('');
+    const [grams, setGrams] = useState('100');
+    const [search, setSearch] = useState('');
+    const [processing, setProcessing] = useState(false);
+
+    const filtered = useMemo(() => {
+        if (!search.trim()) return myProducts;
+        return myProducts.filter((p) => p.name.toLowerCase().includes(search.toLowerCase()));
+    }, [myProducts, search]);
+
+    const selectedProduct = myProducts.find((p) => p.id === Number(selectedProductId));
+
+    const preview = selectedProduct && grams > 0 ? {
+        calories: Math.round((parseFloat(grams) / 100) * selectedProduct.calories * 10) / 10,
+        protein: Math.round((parseFloat(grams) / 100) * selectedProduct.protein * 10) / 10,
+        carbohydrates: Math.round((parseFloat(grams) / 100) * selectedProduct.carbohydrates * 10) / 10,
+        fats: Math.round((parseFloat(grams) / 100) * selectedProduct.fats * 10) / 10,
+    } : null;
+
+    const handleSubmit = () => {
+        if (!selectedProductId || !grams) return;
+        setProcessing(true);
+        router.post(`/voeding-dagboek/${memberId}`, {
+            food_product_id: selectedProductId,
+            category: categoryKey,
+            grams: grams,
+        }, {
+            preserveScroll: true,
+            onFinish: () => {
+                setProcessing(false);
+                setSelectedProductId('');
+                setGrams('100');
+                setSearch('');
+            },
+        });
+    };
+
+    if (!showForm) {
+        return (
+            <div className="px-4 py-3">
+                <button
+                    onClick={() => setShowForm(true)}
+                    className="text-xs font-medium text-lime-500 hover:text-lime-400"
+                >
+                    + Product toevoegen
+                </button>
+            </div>
+        );
+    }
+
+    return (
+        <div className="px-4 py-3 bg-slate-800/20 space-y-3">
+            <div className="flex items-center justify-between">
+                <p className="text-xs font-medium text-slate-400">Product toevoegen</p>
+                <button onClick={() => { setShowForm(false); setShowNewProduct(false); }} className="text-xs text-slate-600 hover:text-slate-400">Sluiten</button>
+            </div>
+
+            {!showNewProduct ? (
+                <>
+                    <div>
+                        <input
+                            type="text"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            placeholder="Zoek in mijn producten..."
+                            className="w-full rounded-md bg-slate-800 border-slate-700 text-white text-sm px-3 py-1.5 placeholder-slate-500 focus:ring-lime-500 focus:border-lime-500"
+                        />
+                    </div>
+
+                    <div className="max-h-40 overflow-y-auto space-y-1">
+                        {filtered.length === 0 ? (
+                            <p className="text-xs text-slate-600 py-2">Geen producten gevonden</p>
+                        ) : (
+                            filtered.map((p) => (
+                                <button
+                                    key={p.id}
+                                    type="button"
+                                    onClick={() => { setSelectedProductId(String(p.id)); setSearch(''); }}
+                                    className={`w-full text-left rounded-md px-3 py-1.5 text-sm transition-colors ${
+                                        Number(selectedProductId) === p.id
+                                            ? 'bg-lime-900/30 ring-1 ring-lime-700/50 text-white'
+                                            : 'bg-slate-800/50 hover:bg-slate-700/50 text-slate-300'
+                                    }`}
+                                >
+                                    <span className="font-medium">{p.name}</span>
+                                    <span className="text-xs text-slate-500 ml-2">{p.calories} kcal/100g</span>
+                                </button>
+                            ))
+                        )}
+                    </div>
+
+                    {selectedProduct && (
+                        <div className="space-y-2">
+                            <div className="flex gap-2 items-end">
+                                <div className="flex-1">
+                                    <label className="block text-xs text-slate-500 mb-1">Hoeveelheid (gram)</label>
+                                    <input
+                                        type="number"
+                                        min="1"
+                                        max="9999"
+                                        step="1"
+                                        value={grams}
+                                        onChange={(e) => setGrams(e.target.value)}
+                                        className="w-full rounded-md bg-slate-800 border-slate-700 text-white text-sm px-3 py-1.5 focus:ring-lime-500 focus:border-lime-500"
+                                    />
+                                </div>
+                                <button
+                                    onClick={handleSubmit}
+                                    disabled={processing}
+                                    className="rounded-md bg-lime-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-lime-700 disabled:opacity-50"
+                                >
+                                    {processing ? '...' : 'Toevoegen'}
+                                </button>
+                            </div>
+                            {preview && (
+                                <p className="text-xs text-slate-500">
+                                    = {preview.calories} kcal · {preview.protein}g eiwit · {preview.carbohydrates}g koolh. · {preview.fats}g vet
+                                </p>
+                            )}
+                        </div>
+                    )}
+
+                    <button
+                        onClick={() => setShowNewProduct(true)}
+                        className="text-xs text-sky-500 hover:text-sky-400"
+                    >
+                        Product niet in je lijst? Voeg een nieuw product toe →
+                    </button>
+                </>
+            ) : (
+                <NewProductForm memberId={memberId} onCancel={() => setShowNewProduct(false)} />
+            )}
+        </div>
+    );
+}
+
+/* ─── New Product Form (within diary) ─── */
+function NewProductForm({ memberId, onCancel }) {
+    const [form, setForm] = useState({ name: '', calories: '', protein: '', carbohydrates: '', fats: '' });
+    const [processing, setProcessing] = useState(false);
+    const [errors, setErrors] = useState({});
+
+    // API search
+    const [apiResults, setApiResults] = useState([]);
+    const [apiLoading, setApiLoading] = useState(false);
+    const debounceRef = useRef(null);
+
+    useEffect(() => {
+        clearTimeout(debounceRef.current);
+        if (form.name.trim().length < 2) {
+            setApiResults([]);
+            return;
+        }
+        debounceRef.current = setTimeout(() => {
+            setApiLoading(true);
+            fetch(`/api/voeding/zoek?q=${encodeURIComponent(form.name.trim())}`, {
+                headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+            })
+                .then((r) => r.ok ? r.json() : [])
+                .then((data) => setApiResults(data))
+                .catch(() => setApiResults([]))
+                .finally(() => setApiLoading(false));
+        }, 400);
+        return () => clearTimeout(debounceRef.current);
+    }, [form.name]);
+
+    const handleSelectApi = (product) => {
+        setForm({
+            name: product.name,
+            calories: String(product.calories),
+            protein: String(product.protein),
+            carbohydrates: String(product.carbohydrates),
+            fats: String(product.fats),
+        });
+        setApiResults([]);
+    };
+
+    const handleSubmit = () => {
+        setProcessing(true);
+        setErrors({});
+        router.post(`/voeding-dagboek/${memberId}/product`, form, {
+            preserveScroll: true,
+            onError: (errs) => setErrors(errs),
+            onFinish: () => setProcessing(false),
+            onSuccess: () => onCancel(),
+        });
+    };
+
+    return (
+        <div className="space-y-2">
+            <p className="text-xs font-medium text-sky-400">Nieuw product aanmaken</p>
+
+            <div>
+                <input
+                    type="text"
+                    value={form.name}
+                    onChange={(e) => setForm({ ...form, name: e.target.value })}
+                    placeholder="Productnaam"
+                    className="w-full rounded-md bg-slate-800 border-slate-700 text-white text-sm px-3 py-1.5 placeholder-slate-500"
+                />
+                {errors.name && <p className="text-xs text-red-400 mt-1">{errors.name}</p>}
+            </div>
+
+            {apiLoading && <p className="text-xs text-sky-400">Zoeken in voedingsdatabases...</p>}
+
+            {!apiLoading && apiResults.length > 0 && (
+                <div className="space-y-1 max-h-32 overflow-y-auto">
+                    {apiResults.map((p, i) => (
+                        <button
+                            key={i}
+                            type="button"
+                            onClick={() => handleSelectApi(p)}
+                            className="w-full text-left rounded-md bg-sky-900/30 hover:bg-sky-800/40 px-3 py-1.5 ring-1 ring-sky-800/30 transition-colors"
+                        >
+                            <p className="text-xs text-white font-medium truncate">{p.name}</p>
+                            <p className="text-xs text-sky-300/70">{p.calories} kcal · {p.protein}g eiwit · {p.carbohydrates}g koolh. · {p.fats}g vet</p>
+                        </button>
+                    ))}
+                </div>
+            )}
+
+            <div className="grid grid-cols-2 gap-2">
+                {[
+                    { key: 'calories', label: 'Calorieën (kcal)' },
+                    { key: 'protein', label: 'Eiwit (g)' },
+                    { key: 'carbohydrates', label: 'Koolhydraten (g)' },
+                    { key: 'fats', label: 'Vetten (g)' },
+                ].map(({ key, label }) => (
+                    <div key={key}>
+                        <label className="block text-xs text-slate-500 mb-1">{label}</label>
+                        <input
+                            type="number"
+                            step="0.1"
+                            min="0"
+                            value={form[key]}
+                            onChange={(e) => setForm({ ...form, [key]: e.target.value })}
+                            className="w-full rounded-md bg-slate-800 border-slate-700 text-white text-sm px-3 py-1.5"
+                        />
+                        {errors[key] && <p className="text-xs text-red-400 mt-1">{errors[key]}</p>}
+                    </div>
+                ))}
+            </div>
+
+            <div className="flex gap-2">
+                <button
+                    onClick={handleSubmit}
+                    disabled={processing}
+                    className="rounded-md bg-sky-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-sky-700 disabled:opacity-50"
+                >
+                    {processing ? 'Bezig...' : 'Aanmaken'}
+                </button>
+                <button onClick={onCancel} className="text-xs text-slate-500 hover:text-slate-400 px-2">
+                    Annuleren
+                </button>
+            </div>
+        </div>
+    );
+}
