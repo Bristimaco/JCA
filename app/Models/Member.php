@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 
@@ -158,6 +159,11 @@ class Member extends Model
     public function trainingGroups(): BelongsToMany
     {
         return $this->belongsToMany(TrainingGroup::class)->withTimestamps();
+    }
+
+    public function nutritionPlan(): HasOne
+    {
+        return $this->hasOne(NutritionPlan::class);
     }
 
     public function attendances(): HasMany

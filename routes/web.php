@@ -85,6 +85,7 @@ use App\Http\Controllers\Trainer\TrainerTournamentController;
 use App\Http\Controllers\Trainer\TrainerTrainingGroupController;
 use App\Http\Controllers\TrainingAbsenceController;
 use App\Http\Controllers\TrainingCancellationController;
+use App\Http\Controllers\VoedingsplanController;
 use App\Http\Controllers\VoedingZoekController;
 use App\Http\Controllers\VoucherController;
 use Illuminate\Support\Facades\Route;
@@ -235,6 +236,8 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
     Route::delete('/mijn-producten/{foodProduct}', [MijnProductenController::class, 'destroy'])->name('mijn-producten.destroy');
     Route::get('/producten', [ProductenController::class, 'index'])->name('producten');
     Route::get('/api/voeding/zoek', [VoedingZoekController::class, 'search'])->name('voeding.zoek');
+    Route::get('/voedingsplan', [VoedingsplanController::class, 'index'])->name('voedingsplan');
+    Route::post('/voedingsplan/{member}', [VoedingsplanController::class, 'store'])->name('voedingsplan.store');
 
     // Trainer routes
     Route::middleware('coach:training')->prefix('trainer')->group(function () {
