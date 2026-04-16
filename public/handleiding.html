@@ -3708,23 +3708,34 @@
                 </li>
             </ul>
 
-            <h3>Open Food Facts zoeken</h3>
+            <h3>Zoeken in voedingsdatabases</h3>
             <p>
-                Wanneer een product nog niet in de lokale catalogus bestaat, wordt automatisch gezocht in de
-                <strong>Open Food Facts</strong> database &mdash; een open-source database met miljoenen voedingsproducten
-                (inclusief veel Nederlandse en Belgische producten).
+                Wanneer een product nog niet in de lokale catalogus bestaat, wordt automatisch gezocht in externe
+                voedingsdatabases:
             </p>
+            <ol>
+                <li><strong>Open Food Facts</strong> &mdash; een open-source database met miljoenen voedingsproducten
+                    (inclusief veel Nederlandse en Belgische producten). Dit is de primaire bron.
+                </li>
+                <li><strong>USDA FoodData Central</strong> &mdash; de Amerikaanse voedingsdatabase van het
+                    U.S. Department of Agriculture. Wordt automatisch geraadpleegd als Open Food Facts geen
+                    resultaten geeft of niet beschikbaar is.
+                </li>
+            </ol>
             <ul>
                 <li>Resultaten verschijnen in een <span style="color: #38bdf8;">blauw</span> kader met de label
-                    <em>&ldquo;Resultaten uit Open Food Facts&rdquo;</em>.
+                    <em>&ldquo;Resultaten uit voedingsdatabase&rdquo;</em>.
                 </li>
                 <li>Elk resultaat toont de productnaam met calorieën, eiwit, koolhydraten en vetten per 100g.</li>
                 <li><strong>Klik op een resultaat</strong> om de voedingswaarden automatisch in het formulier in te vullen.
                     Je kunt de waarden daarna nog aanpassen voordat je bevestigt.
                 </li>
+                <li>Als geen van beide databases resultaten oplevert, verschijnt het bericht
+                    <em>&ldquo;Geen resultaten gevonden&rdquo;</em> en kun je de waarden handmatig invoeren.
+                </li>
             </ul>
             <div class="info-box">
-                <strong>Tip:</strong> De Open Food Facts zoekresultaten worden 24 uur gecacht.
+                <strong>Tip:</strong> De zoekresultaten worden 24 uur gecacht.
                 Zoek altijd eerst of een product al in de lokale catalogus bestaat voordat je het aanmaakt.
                 Zo vermijden we dubbels.
             </div>

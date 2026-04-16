@@ -44,4 +44,8 @@ return [
         'token' => env('CBE_API_TOKEN'),
     ],
 
+    'usda' => [
+        'api_key' => env('USDA_API_KEY'),
+    ],
+
 ];

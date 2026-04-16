@@ -7,6 +7,7 @@ export default function MijnProducten({ myProducts, catalog }) {
     const [searchName, setSearchName] = useState('');
     const [apiResults, setApiResults] = useState([]);
     const [apiLoading, setApiLoading] = useState(false);
+    const [apiSearched, setApiSearched] = useState(false);
     const debounceRef = useRef(null);
 
     const match = useMemo(() => {
@@ -27,12 +28,19 @@ export default function MijnProducten({ myProducts, catalog }) {
             return;
         }
         setApiLoading(true);
+        setApiSearched(false);
         fetch(`/api/voeding/zoek?q=${encodeURIComponent(q)}`, {
             headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
         })
             .then((r) => r.ok ? r.json() : [])
-            .then((data) => setApiResults(data))
-            .catch(() => setApiResults([]))
+            .then((data) => {
+                setApiResults(data);
+                setApiSearched(true);
+            })
+            .catch(() => {
+                setApiResults([]);
+                setApiSearched(true);
+            })
             .finally(() => setApiLoading(false));
     }, []);
 
@@ -40,6 +48,7 @@ export default function MijnProducten({ myProducts, catalog }) {
         clearTimeout(debounceRef.current);
         if (!searchName.trim() || match) {
             setApiResults([]);
+            setApiSearched(false);
             return;
         }
         debounceRef.current = setTimeout(() => fetchApiResults(searchName.trim()), 400);
@@ -95,6 +104,7 @@ export default function MijnProducten({ myProducts, catalog }) {
                                     suggestions={hasPartialMatches ? catalog.filter((p) => p.name.toLowerCase().includes(searchName.trim().toLowerCase())) : []}
                                     apiResults={apiResults}
                                     apiLoading={apiLoading}
+                                    apiSearched={apiSearched}
                                     onDone={() => setSearchName('')}
                                     onSelectSuggestion={(name) => setSearchName(name)}
                                 />
@@ -193,7 +203,7 @@ function MatchFound({ product, isAlreadyInMyList, onDone }) {
     );
 }
 
-function CreateNewProduct({ name, suggestions, apiResults, apiLoading, onDone, onSelectSuggestion }) {
+function CreateNewProduct({ name, suggestions, apiResults, apiLoading, apiSearched, onDone, onSelectSuggestion }) {
     const form = useForm({ name, calories: '', protein: '', carbohydrates: '', fats: '' });
 
     const handleSelectApiProduct = (product) => {
@@ -236,13 +246,13 @@ function CreateNewProduct({ name, suggestions, apiResults, apiLoading, onDone, o
             {/* API results from Open Food Facts */}
             {apiLoading && (
                 <div className="rounded-lg ring-1 ring-sky-700/30 bg-sky-900/20 p-3 mb-3">
-                    <p className="text-xs font-medium text-sky-400">Zoeken in Open Food Facts...</p>
+                    <p className="text-xs font-medium text-sky-400">Zoeken in voedingsdatabases...</p>
                 </div>
             )}
 
             {!apiLoading && apiResults.length > 0 && (
                 <div className="rounded-lg ring-1 ring-sky-700/30 bg-sky-900/20 p-3 mb-3">
-                    <p className="text-xs font-medium text-sky-400 mb-2">Resultaten uit Open Food Facts <span className="text-sky-600">(per 100g)</span></p>
+                    <p className="text-xs font-medium text-sky-400 mb-2">Resultaten uit voedingsdatabase <span className="text-sky-600">(per 100g)</span></p>
                     <div className="space-y-1.5 max-h-60 overflow-y-auto">
                         {apiResults.map((product, i) => (
                             <button
@@ -258,6 +268,12 @@ function CreateNewProduct({ name, suggestions, apiResults, apiLoading, onDone, o
                             </button>
                         ))}
                     </div>
+                </div>
+            )}
+
+            {!apiLoading && apiSearched && apiResults.length === 0 && (
+                <div className="rounded-lg ring-1 ring-slate-700/30 bg-slate-800/30 p-3 mb-3">
+                    <p className="text-xs text-slate-500">Geen resultaten gevonden in voedingsdatabases. Vul de waarden handmatig in.</p>
                 </div>
             )}
 

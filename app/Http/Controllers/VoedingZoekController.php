@@ -16,11 +16,26 @@ class VoedingZoekController extends Controller
         ]);
 
         $query = mb_strtolower(trim($request->input('q')));
-        $cacheKey = 'voeding_zoek_'.md5($query);
+        $cacheKey = 'vz2_'.md5($query);
 
         $results = Cache::remember($cacheKey, now()->addHours(24), function () use ($query) {
+            $results = $this->searchOpenFoodFacts($query);
+
+            if (count($results) === 0) {
+                $results = $this->searchUsda($query);
+            }
+
+            return $results;
+        });
+
+        return response()->json($results);
+    }
+
+    private function searchOpenFoodFacts(string $query): array
+    {
+        try {
             $response = Http::withUserAgent('JCA/1.0')
-                ->timeout(5)
+                ->timeout(8)
                 ->get('https://world.openfoodfacts.org/cgi/search.pl', [
                     'search_terms' => $query,
                     'search_simple' => 1,
@@ -62,8 +77,62 @@ class VoedingZoekController extends Controller
                 ->take(10)
                 ->values()
                 ->all();
-        });
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
 
-        return response()->json($results);
+    private function searchUsda(string $query): array
+    {
+        $apiKey = config('services.usda.api_key');
+
+        if (! $apiKey) {
+            return [];
+        }
+
+        try {
+            $response = Http::timeout(8)
+                ->get('https://api.nal.usda.gov/fdc/v1/foods/search', [
+                    'api_key' => $apiKey,
+                    'query' => $query,
+                    'pageSize' => 20,
+                    'dataType' => 'Survey (FNDDS),SR Legacy',
+                ]);
+
+            if ($response->failed()) {
+                return [];
+            }
+
+            $foods = $response->json('foods', []);
+
+            return collect($foods)
+                ->map(function ($food) {
+                    $nutrients = collect($food['foodNutrients'] ?? []);
+
+                    $calories = $nutrients->firstWhere('nutrientId', 1008)['value'] ?? null;
+                    $protein = $nutrients->firstWhere('nutrientId', 1003)['value'] ?? null;
+                    $carbs = $nutrients->firstWhere('nutrientId', 1005)['value'] ?? null;
+                    $fat = $nutrients->firstWhere('nutrientId', 1004)['value'] ?? null;
+
+                    if ($calories === null && $protein === null && $carbs === null && $fat === null) {
+                        return null;
+                    }
+
+                    return [
+                        'name' => $food['description'] ?? '',
+                        'calories' => round((float) ($calories ?? 0), 1),
+                        'protein' => round((float) ($protein ?? 0), 1),
+                        'carbohydrates' => round((float) ($carbs ?? 0), 1),
+                        'fats' => round((float) ($fat ?? 0), 1),
+                    ];
+                })
+                ->filter(fn ($item) => $item !== null && $item['name'] !== '')
+                ->unique('name')
+                ->take(10)
+                ->values()
+                ->all();
+        } catch (\Exception $e) {
+            return [];
+        }
     }
 }
