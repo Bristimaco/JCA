@@ -85,6 +85,7 @@ use App\Http\Controllers\Trainer\TrainerTournamentController;
 use App\Http\Controllers\Trainer\TrainerTrainingGroupController;
 use App\Http\Controllers\TrainingAbsenceController;
 use App\Http\Controllers\TrainingCancellationController;
+use App\Http\Controllers\VoedingZoekController;
 use App\Http\Controllers\VoucherController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -233,6 +234,7 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
     Route::post('/mijn-producten', [MijnProductenController::class, 'store'])->name('mijn-producten.store');
     Route::delete('/mijn-producten/{foodProduct}', [MijnProductenController::class, 'destroy'])->name('mijn-producten.destroy');
     Route::get('/producten', [ProductenController::class, 'index'])->name('producten');
+    Route::get('/api/voeding/zoek', [VoedingZoekController::class, 'search'])->name('voeding.zoek');
 
     // Trainer routes
     Route::middleware('coach:training')->prefix('trainer')->group(function () {

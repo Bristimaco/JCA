@@ -1,4 +1,4 @@
-import { Head, usePage } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import AppLayout from '../Layouts/AppLayout';
 
@@ -13,9 +13,14 @@ export default function Producten({ products }) {
         <AppLayout>
             <Head title="Producten" />
 
-            <div className="mb-4">
-                <h1 className="text-xl font-bold text-stone-100 tracking-tight">Producten</h1>
-                <p className="text-slate-400 text-xs">Overzicht van alle voedingsproducten — waarden per 100g</p>
+            <div className="mb-4 flex items-center justify-between">
+                <div>
+                    <h1 className="text-xl font-bold text-stone-100 tracking-tight">Producten</h1>
+                    <p className="text-slate-400 text-xs">Overzicht van alle voedingsproducten — waarden per 100g</p>
+                </div>
+                <Link href="/" className="text-sm font-medium text-slate-400 hover:text-slate-300">
+                    &larr; Dashboard
+                </Link>
             </div>
 
             <div className="bg-slate-900 rounded-xl shadow-sm ring-1 ring-slate-700/60 border-t-2 border-t-emerald-700">

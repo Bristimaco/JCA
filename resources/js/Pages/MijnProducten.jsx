@@ -1,10 +1,13 @@
-import { Head, useForm, usePage, router } from '@inertiajs/react';
-import { useState, useMemo } from 'react';
+import { Head, Link, useForm, usePage, router } from '@inertiajs/react';
+import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import AppLayout from '../Layouts/AppLayout';
 
 export default function MijnProducten({ myProducts, catalog }) {
     const { flash } = usePage().props;
     const [searchName, setSearchName] = useState('');
+    const [apiResults, setApiResults] = useState([]);
+    const [apiLoading, setApiLoading] = useState(false);
+    const debounceRef = useRef(null);
 
     const match = useMemo(() => {
         if (!searchName.trim()) return null;
@@ -18,13 +21,43 @@ export default function MijnProducten({ myProducts, catalog }) {
 
     const isAlreadyInMyList = match ? myProducts.some((p) => p.id === match.id) : false;
 
+    const fetchApiResults = useCallback((q) => {
+        if (q.length < 2) {
+            setApiResults([]);
+            return;
+        }
+        setApiLoading(true);
+        fetch(`/api/voeding/zoek?q=${encodeURIComponent(q)}`, {
+            headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+        })
+            .then((r) => r.ok ? r.json() : [])
+            .then((data) => setApiResults(data))
+            .catch(() => setApiResults([]))
+            .finally(() => setApiLoading(false));
+    }, []);
+
+    useEffect(() => {
+        clearTimeout(debounceRef.current);
+        if (!searchName.trim() || match) {
+            setApiResults([]);
+            return;
+        }
+        debounceRef.current = setTimeout(() => fetchApiResults(searchName.trim()), 400);
+        return () => clearTimeout(debounceRef.current);
+    }, [searchName, match, fetchApiResults]);
+
     return (
         <AppLayout>
             <Head title="Mijn Producten" />
 
-            <div className="mb-4">
-                <h1 className="text-xl font-bold text-stone-100 tracking-tight">Mijn Producten</h1>
-                <p className="text-slate-400 text-xs">Je persoonlijke voedingsproducten</p>
+            <div className="mb-4 flex items-center justify-between">
+                <div>
+                    <h1 className="text-xl font-bold text-stone-100 tracking-tight">Mijn Producten</h1>
+                    <p className="text-slate-400 text-xs">Je persoonlijke voedingsproducten</p>
+                </div>
+                <Link href="/" className="text-sm font-medium text-slate-400 hover:text-slate-300">
+                    &larr; Dashboard
+                </Link>
             </div>
 
             {flash.status && (
@@ -60,6 +93,8 @@ export default function MijnProducten({ myProducts, catalog }) {
                                 <CreateNewProduct
                                     name={searchName.trim()}
                                     suggestions={hasPartialMatches ? catalog.filter((p) => p.name.toLowerCase().includes(searchName.trim().toLowerCase())) : []}
+                                    apiResults={apiResults}
+                                    apiLoading={apiLoading}
                                     onDone={() => setSearchName('')}
                                     onSelectSuggestion={(name) => setSearchName(name)}
                                 />
@@ -158,8 +193,18 @@ function MatchFound({ product, isAlreadyInMyList, onDone }) {
     );
 }
 
-function CreateNewProduct({ name, suggestions, onDone, onSelectSuggestion }) {
+function CreateNewProduct({ name, suggestions, apiResults, apiLoading, onDone, onSelectSuggestion }) {
     const form = useForm({ name, calories: '', protein: '', carbohydrates: '', fats: '' });
+
+    const handleSelectApiProduct = (product) => {
+        form.setData({
+            name: product.name,
+            calories: String(product.calories),
+            protein: String(product.protein),
+            carbohydrates: String(product.carbohydrates),
+            fats: String(product.fats),
+        });
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -182,6 +227,34 @@ function CreateNewProduct({ name, suggestions, onDone, onSelectSuggestion }) {
                                 className="rounded-full bg-amber-800/40 px-2.5 py-0.5 text-xs text-amber-200 hover:bg-amber-700/50 transition-colors"
                             >
                                 {s.name}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {/* API results from Open Food Facts */}
+            {apiLoading && (
+                <div className="rounded-lg ring-1 ring-sky-700/30 bg-sky-900/20 p-3 mb-3">
+                    <p className="text-xs font-medium text-sky-400">Zoeken in Open Food Facts...</p>
+                </div>
+            )}
+
+            {!apiLoading && apiResults.length > 0 && (
+                <div className="rounded-lg ring-1 ring-sky-700/30 bg-sky-900/20 p-3 mb-3">
+                    <p className="text-xs font-medium text-sky-400 mb-2">Resultaten uit Open Food Facts <span className="text-sky-600">(per 100g)</span></p>
+                    <div className="space-y-1.5 max-h-60 overflow-y-auto">
+                        {apiResults.map((product, i) => (
+                            <button
+                                key={i}
+                                type="button"
+                                onClick={() => handleSelectApiProduct(product)}
+                                className="w-full text-left rounded-md bg-sky-900/30 hover:bg-sky-800/40 px-3 py-2 transition-colors ring-1 ring-sky-800/30"
+                            >
+                                <p className="text-sm text-white font-medium truncate">{product.name}</p>
+                                <p className="text-xs text-sky-300/70 mt-0.5">
+                                    {product.calories} kcal · {product.protein}g eiwit · {product.carbohydrates}g koolh. · {product.fats}g vet
+                                </p>
                             </button>
                         ))}
                     </div>
