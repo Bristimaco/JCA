@@ -82,6 +82,33 @@ class VoedingZoekController extends Controller
         }
     }
 
+    private function translateToEnglish(string $query): string
+    {
+        $cacheKey = 'vz2_translate_'.md5($query);
+
+        return Cache::remember($cacheKey, now()->addHours(24), function () use ($query) {
+            try {
+                $response = Http::timeout(5)
+                    ->get('https://api.mymemory.translated.net/get', [
+                        'q' => $query,
+                        'langpair' => 'nl|en',
+                    ]);
+
+                if ($response->successful()) {
+                    $translated = $response->json('responseData.translatedText');
+
+                    if ($translated && mb_strtolower($translated) !== mb_strtolower($query)) {
+                        return mb_strtolower($translated);
+                    }
+                }
+            } catch (\Exception $e) {
+                // Fallback to original query
+            }
+
+            return $query;
+        });
+    }
+
     private function searchUsda(string $query): array
     {
         $apiKey = config('services.usda.api_key');
@@ -90,11 +117,13 @@ class VoedingZoekController extends Controller
             return [];
         }
 
+        $translatedQuery = $this->translateToEnglish($query);
+
         try {
             $response = Http::timeout(8)
                 ->get('https://api.nal.usda.gov/fdc/v1/foods/search', [
                     'api_key' => $apiKey,
-                    'query' => $query,
+                    'query' => $translatedQuery,
                     'pageSize' => 20,
                     'dataType' => 'Survey (FNDDS),SR Legacy',
                 ]);
