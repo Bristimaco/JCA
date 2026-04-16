@@ -192,8 +192,8 @@ const moduleGroups = [
     {
         title: 'Voeding',
         modules: [
-            { name: 'Mijn Producten', href: '/mijn-producten', roles: ['member', 'coach'] },
-            { name: 'Producten', href: '/producten', roles: ['member', 'coach'] },
+            { name: 'Mijn Producten', href: '/mijn-producten', roles: ['parent', 'member', 'admin', 'coach', 'barmedewerker'] },
+            { name: 'Producten', href: '/producten', roles: ['parent', 'member', 'admin', 'coach', 'barmedewerker'] },
         ],
     },
     {
