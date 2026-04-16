@@ -61,6 +61,7 @@ use App\Http\Controllers\ImpersonateController;
 use App\Http\Controllers\MemberAttendanceController;
 use App\Http\Controllers\MemberPhotoController;
 use App\Http\Controllers\MijnPoefController;
+use App\Http\Controllers\MijnProductenController;
 use App\Http\Controllers\MijnToernooienController;
 use App\Http\Controllers\MijnToernooienRespondController;
 use App\Http\Controllers\MollieWebhookController;
@@ -69,6 +70,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PodiumPhotoController;
 use App\Http\Controllers\PoefController;
 use App\Http\Controllers\POSController;
+use App\Http\Controllers\ProductenController;
 use App\Http\Controllers\PushSubscriptionController;
 use App\Http\Controllers\StageAttachmentController;
 use App\Http\Controllers\StageDetailController;
@@ -225,6 +227,12 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
     Route::get('/bestelling', [BarOrderController::class, 'index'])->name('bestelling');
     Route::post('/bestelling', [BarOrderController::class, 'store'])->name('bestelling.store');
     Route::get('/mijn-poef', [MijnPoefController::class, 'index'])->name('mijn-poef');
+
+    // Voeding (any approved user)
+    Route::get('/mijn-producten', [MijnProductenController::class, 'index'])->name('mijn-producten');
+    Route::post('/mijn-producten', [MijnProductenController::class, 'store'])->name('mijn-producten.store');
+    Route::delete('/mijn-producten/{foodProduct}', [MijnProductenController::class, 'destroy'])->name('mijn-producten.destroy');
+    Route::get('/producten', [ProductenController::class, 'index'])->name('producten');
 
     // Trainer routes
     Route::middleware('coach:training')->prefix('trainer')->group(function () {
