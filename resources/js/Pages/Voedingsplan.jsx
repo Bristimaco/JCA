@@ -66,7 +66,7 @@ export default function Voedingsplan({ members }) {
                 </div>
             )}
 
-            {selected && <PlanForm member={selected} />}
+            {selected && <PlanForm key={selected.id} member={selected} />}
         </AppLayout>
     );
 }
@@ -90,10 +90,10 @@ function PlanForm({ member }) {
     };
 
     const fields = [
-        { label: 'Calorieën (kcal)', minKey: 'min_calories', maxKey: 'max_calories' },
-        { label: 'Eiwit (g)', minKey: 'min_protein', maxKey: 'max_protein' },
-        { label: 'Koolhydraten (g)', minKey: 'min_carbohydrates', maxKey: 'max_carbohydrates' },
-        { label: 'Vetten (g)', minKey: 'min_fats', maxKey: 'max_fats' },
+        { label: 'Calorieën (kcal)', minKey: 'min_calories', maxKey: 'max_calories', required: true },
+        { label: 'Eiwit (g)', minKey: 'min_protein', maxKey: 'max_protein', required: false },
+        { label: 'Koolhydraten (g)', minKey: 'min_carbohydrates', maxKey: 'max_carbohydrates', required: false },
+        { label: 'Vetten (g)', minKey: 'min_fats', maxKey: 'max_fats', required: false },
     ];
 
     return (
@@ -105,9 +105,15 @@ function PlanForm({ member }) {
 
             <form onSubmit={handleSubmit} className="px-3 sm:px-6 py-4">
                 <div className="space-y-4">
-                    {fields.map(({ label, minKey, maxKey }) => (
+                    {fields.map(({ label, minKey, maxKey, required }) => (
                         <div key={minKey}>
-                            <label className="block text-sm font-medium text-slate-300 mb-1.5">{label}</label>
+                            <label className="block text-sm font-medium text-slate-300 mb-1.5">
+                                {label}
+                                {required
+                                    ? <span className="text-red-400 ml-1">*</span>
+                                    : <span className="text-slate-600 text-xs ml-1.5">(optioneel)</span>
+                                }
+                            </label>
                             <div className="grid grid-cols-2 gap-3 max-w-md">
                                 <div>
                                     <label className="block text-xs text-slate-500 mb-1">Minimum</label>

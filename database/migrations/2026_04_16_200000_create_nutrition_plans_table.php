@@ -16,12 +16,12 @@ return new class extends Migration
             $table->foreignId('member_id')->unique()->constrained()->cascadeOnDelete();
             $table->decimal('min_calories', 6, 1);
             $table->decimal('max_calories', 6, 1);
-            $table->decimal('min_protein', 6, 1);
-            $table->decimal('max_protein', 6, 1);
-            $table->decimal('min_carbohydrates', 6, 1);
-            $table->decimal('max_carbohydrates', 6, 1);
-            $table->decimal('min_fats', 6, 1);
-            $table->decimal('max_fats', 6, 1);
+            $table->decimal('min_protein', 6, 1)->nullable();
+            $table->decimal('max_protein', 6, 1)->nullable();
+            $table->decimal('min_carbohydrates', 6, 1)->nullable();
+            $table->decimal('max_carbohydrates', 6, 1)->nullable();
+            $table->decimal('min_fats', 6, 1)->nullable();
+            $table->decimal('max_fats', 6, 1)->nullable();
             $table->timestamps();
         });
     }

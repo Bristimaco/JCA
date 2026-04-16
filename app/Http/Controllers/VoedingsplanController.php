@@ -40,12 +40,12 @@ class VoedingsplanController extends Controller
         $validated = $request->validate([
             'min_calories' => ['required', 'numeric', 'min:0', 'max:99999'],
             'max_calories' => ['required', 'numeric', 'min:0', 'max:99999'],
-            'min_protein' => ['required', 'numeric', 'min:0', 'max:99999'],
-            'max_protein' => ['required', 'numeric', 'min:0', 'max:99999'],
-            'min_carbohydrates' => ['required', 'numeric', 'min:0', 'max:99999'],
-            'max_carbohydrates' => ['required', 'numeric', 'min:0', 'max:99999'],
-            'min_fats' => ['required', 'numeric', 'min:0', 'max:99999'],
-            'max_fats' => ['required', 'numeric', 'min:0', 'max:99999'],
+            'min_protein' => ['nullable', 'numeric', 'min:0', 'max:99999'],
+            'max_protein' => ['nullable', 'numeric', 'min:0', 'max:99999'],
+            'min_carbohydrates' => ['nullable', 'numeric', 'min:0', 'max:99999'],
+            'max_carbohydrates' => ['nullable', 'numeric', 'min:0', 'max:99999'],
+            'min_fats' => ['nullable', 'numeric', 'min:0', 'max:99999'],
+            'max_fats' => ['nullable', 'numeric', 'min:0', 'max:99999'],
         ]);
 
         $member->nutritionPlan()->updateOrCreate(
