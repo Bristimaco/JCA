@@ -17,10 +17,13 @@ class VoedingsplanController extends Controller
             ->orderBy('first_name')
             ->get(['members.id', 'first_name', 'last_name'])
             ->map(function (Member $member) {
+                $this->ensureDefaultTrainingType($member);
+
                 return [
                     'id' => $member->id,
                     'name' => $member->fullName(),
                     'nutrition_plan' => $member->nutritionPlan,
+                    'training_types' => $member->trainingTypes()->orderByDesc('is_default')->orderBy('name')->get(),
                 ];
             });
 
@@ -54,5 +57,16 @@ class VoedingsplanController extends Controller
         );
 
         return back()->with('status', "Voedingsplan voor {$member->fullName()} opgeslagen.");
+    }
+
+    private function ensureDefaultTrainingType(Member $member): void
+    {
+        if (! $member->trainingTypes()->where('is_default', true)->exists()) {
+            $member->trainingTypes()->create([
+                'name' => 'Judo',
+                'is_default' => true,
+                'surplus_calories' => 0,
+            ]);
+        }
     }
 }

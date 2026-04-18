@@ -9,7 +9,7 @@ const CATEGORIES = [
     { key: 'tussendoortjes', label: 'Tussendoortjes', icon: '🍎' },
 ];
 
-export default function VoedingDagboek({ member, entries, myProducts, catalog }) {
+export default function VoedingDagboek({ member, entries, myProducts, catalog, trainingTypes, todayTrainings }) {
     const { flash } = usePage().props;
     const [openCategory, setOpenCategory] = useState('ontbijt');
 
@@ -28,6 +28,21 @@ export default function VoedingDagboek({ member, entries, myProducts, catalog })
             fats: Math.round(t.fats * 10) / 10,
         };
     }, [entries]);
+
+    // Calculate training surplus for active trainings today
+    const trainingSurplus = useMemo(() => {
+        const s = { calories: 0, protein: 0, carbohydrates: 0, fats: 0 };
+        (todayTrainings || []).forEach((dt) => {
+            const tt = (trainingTypes || []).find((t) => t.id === dt.training_type_id);
+            if (!tt) return;
+            // For calories: use actual_calories if set, otherwise surplus_calories
+            s.calories += dt.actual_calories != null ? parseFloat(dt.actual_calories) : parseFloat(tt.surplus_calories || 0);
+            s.protein += parseFloat(tt.surplus_protein || 0);
+            s.carbohydrates += parseFloat(tt.surplus_carbohydrates || 0);
+            s.fats += parseFloat(tt.surplus_fats || 0);
+        });
+        return s;
+    }, [todayTrainings, trainingTypes]);
 
     const plan = member.nutrition_plan;
 
@@ -52,7 +67,16 @@ export default function VoedingDagboek({ member, entries, myProducts, catalog })
             )}
 
             {/* Gauge meters */}
-            {plan && <GaugePanel totals={totals} plan={plan} />}
+            {plan && <GaugePanel totals={totals} plan={plan} trainingSurplus={trainingSurplus} />}
+
+            {/* Training section */}
+            {(trainingTypes || []).length > 0 && (
+                <TrainingSection
+                    trainingTypes={trainingTypes}
+                    todayTrainings={todayTrainings || []}
+                    memberId={member.id}
+                />
+            )}
 
             {/* Meal categories */}
             <div className="space-y-3">
@@ -76,19 +100,20 @@ export default function VoedingDagboek({ member, entries, myProducts, catalog })
 }
 
 /* ─── Gauge Panel ─── */
-function GaugePanel({ totals, plan }) {
+function GaugePanel({ totals, plan, trainingSurplus }) {
+    const s = trainingSurplus || { calories: 0, protein: 0, carbohydrates: 0, fats: 0 };
     const gauges = [
-        { label: 'Calorieën', unit: 'kcal', value: totals.calories, min: plan.min_calories, max: plan.max_calories },
+        { label: 'Calorieën', unit: 'kcal', value: totals.calories, min: parseFloat(plan.min_calories || 0) + s.calories, max: parseFloat(plan.max_calories || 0) + s.calories },
     ];
 
     if (plan.min_protein != null || plan.max_protein != null) {
-        gauges.push({ label: 'Eiwit', unit: 'g', value: totals.protein, min: plan.min_protein, max: plan.max_protein });
+        gauges.push({ label: 'Eiwit', unit: 'g', value: totals.protein, min: parseFloat(plan.min_protein || 0) + s.protein, max: parseFloat(plan.max_protein || 0) + s.protein });
     }
     if (plan.min_carbohydrates != null || plan.max_carbohydrates != null) {
-        gauges.push({ label: 'Koolhydraten', unit: 'g', value: totals.carbohydrates, min: plan.min_carbohydrates, max: plan.max_carbohydrates });
+        gauges.push({ label: 'Koolhydraten', unit: 'g', value: totals.carbohydrates, min: parseFloat(plan.min_carbohydrates || 0) + s.carbohydrates, max: parseFloat(plan.max_carbohydrates || 0) + s.carbohydrates });
     }
     if (plan.min_fats != null || plan.max_fats != null) {
-        gauges.push({ label: 'Vetten', unit: 'g', value: totals.fats, min: plan.min_fats, max: plan.max_fats });
+        gauges.push({ label: 'Vetten', unit: 'g', value: totals.fats, min: parseFloat(plan.min_fats || 0) + s.fats, max: parseFloat(plan.max_fats || 0) + s.fats });
     }
 
     return (
@@ -154,6 +179,111 @@ function Gauge({ label, unit, value, min, max }) {
             <p className={`text-lg font-bold ${color}`}>{Math.round(value)}</p>
             <p className="text-xs text-slate-500">{label} ({unit})</p>
             <p className="text-xs text-slate-600 mt-0.5">{numMin}–{numMax} {unit}</p>
+        </div>
+    );
+}
+
+/* ─── Training Section ─── */
+function TrainingSection({ trainingTypes, todayTrainings, memberId }) {
+    const [isOpen, setIsOpen] = useState(false);
+    const activeCount = todayTrainings.length;
+
+    return (
+        <div className="bg-slate-900 rounded-xl ring-1 ring-slate-700/60 border-t-2 border-t-orange-700 overflow-hidden mb-3">
+            <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="w-full px-4 py-3 flex items-center justify-between hover:bg-slate-800/30 transition-colors"
+            >
+                <div className="flex items-center gap-2">
+                    <span className="text-lg">🏋️</span>
+                    <span className="text-sm font-semibold text-white">Trainingen vandaag</span>
+                    <span className="text-xs text-slate-500">({activeCount} actief)</span>
+                </div>
+                <svg className={`w-4 h-4 text-slate-500 transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+            </button>
+
+            {isOpen && (
+                <div className="border-t border-slate-800/60 divide-y divide-slate-800/40">
+                    {trainingTypes.map((tt) => {
+                        const active = todayTrainings.find((dt) => dt.training_type_id === tt.id);
+                        return (
+                            <TrainingToggleRow key={tt.id} tt={tt} active={active} memberId={memberId} />
+                        );
+                    })}
+                </div>
+            )}
+        </div>
+    );
+}
+
+function TrainingToggleRow({ tt, active, memberId }) {
+    const [actualCal, setActualCal] = useState(active?.actual_calories ?? '');
+    const [saving, setSaving] = useState(false);
+
+    const handleToggle = () => {
+        router.post(`/voeding-dagboek/${memberId}/trainingen`, { training_type_id: tt.id }, { preserveScroll: true });
+    };
+
+    const handleSaveActual = () => {
+        if (!active) return;
+        setSaving(true);
+        router.patch(`/voeding-dagboek/trainingen/${active.id}`, {
+            actual_calories: actualCal === '' ? null : actualCal,
+        }, {
+            preserveScroll: true,
+            onFinish: () => setSaving(false),
+        });
+    };
+
+    return (
+        <div className="px-4 py-3 flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
+            <div className="flex items-center gap-3 flex-1 min-w-0">
+                <button
+                    onClick={handleToggle}
+                    className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
+                        active
+                            ? 'bg-orange-600 border-orange-600 text-white'
+                            : 'border-slate-600 hover:border-orange-500'
+                    }`}
+                >
+                    {active && (
+                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                    )}
+                </button>
+                <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                        <span className={`text-sm font-medium ${active ? 'text-white' : 'text-slate-400'}`}>{tt.name}</span>
+                        {tt.is_default && <span className="text-xs bg-orange-900/40 text-orange-400 px-1.5 py-0.5 rounded-full">Standaard</span>}
+                    </div>
+                    <span className="text-xs text-slate-500">+{tt.surplus_calories} kcal{tt.surplus_protein != null ? `, +${tt.surplus_protein}g eiwit` : ''}</span>
+                </div>
+            </div>
+            {active && (
+                <div className="flex items-center gap-2 ml-8 sm:ml-0">
+                    <label className="text-xs text-slate-500 whitespace-nowrap">Werkelijk:</label>
+                    <input
+                        type="number"
+                        step="0.1"
+                        min="0"
+                        value={actualCal}
+                        onChange={(e) => setActualCal(e.target.value)}
+                        placeholder={tt.surplus_calories}
+                        className="w-24 rounded-md bg-slate-800 border-slate-700 text-white text-xs px-2 py-1 focus:ring-orange-500 focus:border-orange-500"
+                    />
+                    <span className="text-xs text-slate-500">kcal</span>
+                    <button
+                        onClick={handleSaveActual}
+                        disabled={saving}
+                        className="text-xs text-orange-400 hover:text-orange-300 disabled:opacity-50"
+                    >
+                        {saving ? '...' : 'Opslaan'}
+                    </button>
+                </div>
+            )}
         </div>
     );
 }

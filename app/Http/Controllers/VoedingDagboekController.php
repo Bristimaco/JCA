@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DiaryTraining;
 use App\Models\FoodDiaryEntry;
 use App\Models\FoodProduct;
 use App\Models\Member;
@@ -39,6 +40,20 @@ class VoedingDagboekController extends Controller
         $catalog = FoodProduct::orderBy('name')
             ->get(['id', 'name', 'calories', 'protein', 'carbohydrates', 'fats']);
 
+        $trainingTypes = $member->trainingTypes()
+            ->orderByDesc('is_default')
+            ->orderBy('name')
+            ->get(['id', 'name', 'is_default', 'surplus_calories', 'surplus_protein', 'surplus_carbohydrates', 'surplus_fats']);
+
+        $todayTrainings = $member->diaryTrainings()
+            ->forToday()
+            ->get()
+            ->map(fn (DiaryTraining $dt) => [
+                'id' => $dt->id,
+                'training_type_id' => $dt->training_type_id,
+                'actual_calories' => $dt->actual_calories,
+            ]);
+
         return Inertia::render('VoedingDagboek', [
             'member' => [
                 'id' => $member->id,
@@ -48,6 +63,8 @@ class VoedingDagboekController extends Controller
             'entries' => $entries,
             'myProducts' => $myProducts,
             'catalog' => $catalog,
+            'trainingTypes' => $trainingTypes,
+            'todayTrainings' => $todayTrainings,
         ]);
     }
 

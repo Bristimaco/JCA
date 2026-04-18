@@ -166,6 +166,16 @@ class Member extends Model
         return $this->hasOne(NutritionPlan::class);
     }
 
+    public function trainingTypes(): HasMany
+    {
+        return $this->hasMany(TrainingType::class);
+    }
+
+    public function diaryTrainings(): HasMany
+    {
+        return $this->hasMany(DiaryTraining::class);
+    }
+
     public function foodDiaryEntries(): HasMany
     {
         return $this->hasMany(FoodDiaryEntry::class);
