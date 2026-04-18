@@ -280,7 +280,7 @@ function ProspectDetailContent({ prospect }) {
                                     <label className="block text-xs font-medium text-slate-500 mb-1">Website</label>
                                     <input type="text" value={companyForm.data.website} onChange={(e) => companyForm.setData('website', e.target.value)} className="w-full rounded-lg bg-slate-800 border border-slate-700 text-white px-3 py-1.5 text-sm focus:ring-2 focus:ring-rose-500 focus:border-transparent" />
                                 </div>
-                                {cbe?.status && <InfoItem label="Status" value={cbe.status} />}
+                                {cbe?.status && <InfoItem label="KBO Status" value={cbe.status} />}
                                 {cbe?.juridical_situation && <InfoItem label="Juridische situatie" value={cbe.juridical_situation} />}
                                 {cbe?.type && <InfoItem label="Type" value={cbe.type} />}
                                 {cbe?.start_date && <InfoItem label="Oprichtingsdatum" value={formatDate(cbe.start_date)} />}

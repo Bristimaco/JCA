@@ -209,7 +209,7 @@ export default function Prospectie({ prospects, filter }) {
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                             <InfoItem label="Ondernemingsnummer" value={lookupResult.cbe_number_formatted || formatVat(lookupResult.vat_number)} />
                             <InfoItem label="Rechtsvorm" value={lookupResult.legal_form} />
-                            <InfoItem label="Status" value={lookupResult.status} />
+                            <InfoItem label="KBO Status" value={lookupResult.status} />
                             <InfoItem label="Adres" value={lookupResult.full_address || [lookupResult.address_street, lookupResult.address_postal_code, lookupResult.address_city].filter(Boolean).join(', ')} />
                             <InfoItem label="Telefoon" value={lookupResult.phone} />
                             <InfoItem label="E-mail" value={lookupResult.email} />
@@ -298,7 +298,7 @@ export default function Prospectie({ prospects, filter }) {
                                 <tr className="border-b border-slate-800">
                                     <th className="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Bedrijf</th>
                                     <th className="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Ondernemingsnr.</th>
-                                    <th className="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Status</th>
+                                    <th className="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">KBO Status</th>
                                     <th className="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Stad</th>
                                     <th className="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Telefoon</th>
                                     <th className="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">E-mail</th>
