@@ -6,6 +6,9 @@ use App\Models\DiaryTraining;
 use App\Models\FoodDiaryEntry;
 use App\Models\FoodProduct;
 use App\Models\Member;
+use App\Models\TrainingAbsence;
+use App\Models\TrainingCancellation;
+use App\Models\TrainingSchedule;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -44,6 +47,8 @@ class VoedingDagboekController extends Controller
             ->orderByDesc('is_default')
             ->orderBy('name')
             ->get(['id', 'name', 'is_default', 'surplus_calories', 'surplus_protein', 'surplus_carbohydrates', 'surplus_fats']);
+
+        $this->autoCheckDefaultTraining($member, $trainingTypes);
 
         $todayTrainings = $member->diaryTrainings()
             ->forToday()
@@ -147,5 +152,83 @@ class VoedingDagboekController extends Controller
         if (! $request->user()->members()->where('members.id', $member->id)->exists()) {
             abort(403);
         }
+    }
+
+    private function autoCheckDefaultTraining(Member $member, $trainingTypes): void
+    {
+        $defaultType = $trainingTypes->firstWhere('is_default', true);
+
+        if (! $defaultType) {
+            return;
+        }
+
+        $today = now()->toDateString();
+        $todayDay = ucfirst(now()->locale('nl')->isoFormat('dddd'));
+        $groupIds = $member->trainingGroups()->pluck('training_groups.id');
+
+        if ($groupIds->isEmpty()) {
+            return;
+        }
+
+        $scheduleIds = TrainingSchedule::where(function ($q) use ($groupIds, $todayDay) {
+            $q->where('is_extra', false)
+                ->whereIn('training_group_id', $groupIds)
+                ->where('day', $todayDay);
+        })->orWhere(function ($q) use ($groupIds, $today) {
+            $q->where('is_extra', true)
+                ->whereDate('date', $today)
+                ->where(function ($q2) use ($groupIds) {
+                    $q2->whereIn('training_group_id', $groupIds)
+                        ->orWhereHas('trainingGroups', fn ($q3) => $q3->whereIn('training_groups.id', $groupIds));
+                });
+        })->pluck('id');
+
+        if ($scheduleIds->isEmpty()) {
+            return;
+        }
+
+        $cancelledIds = TrainingCancellation::whereIn('training_schedule_id', $scheduleIds)
+            ->whereDate('date', $today)
+            ->pluck('training_schedule_id');
+
+        $activeScheduleIds = $scheduleIds->diff($cancelledIds);
+
+        if ($activeScheduleIds->isEmpty()) {
+            return;
+        }
+
+        $absentScheduleIds = TrainingAbsence::where('member_id', $member->id)
+            ->whereIn('training_schedule_id', $activeScheduleIds)
+            ->whereDate('date', $today)
+            ->pluck('training_schedule_id');
+
+        $validScheduleIds = $activeScheduleIds->diff($absentScheduleIds);
+
+        if ($validScheduleIds->isEmpty()) {
+            return;
+        }
+
+        $alreadyLogged = $member->diaryTrainings()
+            ->where('training_type_id', $defaultType->id)
+            ->whereDate('date', $today)
+            ->exists();
+
+        if ($alreadyLogged) {
+            return;
+        }
+
+        $dismissed = $member->autoTrainingDismissals()
+            ->where('training_type_id', $defaultType->id)
+            ->whereDate('date', $today)
+            ->exists();
+
+        if ($dismissed) {
+            return;
+        }
+
+        $member->diaryTrainings()->create([
+            'training_type_id' => $defaultType->id,
+            'date' => $today,
+        ]);
     }
 }

@@ -176,6 +176,11 @@ class Member extends Model
         return $this->hasMany(DiaryTraining::class);
     }
 
+    public function autoTrainingDismissals(): HasMany
+    {
+        return $this->hasMany(AutoTrainingDismissal::class);
+    }
+
     public function foodDiaryEntries(): HasMany
     {
         return $this->hasMany(FoodDiaryEntry::class);
