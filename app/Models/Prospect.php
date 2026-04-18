@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ProspectStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -22,18 +23,28 @@ class Prospect extends Model
             'sponsor_amount' => 'float',
             'sponsor_start_date' => 'date',
             'sponsor_renewal_months' => 'integer',
-            'archived_at' => 'datetime',
+            'status' => ProspectStatus::class,
         ];
     }
 
     public function scopeActive(Builder $query): Builder
     {
-        return $query->whereNull('archived_at');
+        return $query->where('status', '!=', ProspectStatus::Gearchiveerd);
+    }
+
+    public function scopeActivated(Builder $query): Builder
+    {
+        return $query->where('status', ProspectStatus::Actief);
+    }
+
+    public function scopeInactive(Builder $query): Builder
+    {
+        return $query->where('status', ProspectStatus::Inactief);
     }
 
     public function scopeArchived(Builder $query): Builder
     {
-        return $query->whereNotNull('archived_at');
+        return $query->where('status', ProspectStatus::Gearchiveerd);
     }
 
     public function logoDataUri(): ?string

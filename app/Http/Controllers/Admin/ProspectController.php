@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\ProspectStatus;
 use App\Http\Controllers\Controller;
 use App\Jobs\ImportProspect;
 use App\Models\Prospect;
@@ -18,9 +19,11 @@ class ProspectController extends Controller
 {
     public function index(Request $request): Response
     {
-        $showArchived = $request->boolean('archived');
+        $filter = $request->input('filter', 'actief');
 
-        $prospects = Prospect::when($showArchived, fn ($q) => $q->archived(), fn ($q) => $q->active())
+        $prospects = Prospect::when($filter === 'gearchiveerd', fn ($q) => $q->archived())
+            ->when($filter === 'inactief', fn ($q) => $q->inactive())
+            ->when($filter === 'actief', fn ($q) => $q->activated())
             ->orderBy('company_name')
             ->get()
             ->map(fn (Prospect $p) => [
@@ -32,7 +35,8 @@ class ProspectController extends Controller
                 'phone' => $p->phone,
                 'email' => $p->email,
                 'website' => $p->website,
-                'status' => $p->cbe_data['status'] ?? null,
+                'cbe_status' => $p->cbe_data['status'] ?? null,
+                'status' => $p->status->value,
                 'notes_count' => $p->notes()->count(),
                 'archived_reason' => $p->archived_reason,
                 'created_at' => $p->created_at->toDateString(),
@@ -40,7 +44,7 @@ class ProspectController extends Controller
 
         return Inertia::render('Admin/Prospectie', [
             'prospects' => $prospects,
-            'showArchived' => $showArchived,
+            'filter' => $filter,
         ]);
     }
 
@@ -105,7 +109,7 @@ class ProspectController extends Controller
                 'sponsor_tier' => $prospect->sponsor_tier,
                 'has_logo' => (bool) $prospect->logo_mime,
                 'logo_url' => $prospect->logoDataUri(),
-                'archived_at' => $prospect->archived_at?->toDateTimeString(),
+                'status' => $prospect->status->value,
                 'archived_reason' => $prospect->archived_reason,
                 'cbe_data' => $prospect->cbe_data,
                 'cbe_fetched_at' => $prospect->cbe_fetched_at?->toDateTimeString(),
@@ -274,7 +278,7 @@ class ProspectController extends Controller
         Sponsor::create($sponsorData);
 
         $prospect->update([
-            'archived_at' => now(),
+            'status' => ProspectStatus::Gearchiveerd,
             'archived_reason' => 'converted',
         ]);
 
@@ -284,7 +288,7 @@ class ProspectController extends Controller
     public function archive(Prospect $prospect): RedirectResponse
     {
         $prospect->update([
-            'archived_at' => now(),
+            'status' => ProspectStatus::Gearchiveerd,
             'archived_reason' => 'no_sponsor',
         ]);
 
@@ -294,11 +298,25 @@ class ProspectController extends Controller
     public function unarchive(Prospect $prospect): RedirectResponse
     {
         $prospect->update([
-            'archived_at' => null,
+            'status' => ProspectStatus::Inactief,
             'archived_reason' => null,
         ]);
 
         return back()->with('status', "'{$prospect->company_name}' opnieuw geactiveerd.");
+    }
+
+    public function activate(Prospect $prospect): RedirectResponse
+    {
+        $prospect->update(['status' => ProspectStatus::Actief]);
+
+        return back()->with('status', "'{$prospect->company_name}' is nu actief.");
+    }
+
+    public function deactivate(Prospect $prospect): RedirectResponse
+    {
+        $prospect->update(['status' => ProspectStatus::Inactief]);
+
+        return back()->with('status', "'{$prospect->company_name}' is nu inactief.");
     }
 
     private function applyLogo(Prospect $prospect, string $dataUrl): void

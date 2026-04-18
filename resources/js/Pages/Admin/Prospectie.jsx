@@ -2,7 +2,7 @@ import { Head, Link, useForm, router, usePage } from '@inertiajs/react';
 import { useState, useRef } from 'react';
 import AppLayout from '../../Layouts/AppLayout';
 
-export default function Prospectie({ prospects, showArchived }) {
+export default function Prospectie({ prospects, filter }) {
     const { flash } = usePage().props;
     const [lookupResult, setLookupResult] = useState(null);
     const [lookupError, setLookupError] = useState(null);
@@ -266,14 +266,20 @@ export default function Prospectie({ prospects, showArchived }) {
                     />
                     <div className="flex rounded-lg bg-slate-800 p-0.5 ring-1 ring-slate-700">
                         <button
-                            onClick={() => router.get('/admin/prospectie', {}, { preserveState: true })}
-                            className={`rounded-md px-3 py-1 text-sm font-medium transition-colors ${!showArchived ? 'bg-slate-700 text-white' : 'text-slate-400 hover:text-white'}`}
+                            onClick={() => router.get('/admin/prospectie', { filter: 'actief' }, { preserveState: true })}
+                            className={`rounded-md px-3 py-1 text-sm font-medium transition-colors ${filter === 'actief' ? 'bg-emerald-600 text-white' : 'text-slate-400 hover:text-white'}`}
                         >
                             Actief
                         </button>
                         <button
-                            onClick={() => router.get('/admin/prospectie', { archived: 1 }, { preserveState: true })}
-                            className={`rounded-md px-3 py-1 text-sm font-medium transition-colors ${showArchived ? 'bg-slate-700 text-white' : 'text-slate-400 hover:text-white'}`}
+                            onClick={() => router.get('/admin/prospectie', { filter: 'inactief' }, { preserveState: true })}
+                            className={`rounded-md px-3 py-1 text-sm font-medium transition-colors ${filter === 'inactief' ? 'bg-slate-700 text-white' : 'text-slate-400 hover:text-white'}`}
+                        >
+                            Inactief
+                        </button>
+                        <button
+                            onClick={() => router.get('/admin/prospectie', { filter: 'gearchiveerd' }, { preserveState: true })}
+                            className={`rounded-md px-3 py-1 text-sm font-medium transition-colors ${filter === 'gearchiveerd' ? 'bg-slate-700 text-white' : 'text-slate-400 hover:text-white'}`}
                         >
                             Gearchiveerd
                         </button>
@@ -310,7 +316,7 @@ export default function Prospectie({ prospects, showArchived }) {
                                                     <p className="text-sm font-medium text-white">{p.company_name}</p>
                                                     {p.legal_form && <p className="text-xs text-slate-500">{p.legal_form}</p>}
                                                 </div>
-                                                {p.archived_reason && (
+                                                {filter === 'gearchiveerd' && p.archived_reason && (
                                                     <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${p.archived_reason === 'converted' ? 'bg-emerald-900/50 text-emerald-400' : 'bg-slate-700 text-slate-400'}`}>
                                                         {p.archived_reason === 'converted' ? 'Omgezet' : 'Geen sponsor'}
                                                     </span>
@@ -318,7 +324,7 @@ export default function Prospectie({ prospects, showArchived }) {
                                             </div>
                                         </td>
                                         <td className="px-6 py-3 text-sm text-slate-300">{formatVat(p.vat_number)}</td>
-                                        <td className="px-6 py-3 text-sm text-slate-300">{p.status || '-'}</td>
+                                        <td className="px-6 py-3 text-sm text-slate-300">{p.cbe_status || '-'}</td>
                                         <td className="px-6 py-3 text-sm text-slate-300">{p.address_city || '-'}</td>
                                         <td className="px-6 py-3 text-sm text-slate-300">{p.phone || '-'}</td>
                                         <td className="px-6 py-3 text-sm text-slate-300">{p.email || '-'}</td>
@@ -330,6 +336,24 @@ export default function Prospectie({ prospects, showArchived }) {
                                         <td className="px-6 py-3 text-sm text-slate-400">{p.created_at}</td>
                                         <td className="px-6 py-3">
                                             <div className="flex items-center gap-1">
+                                                {filter === 'inactief' && (
+                                                    <button
+                                                        onClick={(e) => { e.stopPropagation(); router.post(`/admin/prospectie/${p.id}/activate`, {}, { preserveScroll: true }); }}
+                                                        className="rounded-md bg-emerald-900/30 p-1.5 text-emerald-400 hover:bg-emerald-600 hover:text-white transition-colors"
+                                                        title="Activeren"
+                                                    >
+                                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                                                    </button>
+                                                )}
+                                                {filter === 'actief' && (
+                                                    <button
+                                                        onClick={(e) => { e.stopPropagation(); router.post(`/admin/prospectie/${p.id}/deactivate`, {}, { preserveScroll: true }); }}
+                                                        className="rounded-md bg-slate-700 p-1.5 text-amber-400 hover:bg-amber-600 hover:text-white transition-colors"
+                                                        title="Deactiveren"
+                                                    >
+                                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                                    </button>
+                                                )}
                                                 <button
                                                     onClick={(e) => { e.stopPropagation(); router.post(`/admin/prospectie/${p.id}/refresh`, {}, { preserveScroll: true }); }}
                                                     className="rounded-md bg-slate-700 p-1.5 text-slate-400 hover:bg-slate-600 hover:text-white transition-colors"
@@ -359,13 +383,31 @@ export default function Prospectie({ prospects, showArchived }) {
                                 <div className="flex items-center justify-between gap-2">
                                     <div className="flex items-center gap-2 min-w-0">
                                         <p className="text-sm font-medium text-white truncate">{p.company_name}</p>
-                                        {p.archived_reason && (
+                                        {filter === 'gearchiveerd' && p.archived_reason && (
                                             <span className={`shrink-0 inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${p.archived_reason === 'converted' ? 'bg-emerald-900/50 text-emerald-400' : 'bg-slate-700 text-slate-400'}`}>
                                                 {p.archived_reason === 'converted' ? 'Omgezet' : 'Geen sponsor'}
                                             </span>
                                         )}
                                     </div>
                                     <div className="flex items-center gap-1 shrink-0">
+                                        {filter === 'inactief' && (
+                                            <button
+                                                onClick={(e) => { e.stopPropagation(); router.post(`/admin/prospectie/${p.id}/activate`, {}, { preserveScroll: true }); }}
+                                                className="rounded-md bg-emerald-900/30 p-1.5 text-emerald-400 hover:bg-emerald-600 hover:text-white transition-colors"
+                                                title="Activeren"
+                                            >
+                                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                                            </button>
+                                        )}
+                                        {filter === 'actief' && (
+                                            <button
+                                                onClick={(e) => { e.stopPropagation(); router.post(`/admin/prospectie/${p.id}/deactivate`, {}, { preserveScroll: true }); }}
+                                                className="rounded-md bg-slate-700 p-1.5 text-amber-400 hover:bg-amber-600 hover:text-white transition-colors"
+                                                title="Deactiveren"
+                                            >
+                                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                            </button>
+                                        )}
                                         <button
                                             onClick={(e) => { e.stopPropagation(); router.post(`/admin/prospectie/${p.id}/refresh`, {}, { preserveScroll: true }); }}
                                             className="rounded-md bg-slate-700 p-1.5 text-slate-400 hover:bg-slate-600 hover:text-white transition-colors"
@@ -384,7 +426,7 @@ export default function Prospectie({ prospects, showArchived }) {
                                 </div>
                                 {p.legal_form && <p className="text-xs text-slate-500">{p.legal_form}</p>}
                                 <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-400">
-                                    {p.status && <span>{p.status}</span>}
+                                    {p.cbe_status && <span>{p.cbe_status}</span>}
                                     {p.address_city && <span>{p.address_city}</span>}
                                     {p.phone && <span>{p.phone}</span>}
                                     {p.email && <span className="text-slate-300">{p.email}</span>}

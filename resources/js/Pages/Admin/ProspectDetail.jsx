@@ -58,7 +58,8 @@ function ProspectDetailContent({ prospect }) {
     });
 
     const cbe = prospect.cbe_data;
-    const isArchived = !!prospect.archived_at;
+    const isArchived = prospect.status === 'gearchiveerd';
+    const isActief = prospect.status === 'actief';
 
     const handleAddNote = (e) => {
         e.preventDefault();
@@ -102,6 +103,14 @@ function ProspectDetailContent({ prospect }) {
 
     const handleUnarchive = () => {
         router.post(`/admin/prospectie/${prospect.id}/unarchive`, {}, { preserveScroll: true });
+    };
+
+    const handleActivate = () => {
+        router.post(`/admin/prospectie/${prospect.id}/activate`, {}, { preserveScroll: true });
+    };
+
+    const handleDeactivate = () => {
+        router.post(`/admin/prospectie/${prospect.id}/deactivate`, {}, { preserveScroll: true });
     };
 
     const handleSaveSponsor = (e) => {
@@ -154,11 +163,15 @@ function ProspectDetailContent({ prospect }) {
                     <div className="flex-1">
                         <div className="flex items-center gap-3">
                             <h1 className="text-2xl font-bold text-white">{prospect.company_name}</h1>
-                            {isArchived && (
-                                <span className="inline-flex items-center rounded-full bg-slate-700 px-2.5 py-0.5 text-xs font-medium text-slate-300">
-                                    Gearchiveerd{prospect.archived_reason === 'converted' ? ' — Omgezet' : prospect.archived_reason === 'no_sponsor' ? ' — Geen sponsor' : ''}
-                                </span>
-                            )}
+                            <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                                isArchived ? 'bg-slate-700 text-slate-300' :
+                                isActief ? 'bg-emerald-900/50 text-emerald-400 ring-1 ring-emerald-700/30' :
+                                'bg-slate-800 text-slate-400 ring-1 ring-slate-700'
+                            }`}>
+                                {isArchived ? (
+                                    <>Gearchiveerd{prospect.archived_reason === 'converted' ? ' — Omgezet' : prospect.archived_reason === 'no_sponsor' ? ' — Geen sponsor' : ''}</>
+                                ) : isActief ? 'Actief' : 'Inactief'}
+                            </span>
                         </div>
                         <p className="text-sm text-slate-400">{formatVat(prospect.vat_number)} · {prospect.legal_form || 'Onbekende rechtsvorm'}</p>
                     </div>
@@ -174,6 +187,24 @@ function ProspectDetailContent({ prospect }) {
                     </button>
                     {!isArchived && (
                         <>
+                            {!isActief && (
+                                <button
+                                    onClick={handleActivate}
+                                    className="rounded-lg bg-emerald-900/30 px-4 py-2 text-sm font-semibold text-emerald-400 hover:bg-emerald-600 hover:text-white ring-1 ring-emerald-700/30 flex items-center gap-2"
+                                >
+                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                                    Activeren
+                                </button>
+                            )}
+                            {isActief && (
+                                <button
+                                    onClick={handleDeactivate}
+                                    className="rounded-lg bg-slate-800 px-4 py-2 text-sm font-medium text-amber-400 hover:bg-slate-700 ring-1 ring-slate-700 flex items-center gap-2"
+                                >
+                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                    Deactiveren
+                                </button>
+                            )}
                             <button
                                 onClick={() => setShowConvertModal(true)}
                                 className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 flex items-center gap-2"

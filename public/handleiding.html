@@ -2900,7 +2900,7 @@
                 op te slaan in je prospectenlijst. Alle KBO-gegevens worden mee opgeslagen.
             </p>
 
-            <h4>Prospectenlijst</h4>
+            <h4>Prospectenlijst &amp; status</h4>
             <p>
                 Onder het opzoekformulier zie je een tabel met alle opgeslagen prospecten, met kolommen voor
                 bedrijfsnaam, ondernemingsnummer, status, stad, telefoon, e-mail, aantal notities en datum van toevoegen.
@@ -2909,9 +2909,18 @@
                 zonder de detailpagina te openen.
             </p>
             <p>
-                Bovenaan de tabel kan je schakelen tussen <strong>Actief</strong> en <strong>Gearchiveerd</strong>.
-                Standaard zie je de actieve prospecten. Gearchiveerde prospecten tonen een badge met de reden
-                (<em>Omgezet</em> of <em>Geen sponsor</em>).
+                Elke prospect heeft een <strong>status</strong>:
+            </p>
+            <ul>
+                <li><strong>Inactief</strong> &mdash; nieuw toegevoegde prospecten starten altijd als inactief. Er is nog geen actief contact mee.</li>
+                <li><strong>Actief</strong> &mdash; bedrijven waarmee actief gesproken wordt. Gebruik de knop <strong>&#8220;Activeren&#8221;</strong> om een prospect actief te maken.</li>
+                <li><strong>Gearchiveerd</strong> &mdash; prospecten die omgezet zijn naar sponsor of geen interesse hebben. Toont een badge met de reden (<em>Omgezet</em> of <em>Geen sponsor</em>).</li>
+            </ul>
+            <p>
+                Bovenaan de tabel kan je schakelen tussen drie tabs: <strong>Actief</strong> (standaard),
+                <strong>Inactief</strong> en <strong>Gearchiveerd</strong>. Per rij zijn er snelknoppen om
+                een prospect te <strong>activeren</strong> (in de inactief-tab) of te <strong>deactiveren</strong>
+                (in de actief-tab).
             </p>
 
             <h4>Excel import</h4>
@@ -2958,7 +2967,9 @@
                     sponsor. Het prospect krijgt de status &#8220;Geen sponsor&#8221;. Gearchiveerde prospecten
                     zijn terug te vinden via de tab <em>Gearchiveerd</em> in de prospectenlijst.</li>
                 <li><strong>Heractiveren</strong> &#8212; een gearchiveerd prospect kan opnieuw geactiveerd
-                    worden via de knop &#8220;Heractiveren&#8221; op de detailpagina.</li>
+                    worden via de knop &#8220;Heractiveren&#8221; op de detailpagina. Het prospect krijgt dan de status <em>Inactief</em>.</li>
+                <li><strong>Activeren / Deactiveren</strong> &#8212; schakel een prospect tussen <em>Actief</em>
+                    en <em>Inactief</em>. Beschikbaar op zowel de detailpagina als via de snelknoppen in de prospectenlijst.</li>
                 <li><strong>Verwijderen</strong> &#8212; verwijdert het prospect inclusief alle notities</li>
             </ul>
 
