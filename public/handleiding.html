@@ -788,6 +788,8 @@
                     <a href="#admin-mededelingen" class="nav-link">Mededelingen</a>
                     <a href="#admin-bar-producten" class="nav-link">Bar Producten</a>
                     <a href="#admin-aan-te-vullen" class="nav-link">Aan te vullen</a>
+                    <a href="#admin-bankbewegingen" class="nav-link">Bankbewegingen</a>
+                    <a href="#admin-financieel-rapport" class="nav-link">Financieel Rapport</a>
                     <a href="#admin-activiteit" class="nav-link">Activiteit</a>
                     <a href="#admin-test-mode" class="nav-link">Test Modus</a>
                 </div>
@@ -2354,6 +2356,9 @@
                 <li><strong>&#8220;Leden koppelen&#8221;</strong> &#8212; leden aan een gebruikersaccount koppelen. Dit
                     is essentieel voor ouders: koppel de kinderen aan het ouderaccount zodat de ouder ze kan zien en
                     beheren op &#8220;Mijn Leden&#8221;.</li>
+                <li><strong>&#8220;Inloggen als&#8221;</strong> &#8212; log in als deze gebruiker (impersonatie)
+                    om het systeem te bekijken vanuit hun perspectief. Handig voor support en probleemoplossing.
+                    Zie <a href="#admin-impersonatie">Impersonatie</a> hieronder.</li>
             </ul>
 
             <div class="box box-warning">
@@ -2364,6 +2369,25 @@
                     <li>De laatste beheerder kan niet van rol worden gewisseld (er moet altijd minstens &#233;&#233;n
                         beheerder zijn).</li>
                 </ul>
+            </div>
+
+            <h4 id="admin-impersonatie">Impersonatie (inloggen als andere gebruiker)</h4>
+            <p>
+                Als beheerder kun je tijdelijk <strong>inloggen als een andere gebruiker</strong> om het systeem
+                vanuit hun perspectief te bekijken. Dit is nuttig voor support en het oplossen van problemen.
+            </p>
+            <ul>
+                <li>Klik op <strong>&ldquo;Inloggen als&rdquo;</strong> bij de gewenste gebruiker in het
+                    gebruikersbeheer.</li>
+                <li>Je wordt direct ingelogd als die gebruiker en ziet het systeem zoals zij het zien.</li>
+                <li>Bovenaan de pagina verschijnt een <strong>banner</strong> met een knop
+                    <strong>&ldquo;Stoppen met impersoneren&rdquo;</strong>.</li>
+                <li>Klik daarop om terug te keren naar je eigen beheerderaccount.</li>
+            </ul>
+            <div class="box box-warning">
+                <strong>Let op:</strong> Je kunt jezelf niet impersoneren, en je kunt niet impersoneren terwijl je
+                al als iemand anders bent ingelogd. Gebruik deze functie verantwoord &mdash; je hebt toegang tot
+                alle gegevens van de ge&iuml;mpersoneerde gebruiker.
             </div>
 
             <h3 id="admin-leden">Ledenbeheer</h3>
@@ -3193,6 +3217,110 @@
                 <strong>Tip:</strong> Vergeet niet de test modus uit te schakelen wanneer je klaar bent met
                 testen. Zolang de test modus actief is, ontvangen je leden geen enkele notificatie of betaalverzoek.
             </div>
+
+            <!-- Bankbewegingen -->
+            <h3 id="admin-bankbewegingen">Bankbewegingen</h3>
+            <p><span class="role-badge role-admin">Beheerder</span></p>
+            <p>
+                Op de pagina <strong>&ldquo;Bankbewegingen&rdquo;</strong> importeer en beheer je banktransacties
+                vanuit CODA-bestanden. De tegel vind je onder de groep <strong>Financi&euml;n</strong> op het dashboard.
+            </p>
+
+            <h4>CODA-bestand importeren</h4>
+            <p>
+                Klik op <strong>&ldquo;Importeren&rdquo;</strong> rechtsboven. Selecteer een
+                <strong>.cod</strong> of <strong>.coda</strong> bestand en kies de bijbehorende bankrekening.
+                Na het importeren verschijnen alle transacties in de tabel.
+            </p>
+            <ul>
+                <li>Elk CODA-bestand kan slechts <strong>&eacute;&eacute;n keer</strong> ge&iuml;mporteerd worden
+                    (op basis van bestandsnaam).</li>
+                <li>Transacties zijn <strong>onwijzigbaar</strong> na import &mdash; enkel dimensies en bijlagen
+                    kunnen worden aangepast.</li>
+            </ul>
+
+            <div class="box box-warning">
+                <strong>Let op:</strong> Configureer eerst minstens &eacute;&eacute;n bankrekening in de
+                <a href="#admin-club">Clubinstellingen</a> voordat je CODA-bestanden kunt importeren.
+            </div>
+
+            <h4>Ge&iuml;mporteerde bestanden</h4>
+            <p>
+                Via de link <strong>&ldquo;Ge&iuml;mporteerde bestanden&rdquo;</strong> bekijk je een overzicht
+                van alle ge&iuml;mporteerde CODA-bestanden met hun datumbereik en aantal transacties.
+                Klik op <strong>&ldquo;Verwijderen&rdquo;</strong> om alle transacties van een bepaald bestand te
+                verwijderen.
+            </p>
+
+            <h4>Transacties filteren</h4>
+            <p>De tabel kan gefilterd worden op:</p>
+            <ul>
+                <li><strong>Zoeken</strong> &mdash; op naam tegenpartij, rekeningnummer of mededeling</li>
+                <li><strong>Bankrekening</strong> &mdash; filter per geconfigureerde rekening</li>
+                <li><strong>Datumbereik</strong> &mdash; van- en tot-datum</li>
+                <li><strong>Dimensies</strong> &mdash; tot 3 aangepaste categorisatievelden
+                    (bijv. kostenplaats, afdeling, project)</li>
+            </ul>
+
+            <h4>Bijlagen toevoegen</h4>
+            <p>
+                Klik op het bijlage-icoon bij een transactie om een <strong>document</strong> toe te voegen
+                (foto, PDF, Word of Excel). Je kunt ook direct een <strong>foto nemen</strong> met de camera.
+                Bijlagen kunnen worden bekeken, gedownload of verwijderd.
+            </p>
+
+            <h4>Dimensies instellen</h4>
+            <p>
+                Per transactie kun je tot <strong>3 dimensies</strong> instellen via dropdown-selectors.
+                Dimensies worden geconfigureerd in de <a href="#admin-club">Clubinstellingen</a> en zijn handig
+                voor kostentoewijzing en financi&euml;le rapportage. De dimensies werken cascaderend: dimensie 2
+                is pas beschikbaar na selectie van dimensie 1.
+            </p>
+
+            <!-- Financieel Rapport -->
+            <h3 id="admin-financieel-rapport">Financieel Rapport</h3>
+            <p><span class="role-badge role-admin">Beheerder</span></p>
+            <p>
+                Het <strong>&ldquo;Financieel Rapport&rdquo;</strong> biedt een uitgebreide analyse van
+                inkomsten en uitgaven over een gekozen periode. De tegel vind je onder de groep
+                <strong>Financi&euml;n</strong> op het dashboard.
+            </p>
+
+            <h4>Periode kiezen</h4>
+            <p>
+                Gebruik de periodekiezer bovenaan: <em>Deze maand</em>, <em>Vorige maand</em>,
+                <em>Dit kwartaal</em>, <em>Dit jaar</em>, <em>Alles</em> of een <strong>aangepast bereik</strong>
+                (vul van- en tot-datum in en klik op &ldquo;Toepassen&rdquo;).
+            </p>
+
+            <h4>Tabs: Per Rekening &amp; Per Tegenpartij</h4>
+            <ul>
+                <li><strong>Per Rekening</strong> &mdash; toont inkomsten en uitgaven uitgesplitst per bankrekening</li>
+                <li><strong>Per Tegenpartij</strong> &mdash; toont inkomsten en uitgaven per tegenpartij
+                    (leverancier, klant, enz.)</li>
+            </ul>
+
+            <h4>Wat het rapport toont</h4>
+            <ul>
+                <li><strong>Samenvattingskaarten</strong> &mdash; totale inkomsten (groen), totale uitgaven (rood)
+                    en saldo</li>
+                <li><strong>Maandgrafiek</strong> &mdash; staafdiagram met inkomsten vs. uitgaven per maand</li>
+                <li><strong>Datatabel</strong> &mdash; rijen per rekening of tegenpartij, kolommen per maand
+                    met een totaalkolom. Onderaan staan de eindtotalen.</li>
+            </ul>
+
+            <h4>Dimensiefilters</h4>
+            <p>
+                Filter het rapport op dimensiewaarden. Klik op waarden om ze te selecteren (meervoudige selectie).
+                De filters werken cascaderend &mdash; dimensie 2 wordt pas beschikbaar na selectie van dimensie 1.
+            </p>
+
+            <h4>Exporteren naar Excel</h4>
+            <p>
+                Klik op <strong>&ldquo;Exporteren&rdquo;</strong> om het rapport als
+                <strong>.xlsx bestand</strong> te downloaden met alle toegepaste filters. Handig voor
+                boekhoudkundige afstemming en kostenplaatsanalyse.
+            </p>
 
             <!-- POS Kassa -->
             <h2 id="pos-kassa">POS Kassa</h2>
@@ -4651,6 +4779,70 @@
                 </tbody>
             </table>
 
+            <h3>Voeding</h3>
+            <table class="perm-table">
+                <thead>
+                    <tr>
+                        <th>Actie</th>
+                        <th>Beheerder</th>
+                        <th>Trainer</th>
+                        <th>Ouder</th>
+                        <th>Lid</th>
+                        <th>Barmedewerker</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Voedingsplan instellen per lid</td>
+                        <td class="check">&#10003;</td>
+                        <td class="check">&#10003;</td>
+                        <td class="check">&#10003;</td>
+                        <td class="check">&#10003;</td>
+                        <td class="check">&#10003;</td>
+                    </tr>
+                    <tr>
+                        <td>Trainingstypes beheren (surplus)</td>
+                        <td class="check">&#10003;</td>
+                        <td class="check">&#10003;</td>
+                        <td class="check">&#10003;</td>
+                        <td class="check">&#10003;</td>
+                        <td class="check">&#10003;</td>
+                    </tr>
+                    <tr>
+                        <td>Voeding Dagboek invullen</td>
+                        <td class="check">&#10003;</td>
+                        <td class="check">&#10003;</td>
+                        <td class="check">&#10003;</td>
+                        <td class="check">&#10003;</td>
+                        <td class="check">&#10003;</td>
+                    </tr>
+                    <tr>
+                        <td>Mijn Producten beheren</td>
+                        <td class="check">&#10003;</td>
+                        <td class="check">&#10003;</td>
+                        <td class="check">&#10003;</td>
+                        <td class="check">&#10003;</td>
+                        <td class="check">&#10003;</td>
+                    </tr>
+                    <tr>
+                        <td>Producten catalogus bekijken</td>
+                        <td class="check">&#10003;</td>
+                        <td class="check">&#10003;</td>
+                        <td class="check">&#10003;</td>
+                        <td class="check">&#10003;</td>
+                        <td class="check">&#10003;</td>
+                    </tr>
+                    <tr>
+                        <td>Producten verwijderen uit catalogus</td>
+                        <td class="check">&#10003;</td>
+                        <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
+                    </tr>
+                </tbody>
+            </table>
+
             <h3>Beheer &amp; Administratie</h3>
             <table class="perm-table">
                 <thead>
@@ -4754,6 +4946,30 @@
                     </tr>
                     <tr>
                         <td>Vouchers overzicht bekijken</td>
+                        <td class="check">&#10003;</td>
+                        <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
+                    </tr>
+                    <tr>
+                        <td>Bankbewegingen importeren &amp; beheren</td>
+                        <td class="check">&#10003;</td>
+                        <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
+                    </tr>
+                    <tr>
+                        <td>Financieel rapport bekijken &amp; exporteren</td>
+                        <td class="check">&#10003;</td>
+                        <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
+                        <td class="cross">&#8212;</td>
+                    </tr>
+                    <tr>
+                        <td>Inloggen als andere gebruiker (impersonatie)</td>
                         <td class="check">&#10003;</td>
                         <td class="cross">&#8212;</td>
                         <td class="cross">&#8212;</td>
@@ -5381,10 +5597,52 @@
                 dat minstens &#233;&#233;n voogd is ingevoerd met een geldig e-mailadres.
             </p>
 
+            <h4>Hoe importeer ik bankbewegingen via CODA?</h4>
+            <p>
+                Ga als beheerder naar <strong>Beheerderspaneel</strong> &#8594;
+                <strong>Bankbewegingen</strong>. Upload een <strong>.cod</strong>-bestand (CODA-formaat)
+                via de uploadknop. Het systeem verwerkt het bestand en toont de ge&#239;mporteerde
+                transacties in een overzichtstabel. Je kunt filteren op datum en zoeken op beschrijving
+                of bedrag.
+            </p>
+
+            <h4>Hoe open ik het financi&#235;le rapport?</h4>
+            <p>
+                Ga als beheerder naar <strong>Beheerderspaneel</strong> &#8594;
+                <strong>Bankbewegingen</strong> en klik op <strong>&#8220;Financieel Rapport&#8221;</strong>.
+                Dit rapport combineert bankbewegingen met factuurdata en toont inkomsten, uitgaven en
+                openstaande bedragen over een geselecteerde periode. Je kunt het rapport ook exporteren.
+            </p>
+
+            <h4>Wat is impersonatie en hoe gebruik ik het?</h4>
+            <p>
+                Impersonatie laat een beheerder inloggen als een andere gebruiker om problemen te
+                diagnosticeren. Ga naar <strong>Beheerderspaneel</strong> &#8594; <strong>Gebruikers</strong>
+                en klik op het <strong>&#128065;&#65039;</strong>-icoon naast een gebruiker. Je ziet de
+                applicatie dan exact zoals die gebruiker. Klik op de gele banner bovenaan om terug te
+                keren naar je eigen account.
+            </p>
+
+            <h4>Worden judotrainingen automatisch aangevinkt in het dagboek?</h4>
+            <p>
+                Ja, als een lid een ingeplande judotraining heeft op een bepaalde dag en <em>niet</em>
+                als afwezig is gemeld en de training <em>niet</em> geannuleerd is, wordt het trainingstype
+                <strong>Judo</strong> automatisch aangevinkt bij het openen van het dagboek. Je kunt dit
+                handmatig uitvinken; deze keuze blijft behouden tot de volgende trainingsdag.
+            </p>
+
+            <h4>Hoe werkt de poef?</h4>
+            <p>
+                De poef is een krediet-systeem voor de bar. Een beheerder of barmedewerker kan via de
+                kassa een bestelling op de poef plaatsen van een lid. Het openstaande bedrag wordt
+                bijgehouden. Leden kunnen hun eigen poef bekijken via <strong>Mijn Poef</strong> in het
+                dashboard en betalen via een Mollie-betaallink.
+            </p>
+
             <div
                 style="margin-top: 80px; padding-top: 24px; border-top: 1px solid var(--slate-200); text-align: center;">
                 <p style="font-size: 12px; color: var(--slate-400);">
-                    JCA Handleiding &#8212; Laatst bijgewerkt: 3 april 2026
+                    JCA Handleiding &#8212; Laatst bijgewerkt: 18 april 2026
                 </p>
             </div>
 
