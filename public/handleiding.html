@@ -2290,6 +2290,8 @@
                 <div class="flow-diagram" style="flex-wrap:wrap;">
                     <div class="flow-node" style="background:#64748b;">&#128100; Registratie</div>
                     <div class="flow-arrow">→</div>
+                    <div class="flow-node" style="background:#ef4444;">&#9993; E-mail verificatie</div>
+                    <div class="flow-arrow">→</div>
                     <div class="flow-node" style="background:#f59e0b;">&#9203; Wachtend op goedkeuring</div>
                     <div class="flow-arrow">→</div>
                     <div class="flow-node" style="background:#8b5cf6;">&#127991; Rol toekennen</div>
@@ -2303,8 +2305,23 @@
                     <span class="mockup-badge" style="background:#059669;">Lid</span>
                     <span class="mockup-badge" style="background:#d97706;">Barmedewerker</span>
                 </div>
-                <span class="mockup-caption">Goedkeuringsproces: registratie → beoordeling → roltoekenning → actief</span>
+                <span class="mockup-caption">Goedkeuringsproces: registratie → e-mail verificatie → beoordeling → roltoekenning → actief</span>
             </div>
+
+            <h4>Ongevalideerde e-mailadressen</h4>
+            <p>
+                Wanneer een gebruiker zich registreert maar zijn e-mailadres nog niet heeft bevestigd (bijvoorbeeld
+                doordat de verificatie-e-mail niet is aangekomen), verschijnt deze in de sectie
+                <strong>&#8220;Ongevalideerde e-mailadressen&#8221;</strong> bovenaan de gebruikersbeheerpagina.
+                Per gebruiker zijn twee acties beschikbaar:
+            </p>
+            <ul>
+                <li><strong>&#8220;Verificatie opnieuw versturen&#8221;</strong> &#8212; stuurt de verificatie-e-mail
+                    opnieuw naar het e-mailadres van de gebruiker, zodat deze alsnog zelf kan bevestigen.</li>
+                <li><strong>&#8220;E-mail verifiëren&#8221;</strong> &#8212; markeert het e-mailadres handmatig als
+                    geverifieerd. De gebruiker verschijnt vervolgens in de sectie &#8220;Nieuwe aanvragen&#8221; zodat
+                    je een rol kunt toekennen.</li>
+            </ul>
 
             <h4>Nieuwe aanvragen goedkeuren</h4>
                 Bovenaan het beheerderspaneel verschijnt de sectie <strong>&#8220;Nieuwe aanvragen&#8221;</strong>

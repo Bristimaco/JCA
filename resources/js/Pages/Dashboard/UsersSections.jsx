@@ -1,6 +1,75 @@
 import { useForm, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 
+export function UnverifiedUsersSection({ unverifiedUsers }) {
+    const { flash } = usePage().props;
+
+    if (unverifiedUsers.length === 0) {
+        return null;
+    }
+
+    return (
+        <div>
+            <h2 className="text-lg font-semibold text-white mb-3">Ongevalideerde e-mailadressen</h2>
+            {flash.status && (
+                <div className="mb-4 rounded-md bg-emerald-900/30 border ring-1 ring-emerald-700/30 p-3">
+                    <p className="text-sm text-emerald-400">{flash.status}</p>
+                </div>
+            )}
+            <div className="divide-y divide-slate-700 rounded-xl bg-slate-800/40 ring-1 ring-slate-700/50 overflow-hidden">
+                {unverifiedUsers.map((user) => (
+                    <UnverifiedUserRow key={user.id} user={user} />
+                ))}
+            </div>
+        </div>
+    );
+}
+
+function UnverifiedUserRow({ user }) {
+    const verifyForm = useForm({});
+    const resendForm = useForm({});
+
+    const handleVerify = (e) => {
+        e.preventDefault();
+        verifyForm.patch(`/admin/users/${user.id}/verify-email`);
+    };
+
+    const handleResend = (e) => {
+        e.preventDefault();
+        resendForm.post(`/admin/users/${user.id}/resend-verification`);
+    };
+
+    return (
+        <div className="px-3 sm:px-6 py-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4">
+                <div className="min-w-0 flex-1">
+                    <p className="font-medium text-white truncate">{user.name}</p>
+                    <p className="text-sm text-slate-500">{user.email}</p>
+                    <p className="text-xs text-slate-400">
+                        Geregistreerd op {new Date(user.created_at).toLocaleDateString('nl-BE')}
+                    </p>
+                </div>
+                <div className="flex items-center gap-2">
+                    <button
+                        onClick={handleResend}
+                        disabled={resendForm.processing}
+                        className="rounded-md bg-slate-700/50 border border-slate-600 px-3 py-1.5 text-sm font-medium text-slate-300 hover:bg-slate-700/80 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        Verificatie opnieuw versturen
+                    </button>
+                    <button
+                        onClick={handleVerify}
+                        disabled={verifyForm.processing}
+                        className="rounded-md bg-rose-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-rose-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        E-mail verifiëren
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+}
+
 export function PendingUsersSection({ pendingUsers, roles, extraModules }) {
     const { flash } = usePage().props;
 

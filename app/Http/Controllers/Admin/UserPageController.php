@@ -15,6 +15,10 @@ class UserPageController extends Controller
 {
     public function __invoke(): Response
     {
+        $unverifiedUsers = User::whereNull('email_verified_at')
+            ->orderBy('created_at')
+            ->get(['id', 'name', 'email', 'created_at']);
+
         $pendingUsers = User::whereNull('role')
             ->whereNotNull('email_verified_at')
             ->orderBy('created_at')
@@ -59,6 +63,7 @@ class UserPageController extends Controller
             ]);
 
         return Inertia::render('Admin/Users', [
+            'unverifiedUsers' => $unverifiedUsers,
             'pendingUsers' => $pendingUsers,
             'users' => $users,
             'roles' => $roles,

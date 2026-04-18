@@ -1,9 +1,9 @@
 import { Head, Link } from '@inertiajs/react';
 import { useState } from 'react';
 import AppLayout from '../../Layouts/AppLayout';
-import { PendingUsersSection, UsersSection } from '../Dashboard/UsersSections';
+import { PendingUsersSection, UnverifiedUsersSection, UsersSection } from '../Dashboard/UsersSections';
 
-export default function Users({ pendingUsers, users, roles, extraModules, allMembers, renewalDueCount, renewalDueMembers }) {
+export default function Users({ unverifiedUsers, pendingUsers, users, roles, extraModules, allMembers, renewalDueCount, renewalDueMembers }) {
     const urlParams = new URLSearchParams(window.location.search);
     const [renewalListOpen, setRenewalListOpen] = useState(urlParams.get('renewal') === 'open');
 
@@ -64,6 +64,7 @@ export default function Users({ pendingUsers, users, roles, extraModules, allMem
             )}
 
             <div className="space-y-6">
+                <UnverifiedUsersSection unverifiedUsers={unverifiedUsers} />
                 <PendingUsersSection pendingUsers={pendingUsers} roles={roles} extraModules={extraModules} />
                 <UsersSection users={users} roles={roles} extraModules={extraModules} allMembers={allMembers} />
             </div>

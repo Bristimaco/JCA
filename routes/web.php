@@ -22,6 +22,7 @@ use App\Http\Controllers\Admin\MemberExcelController;
 use App\Http\Controllers\Admin\MemberIndexController;
 use App\Http\Controllers\Admin\ProspectController;
 use App\Http\Controllers\Admin\ProspectNoteController;
+use App\Http\Controllers\Admin\ResendVerificationController;
 use App\Http\Controllers\Admin\SponsorController;
 use App\Http\Controllers\Admin\SponsorLogoController;
 use App\Http\Controllers\Admin\StageController;
@@ -36,6 +37,7 @@ use App\Http\Controllers\Admin\TrainingGroupMemberController;
 use App\Http\Controllers\Admin\UpdateUserController;
 use App\Http\Controllers\Admin\UserMembersController;
 use App\Http\Controllers\Admin\UserPageController;
+use App\Http\Controllers\Admin\VerifyUserEmailController;
 use App\Http\Controllers\Admin\VoucherController as AdminVoucherController;
 use App\Http\Controllers\Admin\WeightCategoryController;
 use App\Http\Controllers\Admin\WeightCategoryPageController;
@@ -319,6 +321,8 @@ Route::middleware(['auth', 'verified', 'approved'])->group(function () {
     Route::middleware('admin')->prefix('admin')->group(function () {
         Route::patch('/club-settings', [ClubSettingsController::class, 'update'])->name('admin.club-settings.update');
         Route::patch('/users/{user}/approve', ApproveUserController::class)->name('admin.users.approve');
+        Route::patch('/users/{user}/verify-email', VerifyUserEmailController::class)->name('admin.users.verify-email');
+        Route::post('/users/{user}/resend-verification', ResendVerificationController::class)->name('admin.users.resend-verification');
         Route::patch('/users/{user}/toggle-active', ToggleUserActiveController::class)->name('admin.users.toggle-active');
         Route::patch('/users/{user}', UpdateUserController::class)->name('admin.users.update');
         Route::put('/users/{user}/members', [UserMembersController::class, 'update'])->name('admin.users.members');
